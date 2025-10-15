@@ -1,0 +1,2706 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/views/mail/mail-template.xhtml">
+	<ui:define name="section-head">
+         <h:outputText value="#{outBoxBean.correspondence.title}" title="#{outBoxBean.correspondence.title}" style="text-overflow: ellipsis;overflow: hidden;white-space: nowrap;padding: 4px;" />  <i class="pi pi-paperclip"></i>
+         <div class="ui-chip ui-widget"><span class="ui-chip-icon pi pi-comment" ></span><div class="ui-chip-text" style="text-overflow: ellipsis;overflow: hidden;white-space: nowrap;padding: 4px;max-width: 250px;width: auto;" title="#{outBoxBean.decode(outBoxBean.correspondenceRecipient.correspondenceNote.note)}">#{outBoxBean.decode(outBoxBean.correspondenceRecipient.correspondenceNote.note)}</div></div>
+	</ui:define>
+	<ui:define name="head">
+	    <h:outputScript name="script/jquery.transit.min.js"
+			library="#{appSetting.resourceLib}"></h:outputScript>
+		<h:outputStylesheet library="#{appSetting.resourceLib}" name="css/material-theme.css"></h:outputStylesheet>
+	    <style type="text/css" >
+	      div.feature-intro{
+	        width: 50% !important;
+	       }
+	      div.feature-intro h1{
+	        display: flex;
+	        align-items: center;
+	       }
+	      [id$=ckEditor_reader]  span.cke_top {display: none;}
+	      [id$=ckEditor_reader]  span.cke_bottom {display: none;}
+	      [id$=ckEditor_reader].cke_chrome {border: 0px solid #d1d1d1;border: 0px;border-radius: 0.25rem;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);background-color: transparent; } 
+	      body .ui-datascroller .ui-datascroller-content {
+	         border: 1px solid #dee2e6;
+	         background: #fff;
+	         color: #495057;
+	         padding: 1rem;
+	         border-bottom-left-radius: 10px;
+	         border-bottom-right-radius: 10px;
+          }
+          
+          .ui-sticky {
+	top: 90px !important;
+}
+
+@media ( max-width : 960px) {
+	.ui-sticky {
+		top: 130px !important;
+	}
+	.ui-panelgrid.panelgrid-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+		{
+		text-align: center;
+	}
+}
+
+.ui-panelgrid.panelgrid-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+.product-item .product-item-content {
+	border: 1px solid var(- -surface-d);
+	border-radius: 3px;
+	margin: .3rem;
+	text-align: center;
+	padding: 2rem 0;
+}
+
+.product-item .product-image {
+	width: 50%;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
+
+.mt-5 {
+	margin-top: 2rem !important;
+}
+
+.mr-2 {
+	margin: 0.5rem !important;
+}
+
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+
+.block-rtl {
+	margin-right: 98px;
+	margin-top: 16px;
+}
+
+.block-ltr {
+	margin-left: 14px;
+	margin-top: 16px;
+}
+
+img {
+	cursor: pointer;
+}
+
+.ui-panelgrid.grid-text-align-right .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: right !important;
+}
+
+.ui-panelgrid.grid-text-align-left .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: left !important;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: baseline;
+}
+
+.ui-divider.ui-divider-dashed.ui-divider-vertical::before {
+	color: green !important;
+}
+
+body .ui-menu {
+	padding: 0;
+	border: 1px solid #dee2e6;
+	border-radius: 4px;
+	width: auto;
+}
+
+div.ui-chip {
+	cursor: pointer;
+}
+
+span.ui-chip-remove-icon {
+	cursor: default;
+}
+
+.ui-chip.chip-select {
+	background: var(- -primary-color);
+	color: var(- -primary-color-text);
+}
+
+.product .product-grid-item img {
+	box-shadow: none !important;
+}
+
+.product .product-list-item img {
+	box-shadow: none !important;
+}
+
+.product .product-list-item .product-price {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: .5rem;
+	margin-top: .5rem;
+	align-self: center;
+}
+	    </style>
+	    <script>
+		   
+	    $(function() {
+			   
+			   $(".imgIcon").hover(function() {
+				   $(this).closest(".imgIcon").css("z-index", 9999);
+				   $(this).css('opacity', '1');
+				   $(this).css('cursor', 'pointer');
+				    $(this).transition({ scale: [1.4, 1.4] });
+			   }, function() {
+				    $(this).closest(".imgIcon").css("z-index", 0);
+				    $(this).css('opacity', '0.7');
+				    $(this).css('cursor', 'default');
+				    $(this).transition({ scale: [1, 1] });
+				});
+				
+			});
+
+		   function pageNav(){
+	     	  setTimeout(function() { 
+	         	  PF('caroulsel_drawer_widget').getJQ().find('div.ui-carousel-item-active').find('.ui-button').click();
+	   	        
+	     	    }, 100);
+	           }
+	       
+
+			  function resetFilterSearch(){
+				   PF('widgetvar_lang').filter(); 
+				   $('[id$=selectOneMenu_lang_filter]').val('');
+	           return false;
+				}
+
+			  function selectImg(event){
+				  event.target.parentElement.style.backgroundColor="#F8F9FA";
+				 
+				}
+		  window.onload = function() {
+			   
+			  CKEDITOR.on('instanceReady', function() {
+				  setTimeout(cke_print(), 15000); 
+			  });
+			}
+		    
+	    
+	   </script>
+	</ui:define>
+	<ui:define name="toolbar">
+	   <p:commandButton id="print"   ajax="true" onmouseover="cke_print();" onclick="$('a.cke_button__print').click();"
+			title="#{interfaceLabel.print}" styleClass="rounded-button ui-button-secondary ui-button-flat" icon="fa fa-print" >
+		
+		</p:commandButton>
+	   
+		
+		<p:commandLink id="inbox" value="" action="pretty:inBox" ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.inBoxMail}">
+			<i class="fa fa-inbox" style="font-size: 2rem; color: green;"></i>
+		</p:commandLink>
+
+		<p:commandLink id="home" value="" action="pretty:registerIncomingMail"
+			ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.registerIncomingMail}">
+			<i class="fa fa-mail-forward" style="font-size: 2rem"></i>
+		</p:commandLink>
+
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+
+	</ui:define>
+	<ui:define name="mail-template-content">
+		<h:form id="form">		   		  
+		    <p:tooltip />
+			<p:growl id="messages" showDetail="true" showSummary="false" />
+			<div style="width:90%;margin-left:5%;margin-right:5%;border-radius: 7px;background-color: #F8F9FA;display: flex;margin-bottom: 7px;align-content: center;align-items: center;">
+			  <p:avatar icon="pi pi-user" styleClass="mr-2" size="xlarge" shape="circle" />
+			  <p:outputLabel value="#{interfaceLabel.ownerUser}:" style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>
+			  <p:chip label="#{outBoxBean.correspondence.userAlias.aliasName} (#{outBoxBean.correspondence.userAlias.sysUserBySysUser.displayName})" image="#{resource['smat-ins:images/anonymouse-user.jpg']}" styleClass="mr-2"/>
+			  
+			  <p:outputLabel value="/" style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>
+			  <p:outputLabel value="#{interfaceLabel.sender}:" style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>
+			  <p:chip label="#{outBoxBean.correspondenceNote.userAlias.aliasName} (#{outBoxBean.correspondenceNote.userAlias.sysUserBySysUser.displayName})" image="#{resource['smat-ins:images/anonymouse-user.jpg']}"
+                    styleClass="mr-2 custom-chip"/>
+			  
+			</div>
+			<div style="width:90%;margin-left:5%;margin-right:5%;border-radius: 7px;background-color: #F8F9FA;display: flex;margin-bottom: 7px;align-content: center;align-items: center;">
+			  <p:outputLabel value="#{interfaceLabel.date}:" style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:3%;margin-right:3%"></p:outputLabel>
+			  <p:outputLabel value="[#{outBoxBean.correspondence.getLocalDatePattern(outBoxBean.correspondenceRecipient.correspondenceNote.noteDate)}]" style="font-size: 0.9rem; color: #2196F3;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>
+			  <i class="pi pi-flag-fill" style="color:red;margin-left:1%;margin-right:1%;" title="#{outBoxBean.correspondence.priorityType.name}"></i>
+			  <i class="#{app.locale.rtl?'pi pi-arrow-up-left':'pi pi-arrow-up-right'}" style="color:green;margin-left:1%;margin-right:1%;" title="#{outBoxBean.correspondence.boxType.name}"></i>
+			  <i class="pi pi-envelope" style="color:#2196F3;margin-left:1%;margin-right:1%;" title="#{outBoxBean.correspondence.correspondenceType.name}"></i>
+			</div>
+			<div
+				style="width: 90%; margin-left: 7%; margin-right: 7%; border-radius: 7px; background-color: #F8F9FA; display: flex; margin-bottom: 7px; align-content: center; align-items: center;">
+				<p:avatar icon="pi pi-user" styleClass="mr-2" size="xlarge"
+					shape="square"
+					style="background-color:hsla(45,100%,85%,100%); color:#fff" />
+				<p:outputLabel value="#{interfaceLabel.recipient}:"
+					style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>
+				<p:chip
+					style="background-color: hsla(45,100%,85%,100%);color:#495057;"
+					label="#{outBoxBean.correspondenceRecipient.userAlias.aliasName} (#{outBoxBean.correspondenceRecipient.userAlias.sysUserBySysUser.displayName})"
+					image="#{resource['smat-ins:images/anonymouse-user.jpg']}"
+					styleClass="mr-2" />
+				<i
+					class="#{outBoxBean.iconRecipientStatus(outBoxBean.correspondenceRecipient)}"
+					style="#{outBoxBean.iconColorRecipientStatus(outBoxBean.correspondenceRecipient)}"></i>
+				<p:outputLabel value="#{interfaceLabel.viewedDate}:"
+					style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:3%;margin-right:3%"></p:outputLabel>
+				<p:outputLabel
+					value="[#{outBoxBean.correspondence.getLocalDateTimePattern(outBoxBean.correspondenceRecipient.viewedDate)}]"
+					style="font-size: 0.9rem; color: #2196F3;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>
+				<p:outputLabel value="#{interfaceLabel.processingDate}:"
+					style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:3%;margin-right:3%"></p:outputLabel>
+				<p:outputLabel
+					value="[#{outBoxBean.correspondence.getLocalDateTimePattern(outBoxBean.correspondenceRecipient.processingDate)}]"
+					style="font-size: 0.9rem; color: #1FD03E;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>
+				
+
+			</div>
+			<p:divider type="dotted"></p:divider>
+			<div class="Mezkw" style="width:80%;margin-left:10%;;margin-right:10%;border-radius: 7px;background-color: #F8F9FA;">
+              <p:commandButton  icon="pi pi-arrow-left" styleClass="rounded-button ui-button-help ui-button-flat" style="margin-left:2px;margin-right:2px;"></p:commandButton>
+              
+			  <p:commandButton  icon="fa fa-archive" styleClass="rounded-button ui-button-info ui-button-flat" style="margin-left:2px;margin-right:2px;" ></p:commandButton>	
+			  
+			  <p:commandButton  icon="pi pi-trash" styleClass="rounded-button ui-button-danger ui-button-flat" style="margin-left:2px;margin-right:2px;" ></p:commandButton>	
+		
+			  <p:commandButton  icon="pi pi-envelope" styleClass="rounded-button ui-button-success ui-button-flat" style="margin-left:2px;margin-right:2px;" ></p:commandButton>
+			
+			</div>
+		    <p:remoteCommand name="cke_print"  oncomplete="PF('widgetvar_subject').getEditorInstance().addContentsCss('@page { size: auto;  margin: 0mm; }');"></p:remoteCommand>
+			 <script type="text/javascript" >
+                $(".cke_print_editor").on( "mouseover", function(){
+                	cke_print();
+                	
+                });
+
+			
+//<![CDATA[
+function start() {
+PF('statusDialog').show();
+}
+
+function stop() {
+PF('statusDialog').hide();
+}
+//]]>
+
+               
+                </script>
+			<div id="correspondence_body" style="display: flex;width:80%;margin-left:10%;;margin-right:10%;height:300px;border-radius: 7px;">
+				<pe:ckEditor id="ckEditor_reader" contentsCss="" widgetVar="widgetvar_subject"
+					value="#{outBoxBean.decode(outBoxBean.correspondence.htmlSubject)}"
+					width="100%"  language="#{app.locale.language}" height="300px" skin="office2013"
+					defaultLanguage="#{app.locale.language}" readonly="true"></pe:ckEditor>
+			</div>
+			<h:panelGroup rendered="#{outBoxBean.archiveDocumentFilesList.size()>0}" style="display: block;margin-left: 10%;margin-right: 10%;">
+				<p:divider type="solid"></p:divider>
+				<div class="field col-12 md:col-4" style="display: flex;">
+					<p:badge value="#{outBoxBean.archiveDocumentFilesList.size()}"
+						severity="danger">
+						<span
+							style="font-size: 1.3rem; color: black; font-weight: bolder;">
+							<i class="pi pi-paperclip" style="font-size: 2rem; color: green"></i>#{interfaceLabel.mailAttachements}
+						</span>
+
+					</p:badge>
+				</div>
+				<div id="correspondence_attachement"
+					style="display: flex; width: 90%; margin-left: 5%;; margin-right: 5%; height: 180px; border-radius: 7px;">
+					<c:forEach items="#{outBoxBean.archiveDocumentFilesList}"
+						var="archiveDocumentFile" varStatus="loop">
+						<c:if test="#{loop.count eq 4}">
+							<p:commandButton value="#{interfaceLabel.more}"
+								icon="pi pi-ellipsis-h"
+								styleClass="ui-button-danger ui-button-flat"
+								style="align-self: first baseline;flex: initial;width: auto;border-radius: 10px;display: inline-flex;"></p:commandButton>
+						</c:if>
+						<c:if test="#{loop.count lt 5}">
+							<div class="ui-attachement-element">
+								<div
+									style="height: 78%; width: 100%; background-color: #F8F9FA; box-shadow: 0 5px 10px rgba(10, 2, 35, 0); display: flex;">
+									<p:graphicImage library="#{appSetting.resourceLib}"
+										name="images/1200px-Document_icon.png" styleClass="docAttach"></p:graphicImage>
+									<h:outputText value="[#{archiveDocumentFile.code}]"
+										title="[#{archiveDocumentFile.code}]" styleClass="docTitle" />
+									<p:commandButton icon="pi pi-cloud-download" actionListener="#{outBoxBean.prepareDocument(archiveDocumentFile)}"
+										oncomplete="document.getElementById('form:commandButton_download').click() ; return false;"
+										title="#{interfaceLabel.download}"
+										styleClass="ui-button-raised rounded-button ui-button-info ui-button-outlined btnAttachDownload"></p:commandButton>
+									<p:commandButton icon="pi pi-search" actionListener="#{outBoxBean.prepareDocumentViewer(archiveDocumentFile)}"
+									    title="#{interfaceLabel.view}"
+										rendered="#{outBoxBean.extensionIn(archiveDocumentFile)}"
+										onstart="PF('statusDialog').show();"
+										oncomplete="PF('statusDialog').hide();"
+										styleClass="ui-button-raised rounded-button ui-button-warning ui-button-outlined btnAttachPreview"></p:commandButton>
+
+								</div>
+								<div
+									style="height: 22%; width: 100%; display: flex; align-items: center; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8); border: 0.1em dotted #E5E4E2;">
+									<h:outputText value="#{archiveDocumentFile.name}"
+										class="attach-text" title="#{archiveDocumentFile.name}"></h:outputText>
+									<p:graphicImage library="#{appSetting.resourceLib}"
+										name="images/icon_2_archive_x16.png" styleClass="iconAttach"></p:graphicImage>
+								</div>
+
+							</div>
+						</c:if>
+					</c:forEach>
+
+				</div>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{outBoxBean.linkedCorrespondences.size()>0}" style="display: block;margin-left: 10%;margin-right: 10%;">
+				<p:divider type="solid"></p:divider>
+				<div class="field col-12 md:col-4" style="display: flex;">
+					<p:badge value="#{outBoxBean.linkedCorrespondences.size()}"
+						severity="info">
+
+						<span
+							style="font-size: 1.3rem; color: black; font-weight: bolder;">
+							<i class="fa fa-link" style="font-size: 2rem; color: #0287CF"></i>#{interfaceLabel.linkedMail}
+						</span>
+
+					</p:badge>
+				</div>
+				<div id="linked_correspondence"
+					style="display: flex; width: 90%; margin-left: 5%;; margin-right: 5%; height: 180px; border-radius: 7px;">
+					<c:forEach items="#{outBoxBean.linkedCorrespondences}"
+						var="linkedCorrespondence" varStatus="loop">
+						<c:if test="#{loop.count eq 4}">
+							<p:commandButton value="#{interfaceLabel.more}"
+								icon="pi pi-ellipsis-h"
+								styleClass="ui-button-danger ui-button-flat"
+								style="align-self: first baseline;flex: initial;width: auto;border-radius: 10px;display: inline-flex;"></p:commandButton>
+						</c:if>
+						<c:if test="#{loop.count lt 5}">
+							<div class="ui-linked-correspondence-element">
+								<div
+									style="height: 78%; width: 100%; background-color: #FFF; box-shadow: 0 5px 10px rgba(10, 2, 35, 0); display: flex;">
+									<p:graphicImage library="#{appSetting.resourceLib}"
+										name="images/linked-mail.png" styleClass="linkedAttach"></p:graphicImage>
+									<div style="display: flex;flex-flow: column;width: 80%;align-content: baseline;align-items: baseline;align-self: baseline;margin-top: 2px;margin-bottom: 2px;">
+									  <h:outputText value="[#{linkedCorrespondence.correspondenceByLinkedCorrespondence.getLocalDatePattern(linkedCorrespondence.correspondenceByLinkedCorrespondence.correspondenceDate)}]"
+										title="[#{linkedCorrespondence.correspondenceByLinkedCorrespondence.getLocalDatePattern(linkedCorrespondence.correspondenceByLinkedCorrespondence.correspondenceDate)}]" styleClass="linked-correspondence-attr" />
+									  <h:outputText value="#{linkedCorrespondence.correspondenceByLinkedCorrespondence.correspondenceState.code eq '02' ? outBoxBean.decode(linkedCorrespondence.correspondenceByLinkedCorrespondence.subject):''}"
+										title="#{linkedCorrespondence.correspondenceByLinkedCorrespondence.correspondenceState.code eq '02' ? outBoxBean.decode(linkedCorrespondence.correspondenceByLinkedCorrespondence.subject):''}" styleClass="linked-correspondence-attr" />
+									  <h:outputText value="#{linkedCorrespondence.correspondenceByLinkedCorrespondence.year}"
+										title="#{linkedCorrespondence.correspondenceByLinkedCorrespondence.year}" styleClass="linked-correspondence-attr" />
+									</div>
+
+								</div>
+								<div
+									style="height: 22%; width: 100%; display: flex; align-items: center; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8); border: 0.1em dotted #E5E4E2;">
+									<h:outputText value="#{linkedCorrespondence.correspondenceByLinkedCorrespondence.title}" style="color:green;"
+										class="attach-text" title="#{linkedCorrespondence.correspondenceByLinkedCorrespondence.title}"></h:outputText>
+									<p:graphicImage library="#{appSetting.resourceLib}"
+										name="images/linkedmail.png" styleClass="icon-linked-correspondence"></p:graphicImage>
+								</div>
+
+							</div>
+						</c:if>
+					</c:forEach>
+
+				</div>
+			</h:panelGroup>
+			<p:commandButton id="commandButton_download" value="Download"
+				ajax="true" update="@([id$=messages])"
+				onclick="PrimeFaces.monitorDownload(start, stop);"
+				style="display:none;" icon="pi pi-arrow-down" styleClass="mr-2">
+				<p:fileDownload value="#{documentDownloadBean.file}" />
+			</p:commandButton>
+			<p:dialog modal="true" widgetVar="statusDialog"
+				header="#{interfaceLabel.processing}" draggable="false"
+				closable="false" resizable="false">
+				<i class="pi pi-spinner pi-spin" style="font-size: 3rem"></i>
+			</p:dialog>
+			<p:dialog header="#{interfaceLabel.viewer}" showEffect="fade"
+				widgetVar="viewerWidgetVar" closable="true" blockScroll="true"
+				dynamic="true" cache="true" fitViewport="true" showHeader="true"
+				contentWidth="100%" contentHeight="100%" resizeObserver="true"
+				resizeObserverCenter="true" styleClass="max-w-screen"
+				iframeStyleClass="max-w-screen" responsive="true" width="92%"
+				height="100%" maximizable="true" minimizable="true">
+
+				<p:outputPanel id="manage-viewer-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:100%">
+					<p:scrollPanel
+						style="border:dotted;border-color:#B9CEF2;width: auto; height:100%"
+						styleClass="" mode="native">
+						<pe:documentViewer height="550" zoom="page-width"
+							value="#{pdfViewerBean.file}"></pe:documentViewer>
+					</p:scrollPanel>
+				</p:outputPanel>
+			</p:dialog>
+			<p:dialog header="#{interfaceLabel.viewer}" showEffect="fade"
+				widgetVar="photoViewerWidgetVar" closable="true" blockScroll="true"
+				dynamic="true" cache="true" fitViewport="true" showHeader="true"
+				contentWidth="100%" contentHeight="100%" resizeObserver="true"
+				resizeObserverCenter="true" styleClass="max-w-screen"
+				iframeStyleClass="max-w-screen" responsive="true" width="92%"
+				height="550" maximizable="true" minimizable="true">
+
+				<p:outputPanel id="manage-photo-viewer-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:100%">
+					<p:scrollPanel
+						style="border:dotted;border-color:#B9CEF2;width: auto; height:100%"
+						styleClass="" mode="native">
+						<p:graphicImage value="#{photoViewerBean.file}" stream="true"
+							cache="false" style="width: 100%; display: block" />
+					</p:scrollPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+			<p:dialog header="#{interfaceLabel.viewer}" showEffect="fade"
+				widgetVar="convertedDocWidgetVar" closable="true" blockScroll="true"
+				dynamic="true" cache="true" fitViewport="true" showHeader="true"
+				contentWidth="100%" contentHeight="100%" resizeObserver="true"
+				resizeObserverCenter="true" styleClass="max-w-screen"
+				iframeStyleClass="max-w-screen" responsive="true" width="92%"
+				height="550" maximizable="true" minimizable="true">
+
+				<p:outputPanel id="manage-doc-viewer-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:100%">
+					<p:scrollPanel
+						style="border:dotted;border-color:#B9CEF2;width: auto; height:100%"
+						styleClass="" mode="native">
+						<pe:documentViewer height="550" zoom="page-width"
+							value="#{documentConvertForViewBean.file}"></pe:documentViewer>
+					</p:scrollPanel>
+				</p:outputPanel>
+			</p:dialog>
+			<p:divider type="solid"></p:divider>
+			<h:panelGroup id="panelGroup_comments">
+				<p:dataScroller id="custom_comments"
+					widgetVar="dataScrollerWidgetVar"
+					style="width:80%;margin-left:10%;margin-right:10%;margin-top:0px;border-radius: 10px;border:0px none; background-color:transparent;box-sizing: border-box;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;"
+					value="#{outBoxBean.correspondenceNotes}" var="noteVar" chunkSize="5"
+					mode="inline" scrollHeight="350">
+					<f:facet name="header">
+						<div
+							style="width: 100%; display: flex; align-items: first baseline;">
+							<span
+								style="text-align: start; margin-left: 3px; margin-right: 3px">
+								<i class="fa fa-comments"></i>
+								#{interfaceLabel.comments}: </span>
+							<p:badge value="#{outBoxBean.correspondenceNotes.size()}"
+								severity="info"></p:badge>
+						</div>
+					</f:facet>
+					<div
+						style="width: 100%; height: auto; display: flex; align-items: first baseline;">
+						<p:avatar icon="pi pi-user" styleClass="mr-2" size="large"
+							shape="circle" />
+						<div class="ui-chip ui-widget" style="display: block;max-width: 80%;width:auto;margin-left: 5px;margin-right: 5px;padding: 3px; ">
+							<div style="max-width: 100%; width: auto;margin-bottom: 15px;font-weight: bolder;color:black;">#{interfaceLabel.from}: #{noteVar.userAlias.aliasName}<span style="font-style:italic;color:#6C757D;font-weight: bolder;">[#{noteVar.userAlias.sysUserBySysUser.displayName}]</span> </div>
+						    <div style="max-width: 100%; width: auto;margin-right:40px;margin-left:40px;margin-bottom: 15px;font-weight: bolder;color:#F4CA16;">#{interfaceLabel.to}: #{not empty outBoxBean.getBy(noteVar) ?  outBoxBean.getBy(noteVar).userAlias.aliasName:''}<span style="font-style:italic;color:#6C757D;font-weight: bolder;">[#{not empty outBoxBean.getBy(noteVar) ? outBoxBean.getBy(noteVar).userAlias.sysUserBySysUser.displayName:''}]</span> </div>
+							<div style="max-width: 100%; width: auto;display: flex;align-items: baseline;margin-inline-start: 30px;">
+								<span class="ui-chip-icon fa fa-comment"></span>
+								<div class="ui-chip-text"
+									style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 4px; max-width: 100%; width: auto;"
+									title="#{outBoxBean.decode(noteVar.note)}">#{outBoxBean.decode(noteVar.note)}</div>
+							    
+							</div>
+							<div style="max-width: 100%; width: auto;display: flex;align-items: baseline;margin-inline-start: 50px;margin-top: -10px;">
+							    <span class="ui-chip-icon fa fa-clock" style="color:green;"></span>
+							    <div class="ui-chip-text"
+									style="color:green; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 2px; max-width: 100%; width: auto;"
+									title="#{noteVar.noteDate}">#{noteVar.noteDate}</div>
+							</div>
+							
+						</div>
+					</div>
+				</p:dataScroller>
+			</h:panelGroup>
+			<p:divider type="dashed"></p:divider>
+		    <div style="width:80%;display: flex;margin-top: 5px;margin-bottom: 5px;align-content: center;margin-right: 10%;margin-left: 10%">
+		      <h:outputText value="#{interfaceLabel.to} #{interfaceLabel.archive}" style="margin-left:5px;margin-right:5px" />
+		      <p:selectBooleanCheckbox value="#{outBoxBean.toArchive}">
+		        <p:ajax process="@this" update="@([id$=badge_recipient_size],[id$=badge_archive_size])"></p:ajax>
+		      </p:selectBooleanCheckbox>
+		    </div>
+			<div class="RNNXgb"
+				style="max-width: 90% !important; border-radius: 40px;height: 67px;">
+				<p:badge id="badge_recipient_size" styleClass="custom-badge"
+					severity="success" value="#{outBoxBean.recipientList.size()}">
+					<p:commandButton id="btn_recipient" icon="fas fa-users" disabled="#{outBoxBean.toArchive}"
+						pt:data-tooltip="#{interfaceLabel.recipients}"
+						styleClass="RNNXgb-btn-round ui-button-success ui-button-outlined ui-button-flat"
+						style="border-radius: 40px;"
+						oncomplete="PF('sidebar_recipients').show();"></p:commandButton>
+				</p:badge>
+				<p:badge id="badge_archive_size" styleClass="custom-badge"
+					severity="danger" value="#{outBoxBean.mailAttachementList.size()}">
+					<p:commandButton id="btn_attachements" icon="fa fa-paperclip" disabled="#{outBoxBean.toArchive}"
+						pt:data-tooltip="#{interfaceLabel.attachFile}"
+						styleClass="RNNXgb-btn-round ui-button-danger  ui-button-flat"
+						style="border-radius: 40px;"
+						oncomplete="PF('sidebar_archive').show();"></p:commandButton>
+				</p:badge>
+				<p:inputText placeholder="#{interfaceLabel.writeComment}" value="#{outBoxBean.comment}"
+					style="flex-grow:2;border:none;font: normal 16px Google Sans,Roboto,Helvetica,Arial,sans-serif;" />
+				<p:commandButton id="btn_comment" icon="far fa-comment-dots"
+					pt:data-tooltip="#{interfaceLabel.sendComment}" action="#{outBoxBean.doComment()}"
+					styleClass="RNNXgb-btn ui-button-raised ui-button-outlined ui-button-flat ui-button-help"
+					style="border-radius: 40px !important;"></p:commandButton>
+			</div>
+			<p:sidebar id="sidebar_recipient_content"
+				style="width:65%;overflow: auto;" widgetVar="sidebar_recipients"
+				blockScroll="true" dynamic="true"
+				position="#{app.locale.locale eq 'en'? 'left' : 'right'}">
+				<p:divider align="center" type="dashed">
+					<div class="inline-flex align-items-center">
+						<p:badge id="badge_recipients"
+							value="#{outBoxBean.selectedUserAliasRecipients.size()}"
+							severity="danger">
+							<i class="pi pi-users" style="font-size: 2rem; color: red"></i>
+						</p:badge>
+						<p:spacer width="5"></p:spacer>
+						<p:outputLabel value="#{interfaceLabel.recipients}"
+							style="color:red;font-weight: bold"></p:outputLabel>
+					</div>
+				</p:divider>
+
+				<p:panelGrid columns="2"
+					id="panelGrid_selectCheckBoxMenu_UserAliasRecpient"
+					columnClasses="ui-grid-col-2 ,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+
+					<p:outputLabel for="@next">#{interfaceLabel.to}</p:outputLabel>
+					<p:selectCheckboxMenu id="selectCheckBoxMenu_UserAliasRecpient"
+						multiple="true" filter="true" filterMatchMode="contains"
+						updateLabel="true" widgetVar="widgetVar_SelectCheckBoxMenu"
+						valueChangeListener="#{outBoxBean.updateBadge()}"
+						emptyLabel="#{interfaceLabel.noRecipientsSelected}"
+						value="#{outBoxBean.selectedUserAliasRecipients}">
+						<p:ajax event="toggleSelect"
+							update="badge_recipient_size "></p:ajax>
+						<p:ajax event="change"
+							update="badge_recipient_size "></p:ajax>
+						<p:ajax event="itemUnselect"
+							update="badge_recipient_size "></p:ajax>
+						<f:selectItems
+							itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+							itemValue="#{userAlias}" var="userAlias"
+							value="#{outBoxBean.userAliasRecipientList}" />
+						<o:converter converterId="omnifaces.ListIndexConverter"
+							list="#{outBoxBean.userAliasRecipientList}" />
+					</p:selectCheckboxMenu>
+				</p:panelGrid>
+
+				<p:panelGrid columns="4"
+					columnClasses="ui-grid-col-2 ,ui-grid-col-4 ,ui-grid-col-2,ui-grid-col-4"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+
+					<p:outputLabel for="@next" value="#{interfaceLabel.priorityType}"></p:outputLabel>
+					<p:selectOneMenu id="selectOneMenu_Priority_Type"
+						style="background-color:#F9F9FB;font-weight:bolder;font-style:italic;"
+						value="#{outBoxBean.priorityType}"
+						converter="omnifaces.SelectItemsIndexConverter">
+						<f:selectItems itemLabel="#{priorityType.name}"
+							itemValue="#{priorityType}" var="priorityType"
+							value="#{outBoxBean.priorityTypes}" />
+					</p:selectOneMenu>
+					<p:outputLabel for="@next" value="#{interfaceLabel.purposeType}" />
+					<p:selectOneMenu
+						style="background-color:#F9F9FB;font-weight:bolder;font-style:italic;"
+						value="#{outBoxBean.purposeType}"
+						converter="omnifaces.SelectItemsIndexConverter">
+						<f:selectItems itemLabel="#{purposeType.name} "
+							itemValue="#{purposeType}" var="purposeType"
+							value="#{outBoxBean.purposeTypes}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+				<p:panelGrid id="panelGrid_editor" columns="2"
+					columnClasses="ui-grid-col-2 ,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+					<p:outputLabel for="@next" value="#{interfaceLabel.note}" />
+					<pe:ckEditor id="ckEditor_note" widgetVar="widgetvar_note"
+						value="#{outBoxBean.htmlNote}" skin="office2013"
+						width="100%" height="70px"
+						toolbar="#{outBoxBean.localizationCkEditorNoteToolBar()}"
+						placeholder="#{interfaceLabel.note}"
+						defaultLanguage="#{app.locale.language}"
+						language="#{app.locale.language}"></pe:ckEditor>
+
+				</p:panelGrid>
+				<pe:remoteCommand id="applyDataCommand" name="applyData"
+					process="@([id$=sidebar_recipient_content])"
+					update="@([id$=dt-correspondenceRecipient],[id$=panelGrid_editor],[id$=badge_recipient],[id$=badge_recipient_size])"
+					actionListener="#{outBoxBean.addCorrespondenceRecipient()}">
+					<pe:assignableParam name="note"
+						assignTo="#{outBoxBean.note}" />
+					<pe:assignableParam name="htmlNote"
+						assignTo="#{outBoxBean.htmlNote}" />
+				</pe:remoteCommand>
+				<p:toolbar id="toolbar">
+					<f:facet name="left">
+						<p:spacer width="160px;"></p:spacer>
+						<p:commandButton value="#{interfaceLabel.add}"
+							icon="fas fa-user-plus"
+							styleClass="ui-button-raised ui-button-success ui-button-flat"
+							type="button"
+							onclick="applyData(PF('widgetvar_note').getEditorInstance().document.getBody().getText(),PF('widgetvar_note').getEditorInstance().getData())" />
+						<p:divider layout="vertical" type="dashed"></p:divider>
+						<p:commandButton value="#{interfaceLabel.reset}"
+							icon="pi pi-trash"
+							styleClass="ui-button-raised ui-button-danger ui-button-flat"
+							ajax="true">
+						</p:commandButton>
+					</f:facet>
+				</p:toolbar>
+				<p:divider type="dashed" style="margin-top:-10px;"></p:divider>
+				<p:dataTable id="dt-correspondenceRecipient"
+					widgetVar="dtCorrespondenceRecipient"
+					var="correspondenceRecipientVar"
+					value="#{outBoxBean.recipientList}" reflow="true"
+					rowKey="#{correspondenceRecipientVar.id}" paginator="true"
+					rows="10" emptyMessage="#{interfaceLabel.noRecordsFound}"
+					paginatorPosition="bottom">
+
+					<p:column headerText="#{interfaceLabel.to}" width="40%">
+						<h:outputText
+							style="font-weight:bolder;font-style:italic;color:green;"
+							value="#{correspondenceRecipientVar.userAlias.sysUserBySysUser.displayName} / #{correspondenceRecipientVar.userAlias.jobPosition.name}  / #{correspondenceRecipientVar.userAlias.organizationByOrganization.name} " />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.priorityType}">
+						<h:outputText
+							value="#{correspondenceRecipientVar.priorityType.name} " />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.purposeType}">
+						<h:outputText
+							value="#{correspondenceRecipientVar.purposeType.name} " />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.note}">
+							#{correspondenceRecipientVar.note}
+						</p:column>
+
+					<p:column width="30">
+						<p:commandButton
+							styleClass="rounded-button ui-button-danger ui-button-outlined"
+							icon="fas fa-user-times" title="#{interfaceLabel.delete}"
+							process="@this"
+							update="@([id$=badge_recipient_size])"
+							action="#{outBoxBean.removeCorrespondenceRecipient(correspondenceRecipientVar)}">
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:scrollTop behavior="smooth" target="parent" threshold="50" />
+			</p:sidebar>
+			
+			<p:sidebar id="sidebar_archive_content" blockScroll="true"
+				dynamic="true" style="width:85%;overflow: auto;"
+				widgetVar="sidebar_archive"
+				position="#{app.locale.locale eq 'en'? 'left' : 'right'} ">
+				<p:divider align="center" type="dashed">
+					<div class="inline-flex align-items-center">
+						<p:badge id="badge_archive_count"
+							value="#{outBoxBean.mailAttachementList.size()}"
+							severity="success">
+							<i class="pi pi-paperclip" style="font-size: 2rem; color: green"></i>
+						</p:badge>
+						<p:spacer width="5"></p:spacer>
+						<p:outputLabel value="#{interfaceLabel.archive}"
+							style="color:green;font-weight: bold"></p:outputLabel>
+					</div>
+				</p:divider>
+				<p:tabView>
+					<p:tab title="#{interfaceLabel.prepareDocument}">
+						<p:wizard showNavBar="false" showStepStatus="false"
+							widgetVar="widgetVar_wizard">
+							<p:tab id="tab_cabinets" title="#{interfaceLabel.cabinets}">
+								<p:panelGrid columns="1" layout="flex"
+									columnClasses="col-12 md:col-12 xl:col-12"
+									styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+									style="border:0px none;margin-right:7%;margin-left:7%;margin-top:5%;word-wrap: break-word;border-radius: .25rem;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important; background-color:transparent;">
+									<p:column>
+										<p:outputLabel value="#{interfaceLabel.theDocumentsIn}"
+											style="text-align: center !important;color: #F4CA16;padding: 10px;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+											<i class="pi pi-ellipsis-h"></i>
+										</p:outputLabel>
+
+
+										<p:outputLabel id="outputLabel_cabinet"
+											value="#{outBoxBean.cabinet.name}"
+											style="text-align: center !important;color:#008000;padding: 10px;font-size: 1.2rem;font-style: oblique;font-weight: bolder;">
+											<i class="pi pi-server"></i>
+										</p:outputLabel>
+
+										<p:commandButton ajax="true" value="#{interfaceLabel.next}"
+											process="@this" title=""
+											action="#{outBoxBean.assignCabinetAndContinue()}"
+											oncomplete="PF('widgetVar_wizard').next();"
+											style="#{app.locale.rtl ? 'float:left':'float:right'};width:auto;"
+											icon="#{app.locale.rtl ? 'pi pi-arrow-left':'pi pi-arrow-right'}"
+											styleClass="ui-button-raised ui-button-success ui-button-flat mr-2" />
+
+									</p:column>
+
+									<p:staticMessage severity="warn"
+										detail="#{interfaceLabel.chooseCabinetThenClickNext}"
+										style="margin-right:20%;margin-left:20%;width: 50%;text-align:center;"></p:staticMessage>
+
+									<p:carousel id="caroulssel_myCabinet"
+										value="#{outBoxBean.myCabinets}"
+										var="cabinetVar" numVisible="3" numScroll="3"
+										responsiveOptions="#{outBoxBean.responsiveOptions}">
+										<f:facet name="header">
+
+										</f:facet>
+										<div class="product-item">
+											<div class="product-item-content">
+												<div class="mb-3">
+													<p:graphicImage
+														name="#{outBoxBean.imgIcon(cabinetVar.cabinetType)}"
+														width="150" height="121.033" library="smat-ins" />
+												</div>
+												<div>
+													<h4 class="mb-1">#{cabinetVar.name}</h4>
+													<h6 class="mt-0 mb-3">
+														<h:outputText value="#{cabinetVar.description}">
+
+														</h:outputText>
+													</h6>
+													<span
+														class="product-badge status-#{cabinetVar.cabinetType.englishName.toLowerCase()}">#{cabinetVar.code}</span>
+													<div class="mt-5">
+
+														<p:commandButton
+															icon="#{app.locale.rtl ? 'pi pi-arrow-left':'pi pi-arrow-right'}"
+															ajax="true" process="@this"
+															title="#{interfaceLabel.view} #{interfaceLabel.drawers}"
+															actionListener="#{outBoxBean.assignCabinet(cabinetVar)}"
+															update="@([id$=outputLabel_cabinet])"
+															oncomplete="PF('widgetVar_wizard').next();"
+															styleClass="ui-button-raised rounded-button mr-2" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</p:carousel>
+								</p:panelGrid>
+							</p:tab>
+							<p:tab id="tab_drawers" title="#{interfaceLabel.drawers}">
+								<pe:remoteCommand name="applyPageIndex" process="@form">
+									<pe:assignableParam name="pageIndex"
+										assignTo="#{outBoxBean.pageIndex}" />
+								</pe:remoteCommand>
+								<div class="product ">
+									<p:panelGrid id="panelGrid_drawers" columns="2" layout="grid"
+										columnClasses="ui-g-12 ui-md-5 ui-lg-4,ui-g-12 ui-md-7 ui-lg-8"
+										contentStyleClass="align-items-baseline ui-fluid"
+										styleClass="panelgrid-text-align-center"
+										style="border:0px none; background-color:transparent;">
+
+										<p:carousel id="caroulsel_drawers"
+											value="#{outBoxBean.cabinetDefinitions}"
+											page="#{outBoxBean.pageIndex}"
+											widgetVar="caroulsel_drawer_widget"
+											var="cabinetDefinitionVar" verticalViewPortHeight="352px"
+											onPageChange="applyPageIndex(PF('caroulsel_drawer_widget').page); pageNav();"
+											style="max-width: 400px;" orientation="vertical">
+											<f:facet name="header">
+						                          #{interfaceLabel.choose} #{interfaceLabel.drawer}
+						                          <p:divider align="center" type="solid"></p:divider>
+											</f:facet>
+											<div class="product-item">
+												<div class="product-item-content">
+													<div class="mb-3">
+														<p:graphicImage name="images/drawer-icon.jpg" width="250"
+															height="121.033" library="smat-ins" />
+													</div>
+													<div>
+														<h4 class="mb-1">#{cabinetDefinitionVar.drawerName}</h4>
+														<h6 class="mt-0 mb-3">
+															<p:outputLabel value="#{interfaceLabel.drawerOrder} : "
+																style="color:green;font-weight:bolder;"></p:outputLabel>
+															<h:outputText value="#{cabinetDefinitionVar.drawerOrder}"
+																style="color:green;font-weight:bolder;">
+															</h:outputText>
+														</h6>
+														<span
+															class="product-badge status-#{cabinetDefinitionVar.cabinet.cabinetType.englishName.toLowerCase()}"
+															style="color: green; font-weight: bolder; font-size: 1.4em; font-style: italic;">#{cabinetDefinitionVar.code}</span>
+														<span
+															class="product-badge status-#{cabinetDefinitionVar.cabinet.cabinetType.englishName.toLowerCase()}"
+															style="font-size: 0.9em">#{cabinetDefinitionVar.cabinet.code}
+														</span>
+														<div class="mt-5">
+															<p:commandButton id="commandButton_selectDrawer"
+																icon="pi pi-search" update="@([id$=panelGrid_drawers])"
+																actionListener="#{outBoxBean.assignCabinetDefinition(cabinetDefinitionVar)}"
+																title="#{interfaceLabel.view} #{interfaceLabel.folders}"
+																styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</p:carousel>
+										<p:column>
+											<p:outputLabel value="#{interfaceLabel.theFoldersIn}"
+												style="text-align: center !important;color: #F4CA16;padding: 10px;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+												<i class="pi pi-ellipsis-h"></i>
+											</p:outputLabel>
+											<p:commandLink class="mr-4"
+												onclick="PF('widgetVar_wizard').back();"
+												value="#{outBoxBean.cabinet.name}"
+												style="text-align: center !important;color: green;padding: 10px;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+												<i
+													class="#{app.locale.rtl ? 'pi pi-angle-left':'pi pi-angle-right'}"></i>
+											</p:commandLink>
+
+											<p:outputLabel
+												value="#{outBoxBean.cabinetDefinition.drawerName}"
+												style="text-align: center !important;color: #F4CA16;padding: 10px;font-size: 1.2rem;font-style: oblique;font-weight: bolder;">
+												<i
+													class="#{app.locale.rtl ? 'pi pi-folder-open':'pi pi-folder-open'}"></i>
+											</p:outputLabel>
+
+											<p:commandButton ajax="true" value="#{interfaceLabel.back}"
+												process="@this" title=""
+												onclick="PF('widgetVar_wizard').back();"
+												style="#{app.locale.rtl ? 'float:left':'float:right'};width:auto;"
+												icon="#{app.locale.rtl ? 'pi pi-arrow-right':'pi pi-arrow-left'}"
+												styleClass="ui-button-raised ui-button-success ui-button-flat" />
+
+											<p:commandButton
+												value="#{interfaceLabel.add} #{interfaceLabel.folder}"
+												actionListener="#{outBoxBean.openNewCabinetFolder()}"
+												oncomplete="PF('addFolderDialog').show()"
+												update="@([id$=add-folder-content])"
+												style="#{app.locale.rtl ? 'float:left':'float:right'};width:auto;"
+												icon="pi pi-plus-circle"
+												title="#{interfaceLabel.add} #{interfaceLabel.folder}"
+												styleClass="ui-button-raised ui-button-danger ui-button-flat"
+												rendered="#{not empty outBoxBean.cabinetDefinition.drawerName}" />
+											<p:divider align="center" type="solid"></p:divider>
+											<p:scrollPanel
+												style="border:dashed;border-color:#B9CEF2;height:501.4px"
+												mode="native">
+
+												<p:panelGrid id="panelGrid_folder_empty_image" columns="1"
+													layout="grid" columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+													styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+													style="border:0px none; background-color:transparent;"
+													rendered="#{empty outBoxBean.cabinetDefinition.drawerName}">
+													<p:staticMessage severity="WARN"
+														summary="#{interfaceLabel.warning}"
+														detail="#{interfaceLabel.noDrawerSelected}"
+														style="width: 100%" />
+													<p:graphicImage name="images/empty-drawer.png"
+														library="smat-ins"></p:graphicImage>
+												</p:panelGrid>
+												<p:dataView id="dv-folders" var="folderVar"
+													rendered="#{not empty outBoxBean.cabinetDefinition.drawerName}"
+													value="#{outBoxBean.cabinetFolders}" rows="3"
+													paginator="true" multiViewState="true"
+													widgetVar="dv-foldersWidget"
+													emptyMessage="#{interfaceLabel.noRecordsFound}"
+													paginatorPosition="bottom"
+													paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+													gridIcon="pi pi-th-large" listIcon="pi pi-bars"
+													layout="grid" gridRowStyleClass="lg:col-6 xl:col-4"
+													flex="true">
+
+													<p:dataViewGridItem>
+														<div class="product-grid-item card border-1">
+															<div class="product-grid-item-top">
+																<div>
+																	<i class="pi pi-tag product-category-icon" /> <span
+																		class="product-category">#{folderVar.cabinetDefinition.drawerName}</span>
+																</div>
+																<span
+																	class="product-badge status-#{folderVar.cabinetDefinition.cabinet.cabinetType.englishName.toLowerCase()}">#{folderVar.code}</span>
+															</div>
+															<div class="product-grid-item-content">
+																<p:graphicImage styleClass="imgIcon"
+																	name="#{folderVar.cabinetFolderDocuments.size() > 0 ? 'images/cabinet-folder-full.png':'images/cabinet-folder.jpg'}"
+																	library="smat-ins" />
+																<div class="product-name">#{folderVar.name}</div>
+																<div class="product-description">#{folderVar.description}</div>
+
+															</div>
+															<div class="product-grid-item-bottom">
+																<h:outputText
+																	value="#{interfaceLabel.theNumber}: #{folderVar.cabinetFolderDocuments.size()}"
+																	styleClass="product-price">
+
+																</h:outputText>
+																<p:commandButton value="#{interfaceLabel.view}"
+																	style="width:auto;" icon="pi pi-sign-in"
+																	oncomplete="PF('widgetVar_wizard').next();"
+																	actionListener="#{outBoxBean.assignCabinetFolder(folderVar)}"
+																	styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat">
+																</p:commandButton>
+															</div>
+														</div>
+													</p:dataViewGridItem>
+
+													<p:dataViewListItem>
+														<div class="product-list-item">
+															<p:graphicImage
+																name="#{folderVar.cabinetFolderDocuments.size() > 0 ? 'images/cabinet-folder-full.png':'images/cabinet-folder.jpg'}"
+																library="smat-ins" />
+															<div class="product-list-detail">
+																<div class="product-name">#{folderVar.name}</div>
+																<div class="product-description">#{folderVar.description}</div>
+
+																<i class="pi pi-tag product-category-icon" /><span
+																	class="product-category">#{folderVar.cabinetDefinition.drawerName}</span>
+															</div>
+															<div class="product-list-action">
+
+
+																<span
+																	class="product-badge status-#{folderVar.cabinetDefinition.cabinet.cabinetType.englishName.toLowerCase()}">#{folderVar.code}</span>
+																<h:outputText
+																	value="#{interfaceLabel.theNumber}: #{folderVar.cabinetFolderDocuments.size()}"
+																	styleClass="product-price">
+
+																</h:outputText>
+																<p:commandButton value="#{interfaceLabel.view}"
+																	style="width:auto;" icon="pi pi-sign-in"
+																	oncomplete="PF('widgetVar_wizard').next();"
+																	actionListener="#{outBoxBean.assignCabinetFolder(folderVar)}"
+																	styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat">
+																</p:commandButton>
+															</div>
+														</div>
+													</p:dataViewListItem>
+												</p:dataView>
+												<p:scrollTop target="parent" threshold="20"
+													styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+											</p:scrollPanel>
+										</p:column>
+									</p:panelGrid>
+								</div>
+							</p:tab>
+							<p:tab id="tab_arch_doc"
+								title="#{interfaceLabel.archiveDocuments}">
+								<p:panelGrid id="panelGrid_content" columns="2" layout="grid"
+									columnClasses="ui-g-12 ui-md-5 ui-lg-4,ui-g-12 ui-md-7 ui-lg-8"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:panelGrid id="panelGrid_tree" columns="1" layout="grid"
+										columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+										contentStyleClass="align-items-baseline ui-fluid"
+										style="border:0px none; background-color:transparent;">
+										<p:column>
+
+											<p:commandButton value="#{interfaceLabel.addArchive}"
+												actionListener="#{outBoxBean.openNewDocument()}"
+												update=":form:manage-add-archive-content"
+												oncomplete="PF('addArchiveWidgetVar').show()"
+												style="#{app.locale.rtl ? 'float:right':'float:left'};width:auto;"
+												icon="pi pi-plus-circle"
+												title="#{interfaceLabel.addArchive}"
+												styleClass="ui-button-raised ui-button-danger ui-button-flat" />
+											<p:commandButton value="#{interfaceLabel.search}"
+												actionListener="#{outBoxBean.prepareDocumentForSearch(true)}"
+												delay="200" update="@([id$=outputPanel_document])"
+												oncomplete="PF('widgetVarDocumentDlg').show();"
+												style="#{app.locale.rtl ? 'float:right':'float:left'};width:auto;"
+												icon="fa fa-search" title="#{interfaceLabel.search}"
+												styleClass="ui-button-raised ui-button-success ui-button-flat" />
+										</p:column>
+
+										<p:scrollPanel id="scrollPanel_tree"
+											style="border:0px;border-radius:0.25rem;height:501.4px;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)"
+											mode="native">
+											<p:panelGrid columns="1" layout="grid"
+												columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+												styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+												style="border:0px none; background-color:transparent;"
+												rendered="#{outBoxBean.root.childCount ==0}">
+												<p:staticMessage severity="WARN"
+													detail="#{interfaceLabel.emptyFolder}" style="width: 100%" />
+												<p:graphicImage name="images/folder_empty_icon.png"
+													library="smat-ins"></p:graphicImage>
+											</p:panelGrid>
+											<p:tree id="tree_archiveDocuments"
+												value="#{outBoxBean.root}" highlight="true"
+												animate="true" selectionMode="single"
+												selection="#{outBoxBean.selectedNode}"
+												widgetVar="treeWidgetVar" var="node" cache="true"
+												rendered="#{outBoxBean.root.childCount !=0}"
+												dynamic="true">
+												<p:ajax event="expand"
+													listener="#{outBoxBean.onNodeArchExpand}"
+													oncomplete="reverseTreeChildExpandedIcon();" />
+												<p:ajax event="collapse"
+													listener="#{outBoxBean.onNodeArchCollapse}" />
+												<p:ajax event="select" update="@([id$=scrollPanel_docs])"
+													listener="#{outBoxBean.onNodeArchSelect}"
+													delay="100" />
+												<p:treeNode
+													icon="#{node.isDirectory ? 'pi pi-folder':'far fa-file-alt'}">
+													<span> <span
+														style="color: #F4CA16 !important; font-weight: bolder !important;">(#{node.code})</span>
+														#{node.name}
+													</span>
+													<p:spacer width="6px"></p:spacer>
+													<p:commandButton icon="pi pi-plus-circle" ajax="true"
+														styleClass="rounded-button ui-button-info ui-button-flat"
+														rendered="#{node.isDirectory}"
+														oncomplete="PF('addArchiveWidgetVar').show();"
+														update=":form:manage-add-archive-content" global="false"
+														process="@this" style="vertical-align:middle;"
+														action="#{outBoxBean.addNodeArchive(node)}"></p:commandButton>
+
+													<p:spacer width="6px"></p:spacer>
+													<p:commandButton icon="fa fa-file-text-o" ajax="true"
+														rendered="#{!node.isDirectory}"
+														action="#{outBoxBean.prepareArchiveDocFiles()}"
+														oncomplete="PF('udocumentFileWidgetVar').show();"
+														update="@([id$=customDropzone_udocument])" delay="200"
+														title="#{interfaceLabel.add} #{interfaceLabel.attachement}"
+														styleClass="rounded-button ui-button-help ui-button-flat">
+													</p:commandButton>
+
+													<p:spacer width="6px"></p:spacer>
+												</p:treeNode>
+											</p:tree>
+
+											<p:blockUI block="tree_archiveDocuments"
+												trigger="tree_archiveDocuments" widgetVar="blockWidget"
+												styleClass="#{app.locale.rtl ? 'block-rtl':'block-ltr'}">
+												<i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+											</p:blockUI>
+										</p:scrollPanel>
+									</p:panelGrid>
+									<p:panelGrid id="panelGrid_documents" columns="1" layout="grid"
+										columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+										contentStyleClass="align-items-baseline ui-fluid"
+										style="border:0px none; background-color:transparent;">
+										<p:column>
+											<p:outputLabel value="#{interfaceLabel.theDocumentsIn}"
+												style="text-align: center !important;color: #F4CA16;padding: 10px;padding-top:30px;vertical-align: middle;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+												<i class="pi pi-ellipsis-h"></i>
+											</p:outputLabel>
+											<p:commandLink class="mr-4"
+												onclick="PF('widgetVar_wizard').loadStep('tab_cabinets');"
+												value="#{outBoxBean.cabinet.name}"
+												style="text-align: center !important;color: green;padding: 10px;padding-top:30px;vertical-align: middle;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+												<i
+													class="#{app.locale.rtl ? 'pi pi-angle-left':'pi pi-angle-right'}"></i>
+											</p:commandLink>
+
+											<p:commandLink onclick="PF('widgetVar_wizard').back();"
+												class="mr-4"
+												value="#{outBoxBean.cabinetFolder.cabinetDefinition.drawerName}"
+												style="text-align: center !important;color: green;padding: 10px;padding-top:30px;vertical-align: middle;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+												<i
+													class="#{app.locale.rtl ? 'pi pi-angle-left':'pi pi-angle-right'}"></i>
+											</p:commandLink>
+
+											<p:outputLabel
+												value="#{outBoxBean.cabinetFolder.name}"
+												style="text-align: center !important;color: #F4CA16;padding: 10px;padding-top:30px;vertical-align: middle;font-size: 1.2rem;font-style: oblique;font-weight: bolder;">
+												<i
+													class="#{app.locale.rtl ? 'pi pi-folder-open':'pi pi-folder-open'}"></i>
+											</p:outputLabel>
+
+
+											<p:commandButton icon="pi pi-search" ajax="true"
+												process="@this" title=""
+												action="#{outBoxBean.prepareDocumentForSearch(false)}"
+												delay="200" update="@([id$=outputPanel_document])"
+												oncomplete="PF('widgetVarDocumentDlg').show();"
+												style="#{app.locale.rtl ? 'float:left':'float:right'}"
+												styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat mr-2" />
+											<p:commandButton type="button"
+												icon="#{app.locale.rtl ? 'pi pi-arrow-right':'pi pi-arrow-left'}"
+												style="#{app.locale.rtl ? 'float:left':'float:right'}"
+												onclick="PF('widgetVar_wizard').back();"
+												styleClass="ui-button-success rounded-button ui-button-raised ui-button-warning ui-button-flat mr-2" />
+											<p:commandButton type="button" icon="pi pi-home"
+												onclick="PF('widgetVar_wizard').loadStep('tab_cabinets');"
+												style="#{app.locale.rtl ? 'float:left':'float:right'}"
+												styleClass="ui-button-help rounded-button ui-button-raised  ui-button-flat mr-2" />
+										</p:column>
+										<p:divider layout="horizontal" type="solid"
+											style="margin-top:-32px"></p:divider>
+
+										<p:scrollPanel id="scrollPanel_docs"
+											style="border:0px;border-radius:0.25rem;height:501.4px;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);margin-top:-40px"
+											mode="native">
+											<p:column>
+												<p:outputLabel value="#{interfaceLabel.theDocumentPath}"
+													style="text-align: center !important;color: #D32F2F;padding: 10px;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+													<i class="pi pi-ellipsis-h"></i>
+												</p:outputLabel>
+
+
+												<c:forEach
+													items="#{outBoxBean.breadcrumbList}"
+													var="breadcrumb" varStatus="loop">
+
+													<p:commandLink class="mr-4" value="#{breadcrumb.name}"
+														action="#{outBoxBean.getArchiveDocChildren(breadcrumb.id)}"
+														update="@([id$=scrollPanel_docs])"
+														style="text-align: center !important;color: black;padding: 5px;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+														<i
+															class="#{app.locale.rtl ? 'pi pi-angle-left':'pi pi-angle-right'}"></i>
+													</p:commandLink>
+
+												</c:forEach>
+												<p:commandButton
+													actionListener="#{outBoxBean.addArchiveDoc()}"
+													oncomplete="PF('addArchiveWidgetVar').show();"
+													update=":form:manage-add-archive-content"
+													value="#{interfaceLabel.add} #{interfaceLabel.to}: #{not empty outBoxBean.selectedArchiveDocument ? outBoxBean.selectedArchiveDocument.name : interfaceLabel.root}"
+													style="#{app.locale.rtl ? 'float:left':'float:right'};margin-top:-5px;width:auto;"
+													icon="fas fa-folder-plus"
+													title="#{interfaceLabel.addArchive}"
+													styleClass="ui-button-raised ui-button-warning ui-button-flat"
+													rendered="#{outBoxBean.renderAddArchDoc()}">
+
+												</p:commandButton>
+
+												<p:commandButton
+													actionListener="#{outBoxBean.prepareArchiveDocFiles()}"
+													oncomplete="PF('documentFileWidgetVar').show();"
+													update=":form:manage-add-doc-file-content"
+													value="#{interfaceLabel.add} #{interfaceLabel.attachement} #{interfaceLabel.to}:  #{outBoxBean.selectedArchiveDocument.name}"
+													style="#{app.locale.rtl ? 'float:left':'float:right'};margin-top:-5px;width:auto;"
+													icon="fas fa-file-text"
+													title="#{interfaceLabel.add} #{interfaceLabel.files}"
+													styleClass="ui-button-raised ui-button-danger ui-button-flat"
+													rendered="#{outBoxBean.renderAddArchiveFile()}">
+
+												</p:commandButton>
+											</p:column>
+											<p:divider layout="horizontal"></p:divider>
+											<p:panelGrid id="panelGrid_files_empty_image" columns="1"
+												layout="grid" columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+												styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+												contentStyle="text-align:center;"
+												style="border:0px none; background-color:transparent;"
+												rendered="#{empty outBoxBean.archiveDocumentChildrens and !outBoxBean.viewDocFiles}">
+												<p:staticMessage severity="WARN"
+													detail="#{interfaceLabel.noDocumentToView}, #{interfaceLabel.addArchiveInstructions}"
+													style="width: 50%" />
+												<p:graphicImage name="images/ico_doc_blank.png"
+													library="smat-ins"></p:graphicImage>
+
+											</p:panelGrid>
+											<pe:remoteCommand name="viewArchiveChildren" process="@form"
+												actionListener="#{outBoxBean.getArchiveDocChildren}"
+												update="@([id$=scrollPanel_docs])">
+												<pe:methodSignature parameters="java.lang.Long"></pe:methodSignature>
+												<pe:methodParam name="archiveDocumentId">
+												</pe:methodParam>
+											</pe:remoteCommand>
+											<pe:remoteCommand name="viewArchiveAttribute" process="@form"
+												actionListener="#{outBoxBean.viewDocumentaAttribute}"
+												update="@([id$=scrollPanel_docs])">
+												<pe:methodSignature parameters="java.lang.Long"></pe:methodSignature>
+												<pe:methodParam name="archiveDocumentId">
+												</pe:methodParam>
+											</pe:remoteCommand>
+											<p:scrollPanel id="dataDocument"
+												rendered="#{not empty outBoxBean.archiveDocumentChildrens and !outBoxBean.viewDocFiles}"
+												style="border:dotted;border-color:#B9CEF2;width: auto; height:90%"
+												styleClass="" mode="native">
+												<p:panelGrid columns="3" layout="grid"
+													columnClasses="ui-g-12 ui-md-6 ui-lg-6,ui-g-12 ui-md-6 ui-lg-1,ui-g-12 ui-md-6 ui-lg-5"
+													styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+													style="border:0px none; background-color:transparent">
+													<p:panelGrid columns="2" layout="flex"
+														columnClasses="col-12 md:col-6 lg:col-6, col-12 md:col-6 lg:col-6"
+														styleClass="#{app.locale.rtl ? 'grid-text-align-right':'grid-text-align-left'}"
+														contentStyleClass="ui-fluid"
+														style="border:0px none; background-color:transparent">
+														<p:outputLabel value="#{interfaceLabel.name}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.name}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel value="#{interfaceLabel.description}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.description}"
+															style="text-align: center !important;color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{interfaceLabel.archiveDocumentType}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.archiveDocumentType.name}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{interfaceLabel.rootOrganization}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.organizationByRootOrganization.name}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel value="#{interfaceLabel.organization}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.organizationByOrganization.name}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel value="#{interfaceLabel.divan}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.organizationByDivan.name}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel value="#{interfaceLabel.side}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.fromEntity}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel value="#{interfaceLabel.subject}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.subject}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel value="#{interfaceLabel.year}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.year}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel value="#{interfaceLabel.language}: "
+															style="color: black;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+														<p:outputLabel
+															value="#{outBoxBean.selectedArchiveDocument.lang}"
+															style="color: #F4CA16;font-size: 1rem;font-style: oblique;font-weight: bolder;"></p:outputLabel>
+													</p:panelGrid>
+													<p:divider layout="vertical" type="dashed"></p:divider>
+													<p:scrollPanel id="document_folders"
+														style="border:0px;width: auto; height:100%" styleClass=""
+														mode="native">
+														<script type="text/javascript">
+									    $(function() {
+											   
+											   $(".imgIcon").hover(function() {
+												 
+												   $(this).closest(".imgIcon").css("z-index", 9999);
+												   $(this).css('opacity', '0.7');
+												   $(this).css('cursor', 'pointer');
+												    $(this).transition({ scale: [1.3, 1.3] });
+											   }, function() {
+												    $(this).closest(".imgIcon").css("z-index", 0);
+												    $(this).css('opacity', '1');
+												    $(this).css('cursor', 'default');
+												    $(this).transition({ scale: [1, 1] });
+												});
+												
+											});
+									   
+									    </script>
+														<div class="ui-fluid formgrid grid">
+															<c:forEach var="archiveDocumentChildVar"
+																items="#{outBoxBean.archiveDocumentChildrens}">
+																<div class="field col-12 md:col-6"
+																	style="display: flex;">
+
+																	<p:commandButton icon="pi pi-plus"
+																		rendered="#{!outBoxBean.checkIfDocInAttachementList(archiveDocumentChildVar)}"
+																		styleClass=" ui-button-raised ui-button-success ui-button-flat"
+																		style="height:22px;width:22px;align-self: center;flex: inherit;"
+																		title="#{interfaceLabel.addToMessageAttachement}"
+																		action="#{outBoxBean.addToMailAttachementList(archiveDocumentChildVar)}"
+																		update="@([id$=document_folders],[id$=dataScroller_linked_documents],[id$=badge_archive_size],[id$=badge_archive_count])" />
+																	<p:commandButton icon="pi pi-minus"
+																		rendered="#{outBoxBean.checkIfDocInAttachementList(archiveDocumentChildVar)}"
+																		styleClass=" ui-button-raised ui-button-danger ui-button-flat"
+																		style="#{app.locale.rtl ? 'margin-left:5px' : 'margin-right:5px'};height:22px;width:22px;align-self: center;flex: inherit;"
+																		title="#{interfaceLabel.deleteFromMessageAttachement}"
+																		action="#{outBoxBean.removeFromMailAttachementList(archiveDocumentChildVar)}"
+																		update="@([id$=document_folders],[id$=dataScroller_linked_documents],[id$=badge_archive_size],[id$=badge_archive_count])" />
+																	<p:graphicImage library="smat-ins"
+																		name="images/5290982.png"
+																		rendered="#{outBoxBean.checkIfDocInAttachementList(archiveDocumentChildVar)}"
+																		width="30" height="30"
+																		style="#{app.locale.rtl ? 'margin-left:-35px' : 'margin-right:-35px'};display: flex;flex: inherit;z-index: 1000;"></p:graphicImage>
+																	<p:graphicImage
+																		id="archive_img_#{archiveDocumentChildVar.id}"
+																		library="smat-ins" styleClass="doc-active imgIcon"
+																		onclick="viewArchiveAttribute(#{archiveDocumentChildVar.id});"
+																		ondblclick="viewArchiveChildren(#{archiveDocumentChildVar.id});"
+																		title="#{archiveDocumentChildVar.name}"
+																		style="display: flex;margin: 5px;text-align: center !important;"
+																		name="#{archiveDocumentChildVar.isDirectory ? 'images/folder-img.png' : 'images/icone-fichier-document-jaune.png'}"
+																		width="64" height="64"></p:graphicImage>
+
+																	<div
+																		style="color: green; font-weight: bolder; display: flex; align-self: flex-end; margin-inline: -80px; margin-top: 70px">(#{archiveDocumentChildVar.code})</div>
+																</div>
+																<p:contextMenu
+																	for="archive_img_#{archiveDocumentChildVar.id}">
+																	<p:menuitem value="#{interfaceLabel.viewContent}"
+																		icon="pi pi-search"
+																		onclick="viewArchiveChildren(#{archiveDocumentChildVar.id});"></p:menuitem>
+																	<p:menuitem value="#{interfaceLabel.viewAttribute}"
+																		icon="pi pi-check-square"
+																		onclick="viewArchiveAttribute(#{archiveDocumentChildVar.id});"></p:menuitem>
+																</p:contextMenu>
+															</c:forEach>
+														</div>
+													</p:scrollPanel>
+												</p:panelGrid>
+											</p:scrollPanel>
+											<p:scrollPanel id="scrollPanel_doc_files"
+												rendered="#{outBoxBean.viewDocFiles}"
+												style="border:dotted;border-color:#B9CEF2;width: auto; height:100%;"
+												styleClass="" mode="native">
+
+												<script>
+    //<![CDATA[
+    function start() {
+        PF('statusDialog').show();
+    }
+
+    function stop() {
+        PF('statusDialog').hide();
+    }
+    //]]>
+</script>
+
+												<p:speedDial radius="120"
+													direction="#{app.locale.rtl ? 'down-left':'down-right'}"
+													type="quarter-circle" transitionDelay="80"
+													showIcon="pi pi-bars" hideIcon="pi pi-times"
+													style="margin:-.5rem;"
+													buttonStyleClass="ui-button-raised  ui-button-danger">
+													<p:menuitem icon="pi pi-cloud-upload"
+														actionListener="#{outBoxBean.prepareArchiveDocFiles()}"
+														title="#{interfaceLabel.addFileToCurrentArchive}"
+														oncomplete="PF('documentFileWidgetVar').show();"
+														update="form:manage-add-doc-file-content">
+
+													</p:menuitem>
+													<p:menuitem icon="pi pi-cloud-download"
+														title="#{interfaceLabel.downloadAll}"
+														actionListener="#{outBoxBean.ZipDocumentForDownload()}"
+														oncomplete="document.getElementById('form:commandButton_zip_download').click() ; return false;" />
+													<p:menuitem icon="pi pi-trash"
+														title="#{interfaceLabel.deleteAll}"
+														actionListener="#{outBoxBean.deleteAllDocInFolder()}"
+														update="@([id$=scrollPanel_doc_files],[id$=messages])">
+														<p:confirm header="#{interfaceLabel.confirmation}"
+															message="#{interfaceLabel.wouldYouContinueAndDeleteAllFiles}"
+															icon="pi pi-exclamation-triangle" />
+													</p:menuitem>
+
+												</p:speedDial>
+												<p:commandButton id="commandButton_zip_download"
+													value="Download" ajax="true" update="@([id$=messages])"
+													onclick="PrimeFaces.monitorDownload(start, stop);"
+													style="display:none;" icon="pi pi-arrow-down"
+													styleClass="mr-2">
+													<p:fileDownload value="#{zipDocumentDownloadBean.file}" />
+												</p:commandButton>
+
+												<div style="position: relative; height: 20px;"></div>
+												<div class="ui-fluid formgrid grid">
+													<c:forEach var="archiveDocumentFileVar"
+														items="#{outBoxBean.archiveDocumentFiles}">
+														<div class="field col-12 md:col-2"
+															style="text-align: center;">
+															<p:graphicImage library="smat-ins"
+																title="#{archiveDocumentFileVar.name}"
+																style="text-align: center !important;"
+																name="#{outBoxBean.docImgIconByDocEx(archiveDocumentFileVar.extension)}"
+																width="64" height="64"></p:graphicImage>
+
+															<div style="color: green; font-weight: bolder;">(#{archiveDocumentFileVar.code})</div>
+															<p:commandLink id="commandLink_download"
+																actionListener="#{outBoxBean.prepareDocument(archiveDocumentFileVar)}"
+																oncomplete="document.getElementById('form:commandButton_download').click() ; return false;"
+																title="#{interfaceLabel.download}">
+																<i class="pi pi-cloud-download" style="font-size: 20px;"><span>
+																</span> </i>
+															</p:commandLink>
+															<p:spacer width="10px"></p:spacer>
+															<p:commandLink
+																actionListener="#{outBoxBean.prepareDocumentViewer(archiveDocumentFileVar)}"
+																rendered="#{outBoxBean.extensionIn(archiveDocumentFileVar)}"
+																title="#{interfaceLabel.view}"
+																onstart="PF('statusDialog').show();"
+																oncomplete="PF('statusDialog').hide();">
+																<i class="pi pi-search-plus"
+																	style="font-size: 20px; color: #FFC757;"><span>
+																</span> </i>
+															</p:commandLink>
+															<p:spacer width="10px"></p:spacer>
+															<p:commandLink title="#{interfaceLabel.delete}"
+																actionListener="#{outBoxBean.deleteArchiveDocumentFile(archiveDocumentFileVar)}"
+																update="@([id$=scrollPanel_doc_files],[id$=messages])">
+
+																<i class="pi pi-minus-circle"
+																	style="font-size: 20px; color: red;"><span>
+																</span> </i>
+																<p:confirm header="#{interfaceLabel.confirmation}"
+																	message="#{interfaceLabel.wouldYouContinueAndDeleteFile}"
+																	icon="pi pi-exclamation-triangle" />
+															</p:commandLink>
+														</div>
+													</c:forEach>
+
+												</div>
+											</p:scrollPanel>
+										</p:scrollPanel>
+
+									</p:panelGrid>
+								</p:panelGrid>
+							</p:tab>
+						</p:wizard>
+					</p:tab>
+					<p:tab title="#{interfaceLabel.linkedDocument}">
+						
+						<p:dataScroller id="dataScroller_linked_documents"
+							widgetVar="dataScrollerlinkedDocWidgetVar"
+							style="border:0px none; background-color:transparent;box-sizing: border-box;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;"
+							value="#{outBoxBean.mailAttachementList}"
+							var="archiveDoc" chunkSize="10" mode="inline" scrollHeight="500">
+							<f:facet name="header">
+                                                            #{interfaceLabel.theTotalNumberOfDocument}: <span
+									style="color: #FFC757; font-weight: bolder; font-style: italic;">#{outBoxBean.mailAttachementList.size()}</span>
+
+							</f:facet>
+
+							<div class="product">
+								<div class="product-list-item p-5"
+									style="padding: .5rem !important;">
+									<p:graphicImage library="smat-ins" title="#{archiveDoc.name}"
+										style="text-align: center !important;position: relative;overflow-y:scroll;overflow-x:scroll;top: 0px;left: -20px;;width: 70px;height:70px"
+										name="#{archiveDoc.isDirectory ? 'images/folder-icon-f.png' : 'images/icone-fichier-document-jaune.png'}"></p:graphicImage>
+									<div class="product-list-detail"
+										style="#{app.locale.locale eq 'en'? 'margin-left: 5rem !important;' : 'margin-right: 5rem !important;'}">
+										<div class="product-name">#{archiveDoc.name}</div>
+										<div class="product-description">#{archiveDoc.description}</div>
+
+										<span
+											style="#{app.locale.locale eq 'en'? 'margin-left:.5rem !important' : 'margin-right:.5rem !important'}"
+											class="pi #{app.locale.locale eq 'en'? 'pi-angle-right':'pi-angle-left'} product-category">
+											#{interfaceLabel.theTotalNumberOfContentFiles}:
+											#{archiveDoc.archiveDocumentFiles.size()}</span>
+									</div>
+									<div class="product-list-action">
+
+										<p:commandButton icon="pi pi-trash"
+											value="#{interfaceLabel.delete}"
+											action="#{outBoxBean.removeFromMailAttachementList(archiveDoc)}"
+											update="@([id$=dataScroller_linked_documents],[id$=document_folders],[id$=badge_archive_size],[id$=badge_archive_count])"
+											styleClass="rounded-button ui-button-danger" />
+
+									</div>
+								</div>
+							</div>
+							<p:divider layout="horizontal" type="dashed" style=""
+								styleClass="ui-custom-divider"></p:divider>
+
+						</p:dataScroller>
+					</p:tab>
+				</p:tabView>
+			</p:sidebar>
+			
+			
+			<p:dialog header="#{interfaceLabel.add} #{interfaceLabel.folder}"
+				showEffect="fade" widgetVar="addFolderDialog" closable="true"
+				blockScroll="true" dynamic="true" cache="true" fitViewport="75%"
+				showHeader="true" responsive="true" width="45%" maximizable="true"
+				minimizable="true">
+				<p:divider layout="horizontal" type="dashed" align="center"></p:divider>
+				<p:outputPanel id="add-folder-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:75%">
+					<p:scrollPanel
+						style="border:dashed;border-color:#B9CEF2;width: auto; height: 85%"
+						mode="native">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-4,ui-g-12 ui-md-12 ui-lg-8"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel value="#{interfaceLabel.arabicName}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputText
+								value="#{outBoxBean.cabinetFolder.arabicName}"></p:inputText>
+							<p:outputLabel value="#{interfaceLabel.englishName}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputText
+								value="#{outBoxBean.cabinetFolder.englishName}"></p:inputText>
+							<p:outputLabel value="#{interfaceLabel.englishDescription}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputTextarea
+								value="#{outBoxBean.cabinetFolder.englishDescription}"
+								style="color:black;font-weight:bolder;background-color:#DEEFFF;"></p:inputTextarea>
+							<p:outputLabel value="#{interfaceLabel.arabicDescription}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputTextarea
+								value="#{outBoxBean.cabinetFolder.arabicDescription}"
+								style="color:black;font-weight:bolder;background-color:#DEEFFF;"></p:inputTextarea>
+							<p:outputLabel value="#{interfaceLabel.code}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputText
+								value="#{outBoxBean.cabinetFolder.code}"
+								disabled="true" readonly="true"
+								style="color:black;font-weight:bolder;background-color:#FFF0F5;"></p:inputText>
+							<f:facet name="footer">
+								<p:divider type="dashed"></p:divider>
+								<p:panelGrid columns="3"
+									columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-6"
+									layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:commandButton value="#{interfaceLabel.add}"
+										icon="pi pi-plus-circle"
+										styleClass="ui-button-raised ui-button-success ui-button-flat"
+										actionListener="#{outBoxBean.saveCabinetFolder()}"
+										update="@([id$=add-folder-content],[id$=dv-folders])"
+										process="add-folder-content @this" />
+									<p:commandButton value="#{interfaceLabel.cancel}"
+										icon="pi pi-times-circle"
+										onclick="PF('addFolderDialog').hide()"
+										styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+								</p:panelGrid>
+							</f:facet>
+
+						</p:panelGrid>
+
+					</p:scrollPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+			
+			<p:dialog id="dialog_search" header="#{interfaceLabel.search} "
+				showEffect="fade" widgetVar="widgetVarDocumentDlg" closable="true"
+				dynamic="true" cache="true" fitViewport="true" showHeader="true"
+				contentWidth="100%" contentHeight="100%" resizeObserver="true"
+				resizeObserverCenter="true" styleClass="max-w-screen"
+				iframeStyleClass="max-w-screen"
+				onShow="PF('tabViewWidgetVar').select(0);PF('widgetVarDocumentDlg').jq.css('height',$(window).height()*98/100);"
+				responsive="true" width="94%" height="100%" maximizable="true"
+				minimizable="true">
+				<script type="text/javascript">
+				                  $(function (){
+				                   PF('tabViewWidgetVar').select(0);
+              	                   PF('widgetVarDocumentDlg').jq.css('height',$(window).height()*98/100);
+              	      
+                                  });
+
+				                 
+				                </script>
+				<style>
+.ui-diagram-element {
+	border: 0.1em dotted #E5E4E2;
+	background-color: #EFEEEC;
+	width: 12em;
+	height: 14em;
+	text-align: center;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+	user-select: none;
+}
+
+.ui-diagram-element:hover {
+	background-color: #C7C6C4;
+}
+</style>
+
+				<p:outputPanel id="outputPanel_document" style="width:100%">
+					<p:outputLabel
+						value="#{interfaceLabel.search} #{not empty outBoxBean.selectedArchiveDocument ? interfaceLabel.inDocument : interfaceLabel.inFolder} #{not empty outBoxBean.selectedArchiveDocument ? outBoxBean.selectedArchiveDocument.name : outBoxBean.cabinetFolder.name}"
+						style="background-color:#D9ECF4;color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+					<p:divider layout="horizontal" type="dashed"></p:divider>
+					<p:tabView id="tabView_search" dynamic="true" activeIndex="0"
+						tabindex="0" widgetVar="tabViewWidgetVar">
+						<p:tab title="#{interfaceLabel.searchInDocumentAttributes}">
+							<p:scrollPanel id="scrollPanel_searchInAttributes"
+								style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+								styleClass="" mode="native">
+								<p:panelGrid columns="4" layout="flex"
+									columnClasses="col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-3,col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-3"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:outputLabel for="@next"
+										style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.arabicName}</p:outputLabel>
+									<p:inputText
+										value="#{outBoxBean.archiveDocument.arabicName}"
+										style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+									<p:outputLabel for="@next"
+										style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.englishName}</p:outputLabel>
+									<p:inputText
+										value="#{outBoxBean.archiveDocument.englishName}"
+										style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+								</p:panelGrid>
+								<p:panelGrid columns="2" layout="flex"
+									columnClasses="col-12 md:col-2 xl:col-2, col-12 md:col-10 xl:col-8"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:outputLabel for="@next"
+										style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.description}</p:outputLabel>
+									<p:inputTextarea rows="3"
+										value="#{outBoxBean.archiveDocument.description}"
+										style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+
+								</p:panelGrid>
+								<p:panelGrid columns="3"
+									columnClasses="ui-g-12 ui-md-12 ui-lg-2,ui-g-12 ui-md-12 ui-lg-7, ui-g-12 ui-md-12 ui-lg-1"
+									layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:outputLabel for="@next"
+										style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.archiveDocumentType}</p:outputLabel>
+									<p:selectOneMenu
+										value="#{outBoxBean.archiveDocument.archiveDocumentType}"
+										converter="omnifaces.SelectItemsIndexConverter"
+										style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;">
+										<f:selectItem itemLabel="#{interfaceLabel.choose}"
+											itemValue="" noSelectionOption="true" />
+										<f:selectItems itemLabel="#{archiveDocumentTypeVar.name}"
+											itemValue="#{archiveDocumentTypeVar}"
+											var="archiveDocumentTypeVar"
+											value="#{outBoxBean.archiveDocumentTypes}" />
+									</p:selectOneMenu>
+									<p:column></p:column>
+									<p:outputLabel for="@next">#{interfaceLabel.organization}</p:outputLabel>
+									<p:inputText id="inputText_organization" style="color:blue;"
+										readonly="true" disabled="true"
+										value="#{outBoxBean.archiveDocument.organizationByOrganization}"></p:inputText>
+									<p:commandButton icon="pi pi-search"
+										styleClass="rounded-button ui-button-info ui-button-outlined"
+										oncomplete="PF('organizationVar').show(); return false;"
+										update="@([id$=manage-add-org-content])" ajax="true"
+										title="#{interfaceLabel.add}"></p:commandButton>
+
+									<p:outputLabel for="@next">#{interfaceLabel.rootOrganization}</p:outputLabel>
+									<p:inputText id="inputText_rootOrganization" style="color:red;"
+										readonly="true" disabled="true"
+										value="#{outBoxBean.archiveDocument.organizationByRootOrganization}"></p:inputText>
+									<p:column></p:column>
+
+									<p:outputLabel for="@next">#{interfaceLabel.divan}</p:outputLabel>
+									<p:inputText id="inputText_divan" style="color:orange;"
+										readonly="true" disabled="true"
+										value="#{outBoxBean.archiveDocument.organizationByDivan}"></p:inputText>
+									<p:column></p:column>
+
+									<p:outputLabel for="@next">#{interfaceLabel.side}</p:outputLabel>
+									<p:inputText
+										value="#{outBoxBean.archiveDocument.fromEntity}"
+										style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+									<p:column></p:column>
+									<p:outputLabel for="@next">#{interfaceLabel.subject}</p:outputLabel>
+									<p:inputTextarea
+										value="#{outBoxBean.archiveDocument.subject}"
+										style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+									<p:column></p:column>
+									<p:outputLabel for="@next">#{interfaceLabel.year}</p:outputLabel>
+									<p:inputNumber
+										value="#{outBoxBean.archiveDocument.year}"
+										thousandSeparator="" decimalPlaces="0" minValue="1"
+										maxValue="9999" emptyValue="empty" size="4"
+										style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputNumber>
+									<p:column></p:column>
+
+									<p:outputLabel for="@next">#{interfaceLabel.language}</p:outputLabel>
+									<p:selectOneMenu id="selectOneMenu_lang"
+										widgetVar="widgetvar_lang"
+										value="#{outBoxBean.archiveDocument.lang}"
+										converter="omnifaces.SelectItemsIndexConverter"
+										onblur="resetFilterSearch();"
+										style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;"
+										dynamic="true" filter="true" filterMatchMode="contains"
+										filterPlaceholder="#{interfaceLabel.search}">
+
+										<f:selectItems itemLabel="#{langVar.languageName}"
+											itemValue="#{langVar.languaneCode}" var="langVar"
+											value="#{outBoxBean.languages}" />
+										<p:column style="width:10%">
+											<span class="flag flag-#{langVar.languaneCode}"
+												style="width: 30px; height: 20px" />
+										</p:column>
+
+										<p:column>
+											<f:facet name="header">
+												<h:outputText value="#{interfaceLabel.displayName}" />
+											</f:facet>
+											<h:outputText value="#{langVar.languageName}" />
+										</p:column>
+										<f:facet name="footer">
+											<h:outputText
+												value="#{interfaceLabel.fullSize} : #{outBoxBean.languages.size()} "
+												style="font-weight:bold;" styleClass="py-1 block" />
+										</f:facet>
+									</p:selectOneMenu>
+									<p:column></p:column>
+								</p:panelGrid>
+								<p:divider layout="horizontal" type="dashed"></p:divider>
+								<p:panelGrid columns="2" layout="flex"
+									columnClasses="col-12 md:col-2 xl:col-1, col-12 md:col-2 xl:col-1"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:commandButton value="#{interfaceLabel.search}"
+										actionListener="#{outBoxBean.doSearchInAttribute()}"
+										process="@([id$=scrollPanel_searchInAttributes])"
+										update="@([id$=scrollPanel_files],[id$=scrollPanel_docs])"
+										onstart="PF('waitingDialogWidgetVar').show();"
+										onsuccess="PF('waitingDialogWidgetVar').hide();"
+										oncomplete="PF('tabViewWidgetVar').select(3);"
+										icon="pi pi-search"
+										styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+										style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+
+									</p:commandButton>
+									<p:commandButton value="#{interfaceLabel.close}"
+										icon="pi pi-times-circle"
+										styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+										oncomplete="PF('widgetVarDocumentDlg').hide();">
+
+									</p:commandButton>
+								</p:panelGrid>
+							</p:scrollPanel>
+						</p:tab>
+						<p:tab title="#{interfaceLabel.searchInContent}">
+							<p:scrollPanel id="scrollPanel_searchInContent"
+								style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+								styleClass="" mode="native">
+								<p:panelGrid columns="3" layout="flex"
+									columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-4 xl:col-5,col-12 md:col-5 xl:col-5"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:outputLabel for="@next">#{interfaceLabel.documentType}</p:outputLabel>
+									<p:selectOneMenu id="selectOneMenu_documentType"
+										widgetVar="widgetvarDoc"
+										value="#{outBoxBean.documentType}"
+										style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;">
+										<f:selectItems itemLabel="#{docTypeVar}"
+											itemValue="#{docTypeVar}" var="docTypeVar"
+											value="#{outBoxBean.documentTypeList}" />
+									</p:selectOneMenu>
+									<p:column></p:column>
+									<p:outputLabel for="@next">#{interfaceLabel.searchWord}</p:outputLabel>
+									<p:inputText value="#{outBoxBean.searchWord}"
+										style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+									<p:column></p:column>
+									<p:toggleSwitch value="#{outBoxBean.usingOcr}"
+										onIcon="pi pi-check" offIcon="pi pi-times">
+										<p:ajax update="@([id$=selectOneMenu_Language])"></p:ajax>
+									</p:toggleSwitch>
+									<p:outputLabel value="#{interfaceLabel.advancedSearchUsingOcr}"></p:outputLabel>
+									<p:column></p:column>
+									<p:outputLabel for="@next">#{interfaceLabel.language}</p:outputLabel>
+									<p:selectOneMenu id="selectOneMenu_Language"
+										disabled="#{ not outBoxBean.usingOcr}"
+										value="#{outBoxBean.languageOcr}"
+										converter="omnifaces.SelectItemsIndexConverter"
+										style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;">
+										<f:selectItems itemLabel="#{languageVar.name}"
+											itemValue="#{languageVar}" var="languageVar"
+											value="#{outBoxBean.languagesOcrList}" />
+									</p:selectOneMenu>
+									<p:column></p:column>
+								</p:panelGrid>
+								<p:divider layout="horizontal" type="dashed"></p:divider>
+								<p:panelGrid columns="2" layout="flex"
+									columnClasses="col-12 md:col-2 xl:col-1, col-12 md:col-2 xl:col-1"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:commandButton value="#{interfaceLabel.search}"
+										icon="pi pi-search"
+										actionListener="#{outBoxBean.doSearchInContent()}"
+										process="@([id$=scrollPanel_searchInContent])"
+										update="@([id$=scrollPanel_files],[id$=scrollPanel_docs])"
+										onstart="PF('waitingDialogWidgetVar').show();"
+										onsuccess="PF('waitingDialogWidgetVar').hide();"
+										oncomplete="PF('tabViewWidgetVar').select(3);"
+										styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+										style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+
+									</p:commandButton>
+									<p:commandButton value="#{interfaceLabel.close}"
+										icon="pi pi-times-circle"
+										styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+										oncomplete="PF('widgetVarDocumentDlg').hide();">
+
+									</p:commandButton>
+								</p:panelGrid>
+							</p:scrollPanel>
+						</p:tab>
+						<p:tab title="#{interfaceLabel.advancedSearch}">
+							<p:scrollPanel id="scrollPanel_advancedSearch"
+								style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+								styleClass="" mode="native">
+
+								<p:outputLabel value="#{interfaceLabel.searchBetweenTwoDate} "
+									style="background-color:#D9ECF4;color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+								<p:panelGrid columns="4" layout="flex"
+									columnClasses="col-12 md:col-6 xl:col-2,col-12 md:col-6 xl:col-3,col-12 md:col-6 xl:col-2,col-12 md:col-6 xl:col-3"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:outputLabel for="@next"
+										style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.fromDate}</p:outputLabel>
+									<p:datePicker></p:datePicker>
+									<p:outputLabel for="@next"
+										style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.toDate}</p:outputLabel>
+									<p:datePicker></p:datePicker>
+								</p:panelGrid>
+								<p:divider layout="horizontal" type="dashed"></p:divider>
+								<p:panelGrid columns="2" layout="flex"
+									columnClasses="col-12 md:col-6 xl:col-6,col-12 md:col-6 xl:col-6"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:outputLabel
+										value="#{interfaceLabel.searchInDocumentAttributes}"
+										style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+									<p:outputLabel value="#{interfaceLabel.searchInContent}"
+										style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+									<p:panelGrid columns="2" layout="flex"
+										columnClasses="col-12 md:col-6 xl:col-4, col-12 md:col-6 xl:col-8"
+										contentStyleClass="align-items-baseline ui-fluid"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="@next">#{interfaceLabel.arabicName}</p:outputLabel>
+										<p:inputText
+											value="#{outBoxBean.archiveDocument.arabicName}"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+										<p:outputLabel for="@next">#{interfaceLabel.englishName}</p:outputLabel>
+										<p:inputText
+											value="#{outBoxBean.archiveDocument.englishName}"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+										<p:outputLabel for="@next">#{interfaceLabel.description}</p:outputLabel>
+										<p:inputTextarea rows="3"
+											value="#{outBoxBean.archiveDocument.description}"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+										<p:outputLabel for="@next">#{interfaceLabel.archiveDocumentType}</p:outputLabel>
+										<p:selectOneMenu
+											value="#{outBoxBean.archiveDocument.archiveDocumentType}"
+											converter="omnifaces.SelectItemsIndexConverter"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;">
+											<f:selectItem itemLabel="#{interfaceLabel.choose}"
+												itemValue="" noSelectionOption="true" />
+											<f:selectItems itemLabel="#{archiveDocumentTypeVar.name}"
+												itemValue="#{archiveDocumentTypeVar}"
+												var="archiveDocumentTypeVar"
+												value="#{outBoxBean.archiveDocumentTypes}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="@next">#{interfaceLabel.side}</p:outputLabel>
+										<p:inputText
+											value="#{outBoxBean.archiveDocument.fromEntity}"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+										<p:outputLabel for="@next">#{interfaceLabel.subject}</p:outputLabel>
+										<p:inputTextarea
+											value="#{outBoxBean.archiveDocument.subject}"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+										<p:outputLabel for="@next">#{interfaceLabel.year}</p:outputLabel>
+										<p:inputNumber
+											value="#{outBoxBean.archiveDocument.year}"
+											thousandSeparator="" decimalPlaces="0" minValue="1"
+											maxValue="9999" emptyValue="empty" size="4"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputNumber>
+									</p:panelGrid>
+
+									<p:panelGrid columns="2" layout="flex"
+										columnClasses="col-12 md:col-6 xl:col-4, col-12 md:col-6 xl:col-8"
+										contentStyleClass="align-items-baseline ui-fluid"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="@next">#{interfaceLabel.documentType}</p:outputLabel>
+										<p:selectOneMenu widgetVar="widgetvarDoc"
+											value="#{outBoxBean.documentType}"
+											style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;">
+											<f:selectItems itemLabel="#{docTypeVar}"
+												itemValue="#{docTypeVar}" var="docTypeVar"
+												value="#{outBoxBean.documentTypeList}" />
+										</p:selectOneMenu>
+
+										<p:outputLabel for="@next">#{interfaceLabel.searchWord}</p:outputLabel>
+										<p:inputText value="#{outBoxBean.searchWord}"
+											style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+
+										<p:toggleSwitch value="#{outBoxBean.usingOcr}"
+											onIcon="pi pi-check" offIcon="pi pi-times">
+											<p:ajax update="@([id$=selectOneMenu_LanguageOcr])"></p:ajax>
+										</p:toggleSwitch>
+										<p:outputLabel
+											value="#{interfaceLabel.advancedSearchUsingOcr}"></p:outputLabel>
+
+										<p:outputLabel for="@next">#{interfaceLabel.language}</p:outputLabel>
+										<p:selectOneMenu id="selectOneMenu_LanguageOcr"
+											disabled="#{ not outBoxBean.usingOcr}"
+											value="#{outBoxBean.languageOcr}"
+											converter="omnifaces.SelectItemsIndexConverter"
+											style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;">
+											<f:selectItems itemLabel="#{languageVar.name}"
+												itemValue="#{languageVar}" var="languageVar"
+												value="#{outBoxBean.languagesOcrList}" />
+										</p:selectOneMenu>
+
+									</p:panelGrid>
+								</p:panelGrid>
+								<p:divider layout="horizontal" type="dashed"></p:divider>
+								<p:panelGrid columns="2" layout="flex"
+									columnClasses="col-12 md:col-2 xl:col-1, col-12 md:col-2 xl:col-1"
+									contentStyleClass="align-items-baseline ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:commandButton value="#{interfaceLabel.search}"
+										icon="pi pi-search"
+										actionListener="#{outBoxBean.doSearchInContent()}"
+										process="@([id$=scrollPanel_searchInContent])"
+										update="@([id$=scrollPanel_files],[id$=scrollPanel_docs])"
+										onstart="PF('waitingDialogWidgetVar').show();"
+										onsuccess="PF('waitingDialogWidgetVar').hide();"
+										oncomplete="PF('tabViewWidgetVar').select(2);"
+										styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+										style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+
+									</p:commandButton>
+									<p:commandButton value="#{interfaceLabel.close}"
+										icon="pi pi-times-circle"
+										styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+										oncomplete="PF('widgetVarDocumentDlg').hide();">
+
+									</p:commandButton>
+								</p:panelGrid>
+							</p:scrollPanel>
+						</p:tab>
+						<p:tab id="tab_searchResult"
+							title="#{interfaceLabel.searchResult}">
+
+							<p:scrollPanel id="scrollPanel_files"
+								style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+								styleClass="" mode="native">
+								<p:panelGrid columns="1" layout="grid"
+									columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+									styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+									style="border:0px none; background-color:transparent;text-align:center;"
+									rendered="#{empty outBoxBean.archiveDocumentFilesResult}">
+									<p:staticMessage severity="WARN"
+										detail="#{interfaceLabel.emptySearchResult}"
+										style="width: 50%" />
+									<p:graphicImage name="images/noresult.png" height="250"
+										width="250" library="smat-ins"></p:graphicImage>
+								</p:panelGrid>
+
+								<div style="position: relative; height: 20px;"></div>
+								<div class="ui-fluid formgrid grid">
+									<c:forEach var="archiveDocumentFileVar"
+										items="#{outBoxBean.archiveDocumentFilesResult}">
+										<div class="field col-12 md:col-2" style="text-align: center;">
+											<p:graphicImage
+												id="graphicImage_result_#{archiveDocumentFileVar.id}"
+												library="smat-ins" title="#{archiveDocumentFileVar.name}"
+												style="text-align: center !important;"
+												onmouseover="viewArchiveFilePath(#{archiveDocumentFileVar.id})"
+												name="#{outBoxBean.docImgIconByDocEx(archiveDocumentFileVar.extension)}"
+												width="64" height="64"></p:graphicImage>
+
+											<div style="color: green; font-weight: bolder;">(#{archiveDocumentFileVar.code})</div>
+											<p:commandLink
+												actionListener="#{outBoxBean.prepareDocument(archiveDocumentFileVar)}"
+												oncomplete="document.getElementById('form:commandButton_download').click() ; return false;"
+												title="#{interfaceLabel.download}">
+												<i class="pi pi-cloud-download" style="font-size: 20px;"><span>
+												</span> </i>
+											</p:commandLink>
+											<p:spacer width="10px"></p:spacer>
+											<p:commandLink
+												actionListener="#{outBoxBean.prepareDocumentViewer(archiveDocumentFileVar)}"
+												rendered="#{outBoxBean.extensionIn(archiveDocumentFileVar)}"
+												title="#{interfaceLabel.view}"
+												onstart="PF('statusDialog').show();"
+												oncomplete="PF('statusDialog').hide();">
+												<i class="pi pi-search-plus"
+													style="font-size: 20px; color: #FFC757;"><span>
+												</span> </i>
+											</p:commandLink>
+											<p:spacer width="10px"></p:spacer>
+											<p:commandLink title="#{interfaceLabel.delete}"
+												actionListener="#{outBoxBean.deleteArchiveDocumentFile(archiveDocumentFileVar)}"
+												update="@([id$=scrollPanel_doc_files],[id$=scrollPanel_files],[id$=messages])">
+
+												<i class="pi pi-minus-circle"
+													style="font-size: 20px; color: red;"><span> </span> </i>
+												<p:confirm header="#{interfaceLabel.confirmation}"
+													message="#{interfaceLabel.wouldYouContinueAndDeleteFile}"
+													icon="pi pi-exclamation-triangle" />
+											</p:commandLink>
+										</div>
+									</c:forEach>
+
+								</div>
+								<pe:remoteCommand name="viewArchiveFilePath"
+									process="@([id^=graphicImage_result])"
+									actionListener="#{outBoxBean.getArchiveDocumentFilePhysicalPath}"
+									update="@([id$=scrollPanel_file_physicalpath])">
+									<pe:methodSignature parameters="java.lang.Long"></pe:methodSignature>
+									<pe:methodParam name="archiveDocumentFileId">
+									</pe:methodParam>
+								</pe:remoteCommand>
+
+							</p:scrollPanel>
+							<p:scrollPanel id="scrollPanel_file_physicalpath"
+								style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+								styleClass="" mode="native">
+								<p:column
+									rendered="#{outBoxBean.modelPhysicalPath.elements.size()>0}">
+									<p:outputLabel
+										value="#{interfaceLabel.thePhysicalPathOfTheFileInTheCabinet}: "
+										style="background-color:#D9ECF4;color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+									<p:outputLabel
+										value="(#{outBoxBean.archiveDocumentFileSearchResult.code}) - #{outBoxBean.archiveDocumentFileSearchResult.name}"
+										style="color:green;font-weight:bolder;font-style:italic;"></p:outputLabel>
+
+								</p:column>
+								<p:divider layout="horizontal" type="dashed"></p:divider>
+								<p:diagram value="#{outBoxBean.modelPhysicalPath}"
+									style="height:250px" styleClass="ui-widget-content"
+									var="elementVar">
+									<f:facet name="element">
+										<h:outputText value="#{elementVar.name}"
+											style="display:block;margin-top:1em;" />
+										<p:graphicImage library="smat-ins" name="#{elementVar.image}"
+											width="128" height="128" style="margin-top:0.2em;" />
+									</f:facet>
+								</p:diagram>
+							</p:scrollPanel>
+						</p:tab>
+					</p:tabView>
+				</p:outputPanel>
+			</p:dialog>
+
+			<p:dialog modal="true" widgetVar="waitingDialogWidgetVar"
+				header="#{interfaceLabel.searching}" draggable="false"
+				closable="false" resizable="false">
+				<i class="pi pi-spinner pi-spin" style="font-size: 3rem"></i>
+			</p:dialog>
+
+			<p:dialog
+				header="#{interfaceLabel.add} #{interfaceLabel.attachement} "
+				showEffect="fade" widgetVar="udocumentFileWidgetVar" closable="true"
+				blockScroll="true" dynamic="true" cache="true" fitViewport="true"
+				showHeader="true" contentWidth="100%" contentHeight="100%"
+				resizeObserver="true" resizeObserverCenter="true"
+				styleClass="max-w-screen" iframeStyleClass="max-w-screen"
+				responsive="true" width="75%" height="550" maximizable="true"
+				minimizable="true">
+				<p:outputPanel id="manage-add-udoc-file-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:100%">
+
+					<p:scrollPanel
+						style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+						styleClass="" mode="native">
+						<p:panelGrid id="panelGrid_uploader_udocument" columns="1"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-12" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:column>
+								<p:outputLabel value="#{interfaceLabel.uploadDocumentFiles}"
+									style="color:#FFC757;font-weight:bolder;font-style:italic;"></p:outputLabel>
+								<p:spacer width="10px"></p:spacer>
+								<p:outputLabel
+									value="#{outBoxBean.selectedArchiveDocument.name}"
+									style="background-color:#D9ECF4;color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+							</p:column>
+							<p:divider layout="horizontal" type="solid"
+								style="margin-top:-15px;"></p:divider>
+							<h:panelGroup id="panelGroup_btn_udocument">
+								<p:commandButton id="commandButton_deleteAll_udocument"
+									styleClass="rounded-button ui-button-warning"
+									icon="pi pi-minus-circle" value="#{interfaceLabel.deleteAll}"
+									action="#{outBoxBean.deleteAllDocFiles()}"
+									update="form:customDropzone_udocument form:panelGroup_btn_udocument"
+									rendered="#{outBoxBean.archiveDocumentFiles.size()== 0 ? 'false' : 'true'}"
+									style="#{app.locale.locale eq 'en'?'float:right;margin-right:35px' : 'float:left;margin-left:25px;'};width:auto;margin-top:-85px;"></p:commandButton>
+							</h:panelGroup>
+							<p:dataScroller id="customDropzone_udocument"
+								widgetVar="dataScrollerudocWidgetVar"
+								style="margin-top:-50px;border:0px none; background-color:transparent;box-sizing: border-box;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;"
+								value="#{outBoxBean.archiveDocumentFiles}"
+								var="archiveFile" chunkSize="10" mode="inline"
+								scrollHeight="300">
+								<f:facet name="header">
+                                                            #{interfaceLabel.theTotalNumberOfDocument}: <span
+										style="color: #FFC757; font-weight: bolder; font-style: italic;">#{outBoxBean.archiveDocumentFiles.size()}</span>
+
+								</f:facet>
+
+								<div class="product">
+									<div class="product-list-item p-5">
+										<p:graphicImage
+											name="#{outBoxBean.docImgIconByDocEx(archiveFile.extension)}"
+											library="smat-ins" />
+										<div class="product-list-detail">
+											<div class="product-name">#{archiveFile.name}</div>
+											<div class="product-description">#{archiveFile.extension}</div>
+
+											<span
+												style="#{app.locale.locale eq 'en'? 'margin-left:.5rem' : 'margin-right:.5rem'}"
+												class="pi #{app.locale.locale eq 'en'? 'pi-angle-right':'pi-angle-left'} product-category">
+												#{interfaceLabel.fileSize}: #{archiveFile.fileSize}
+												#{interfaceLabel.byte}</span>
+										</div>
+										<div class="product-list-action">
+
+											<p:commandButton icon="pi pi-trash"
+												value="#{interfaceLabel.delete}"
+												action="#{outBoxBean.deleteDocFile(archiveFile)}"
+												update="form:customDropzone_udocument form:panelGroup_btn_udocument"
+												styleClass="rounded-button ui-button-danger" />
+
+										</div>
+									</div>
+								</div>
+								<p:divider layout="horizontal" type="dashed" style=""
+									styleClass="ui-custom-divider"></p:divider>
+
+							</p:dataScroller>
+							<p:column>
+								<small> #{interfaceLabel.dropHereToStartUpload} <p:link
+										value="#{interfaceLabel.choose}"
+										onclick="PF('uploadFileuDocWidgetVar').show(); return false;"
+										style="font-size:1.2rem" />.
+								</small>
+							</p:column>
+							<p:remoteCommand name="uautoScrollDownData"
+								oncomplete="$('.ui-scrollpanel').scrollTop($('.ui-scrollpanel').height());"></p:remoteCommand>
+							<p:fileUpload id="advancedupload_udocument"
+								widgetVar="uploadFileuDocWidgetVar" multiple="true"
+								listener="#{outBoxBean.uploadArchiveDocToSelectedArchive}"
+								oncomplete="uautoScrollDownData();"
+								update="form:customDropzone_udocument form:advancedupload_udocument form:panelGroup_btn_udocument form:messages"
+								style="display:none;" sequential="true"
+								allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|tif|jpg|doc|docx|txt|ppt|pptx|xlsx|xls)$/"
+								dropZone="customDropzone_udocument" />
+
+						</p:panelGrid>
+					</p:scrollPanel>
+				</p:outputPanel>
+				<p:panelGrid columns="2" layout="flex"
+					columnClasses="col-12 md:col-3 xl:col-1, col-12 md:col-3 xl:col-1"
+					contentStyleClass="align-items-baseline ui-fluid"
+					style="margin-top:0.5rem;border:0px none; background-color:transparent;">
+					<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-save"
+						action="#{outBoxBean.doSaveArchiveDocFiles()}"
+						oncomplete="PF('udocumentFileWidgetVar').hide();"
+						update="@([id$=messages],[id$=scrollPanel_doc_files],[id$=manage-add-udoc-file-content],[id$=customDropzone_udocument],[id$=panelGroup_btn_udocument],[id$=advancedupload_udocument])"
+						styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+						style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'};width:auto; ">
+					</p:commandButton>
+					<p:commandButton value="#{interfaceLabel.close}"
+						icon="pi pi-times-circle" style="width:auto;"
+						action="#{outBoxBean.updateArchPanel()}"
+						oncomplete="PF('udocumentFileWidgetVar').hide();"
+						update="@([id$=scrollPanel_doc_files])"
+						styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat">
+
+					</p:commandButton>
+				</p:panelGrid>
+
+			</p:dialog>
+
+			<p:dialog
+				header="#{interfaceLabel.add} #{interfaceLabel.attachement} "
+				showEffect="fade" widgetVar="documentFileWidgetVar" closable="true"
+				blockScroll="true" dynamic="true" cache="true" fitViewport="true"
+				showHeader="true" contentWidth="100%" contentHeight="100%"
+				resizeObserver="true" resizeObserverCenter="true"
+				styleClass="max-w-screen" iframeStyleClass="max-w-screen"
+				responsive="true" width="75%" height="550" maximizable="true"
+				minimizable="true">
+				<p:outputPanel id="manage-add-doc-file-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:100%">
+
+					<p:scrollPanel
+						style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+						styleClass="" mode="native">
+						<p:panelGrid id="panelGrid_uploader_document" columns="1"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-12" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid"
+							style="border:0px none; background-color:transparent;">
+
+							<p:column>
+								<p:outputLabel value="#{interfaceLabel.uploadDocumentFiles}"
+									style="color:#FFC757;font-weight:bolder;font-style:italic;"></p:outputLabel>
+								<p:spacer width="10px"></p:spacer>
+								<p:outputLabel
+									value="#{myCabinetBean.selectedArchiveDocument.name}"
+									style="background-color:#D9ECF4;color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+							</p:column>
+							<p:divider layout="horizontal" type="solid"
+								style="margin-top:-15px;"></p:divider>
+							<h:panelGroup id="panelGroup_btn_document">
+								<p:commandButton id="commandButton_deleteAll_document"
+									styleClass="rounded-button ui-button-warning"
+									icon="pi pi-minus-circle" value="#{interfaceLabel.deleteAll}"
+									action="#{myCabinetBean.deleteAllDocFiles()}"
+									update="form:customDropzone_document form:panelGroup_btn_document"
+									rendered="#{myCabinetBean.archiveDocumentFiles.size()== 0 ? 'false' : 'true'}"
+									style="#{app.locale.locale eq 'en'?'float:right;margin-right:35px' : 'float:left;margin-left:25px;'};width:auto;margin-top:-85px;"></p:commandButton>
+							</h:panelGroup>
+							<p:dataScroller id="customDropzone_document"
+								widgetVar="dataScrollerdocWidgetVar"
+								style="margin-top:-50px;border:0px none; background-color:transparent;box-sizing: border-box;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;"
+								value="#{myCabinetBean.archiveDocumentFiles}" var="archiveFile"
+								chunkSize="10" mode="inline" scrollHeight="300">
+								<f:facet name="header">
+                                                            #{interfaceLabel.theTotalNumberOfDocument}: <span
+										style="color: #FFC757; font-weight: bolder; font-style: italic;">#{myCabinetBean.archiveDocumentFiles.size()}</span>
+
+								</f:facet>
+
+								<div class="product">
+									<div class="product-list-item p-5">
+										<p:graphicImage
+											name="#{myCabinetBean.docImgIconByDocEx(archiveFile.extension)}"
+											library="smat-ins" />
+										<div class="product-list-detail">
+											<div class="product-name">#{archiveFile.name}</div>
+											<div class="product-description">#{archiveFile.extension}</div>
+
+											<span
+												style="#{app.locale.locale eq 'en'? 'margin-left:.5rem' : 'margin-right:.5rem'}"
+												class="pi #{app.locale.locale eq 'en'? 'pi-angle-right':'pi-angle-left'} product-category">
+												#{interfaceLabel.fileSize}: #{archiveFile.fileSize}
+												#{interfaceLabel.byte}</span>
+										</div>
+										<div class="product-list-action">
+
+											<p:commandButton icon="pi pi-trash"
+												value="#{interfaceLabel.delete}"
+												action="#{myCabinetBean.deleteDocFile(archiveFile)}"
+												update="form:customDropzone_document form:panelGroup_btn_document"
+												styleClass="rounded-button ui-button-danger" />
+
+										</div>
+									</div>
+								</div>
+								<p:divider layout="horizontal" type="dashed" style=""
+									styleClass="ui-custom-divider"></p:divider>
+
+							</p:dataScroller>
+							<p:column>
+								<small> #{interfaceLabel.dropHereToStartUpload} <p:link
+										value="#{interfaceLabel.choose}"
+										onclick="PF('uploadFileDocWidgetVar').show(); return false;"
+										style="font-size:1.2rem" />.
+								</small>
+							</p:column>
+							<p:remoteCommand name="autoScrollDownData"
+								oncomplete="$('.ui-scrollpanel').scrollTop($('.ui-scrollpanel').height());"></p:remoteCommand>
+							<p:fileUpload id="advancedupload_document"
+								widgetVar="uploadFileDocWidgetVar" multiple="true"
+								listener="#{myCabinetBean.uploadArchiveDocToSelectedArchive}"
+								oncomplete="autoScrollDownData();"
+								update="form:customDropzone_document form:advancedupload_document form:panelGroup_btn_document form:messages"
+								style="display:none;" sequential="true"
+								allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|tif|jpg|doc|docx|txt|ppt|pptx|xlsx|xls)$/"
+								dropZone="customDropzone_document" />
+
+						</p:panelGrid>
+					</p:scrollPanel>
+				</p:outputPanel>
+				<p:panelGrid columns="2" layout="flex"
+					columnClasses="col-12 md:col-3 xl:col-1, col-12 md:col-3 xl:col-1"
+					contentStyleClass="align-items-baseline ui-fluid"
+					style="margin-top:0.5rem;border:0px none; background-color:transparent;">
+					<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-save"
+						action="#{myCabinetBean.doSaveArchiveDocFiles()}"
+						update="@([id$=messages],[id$=scrollPanel_doc_files],[id$=manage-add-doc-file-content],[id$=customDropzone_document],[id$=panelGroup_btn_document],[id$=advancedupload_document])"
+						styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+						style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'};width:auto; ">
+					</p:commandButton>
+					<p:commandButton value="#{interfaceLabel.close}"
+						icon="pi pi-times-circle" style="width:auto;"
+						action="#{myCabinetBean.updateArchPanel()}"
+						oncomplete="PF('documentFileWidgetVar').hide();"
+						update="@([id$=scrollPanel_doc_files])"
+						styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat">
+
+					</p:commandButton>
+				</p:panelGrid>
+
+			</p:dialog>
+
+			<p:dialog header="#{interfaceLabel.addArchive}" showEffect="fade"
+				widgetVar="addArchiveWidgetVar" closable="true" blockScroll="true"
+				dynamic="true" cache="true" fitViewport="true" showHeader="true"
+				contentWidth="100%" contentHeight="100%" resizeObserver="true"
+				resizeObserverCenter="true" styleClass="max-w-screen"
+				iframeStyleClass="max-w-screen"
+				onShow="PF('addArchiveWidgetVar').jq.css('height',$(window).height()*98/100); "
+				responsive="true" width="92%" height="100%" maximizable="true"
+				minimizable="true">
+				<script type="text/javascript">
+				 $(function (){
+					 
+              	     PF('addArchiveWidgetVar').jq.css('height',$(window).height()*98/100);
+              	      
+                     });
+                   
+                
+				</script>
+
+
+				<style>
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+
+.ui-divider.ui-divider-dashed.ui-divider-vertical::before {
+	border-left-color: #2196f3;
+}
+
+.ui-divider.ui-divider-dashed.ui-divider-horizontal::before {
+	border-top-color: #F4CA16;
+}
+
+.ui-divider.ui-divider-dashed.ui-divider-horizontal.ui-custom-divider::before
+	{
+	border-top-color: #F4CA16;
+	margin-top: -50px;
+}
+
+body .ui-toggleswitch.ui-toggleswitch-checked .ui-toggleswitch-slider {
+	background: #F4CA16;
+}
+
+body .ui-toggleswitch.ui-toggleswitch-focus .ui-toggleswitch-slider {
+	box-shadow: none;
+}
+
+.product .product-list-item .product-list-detail {
+	flex: 1 1 0;
+	-ms-flex: 1 1 0;
+	margin: 0rem !important;
+}
+
+.product .product-list-item img {
+	box-shadow: none !important;
+	margin: 0px !important;
+}
+
+.ui-datascroller .ui-state-drag {
+	background: #ffffd6;
+}
+
+.ui-datascroller-item {
+	margin-top: -50px;
+}
+</style>
+
+				<p:outputPanel id="manage-add-archive-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:85%">
+					<p:scrollPanel widgetVar="scrollPanelwidgetVar"
+						style="border:dotted;border-color:#B9CEF2;width: auto; height:85%"
+						styleClass="" mode="native">
+						<p:panelGrid columns="6" layout="grid"
+							columnClasses="ui-g-12 ui-md-6 ui-lg-2,ui-g-12 ui-md-6 ui-lg-2,ui-g-12 ui-md-6 ui-lg-2,ui-g-12 ui-md-6 ui-lg-2,ui-g-12 ui-md-6 ui-lg-2,ui-g-12 ui-md-6 ui-lg-2"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel value="#{interfaceLabel.isDirectory}"
+								style="color:black;font-weight:bolder;font-style:italic;"></p:outputLabel>
+							<p:toggleSwitch id="toggleSwitch"
+								value="#{outBoxBean.archiveDocument.isDirectory}"
+								onIcon="pi pi-times" offIcon="pi pi-check">
+								<p:ajax
+									listener="#{outBoxBean.checkOrUncheckIfDirectory()}"
+									update="form:manage-add-archive-content"></p:ajax>
+							</p:toggleSwitch>
+							<p:column></p:column>
+							<p:column></p:column>
+							<p:column></p:column>
+							<p:column></p:column>
+							<p:outputLabel for="@next"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.code}</p:outputLabel>
+							<p:inputText
+								value="#{outBoxBean.archiveDocument.code}"
+								disabled="true"
+								style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+							<p:outputLabel for="@next"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.arabicName}</p:outputLabel>
+							<p:inputText
+								value="#{outBoxBean.archiveDocument.arabicName}"
+								style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+							<p:outputLabel for="@next"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.englishName}</p:outputLabel>
+							<p:inputText
+								value="#{outBoxBean.archiveDocument.englishName}"
+								style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+						</p:panelGrid>
+
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-12 ui-md-6 ui-lg-2,ui-g-12 ui-md-10 ui-lg-10"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="@next"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.description}</p:outputLabel>
+							<p:inputTextarea rows="3"
+								value="#{outBoxBean.archiveDocument.description}"
+								style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+						</p:panelGrid>
+
+						<p:divider layout="horizontal" type="dashed"></p:divider>
+						<p:panelGrid columns="4"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-2,ui-g-12 ui-md-12 ui-lg-1, ui-g-12 ui-md-12 ui-lg-2,ui-g-12 ui-md-12 ui-lg-1"
+							layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+							rendered="#{not outBoxBean.archiveDocument.isDirectory}"
+							style="border:0px none; background-color:transparent;box-sizing: border-box;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;">
+							<p:outputLabel value="#{interfaceLabel.inheritParentAttribute}"
+								style="color:#F4CA16;font-weight:bolder;font-style:italic;"></p:outputLabel>
+							<p:toggleSwitch
+								value="#{outBoxBean.archiveDocument.inheritParentAttribute}"
+								onIcon="pi pi-times" offIcon="pi pi-check">
+							</p:toggleSwitch>
+							<p:outputLabel value="#{interfaceLabel.inheritAttributeToChild}"
+								style="color:#F4CA16;font-weight:bolder;font-style:italic;"></p:outputLabel>
+							<p:toggleSwitch
+								value="#{outBoxBean.archiveDocument.inheritAttributeToChild}"
+								onIcon="pi pi-times" offIcon="pi pi-check">
+							</p:toggleSwitch>
+						</p:panelGrid>
+						<p:panelGrid columns="1" layout="grid"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+							styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+							contentStyle="text-align:center;"
+							style="margin-top:20px;border:0px none; background-color:transparent;"
+							rendered="#{outBoxBean.archiveDocument.isDirectory}">
+							<p:staticMessage severity="WARN"
+								detail="#{interfaceLabel.activeDocAttributeInfo}"
+								style="width: 30%" />
+							<p:graphicImage name="images/settings_file-512.png"
+								library="smat-ins" width="256" height="256"></p:graphicImage>
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-5,ui-g-12 ui-md-12 ui-lg-1, ui-g-12 ui-md-12 ui-lg-6"
+							contentStyleClass="align-items-baseline ui-fluid"
+							rendered="#{not outBoxBean.archiveDocument.isDirectory}"
+							style="margin-top:5px;border:0px none; background-color:transparent;">
+
+							<p:panelGrid columns="3"
+								columnClasses="ui-g-12 ui-md-12 ui-lg-4,ui-g-12 ui-md-12 ui-lg-7, ui-g-12 ui-md-12 ui-lg-1"
+								layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+								style="border:0px none; background-color:transparent;">
+								<p:outputLabel for="@next"
+									style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.archiveDocumentType}</p:outputLabel>
+								<p:selectOneMenu
+									value="#{outBoxBean.archiveDocument.archiveDocumentType}"
+									converter="omnifaces.SelectItemsIndexConverter"
+									style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;">
+									<f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
+										noSelectionOption="true" />
+									<f:selectItems itemLabel="#{archiveDocumentTypeVar.name}"
+										itemValue="#{archiveDocumentTypeVar}"
+										var="archiveDocumentTypeVar"
+										value="#{outBoxBean.archiveDocumentTypes}" />
+								</p:selectOneMenu>
+								<p:column></p:column>
+								<p:outputLabel for="@next">#{interfaceLabel.organization}</p:outputLabel>
+								<p:inputText id="inputText_organization" style="color:blue;"
+									readonly="true" disabled="true"
+									value="#{outBoxBean.archiveDocument.organizationByOrganization}"></p:inputText>
+								<p:commandButton icon="pi pi-search"
+									styleClass="rounded-button ui-button-info ui-button-outlined"
+									onclick="PF('organizationVar').show(); return false;"
+									ajax="true" title="#{interfaceLabel.add}"></p:commandButton>
+
+								<p:outputLabel for="@next">#{interfaceLabel.rootOrganization}</p:outputLabel>
+								<p:inputText id="inputText_rootOrganization" style="color:red;"
+									readonly="true" disabled="true"
+									value="#{outBoxBean.archiveDocument.organizationByRootOrganization}"></p:inputText>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.divan}</p:outputLabel>
+								<p:inputText id="inputText_divan" style="color:orange;"
+									readonly="true" disabled="true"
+									value="#{outBoxBean.archiveDocument.organizationByDivan}"></p:inputText>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.side}</p:outputLabel>
+								<p:inputText
+									value="#{outBoxBean.archiveDocument.fromEntity}"
+									style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputText>
+								<p:column></p:column>
+								<p:outputLabel for="@next">#{interfaceLabel.subject}</p:outputLabel>
+								<p:inputTextarea
+									value="#{outBoxBean.archiveDocument.subject}"
+									style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+								<p:column></p:column>
+								<p:outputLabel for="@next">#{interfaceLabel.year}</p:outputLabel>
+								<p:inputNumber
+									value="#{outBoxBean.archiveDocument.year}"
+									thousandSeparator="" decimalPlaces="0" minValue="1"
+									maxValue="9999" emptyValue="empty" size="4"
+									style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;"></p:inputNumber>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.language}</p:outputLabel>
+								<p:selectOneMenu id="selectOneMenu_lang"
+									widgetVar="widgetvar_lang"
+									value="#{outBoxBean.archiveDocument.lang}"
+									converter="omnifaces.SelectItemsIndexConverter"
+									onblur="resetFilterSearch();"
+									style="background-color:#FFF9E9;color:black;font-weight:bolder;font-style:italic;"
+									dynamic="true" filter="true" filterMatchMode="contains"
+									filterPlaceholder="#{interfaceLabel.search}">
+
+									<f:selectItems itemLabel="#{langVar.languageName}"
+										itemValue="#{langVar.languaneCode}" var="langVar"
+										value="#{outBoxBean.languages}" />
+									<p:column style="width:10%">
+										<span class="flag flag-#{langVar.languaneCode}"
+											style="width: 30px; height: 20px" />
+									</p:column>
+
+									<p:column>
+										<f:facet name="header">
+											<h:outputText value="#{interfaceLabel.displayName}" />
+										</f:facet>
+										<h:outputText value="#{langVar.languageName}" />
+									</p:column>
+									<f:facet name="footer">
+										<h:outputText
+											value="#{interfaceLabel.fullSize} : #{outBoxBean.languages.size()} "
+											style="font-weight:bold;" styleClass="py-1 block" />
+									</f:facet>
+								</p:selectOneMenu>
+								<p:column></p:column>
+							</p:panelGrid>
+							<p:divider layout="vertical" type="dashed"></p:divider>
+							<p:panelGrid id="panelGrid_uploader" columns="1"
+								columnClasses="ui-g-12 ui-md-12 ui-lg-12" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel value="#{interfaceLabel.uploadDocumentFiles}"
+									style="color:#F4CA16;font-weight:bolder;font-style:italic;"></p:outputLabel>
+								<p:divider layout="horizontal" type="solid"
+									style="margin-top:-15px;"></p:divider>
+								<h:panelGroup id="panelGroup_Btn">
+									<p:commandButton id="commandButton_deleteAll"
+										styleClass="rounded-button ui-button-warning"
+										icon="pi pi-minus-circle" value="#{interfaceLabel.deleteAll}"
+										action="#{outBoxBean.deleteAllDocFiles()}"
+										update="form:customDropzone form:panelGroup_Btn"
+										rendered="#{outBoxBean.archiveDocumentFiles.size()== 0 ? 'false' : 'true'}"
+										style="#{app.locale.locale eq 'en'?'float:right;margin-right:35px' : 'float:left;margin-left:25px;'};width:auto;margin-top:-35px;"></p:commandButton>
+								</h:panelGroup>
+								<p:dataScroller id="customDropzone"
+									widgetVar="dataScrollerWidgetVar"
+									style="margin-top:-20px;border:0px none; background-color:transparent;box-sizing: border-box;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;"
+									value="#{outBoxBean.archiveDocumentFiles}"
+									var="archiveFile" chunkSize="10" mode="inline"
+									scrollHeight="350">
+									<f:facet name="header">
+                                               #{interfaceLabel.theTotalNumberOfDocument}: <span
+											style="color: #F4CA16; font-weight: bolder; font-style: italic;">#{outBoxBean.archiveDocumentFiles.size()}</span>
+
+									</f:facet>
+
+									<div class="product">
+										<div class="product-list-item p-5">
+											<p:graphicImage
+												name="#{outBoxBean.docImgIconByDocEx(archiveFile.extension)}"
+												library="smat-ins" />
+											<div class="product-list-detail">
+												<div class="product-name">#{archiveFile.name}</div>
+												<div class="product-description">#{archiveFile.extension}</div>
+
+												<span
+													style="#{app.locale.locale eq 'en'? 'margin-left:.5rem' : 'margin-right:.5rem'}"
+													class="pi #{app.locale.locale eq 'en'? 'pi-angle-right':'pi-angle-left'} product-category">
+													#{interfaceLabel.fileSize}: #{archiveFile.fileSize}
+													#{interfaceLabel.byte}</span>
+											</div>
+											<div class="product-list-action">
+
+												<p:commandButton icon="pi pi-trash"
+													value="#{interfaceLabel.delete}"
+													action="#{outBoxBean.deleteDocFile(archiveFile)}"
+													update="form:customDropzone form:panelGroup_Btn"
+													styleClass="rounded-button ui-button-danger" />
+
+											</div>
+										</div>
+									</div>
+									<p:divider layout="horizontal" type="dashed" style=""
+										styleClass="ui-custom-divider"></p:divider>
+
+								</p:dataScroller>
+								<p:column>
+									<small> #{interfaceLabel.dropHereToStartUpload} <p:link
+											value="#{interfaceLabel.choose}"
+											onclick="PF('uploadFileWidgetVar').show(); return false;"
+											style="font-size:1.2rem" />.
+									</small>
+								</p:column>
+								<p:remoteCommand name="autoScrollDown"
+									oncomplete="$('.ui-scrollpanel').scrollTop($('.ui-scrollpanel').height());"></p:remoteCommand>
+								<p:fileUpload id="advancedupload"
+									widgetVar="uploadFileWidgetVar" multiple="true"
+									listener="#{outBoxBean.uploadArchiveDoc}"
+									oncomplete="autoScrollDown();"
+									update="form:customDropzone form:advancedupload form:panelGroup_Btn form:messages"
+									style="display:none;" sequential="true"
+									allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|tif|jpg|doc|docx|txt|ppt|pptx|xlsx|xls)$/"
+									dropZone="customDropzone" />
+
+							</p:panelGrid>
+						</p:panelGrid>
+						<p:scrollTop target="parent" threshold="20"
+							styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+					</p:scrollPanel>
+					<p:panelGrid columns="2" layout="flex"
+						columnClasses="col-12 md:col-3 xl:col-1, col-12 md:col-3 xl:col-1"
+						contentStyleClass="align-items-baseline ui-fluid"
+						style="margin-top:0.5rem;border:0px none; background-color:transparent;">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-save"
+							action="#{outBoxBean.doSaveArchiveDoc()}"
+							update="@([id$=messages],[id$=panelGrid_content],[id$=manage-add-archive-content])"
+							styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+							style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'};width:auto; ">
+						</p:commandButton>
+						<p:commandButton id="delete-correspondenceState-button"
+							value="#{interfaceLabel.close}" icon="pi pi-times-circle"
+							style="width:auto;"
+							oncomplete="PF('addArchiveWidgetVar').hide();"
+							styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat">
+
+						</p:commandButton>
+					</p:panelGrid>
+				</p:outputPanel>
+			</p:dialog>
+			<p:scrollTop />
+		</h:form>
+	</ui:define>
+</ui:composition>

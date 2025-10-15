@@ -1,0 +1,147 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="emp-certification" language="java" columnCount="1" pageWidth="420" pageHeight="595" orientation="Landscape" columnWidth="380" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3d3e71b2-77c3-40c0-b3d9-5e59da4a2360">
+	<parameter name="CertNumber" class="java.lang.String"/>
+	<parameter name="TsNumber" class="java.lang.String"/>
+	<parameter name="IssueDate" class="java.util.Date"/>
+	<parameter name="ExpiryDate" class="java.util.Date"/>
+	<parameter name="EmployeeName" class="java.lang.String"/>
+	<parameter name="CompanyName" class="java.lang.String"/>
+	<parameter name="CertType" class="java.lang.String"/>
+	<parameter name="EmployeePhoto" class="java.io.InputStream"/>
+	<parameter name="EmployeeId" class="java.lang.String"/>
+	<parameter name="QRCodeImage" class="java.io.InputStream"/>
+	<parameter name="logoLeftPath" class="java.lang.String"/>
+	<parameter name="logoRightPath" class="java.lang.String"/>
+	<parameter name="iconMailPath" class="java.lang.String"/>
+	<parameter name="iconMobilePath" class="java.lang.String"/>
+	<parameter name="iconSitePath" class="java.lang.String"/>
+	<parameter name="iconWhatsPath" class="java.lang.String"/>
+	<title height="380">
+		<element kind="rectangle" uuid="0dab0926-f628-4b1b-af39-5e8c1fc63473" x="-11" y="82" width="401" height="220">
+			<pen lineWidth="3.0" lineStyle="Solid" lineColor="#40709C"/>
+		</element>
+		<element kind="image" uuid="4a7b1b31-44b3-42a0-abd1-c2a02f4d0150" x="-10" y="6" width="75" height="75">
+			<expression><![CDATA[$P{logoLeftPath}]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="image" uuid="013d4b7c-7402-4d43-8ab3-9b3a0dd4bc69" x="229" y="6" width="161" height="75">
+			<expression><![CDATA[$P{logoRightPath}]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="02360005-dfa4-4b57-93cb-2d19d0b5a79f" x="-4" y="91" width="52" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[Cert. Type:]]></text>
+		</element>
+		<element kind="textField" uuid="f590211c-2ac0-4957-a063-e0d965f59763" x="73" y="91" width="189" height="20" forecolor="#C8070B" fontSize="11.0" bold="true">
+			<expression><![CDATA[$P{CertType}]]></expression>
+		</element>
+		<element kind="staticText" uuid="49126d2e-a5f6-4c8e-babd-ff335121ebe6" x="-4" y="121" width="76" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[Company:]]></text>
+		</element>
+		<element kind="textField" uuid="4e578706-f31e-46ec-8c86-610158a44caa" x="72" y="121" width="190" height="20" forecolor="#40709C" bold="true" vTextAlign="Top">
+			<expression><![CDATA[$P{CompanyName}]]></expression>
+		</element>
+		<element kind="staticText" uuid="3efd6683-b57b-4dd0-a23d-8bec8071eac9" x="-4" y="151" width="76" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[Name:]]></text>
+		</element>
+		<element kind="textField" uuid="8128cf8c-3466-4256-93a6-c0c717cd6f02" x="72" y="151" width="189" height="20" forecolor="#40709C" bold="true" vTextAlign="Top">
+			<expression><![CDATA[$P{EmployeeName}]]></expression>
+		</element>
+		<element kind="staticText" uuid="1ae1fbe2-9cac-4352-8ce8-124f84eeba33" x="-4" y="181" width="76" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[Id/Igama No:]]></text>
+		</element>
+		<element kind="textField" uuid="b40c379c-4ae9-403d-89d9-1d7ec63b7e0f" x="72" y="181" width="192" height="20" forecolor="#40709C" bold="true" vTextAlign="Top">
+			<expression><![CDATA[$P{EmployeeId}]]></expression>
+		</element>
+		<element kind="staticText" uuid="b7ddc389-6f36-4443-bb76-ea4d2649adff" x="-4" y="207" width="77" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[Issue on:]]></text>
+		</element>
+		<element kind="textField" uuid="085d8002-2efb-460c-aa6a-0b4274ef370e" x="73" y="207" width="189" height="20" forecolor="#40709C" bold="true" vTextAlign="Top">
+			<expression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{IssueDate})]]></expression>
+		</element>
+		<element kind="staticText" uuid="2f7e5199-e5aa-40a7-8571-0009f28b974f" x="-5" y="233" width="77" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[Valid up to:]]></text>
+		</element>
+		<element kind="textField" uuid="2df7471d-0072-4308-a33f-cb47513214a9" x="73" y="233" width="188" height="20" forecolor="#40709C" bold="true" vTextAlign="Top">
+			<expression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{ExpiryDate})]]></expression>
+		</element>
+		<element kind="staticText" uuid="888c2caf-8dfc-4c29-a350-fd186b65124f" x="-4" y="256" width="76" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[ID No.:]]></text>
+		</element>
+		<element kind="textField" uuid="a12a74b8-7f96-4044-8bef-a1c8f9c1ace7" x="73" y="256" width="189" height="20" forecolor="#40709C" bold="true" vTextAlign="Top">
+			<expression><![CDATA[$P{CertNumber}]]></expression>
+		</element>
+		<element kind="staticText" uuid="66b9ecbf-a9c2-4940-9135-87b88f6f0f17" x="-4" y="275" width="76" height="20" forecolor="#4B5157" fontSize="10.0" bold="true">
+			<text><![CDATA[TS No.:]]></text>
+		</element>
+		<element kind="textField" uuid="66b9ecbf-a9c2-4940-9135-87b88f6f0f18" x="73" y="275" width="189" height="20" forecolor="#40709C" bold="true" vTextAlign="Top">
+			<expression><![CDATA[$P{TsNumber}]]></expression>
+		</element>
+		<element kind="image" uuid="54e1bf53-20e4-43b9-a8bf-4734e60ce638" x="295" y="214" width="75" height="75">
+			<expression><![CDATA[$P{QRCodeImage}]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="rectangle" uuid="ea734faf-ac73-4341-b989-cf0f376f4ac4" x="-10" y="305" width="400" height="60" backcolor="#D5DBE4">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<pen lineWidth="3.0" lineColor="#D5DBE4"/>
+		</element>
+		<element kind="image" uuid="e2132387-49b6-4108-b2ab-60cdfa299570" x="0" y="315" width="12" height="12">
+			<expression><![CDATA[$P{iconWhatsPath}]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="11127d85-1597-4aa8-ad9e-bce7cb198ac6" x="14" y="312" width="65" height="15" forecolor="#4B5157" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[+966 539722994]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="image" uuid="a7bbc53b-a94b-4791-b4d7-ef1b5219f3b1" x="0" y="328" width="12" height="12">
+			<expression><![CDATA[$P{iconMobilePath}]]></expression>
+		</element>
+		<element kind="staticText" uuid="11882d5d-a8e3-45fd-a54c-168f151254b9" x="14" y="327" width="65" height="15" forecolor="#4B5157" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[+966 138829000]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="image" uuid="bf612303-6a07-4353-b4dd-bd9e80232ae6" x="93" y="315" width="12" height="12">
+			<expression><![CDATA[$P{iconMailPath}]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+		</element>
+		<element kind="staticText" uuid="18bba10e-a9f5-4b90-b2e9-b67ea7c7f89f" x="107" y="312" width="75" height="15" forecolor="#2072C5" fontSize="8.0" underline="true" bold="true" vTextAlign="Middle">
+			<text><![CDATA[info@smat-ins.com]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="82635da4-7e42-4a2a-9464-c3a54bba8bfa" x="107" y="327" width="75" height="15" forecolor="#2072C5" fontSize="8.0" underline="true" bold="true" vTextAlign="Middle">
+			<text><![CDATA[www.smat-ins.com]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="image" uuid="dc1e8e36-452c-42b3-adff-10aab119a67a" x="93" y="328" width="12" height="12">
+			<expression><![CDATA[$P{iconSitePath}]]></expression>
+		</element>
+		<element kind="staticText" uuid="273ba5b4-7226-40ce-9a1f-ed926cc83fb0" x="187" y="310" width="78" height="12" forecolor="#4B5157" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Doc. Code. F-11-08]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="textField" uuid="aa0d1f69-2b70-4efd-9a8d-761dd901455e" x="187" y="322" width="78" height="12" forecolor="#4B5157" fontName="SansSerif" fontSize="8.0" bold="true" hTextAlign="Left" vTextAlign="Middle">
+			<expression><![CDATA["Date: " + new SimpleDateFormat("dd.MM.yyyy").format(new java.util.Date())]]></expression>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="6767d419-3c82-496e-9762-8851773b4f5e" x="187" y="334" width="78" height="12" forecolor="#4B5157" fontSize="8.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Rev. 01]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+		</element>
+		<element kind="image" uuid="bb58d7cd-6817-4980-ad1e-c697704fffa6" x="291" y="100" width="80" height="80">
+			<expression><![CDATA[$P{EmployeePhoto}]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+	</title>
+</jasperReport>

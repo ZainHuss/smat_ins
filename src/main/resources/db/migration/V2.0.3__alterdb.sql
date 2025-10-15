@@ -1,0 +1,1 @@
+alter table sys_user  add signture_photo longblob  NULL;

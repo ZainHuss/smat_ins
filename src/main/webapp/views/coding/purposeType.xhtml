@@ -1,0 +1,158 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.purposeType} 
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="section-content">
+		<h:form id="form">
+			<div class="card">
+				<p:growl id="messages" showDetail="true" />
+				<div class="row">
+					<div class="col-lg-9 col-xl-8 col-xxl-7">
+					<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+						actionListener="#{codingPurposeTypeBean.openNew}"
+						update=":form:outputPanel-content"
+						oncomplete="PF('widgetVarDetailDialog').show()"
+						styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+						style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+						<p:resetInput target=":form:outputPanel-content" />
+					</p:commandButton>
+					<p:commandButton id="delete-purposeType-button"
+						value="#{codingPurposeTypeBean.deleteButtonMessage}"
+						icon="pi pi-trash" styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+						actionListener="#{codingPurposeTypeBean.deleteSelectedPurposeType()}"
+						disabled="#{!codingPurposeTypeBean.hasSelectedPurposeType()}"
+						update="@this">
+						<p:confirm header="#{interfaceLabel.confirmation}"
+							message="#{interfaceLabel.deleteSelectedPurposeType}"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+				</div>
+				</div>
+
+
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+
+				<p:dataTable id="dataTable-purposeType" widgetVar="dtPurposeType"
+					var="purposeType" value="#{codingPurposeTypeBean.purposeTypeList}"
+					reflow="true" styleClass="products-table" globalFilterOnly="true"
+					selection="#{codingPurposeTypeBean.selectedPurposeTypeList}"
+					rowKey="#{purposeType.id}" paginator="true" rows="10"
+					rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
+					paginatorPosition="bottom">
+					<p:ajax event="rowSelect" update=":form:delete-purposeType-button" />
+					<p:ajax event="rowUnselect"
+						update=":form:delete-purposeType-button" />
+					<p:ajax event="rowSelectCheckbox"
+						update=":form:delete-purposeType-button" />
+					<p:ajax event="rowUnselectCheckbox"
+						update=":form:delete-purposeType-button" />
+					<p:ajax event="toggleSelect"
+						update=":form:delete-purposeType-button" />
+					<f:facet name="header">
+						<div class="flex align-items-center justify-content-between">
+							<h:outputText value="#{interfaceLabel.search} : " />
+							<p:inputText id="globalFilter"
+								onkeyup="PF('dtPurposeType').filter()" style="width:auto;"
+								placeholder="#{interfaceLabel.enterKeyword}" />
+						</div>
+					</f:facet>
+					<p:column selectionMode="multiple" exportable="false"></p:column>
+
+					<p:column headerText="#{interfaceLabel.englishName}"
+						sortBy="#{purposeType.englishName}"
+						filterBy="#{purposeType.englishName}">
+						<h:outputText value="#{purposeType.englishName}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.code}"
+						sortBy="#{purposeType.code}" filterBy="#{purposeType.code}">
+						<h:outputText value="#{purposeType.code}" />
+					</p:column>
+
+					<p:column exportable="false" width="20">
+						<p:commandButton icon="pi pi-pencil"
+							update=":form:outputPanel-content"
+							oncomplete="PF('widgetVarDetailDialog').show()" process="@this">
+							<f:setPropertyActionListener value="#{purposeType}"
+								target="#{codingPurposeTypeBean.purposeType}" />
+							<p:resetInput target=":form:outputPanel-content" />
+						</p:commandButton>
+					</p:column>
+					<p:column exportable="false" width="20">
+						<p:commandButton styleClass="ui-button-danger" icon="pi pi-trash"
+							process="@this" oncomplete="PF('widgetVarDeleteDialog').show()">
+							<f:setPropertyActionListener value="#{purposeType}"
+								target="#{codingPurposeTypeBean.purposeType}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dialog
+					header="#{interfaceLabel.details} #{interfaceLabel.purposeType}"
+					showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog"
+					responsive="true">
+					<p:outputPanel id="outputPanel-content" class="ui-fluid">
+						<p:outputPanel
+							rendered="#{not empty codingPurposeTypeBean.purposeType}">
+							<div class="p-field">
+								<p:outputLabel for="arabicName">#{interfaceLabel.arabicName}</p:outputLabel>
+								<p:inputText id="arabicName"
+									value="#{codingPurposeTypeBean.purposeType.arabicName}"
+									required="true"
+									requiredMessage="#{interfaceLabel.arabicName}  #{errorLabel.validateInput}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel for="englishName">#{interfaceLabel.englishName}</p:outputLabel>
+								<p:inputText id="englishName"
+									value="#{codingPurposeTypeBean.purposeType.englishName}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel for="code">#{interfaceLabel.code}</p:outputLabel>
+								<p:inputText id="code"
+									value="#{codingPurposeTypeBean.purposeType.code}" />
+							</div>
+
+						</p:outputPanel>
+					</p:outputPanel>
+					<f:facet name="footer">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+							actionListener="#{codingPurposeTypeBean.save}"
+							update=":form:outputPanel-content :form:dataTable-purposeType"
+							process="outputPanel-content @this" />
+						<p:commandButton value="#{interfaceLabel.cancel}"
+							icon="pi pi-times" onclick="PF('widgetVarDetailDialog').hide()"
+							class="ui-button-secondary" />
+					</f:facet>
+				</p:dialog>
+
+				<p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
+					width="300" message="#{interfaceLabel.deleteSelectedPurposeType}"
+					header="#{interfaceLabel.confirmation}" severity="warn">
+					<p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+						actionListener="#{codingPurposeTypeBean.deletePurposeType()}"
+						process="@this" oncomplete="PF('widgetVarDeleteDialog').hide()" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-button-secondary" icon="pi pi-times"
+						onclick="PF('widgetVarDeleteDialog').hide()" />
+				</p:confirmDialog>
+				<p:confirmDialog global="true" showEffect="fade" width="300">
+					<p:commandButton value="#{interfaceLabel.yes}" type="button"
+						styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-confirmdialog-no ui-button-secondary"
+						icon="pi pi-times" />
+				</p:confirmDialog>
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

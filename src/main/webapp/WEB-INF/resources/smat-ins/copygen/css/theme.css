@@ -1,0 +1,154 @@
+/*!
+ * Theme: Default
+ * Package: CopyGen
+ * Version: 1.3.0
+ * Author: Softnio
+ * Author URI: http://themeforest.net/user/softnio
+**/
+/** WRITE YOUR OWN STYLE **/
+
+.text-smat {
+	color: #826539 !important;
+}
+
+.btn-smat{
+	background-color: #826539;
+	border-color:#826539;
+	color:#fff;
+}
+
+.btn-smat:hover{
+	background-color: #C7A370 !important;
+	border-color:#C7A370 !important;
+	color:#fff;
+}
+
+.card-smat{
+	border-radius: 10px;
+}
+
+.input-text-smat{
+	color: #816438 !important;
+	background-color: #fff !important;
+	border-color: #816439 !important;
+	outline: 0 !important;
+	
+}
+
+.input-text-smat:focus{
+	color: #816438 !important;
+	background-color: #fff !important;
+	border-color: #816439 !important;
+	outline: 0 !important;
+	box-shadow: 0 0 0 .25rem rgba(129,129,57,.25) !important;
+}
+
+.card {
+  background: #ffffff !important;
+  padding: 2rem !important;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 1px 3px 0 rgba(0,0,0,.12) !important;
+  border-radius: 4px !important;
+  margin-bottom: 2rem !important;
+}
+
+body .ui-datatable .ui-datatable-header {
+	background: none !important;
+	border: 1px solid #e9ecef;
+	border-width: 1px 0 1px 0;
+	color: #495057;
+	padding: 1rem 1rem;
+	font-weight: 600;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+.smt-text{
+	display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: auto;
+    white-space: nowrap;
+    padding: 2px;
+}
+
+body .ui-widget-overlay {
+	background: rgba(0,0,0,.4);
+	
+}
+
+body .ui-chkbox .ui-chkbox-box .ui-chkbox-icon {
+	overflow: visible !important;
+	position: absolute !important;
+	left: 50% !important;
+	top: 50% !important;
+	margin-left: -0.5rem !important;
+	margin-top: -0.8rem !important;
+}
+
+body .ui-datascroller .ui-datascroller-content {
+	border: 0px solid #dee2e6 !important;
+    background: none !important;
+	color: #495057 !important;
+	padding: 1rem !important;
+}
+
+body .ui-datatable thead th .ui-column-title {
+	font-weight: 700;
+	vertical-align: middle;
+	font-size: 0.9rem !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: auto;
+    white-space: nowrap;
+  
+}
+
+body .ui-datatable .ui-datatable-data > tr > td {
+	padding: 1rem 1rem;
+	border: 1px solid rgba(0,0,0,.08);
+	border-width: 0 0 1px 0;
+	font-size: 0.95rem;
+	font-weight: lighter;
+	text-overflow: ellipsis;
+    overflow: hidden;
+    width: auto;
+    white-space: nowrap;
+    
+}
+
+body .ui-widget {
+	font-family: 'Jozoor',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+	font-size: 0.8rem !important;
+	text-decoration: none;
+}
+
+.first-layer{
+	z-index:505;
+}
+
+.second-layer{
+	z-index:504;
+}
+
+.top-layer{
+	z-index:506;
+}
+.ui-overlay-badge{
+	margin-bottom: 12px !important;
+}
+
+body .ui-inputfield {
+
+	font-size: 0.85rem !important;
+	font-weight: lighter;
+	text-overflow: ellipsis;
+    overflow: hidden;
+    width: auto;
+    white-space: nowrap;
+
+}
+
+body .ui-widget-overlay {
+	z-index:503 !important;
+}
+

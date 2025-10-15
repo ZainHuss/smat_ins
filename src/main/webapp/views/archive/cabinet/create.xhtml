@@ -1,0 +1,415 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="section-head">
+        #{interfaceLabel.create} <span class="subitem">#{interfaceLabel.cabinet}</span>
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+		<h:outputScript library="#{appSetting.resourceLib}"
+			name="script/primefaces-rtl-tree.js"></h:outputScript>
+		<script type="text/javascript">
+		   function resetFilterSearch(){
+			   PF('widgetVar_selectUserAlias').filter(); 
+			   $('[id$=selectOneMenu_userAlias_filter]').val('');
+               return false;
+			}
+		</script>
+	</ui:define>
+	<ui:define name="toolbar">
+		<p:commandLink id="cabinetView" value="" action="pretty:cabinets/view"
+			ajax="true" process="@this"
+			title="#{interfaceLabel.view} #{interfaceLabel.cabinets}">
+			<i class="pi pi-server" style="font-size: 2rem"></i>
+		</p:commandLink>
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+	</ui:define>
+	<ui:define name="section-content">
+		<h:form id="form">
+			<p:growl id="messages" showDetail="true" showSummary="false" />
+			<p:card style="width: 100%; margin:0em">
+				<p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+						style="border:0px none; background-color:transparent;">
+						<p:divider align="center" type="dashed">
+							<div class="inline-flex align-items-center"
+								style="color: #2196F3; font-weight: bolder; font-style: italic;">
+								<i class="pi pi-user mr-2" /> <b>#{interfaceLabel.info}
+									#{interfaceLabel.cabinet}</b>
+							</div>
+						</p:divider>
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="@next"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.cabinetType}</p:outputLabel>
+							<p:selectOneMenu value="#{cabinetBean.cabinet.cabinetType}"
+								converter="omnifaces.SelectItemsIndexConverter"
+								style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;">
+								<p:ajax listener="#{cabinetBean.updateCabinetCode()}"
+									update="@([id$=cabinetCode],[id$=selectOneMenu_userAlias],[id$=selectOneMenu_cabinetType],[id$=commandButton_organization])"></p:ajax>
+								<f:selectItems itemLabel="#{cabinetType.name}"
+									itemValue="#{cabinetType}" var="cabinetType"
+									value="#{cabinetBean.cabinetTypeList}" />
+							</p:selectOneMenu>
+                            
+							<p:outputLabel for="@next"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.cabinetLocation}</p:outputLabel>
+							<p:selectOneMenu value="#{cabinetBean.cabinet.cabinetLocation}"
+								converter="omnifaces.SelectItemsIndexConverter"
+								style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;">
+								<f:selectItems itemLabel="#{cabinetLocation.location}"
+									itemValue="#{cabinetLocation}" var="cabinetLocation"
+									value="#{cabinetBean.cabinetLocationList}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.arabicName}" />
+							<p:inputText
+								style="background-color:#EEF7FE;color:black;font-weight:bolder;font-style:italic;"
+								value="#{cabinetBean.cabinet.arabicName}"></p:inputText>
+
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.englishName}" />
+							<p:inputText
+								style="background-color:#EEF7FE;color:black;font-weight:bolder;font-style:italic;"
+								value="#{cabinetBean.cabinet.englishName}"></p:inputText>
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.arabicDescription}" />
+							<p:inputTextarea value="#{cabinetBean.cabinet.arabicDescription}"
+								rows="3"
+								style="background-color:#EEF7FE;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.englishDescription}" />
+							<p:inputTextarea
+								value="#{cabinetBean.cabinet.englishDescription}" rows="3"
+								style="background-color:#EEF7FE;color:black;font-weight:bolder;font-style:italic;"></p:inputTextarea>
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.code}" />
+							<p:inputText id="cabinetCode" disabled="true" readonly="true"
+								style="background-color:#F0F0F0;color:black;font-weight:bolder;font-style:italic;"
+								value="#{cabinetBean.cabinet.code}"></p:inputText>
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.choose}" />
+							<p:selectOneMenu id="selectOneMenu_cabinetType" value="#{cabinetBean.val}" disabled="#{cabinetBean.cabinet.cabinetType.code eq '01'}"
+								style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;">
+								<p:ajax listener="#{cabinetBean.displayPanel()}"
+									update="@([id$=outputLabel_userAlias],[id$=selectOneMenu_userAlias],[id$=outputLabel_organization],[id$=inputText_organization],[id$=commandButton_organization])"></p:ajax>
+								<f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="1" />
+								<f:selectItem itemLabel="#{interfaceLabel.jobPositionTitle}"
+									itemValue="2" />
+								<f:selectItem itemLabel="#{interfaceLabel.organization}"
+									itemValue="3" />
+							</p:selectOneMenu>
+
+
+
+							<p:outputLabel id="outputLabel_userAlias"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.jobPositionTitle}</p:outputLabel>
+							<p:selectOneMenu id="selectOneMenu_userAlias" widgetVar="widgetVar_selectUserAlias"
+								value="#{cabinetBean.cabinet.userAlias}" onblur="resetFilterSearch();"
+								converter="omnifaces.SelectItemsIndexConverter"
+								disabled="#{cabinetBean.userAliasBool or cabinetBean.cabinet.cabinetType.code eq '01'}" dynamic="true" filter="true" filterMatchMode="contains" filterPlaceholder="#{interfaceLabel.search}"
+								style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;">
+								<f:selectItems
+									itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+									itemValue="#{userAlias}" var="userAlias"
+									value="#{cabinetBean.allUserAliasList}" />
+								<p:column style="width:10%">
+									<span class="pi pi-user"
+										style="width: 30px; height: 20px" />
+								</p:column>
+
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="#{interfaceLabel.displayName}" />
+									</f:facet>
+									<h:outputText value="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}" />
+								</p:column>
+
+								<f:facet name="footer">
+									<h:outputText
+										value="#{interfaceLabel.fullSize} : #{cabinetBean.allUserAliasList.size()} "
+										style="font-weight:bold;" styleClass="py-1 block" />
+								</f:facet>
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:panelGrid columns="3"
+							columnClasses="ui-grid-col-3,ui-grid-col-8,ui-grid-col-1"
+							layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel id="outputLabel_organization"
+								style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.organization}</p:outputLabel>
+							<p:inputText id="inputText_organization" style="color:blue;"
+								readonly="true" disabled="true"
+								value="#{cabinetBean.organization.name}"></p:inputText>
+							<p:commandButton id="commandButton_organization"
+								icon="pi pi-search" disabled="#{cabinetBean.organizationBool or cabinetBean.cabinet.cabinetType.code eq '01'}"
+								styleClass="rounded-button ui-button-info ui-button-outlined"
+								onclick="PF('organizationVar').show(); return false;"
+								ajax="true" title="#{interfaceLabel.add}"></p:commandButton>
+						</p:panelGrid>
+					</p:panelGrid>
+
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+						style="border:0px none; background-color:transparent;">
+						<p:divider align="center" type="dashed">
+							<div class="inline-flex align-items-center"
+								style="color: red; font-weight: bolder; font-style: italic;">
+								<i class="pi pi-user mr-2" /> <b>#{interfaceLabel.info}
+									#{interfaceLabel.drawers}</b>
+							</div>
+						</p:divider>
+
+						<p:panelGrid columns="1" layout="grid"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:toolbar id="toolbar">
+								<f:facet name="left">
+									<p:commandButton
+										value="#{interfaceLabel.add} #{interfaceLabel.drawer}"
+										icon="pi pi-plus" ajax="true" process="@this"
+										action="#{cabinetBean.openNewCabinetDefinition()}"
+										update=":form:manage-cabinetDefinition-content"
+										oncomplete="PF('manageCabinetDefinitionDialog').show()"
+										styleClass="ui-button-raised ui-button-success ui-button-flat">
+									</p:commandButton>
+								</f:facet>
+							</p:toolbar>
+
+
+							<p:dataTable id="dt-cabinetDefinition"
+								widgetVar="cabinetDefinition-widgetVar" var="cabinetDefinition"
+								value="#{cabinetBean.cabinetDefinitionList}" reflow="true"
+								styleClass="products-table" resizeMode="fit"
+								rowKey="#{cabinetDefinition.id}" paginator="true" rows="6"
+								emptyMessage="#{interfaceLabel.noRecordsFound}"
+								paginatorPosition="bottom">
+								<p:column headerText="#{interfaceLabel.arabicName}">
+									<h:outputText value="#{cabinetDefinition.drawerArabicName}" />
+								</p:column>
+
+								<p:column headerText="#{interfaceLabel.englishName}">
+									<h:outputText value="#{cabinetDefinition.drawerEnglishName}" />
+								</p:column>
+
+								<p:column headerText="#{interfaceLabel.drawerOrder}">
+									<h:outputText value="#{cabinetDefinition.drawerOrder}" />
+								</p:column>
+								<p:column width="20">
+									<p:commandButton
+										styleClass="rounded-button ui-button-success ui-button-flat"
+										icon="pi pi-check-square" title="#{interfaceLabel.edit}"
+										action="#{cabinetBean.assignCabinetDefinition(cabinetDefinition)}"
+										update=":form:manage-cabinetDefinition-content"
+										oncomplete="PF('manageCabinetDefinitionDialog').show()"
+										process="@this" ajax="true"></p:commandButton>
+								</p:column>
+								<p:column width="20">
+									<p:commandButton
+										styleClass="rounded-button ui-button-danger ui-button-flat"
+										icon="pi pi-trash" title="#{interfaceLabel.delete}"
+										process="@this" update=":form:dt-cabinetDefinition"
+										action="#{cabinetBean.removeCabinetDefinition(cabinetDefinition)}"></p:commandButton>
+								</p:column>
+							</p:dataTable>
+
+						</p:panelGrid>
+
+
+						<p:panelGrid columns="2" layout="flex"
+							columnClasses="col-4 md:col-5 xl:col-6, col-4 md:col-5 xl:col-6"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-save"
+								action="#{cabinetBean.save()}" ajax="true"
+								update=":form:messages"
+								style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} "
+								styleClass="rounded-button ui-button-primary ui-button-raised ui-button-flat" />
+
+							<p:commandButton value="#{interfaceLabel.back}" ajax="true"
+								process="@this"
+								styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+								action="pretty:cabinets/view" icon="pi pi-undo" />
+
+						</p:panelGrid>
+					</p:panelGrid>
+
+
+				</p:panelGrid>
+			</p:card>
+			<p:scrollTop />
+
+
+			<p:dialog header="#{interfaceLabel.selectOrganization}"
+				closable="true" closeOnEscape="true"
+				dir="#{app.locale.rtl ? 'rtl':'ltr'}" showHeader="true"
+				dynamic="true" blockScroll="true" appendTo="@(body)" width="40%"
+				widgetVar="organizationVar" showEffect="fade" modal="true"
+				responsive="true">
+				<style>
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+</style>
+				<h:form id="form_organizations">
+					<p:divider />
+
+					<div class="p-grid">
+						<div class="p-col-12">
+							<p:scrollPanel
+								style="border:dashed;border-color:#B9CEF2;width: auto; height: 85%"
+								mode="native">
+								<p:tree id="tree_organizations" value="#{organizationBean.root}"
+									highlight="true" animate="true" selectionMode="single"
+									selection="#{organizationBean.selectedNode}"
+									widgetVar="treeWidgetVar" var="node" cache="false"
+									dynamic="true">
+									<p:ajax event="expand"
+										oncomplete="reverseTreeChildExpandedIcon();"
+										listener="#{organizationBean.onNodeExpand}" />
+									<p:ajax event="collapse"
+										listener="#{organizationBean.onNodeCollapse}" />
+									<p:ajax event="select"
+										listener="#{organizationBean.onNodeSelect}" delay="100" />
+									<p:treeNode>
+										<span> <span
+											style="color: black !important; font-weight: bolder !important;">(#{node.code})</span>
+											#{node.name}
+										</span>
+										<p:spacer width="6px"></p:spacer>
+										<p:commandButton icon="pi pi-check-circle" ajax="true"
+											styleClass="rounded-button ui-button-help ui-button-flat"
+											process="@this"
+											action="#{cabinetBean.selectOrganization(node)}"
+											update="@([id$=inputText_organization])"
+											oncomplete="PF('organizationVar').hide();"></p:commandButton>
+										<p:spacer width="6px"></p:spacer>
+									</p:treeNode>
+								</p:tree>
+								<p:scrollTop target="parent" threshold="20"
+									styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+
+							</p:scrollPanel>
+							<p:blockUI block="form_organizations:tree_organizations"
+								trigger="form_organizations:tree_organizations">
+								<div>
+									<div style="direction: ltr;">Loading</div>
+									<p:graphicImage library="#{appSetting.resourceLib}"
+										name="images/loading.gif" width="48" height="48" />
+								</div>
+							</p:blockUI>
+						</div>
+					</div>
+				</h:form>
+			</p:dialog>
+
+			<p:dialog header="#{interfaceLabel.add} #{interfaceLabel.drawer}"
+				showEffect="fade" widgetVar="manageCabinetDefinitionDialog"
+				closable="true" blockScroll="true" dynamic="true" cache="true"
+				fitViewport="75%" showHeader="true" responsive="true" width="45%"
+				maximizable="true" minimizable="true">
+				<p:divider layout="horizontal" type="dashed" align="center"></p:divider>
+				<p:outputPanel id="manage-cabinetDefinition-content"
+					class="ui-fluid" layout="inline" style="width:100%;height:75%">
+					<p:scrollPanel
+						style="border:dashed;border-color:#B9CEF2;width: auto; height: 85%"
+						mode="native">
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.arabicName}" />
+							<p:inputText
+								style="background-color:#EEF7FE;color:black;font-weight:bolder;font-style:italic;"
+								value="#{cabinetBean.cabinetDefinition.drawerArabicName}"></p:inputText>
+
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.englishName}" />
+							<p:inputText
+								style="background-color:#EEF7FE;color:black;font-weight:bolder;font-style:italic;"
+								value="#{cabinetBean.cabinetDefinition.drawerEnglishName}"></p:inputText>
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.code}" />
+							<p:inputText id="drawerCode" disabled="true" readonly="true"
+								style="background-color:#F0F0F0;color:black;font-weight:bolder;font-style:italic;"
+								value="#{cabinetBean.cabinetDefinition.code}"></p:inputText>
+							<p:outputLabel
+								style="color:black;font-weight:bolder;font-style:italic;"
+								value="#{interfaceLabel.drawerOrder}" />
+							<p:inputText 
+								style="background-color:#EEF7FE;color:black;font-weight:bolder;font-style:italic;"
+								value="#{cabinetBean.cabinetDefinition.drawerOrder}"></p:inputText>
+
+
+
+							<f:facet name="footer">
+								<p:divider type="dashed"></p:divider>
+								<p:panelGrid columns="3"
+									columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-6"
+									layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:commandButton value="#{interfaceLabel.add}"
+										icon="pi pi-plus-circle"
+										styleClass="ui-button-raised ui-button-success ui-button-flat"
+										actionListener="#{cabinetBean.addCabinetDefinition}"
+										update="manage-cabinetDefinition-content :form:dt-cabinetDefinition form:drawerCode"
+										process="manage-cabinetDefinition-content @this" />
+
+									<p:commandButton value="#{interfaceLabel.cancel}"
+										icon="pi pi-times-circle"
+										onclick="PF('manageCabinetDefinitionDialog').hide()"
+										styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+								</p:panelGrid>
+							</f:facet>
+						</p:panelGrid>
+
+					</p:scrollPanel>
+				</p:outputPanel>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

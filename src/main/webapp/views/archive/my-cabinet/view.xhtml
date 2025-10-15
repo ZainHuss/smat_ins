@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.myCabinets} 
+	</ui:define>
+	<ui:define name="toolbar">
+		<p:commandLink id="cabinetAdd" value="" action="pretty:cabinets/add"
+			ajax="true" process="@this"
+			title="#{interfaceLabel.add} #{interfaceLabel.cabinet}">
+			<i class="pi pi-plus-circle" style="font-size: 2rem"></i>
+		</p:commandLink>
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+	</ui:define>
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="section-content">
+		<style>
+.product-item .product-item-content {
+	border: 1px solid var(- -surface-d);
+	border-radius: 3px;
+	margin: .3rem;
+	text-align: center;
+	padding: 2rem 0;
+}
+
+.product-item .product-image {
+	width: 50%;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
+
+.mt-5 {
+	margin-top: 2rem !important;
+}
+
+.mr-2 {
+	margin: 0.5rem !important;
+}
+
+
+</style>
+		<h:form id="form">
+			<div class="product card" >
+				<p:growl id="messages" showDetail="true" />
+				<p:panelGrid columns="3" layout="grid"
+					columnClasses="ui-g-12 ui-md-4 ui-lg-2,ui-g-12 ui-md-6 ui-lg-6,ui-g-12 ui-md-2 ui-lg-1"
+					contentStyleClass="align-items-baseline ui-fluid"
+					style="border:0px none; background-color:transparent;">
+				
+					<p:outputLabel for="@next"
+						style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.jobPositionTitle}</p:outputLabel>
+					<p:selectOneMenu value="#{myCabinetBean.myUserAlias}"
+						converter="omnifaces.SelectItemsIndexConverter"
+						style="background-color:#F8F9FA;color:black;font-weight:bolder;font-style:italic;">
+						<f:selectItems
+							itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+							itemValue="#{userAlias}" var="userAlias"
+							value="#{myCabinetBean.myUserAliasList}" />
+					</p:selectOneMenu>
+					<p:column></p:column>		
+				</p:panelGrid>
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<p:carousel value="#{myCabinetBean.myCabinets}" var="cabinetVar"
+					numVisible="3" numScroll="3"
+					responsiveOptions="#{myCabinetBean.responsiveOptions}">
+					<f:facet name="header">
+
+					</f:facet>
+					<div class="product-item">
+						<div class="product-item-content">
+							<div class="mb-3">
+								<p:graphicImage 
+									name="#{myCabinetBean.imgIcon(cabinetVar.cabinetType)}"
+									width="150" height="121.033" library="smat-ins" />
+							</div>
+							<div>
+								<h4 class="mb-1">#{cabinetVar.name}</h4>
+								<h6 class="mt-0 mb-3">
+									<h:outputText value="#{cabinetVar.description}">
+
+									</h:outputText>
+								</h6>
+								<span
+									class="product-badge status-#{cabinetVar.cabinetType.englishName.toLowerCase()}">#{cabinetVar.code}</span>
+								<div class="mt-5">
+									
+									<p:commandButton  icon="pi pi-search" ajax="true" process="@this"
+									    title="#{interfaceLabel.view} #{interfaceLabel.drawers}"
+										action="pretty:my/cabinets/drawer/view" 
+										actionListener="#{myCabinetBean.assignCabinet(cabinetVar)}"
+										styleClass="rounded-button mr-2" />
+									<p:commandButton type="button" icon="pi pi-star"
+										styleClass="ui-button-success rounded-button mr-2" />
+									<p:commandButton type="button" icon="pi pi-cog"
+										styleClass="ui-button-help rounded-button mr-2" />
+								
+								</div>
+							</div>
+						</div>
+					</div>
+				</p:carousel>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

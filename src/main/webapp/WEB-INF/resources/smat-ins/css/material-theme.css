@@ -1,0 +1,59 @@
+@charset "ISO-8859-1";
+
+
+.ui-sticky {
+        top: 60px !important;
+        z-index:100 !important;
+ }
+
+@media (max-width: 960px) {
+        .ui-sticky {
+            top: 114px !important;
+            z-index:100 !important;
+        }
+    }
+ body .ui-toolbar{
+    border: 0px solid #dee2e6;
+    background: #fff;
+    color: #495057;
+    padding: 1rem;
+    border-radius: 0px;	
+ } 
+.ui-panelgrid.correspondence-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+	{
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+.ui-inputfield {
+	border-left: none !important;
+	border-right: none !important;
+	border-top: none !important;
+}
+
+.ui-inputfield:focus {
+	border-left: none !important;
+	border-right: none !important;
+	border-top: none !important;
+	box-shadow: none !important;
+}
+
+.ui-selectonemenu {
+	border-left: none !important;
+	border-right: none !important;
+	border-top: none !important;
+}
+
+.ui-selectcheckboxmenu-multiple{
+	border-left: none !important;
+	border-right: none !important;
+	border-top: none !important;
+}
+
+body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-multiple-container .ui-selectcheckboxmenu-token {
+	color: #2B579A;
+	font-weight: bold;
+}

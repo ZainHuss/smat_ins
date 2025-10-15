@@ -1,0 +1,261 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+		<div class="row ">
+			<div class="col-lg-9 col-xl-8 col-xxl-7">
+				<h6 class="overline-title ">#{interfaceLabel.view}
+					#{interfaceLabel.storageLocations}</h6>
+			</div>
+		</div>
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="section-content">
+		<style>
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+</style>
+		<h:form id="form">
+			<div class="card">
+				<p:growl id="messages" showDetail="true" />
+				<div class="row">
+					<div class="col-lg-9 col-xl-8 col-xxl-7">
+						<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+							actionListener="#{cabinetLocationBean.openNew}" process="@this"
+							update=":form:outputPanel-content,form:panel_cabinet-location"
+							oncomplete="PF('widgetVarDetailDialog').show()"
+							styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+							style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+							<p:resetInput target=":form:outputPanel-content" />
+						</p:commandButton>
+
+						<p:commandButton id="delete-cabinet-location-button"
+							value="#{cabinetLocationBean.deleteButtonMessage}"
+							icon="pi pi-trash" process="@this" style="width:auto"
+							styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+							actionListener="#{cabinetLocationBean.deleteSelectedCabinetLocation()}"
+							disabled="#{!cabinetLocationBean.hasSelectedCabinetLocation()}"
+							update="@this">
+							<p:confirm header="#{interfaceLabel.confirmation}"
+								message="#{interfaceLabel.deleteSelectedCabinetLocation}"
+								icon="pi pi-exclamation-triangle" />
+						</p:commandButton>
+					</div>
+				</div>
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<div class="p-grid">
+					<div class="p-col-12">
+						<p:scrollPanel id="panel_cabinet-location"
+							style="border:dashed;border-color:#B9CEF2;width: auto; height: 85%"
+							mode="native">
+							<div class="row">
+								<div class="col-lg-2 col-xl-3 col-xxl-2">
+									<h:outputText value="#{interfaceLabel.defaultLocationStorage}"
+										styleClass="smt-text"
+										title="#{interfaceLabel.defaultLocationStorage}" />
+								</div>
+								<div class="col-lg-2 col-xl-3 col-xxl-2">
+								    <h:outputText value="#{interfaceLabel.winLocaltion}" />
+									<p:inputText title="#{interfaceLabel.winLocaltion}"
+										value="#{cabinetLocationBean.defaultCabinetLocation.winLocation}"
+										style="background-color:#FFF0F5;border-bottom-color:black;color:black;width:100%;"
+										disabled="#{!cabinetLocationBean.defaultCabinetLocation.isEditMode}"
+										readonly="#{!cabinetLocationBean.defaultCabinetLocation.isEditMode}"></p:inputText>
+								</div>
+								<div class="col-lg-2 col-xl-2 col-xxl-2">
+								    <h:outputText value="#{interfaceLabel.linuxLocation}" />
+									<p:inputText title="#{interfaceLabel.linuxLocation}"
+										value="#{cabinetLocationBean.defaultCabinetLocation.linuxLocation}"
+										style="background-color:#FFF0F5;border-bottom-color:black;color:black;width:100%;"
+										disabled="#{!cabinetLocationBean.defaultCabinetLocation.isEditMode}"
+										readonly="#{!cabinetLocationBean.defaultCabinetLocation.isEditMode}"></p:inputText>
+								</div>
+								<div class="col-lg-2 col-xl-2 col-xxl-2">
+								    <h:outputText value="#{interfaceLabel.macLocation}" />
+									<p:inputText title="#{interfaceLabel.macLocation}"
+										value="#{cabinetLocationBean.defaultCabinetLocation.macLocation}"
+										style="background-color:#FFF0F5;border-bottom-color:black;color:black;width:100%;"
+										disabled="#{!cabinetLocationBean.defaultCabinetLocation.isEditMode}"
+										readonly="#{!cabinetLocationBean.defaultCabinetLocation.isEditMode}"></p:inputText>
+								</div>
+								<div class="col-lg-4 col-xl-2 col-xxl-4" style="margin-top:15px">
+									<p:commandButton icon="pi pi-check-square"
+										rendered="#{!cabinetLocationBean.defaultCabinetLocation.isEditMode}"
+										actionListener="#{cabinetLocationBean.editDefaultLocation}"
+										process="@this" update="@([id$=panel_cabinet-location])"
+										styleClass="rounded-button ui-button-info ui-button-outlined ui-button-raised ui-button-flat" />
+									<p:spacer width="10px"></p:spacer>
+									<p:commandButton icon="fa fa-save green-color" process="@this"
+										actionListener="#{cabinetLocationBean.doEditDefaultLocation}"
+										update="@([id$=panel_cabinet-location])"
+										rendered="#{cabinetLocationBean.defaultCabinetLocation.isEditMode}"
+										styleClass="rounded-button ui-button-success ui-button-outlined ui-button-raised ui-button-flat">
+										<p:confirm header="#{interfaceLabel.confirmation}"
+											message="#{interfaceLabel.wouldYouContinueAndEditDefultLocation}"
+											icon="pi pi-exclamation-triangle" />
+									</p:commandButton>
+									<p:spacer width="10px"></p:spacer>
+									<p:commandButton icon="pi pi-times-circle" process="@this"
+										actionListener="#{cabinetLocationBean.cancelEditMode}"
+										update="@([id$=panel_cabinet-location])"
+										rendered="#{cabinetLocationBean.defaultCabinetLocation.isEditMode}"
+										styleClass="rounded-button ui-button-danger ui-button-outlined ui-button-raised ui-button-flat" />
+								</div>
+							</div>
+
+							<p:scrollTop target="parent" threshold="20"
+								styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+						</p:scrollPanel>
+
+					</div>
+				</div>
+				<p:dataTable id="dt-cabinet-location" widgetVar="dtCabinetLocation"
+					var="cabinetLocationVar"
+					value="#{cabinetLocationBean.cabinetLocations}" reflow="true"
+					selection="#{cabinetLocationBean.selectedCabinetLocations}"
+					styleClass="products-table" multiViewState="true" lazy="false"
+					globalFilterOnly="true" rowKey="#{cabinetLocationVar.id}"
+					paginator="true" rows="10"
+					emptyMessage="#{interfaceLabel.noRecordsFound}"
+					paginatorPosition="bottom">
+					<p:ajax event="rowSelect"
+						update=":form:delete-cabinet-location-button" />
+					<p:ajax event="rowUnselect"
+						update=":form:delete-cabinet-location-button" />
+					<p:ajax event="rowSelectCheckbox"
+						update=":form:delete-cabinet-location-button" />
+					<p:ajax event="rowUnselectCheckbox"
+						update=":form:delete-cabinet-location-button" />
+					<p:ajax event="toggleSelect"
+						update=":form:delete-cabinet-location-button" />
+					<f:facet name="header">
+						<div class="flex align-items-center justify-content-between">
+							<h:outputText value="#{interfaceLabel.search} : " />
+							<p:inputText id="globalFilter"
+								onkeyup="PF('dtCabinetLocation').filter()" style="width:auto"
+								placeholder="#{interfaceLabel.enterKeyword}" />
+						</div>
+					</f:facet>
+					<p:column selectionMode="multiple" exportable="false"
+						style="width:30px;"></p:column>
+					<p:column headerText="#{interfaceLabel.winLocaltion}"
+						sortBy="#{cabinetLocationVar.winLocation}"
+						filterBy="#{cabinetLocationVar.winLocation}"
+						filterMatchMode="contains">
+						<h:outputText value="#{cabinetLocationVar.winLocation}"
+							style="font-weight:bolder;font-style:italic;color:#2195F2;" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.linuxLocation}"
+						sortBy="#{cabinetLocationVar.linuxLocation}"
+						filterBy="#{cabinetLocationVar.linuxLocation}"
+						filterMatchMode="contains">
+						<h:outputText value="#{cabinetLocationVar.linuxLocation}"
+							style="font-weight:bolder;font-style:italic;color:#2195F2;" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.macLocation}"
+						sortBy="#{cabinetLocationVar.macLocation}"
+						filterBy="#{cabinetLocationVar.macLocation}"
+						filterMatchMode="contains">
+						<h:outputText value="#{cabinetLocationVar.macLocation}"
+							style="font-weight:bolder;font-style:italic;color:#2195F2;" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.creatorUser}"
+						sortBy="#{cabinetLocationVar.sysUser.displayName}"
+						filterBy="#{cabinetLocationVar.sysUser.displayName}"
+						filterMatchMode="contains">
+						<h:outputText value="#{cabinetLocationVar.sysUser.displayName}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.creatorDate}"
+						sortBy="#{cabinetLocationVar.createdDate}"
+						filterBy="#{cabinetLocationVar.createdDate}"
+						filterMatchMode="contains">
+						<h:outputText value="#{cabinetLocationVar.createdDate}" />
+					</p:column>
+				</p:dataTable>
+				<p:dialog
+					header="#{interfaceLabel.details} #{interfaceLabel.locationStorage}"
+					showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog"
+					responsive="true">
+					<p:outputPanel id="outputPanel-content" class="ui-fluid">
+						<p:outputPanel
+							rendered="#{not empty cabinetLocationBean.cabinetLocation}">
+							<div class="p-field">
+								<p:outputLabel for="cabinetLocation">#{interfaceLabel.winLocaltion}</p:outputLabel>
+								<p:inputText id="cabinetLocation"
+									value="#{cabinetLocationBean.cabinetLocation.winLocation}"
+									required="true"
+									requiredMessage="#{interfaceLabel.winLocaltion}  #{errorLabel.validateInput}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel>#{interfaceLabel.linuxLocation}</p:outputLabel>
+								<p:inputText
+									value="#{cabinetLocationBean.cabinetLocation.linuxLocation}"
+									required="true"
+									requiredMessage="#{interfaceLabel.linuxLocation}  #{errorLabel.validateInput}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel>#{interfaceLabel.macLocation}</p:outputLabel>
+								<p:inputText
+									value="#{cabinetLocationBean.cabinetLocation.macLocation}"
+									required="true"
+									requiredMessage="#{interfaceLabel.macLocation}  #{errorLabel.validateInput}" />
+							</div>
+
+						</p:outputPanel>
+					</p:outputPanel>
+					<f:facet name="footer">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+							actionListener="#{cabinetLocationBean.save}"
+							update=":form:outputPanel-content :form:dt-cabinet-location"
+							styleClass="ui-button-raised ui-button-info ui-button-flat"
+							process="outputPanel-content @this" />
+						<p:commandButton value="#{interfaceLabel.cancel}"
+							icon="pi pi-times" onclick="PF('widgetVarDetailDialog').hide()"
+							styleClass="ui-button-raised ui-button-danger ui-button-flat" />
+					</f:facet>
+				</p:dialog>
+
+				<p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
+					width="300"
+					message="#{interfaceLabel.deleteSelectedCabinetLocation}"
+					header="#{interfaceLabel.confirmation}" severity="warn">
+					<p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+						actionListener="#{cabinetLocationBean.deleteCabinetLocation()}"
+						process="@this" oncomplete="PF('widgetVarDeleteDialog').hide()" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-button-secondary" icon="pi pi-times"
+						onclick="PF('widgetVarDeleteDialog').hide()" />
+				</p:confirmDialog>
+				<p:confirmDialog global="true" showEffect="fade" width="300">
+					<p:commandButton value="#{interfaceLabel.yes}" type="button"
+						styleClass="ui-button-raised ui-button-info ui-button-flat ui-confirmdialog-yes"
+						icon="pi pi-check-circle" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-button-raised ui-button-danger ui-button-flat ui-confirmdialog-no ui-button-secondary"
+						icon="pi pi-times-circle" />
+				</p:confirmDialog>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

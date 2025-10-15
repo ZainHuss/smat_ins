@@ -1,0 +1,189 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.cabinets} 
+	</ui:define>
+	<ui:define name="toolbar">
+		<p:commandLink id="cabinetAdd" value="" action="pretty:cabinets/add"
+			ajax="true" process="@this"
+			title="#{interfaceLabel.add} #{interfaceLabel.cabinet}">
+			<i class="pi pi-plus-circle" style="font-size: 2rem"></i>
+		</p:commandLink>
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+	</ui:define>
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="section-content">
+		<style>
+.product-item .product-item-content {
+	border: 1px solid var(- -surface-d);
+	border-radius: 3px;
+	margin: .3rem;
+	text-align: center;
+	padding: 2rem 0;
+}
+
+.product-item .product-image {
+	
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
+
+.mt-5 {
+	margin-top: 2rem !important;
+}
+
+.mr-2 {
+	margin: 0.5rem !important;
+}
+
+.ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+
+.product .product-grid-item img {
+	box-shadow: none !important;
+}
+
+.product .product-list-item img {
+	box-shadow: none !important;
+}
+
+.product .product-list-item .product-price {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: .5rem;
+	margin-top: .5rem;
+	align-self: center;
+}
+</style>
+		<h:form id="form">
+			<div class="product card">
+				<p:growl id="messages" showDetail="true" />
+				<div class="row">
+					<div class="col-lg-9 col-xl-8 col-xxl-7">
+						<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+							process="@this" action="pretty:cabinets/add"
+							styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+							style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+						</p:commandButton>
+
+						<p:commandButton id="delete-cabinet-button"
+							value="#{sysUserBean.deleteButtonMessage}" icon="pi pi-trash"
+							styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+							actionListener="#{sysUserBean.deleteSelectedSysUsers()}"
+							disabled="#{!sysUserBean.hasSelectedSysUsers()}" update="@this">
+							<p:confirm header="#{interfaceLabel.confirmation}"
+								message="#{interfaceLabel.deleteSelectedUsers}"
+								icon="pi pi-exclamation-triangle" />
+						</p:commandButton>
+					</div>
+				</div>
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<p:dataView var="cabinetVar" value="#{cabinetBean.cabinetList}"
+					rows="6" paginator="true" 
+					widgetVar="dv-cbinets" 
+					emptyMessage="#{interfaceLabel.noRecordsFound}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+					gridIcon="pi pi-th-large" listIcon="pi pi-bars" layout="grid"
+					gridRowStyleClass="col-xl-6 col-xxl-4"  flex="true">
+
+					<p:dataViewGridItem >
+						<div class="product-grid-item card border-1" >
+							<div class="product-grid-item-top" >
+								<div>
+									<i class="pi pi-tag product-category-icon" /> <span
+										class="product-category">#{cabinetVar.cabinetType.name}</span>
+								</div>
+								<span
+									class="product-badge status-#{cabinetVar.cabinetType.englishName.toLowerCase()}">#{cabinetVar.code}</span>
+							</div>
+							<div class="product-grid-item-content">
+								<p:graphicImage style="width:auto;"
+									name="#{cabinetBean.imgIcon(cabinetVar.cabinetType)}"
+									width="347" height="280" library="smat-ins" />
+								<div class="product-name">#{cabinetVar.name}</div>
+								<div class="product-description">#{cabinetVar.description}</div>
+
+							</div>
+							<div class="product-grid-item-bottom">
+								<h:outputText
+									value="#{interfaceLabel.theNumber}: #{cabinetVar.cabinetDefinitions.size()}  - #{interfaceLabel.drawers}"
+									styleClass="product-price">
+
+								</h:outputText>
+								<p:commandButton value="#{interfaceLabel.edit}"
+									style="width:auto;" icon="pi pi-plus-circle"
+									action="pretty:cabinets/add"
+									actionListener="#{cabinetBean.assignCabinet(cabinetVar)}"
+									styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat">
+								</p:commandButton>
+							</div>
+						</div>
+					</p:dataViewGridItem>
+
+					<p:dataViewListItem >
+						<div class="product-list-item">
+							<p:graphicImage
+								name="#{cabinetBean.imgIcon(cabinetVar.cabinetType)}"
+								width="150" height="121.033" library="smat-ins" />
+							<div class="product-list-detail">
+								<div class="product-name">#{cabinetVar.name}</div>
+								<div class="product-description">#{cabinetVar.description}</div>
+
+								<i class="pi pi-tag product-category-icon" /><span
+									class="product-category">#{cabinetVar.cabinetType.name}</span>
+							</div>
+							<div class="product-list-action">
+								<span
+									class="product-badge status-#{cabinetVar.cabinetType.englishName.toLowerCase()}">#{cabinetVar.code}</span>
+								<h:outputText
+									value="#{interfaceLabel.theNumber}: #{cabinetVar.cabinetDefinitions.size()}  - #{interfaceLabel.drawers}"
+									styleClass="product-price">
+
+								</h:outputText>
+								<p:commandButton value="#{interfaceLabel.edit}"
+									style="width:auto;" icon="pi pi-plus-circle"
+									action="pretty:cabinets/add"
+									actionListener="#{cabinetBean.assignCabinet(cabinetVar)}"
+									styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat">
+								</p:commandButton>
+							</div>
+						</div>
+					</p:dataViewListItem>
+				</p:dataView>
+			</div>
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

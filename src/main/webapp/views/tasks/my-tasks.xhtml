@@ -1,0 +1,937 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:o="http://omnifaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:of="http://omnifaces.org/functions"
+    template="/views/mail/mail-template.xhtml">
+
+    <ui:define name="head">
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+            name="css/material-theme.css"></h:outputStylesheet>
+        
+        <!-- استيراد خطوط Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+        
+        <style>
+            /* تحسين الخطوط العامة */
+            body {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                line-height: 1.6;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                font-weight: 600;
+            }
+            
+            /* Vibrant CSS Variables - محسّنة */
+            :root {
+                --primary-color: #4361ee;
+                --primary-hover: #3a56d4;
+                --primary-active: #2f46b9;
+                --secondary-color: #06d6a0;
+                --accent-color: #ff9e00;
+                --danger-color: #ef476f;
+                --info-color: #118ab2;
+                --light-color: #f8f9fa;
+                --dark-color: #212529;
+                --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --task-header-bg: var(--primary-color);
+                --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+                --box-shadow-medium: 0 10px 25px rgba(0, 0, 0, 0.1);
+                --box-shadow-dark: 0 20px 40px rgba(0, 0, 0, 0.15);
+                --text-color: #4a5568;
+                --text-dark: #2d3748;
+                --border-color: #e2e8f0;
+                --success-color: #06d6a0;
+                --warning-color: #ffd166;
+                --card-radius: 16px;
+                --element-radius: 10px;
+                --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            }
+            
+            /* Animation Styles - محسّنة */
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-5px); }
+                100% { transform: translateY(0px); }
+            }
+            
+            /* Task Container */
+            .task-container {
+                animation: fadeInUp 0.6s ease-out;
+            }
+            
+            /* Task Card - تصميم محسّن ومصغّر */
+            .task-card {
+                transition: var(--transition-smooth);
+                border-radius: var(--card-radius);
+                box-shadow: var(--box-shadow-light);
+                margin-bottom: 1.5rem;
+                background: white;
+                overflow: hidden;
+                border: none;
+                position: relative;
+                border-left: 4px solid var(--task-header-bg);
+            }
+            
+            .task-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--box-shadow-medium);
+                border-left: 4px solid var(--accent-color);
+            }
+            
+            /* Task Header - تصميم محسّن ومصغّر */
+            .task-header {
+                padding: 1rem 1.5rem;
+                border-radius: var(--card-radius) var(--card-radius) 0 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: var(--task-header-bg);
+                color: white;
+                position: relative;
+                background: linear-gradient(105deg, var(--task-header-bg) 0%, #5f6ef7 100%);
+            }
+            
+            /* Task Content - تصميم محسّن ومصغّر */
+            .task-content {
+                padding: 1.5rem;
+                background: white;
+            }
+            
+            /* Task Footer - تصميم محسّن ومصغّر */
+            .task-footer {
+                padding: 1rem 1.5rem;
+                background-color: var(--light-color);
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-radius: 0 0 var(--card-radius) var(--card-radius);
+            }
+            
+            /* Badges - تصميم محسّن ومصغّر */
+            .task-badge {
+                background: rgba(255, 255, 255, 0.25);
+                border-radius: 100px;
+                padding: 0.4rem 1rem;
+                color: white;
+                font-weight: 600;
+                font-size: 0.8rem;
+                letter-spacing: 0.5px;
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                font-family: 'Inter', sans-serif;
+            }
+            
+            .task-type-badge {
+                background-color: rgba(255, 255, 255, 0.3);
+                color: white;
+                padding: 0.4rem 0.8rem;
+                border-radius: 100px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                font-family: 'Inter', sans-serif;
+            }
+            
+            /* Empty State - تصميم محسّن */
+            .empty-state {
+                text-align: center;
+                padding: 4rem 2rem;
+                animation: fadeIn 0.8s ease-out;
+                background: white;
+                border-radius: var(--card-radius);
+                margin: 2rem 0;
+                box-shadow: var(--box-shadow-light);
+                border: 1px solid var(--border-color);
+                font-family: 'Inter', sans-serif;
+            }
+            
+            .empty-state img {
+                max-width: 200px;
+                opacity: 0.9;
+                margin-bottom: 1.5rem;
+                filter: drop-shadow(0 8px 15px rgba(0,0,0,0.1));
+                animation: float 4s ease-in-out infinite;
+            }
+            
+            /* Task Info - تصميم محسّن ومصغّر */
+            .task-info-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 1rem;
+                color: var(--text-color);
+                font-size: 0.95rem;
+                font-family: 'Inter', sans-serif;
+            }
+            
+            .task-info-item i {
+                margin-right: 0.8rem;
+                color: var(--primary-color);
+                font-size: 1.1rem;
+                min-width: 24px;
+                text-align: center;
+                background: rgba(67, 97, 238, 0.1);
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .task-info-item strong {
+                margin-right: 0.4rem;
+                color: var(--text-dark);
+                font-weight: 600;
+                font-family: 'Inter', sans-serif;
+            }
+            
+            /* Description - تصميم محسّن ومصغّر */
+            .task-description {
+                color: var(--text-color);
+                margin: 1.5rem 0 1rem;
+                padding: 1rem;
+                background: #f8fafc;
+                border-radius: var(--element-radius);
+                border-left: 3px solid var(--primary-color);
+                font-size: 0.95rem;
+                line-height: 1.6;
+                box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+                font-family: 'Inter', sans-serif;
+            }
+            
+            /* Quick Actions - تصميم محسّن */
+            .quick-actions-panel {
+                margin-top: 3rem;
+                padding: 2rem;
+                background: white;
+                border-radius: var(--card-radius);
+                border: 1px solid var(--border-color);
+                box-shadow: var(--box-shadow-light);
+                background: linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%);
+                font-family: 'Inter', sans-serif;
+            }
+            
+            /* Delay Indicator Styles - تصميم محسّن ومصغّر */
+            .delay-indicator {
+                display: inline-flex;
+                align-items: center;
+                padding: 0.4rem 1rem;
+                border-radius: 100px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                margin-left: 0.8rem;
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                font-family: 'Inter', sans-serif;
+            }
+            
+            .delay-normal {
+                background: rgba(6, 214, 160, 0.15);
+                color: var(--success-color);
+            }
+            
+            .delay-warning {
+                background: rgba(255, 209, 102, 0.15);
+                color: var(--warning-color);
+            }
+            
+            .delay-high {
+                background: rgba(239, 71, 111, 0.15);
+                color: var(--danger-color);
+            }
+            
+            .delay-critical {
+                background: rgba(239, 71, 111, 0.25);
+                color: white;
+                background: linear-gradient(90deg, #ef476f 0%, #ff6b6b 100%);
+            }
+            
+            .delay-icon {
+                margin-right: 0.4rem;
+                font-size: 1rem;
+            }
+            
+            /* Progress Bar - تصميم محسّن ومصغّر */
+            .task-progress-bar {
+                height: 8px;
+                background: #edf2f7;
+                border-radius: 8px;
+                overflow: hidden;
+                margin: 1rem 0 1.5rem;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            }
+            
+            .task-progress {
+                height: 100%;
+                transition: width 0.6s ease;
+                border-radius: 8px;
+            }
+            
+            .progress-normal {
+                background: linear-gradient(90deg, var(--success-color), #48cae4);
+            }
+            
+            .progress-warning {
+                background: linear-gradient(90deg, var(--warning-color), #ff9e00);
+            }
+            
+            .progress-high {
+                background: linear-gradient(90deg, #ff9e00, #ff6d00);
+            }
+            
+            .progress-critical {
+                background: linear-gradient(90deg, var(--danger-color), #ff2d75);
+            }
+            
+            /* Due Date Badge - تصميم محسّن ومصغّر */
+            .due-date-badge {
+                position: absolute;
+                top: 1rem;
+                right: 1.2rem;
+                background: rgba(0, 0, 0, 0.25);
+                border-radius: 100px;
+                padding: 0.4rem 1rem;
+                color: white;
+                font-size: 0.8rem;
+                font-weight: 600;
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                font-family: 'Inter', sans-serif;
+            }
+            
+            /* Header Styles - تصميم محسّن ومصغّر */
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 2rem;
+                padding-bottom: 1.2rem;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: var(--text-dark);
+                margin: 0;
+                display: flex;
+                align-items: center;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+            }
+            
+            .section-title i {
+                margin-right: 0.8rem;
+                color: var(--primary-color);
+                font-size: 1.6rem;
+                background: rgba(67, 97, 238, 0.1);
+                width: 45px;
+                height: 45px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Button Styles - تصميم محسّن ومتناسق */
+            .refresh-button-icon {
+                background: white !important;
+                color: var(--primary-color) !important;
+                border: 2px solid var(--primary-color) !important;
+                border-radius: 50% !important;
+                width: 42px !important;
+                height: 42px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: var(--transition-smooth) !important;
+                font-family: 'Inter', sans-serif !important;
+                box-shadow: 0 4px 6px rgba(67, 97, 238, 0.1) !important;
+                font-size: 1rem !important;
+                padding: 0 !important;
+            }
+            
+            .refresh-button-icon:hover {
+                background: var(--primary-color) !important;
+                color: white !important;
+                transform: translateY(-2px) rotate(90deg) !important;
+                box-shadow: 0 6px 15px rgba(67, 97, 238, 0.25) !important;
+            }
+            
+            .refresh-button {
+                background: white !important;
+                color: var(--primary-color) !important;
+                border: 2px solid var(--primary-color) !important;
+                border-radius: 100px !important;
+                padding: 0.6rem 1.2rem !important;
+                font-weight: 600 !important;
+                transition: var(--transition-smooth) !important;
+                font-family: 'Inter', sans-serif !important;
+                box-shadow: 0 4px 6px rgba(67, 97, 238, 0.1) !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .refresh-button:hover {
+                background: var(--primary-color) !important;
+                color: white !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 15px rgba(67, 97, 238, 0.25) !important;
+            }
+            
+            /* زر Deactivated Tasks - تصميم جديد */
+            .deactivated-tasks-button {
+                background: white !important;
+                color: #6c757d !important;
+                border: 2px solid #6c757d !important;
+                border-radius: 100px !important;
+                padding: 0.6rem 1.2rem !important;
+                font-weight: 600 !important;
+                transition: var(--transition-smooth) !important;
+                font-family: 'Inter', sans-serif !important;
+                box-shadow: 0 4px 6px rgba(108, 117, 125, 0.1) !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .deactivated-tasks-button:hover {
+                background: #6c757d !important;
+                color: white !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 15px rgba(108, 117, 125, 0.25) !important;
+            }
+            
+            .deactivated-tasks-button.active {
+                background: #6c757d !important;
+                color: white !important;
+                border-color: #5a6268 !important;
+            }
+            
+            .quick-action-button {
+                background: white !important;
+                color: var(--text-dark) !important;
+                border: 2px solid var(--border-color) !important;
+                border-radius: 100px !important;
+                padding: 0.6rem 1.2rem !important;
+                font-weight: 600 !important;
+                transition: var(--transition-smooth) !important;
+                font-family: 'Inter', sans-serif !important;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .quick-action-button:hover {
+                border-color: var(--primary-color) !important;
+                color: var(--primary-color) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            .view-button {
+                background: linear-gradient(135deg, var(--accent-color) 0%, #ff9e00 100%) !important;
+                color: white !important;
+                border-radius: 12px !important;
+                width: 42px !important;
+                height: 42px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: none !important;
+                box-shadow: 0 5px 10px rgba(255, 158, 0, 0.2) !important;
+                transition: var(--transition-smooth) !important;
+                cursor: pointer !important;
+                padding: 0 !important;
+            }
+            
+            .view-button:hover {
+                transform: scale(1.08) translateY(-2px) !important;
+                box-shadow: 0 8px 15px rgba(255, 158, 0, 0.3) !important;
+                animation: pulse 1s infinite !important;
+                background: linear-gradient(135deg, #ff9e00 0%, #ff7b00 100%) !important;
+            }
+            
+            .view-button .pi {
+                font-size: 1.2rem !important;
+                transition: transform 0.3s ease !important;
+            }
+            
+            .view-button:hover .pi {
+                transform: scale(1.15) !important;
+            }
+            
+            /* زر Deactivate - تصميم محسّن ومصغّر */
+            .deactivate-tag {
+                background: linear-gradient(135deg, var(--danger-color) 0%, #ff6b6b 100%) !important;
+                color: white !important;
+                border-radius: 100px !important;
+                padding: 0.3rem 0.8rem !important;
+                font-weight: 600 !important;
+                font-size: 0.75rem !important;
+                border: none !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                cursor: pointer !important;
+                transition: var(--transition-smooth) !important;
+                margin-left: 0.8rem !important;
+                font-family: 'Inter', sans-serif !important;
+                box-shadow: 0 3px 6px rgba(239, 71, 111, 0.2) !important;
+                height: 28px !important;
+            }
+        
+            .deactivate-tag:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 5px 10px rgba(239, 71, 111, 0.3) !important;
+                background: linear-gradient(135deg, #ff6b6b 0%, var(--danger-color) 100%) !important;
+            }
+        
+            .deactivate-tag .pi {
+                margin-right: 0.3rem !important;
+                font-size: 0.75rem !important;
+            }
+            
+            /* Select Menu - تصميم محسّن */
+            .ui-selectonemenu {
+                border-radius: 100px !important;
+                border: 2px solid var(--border-color) !important;
+                padding: 0.6rem 1rem !important;
+                font-weight: 500 !important;
+                transition: var(--transition-smooth) !important;
+                font-family: 'Inter', sans-serif !important;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03) !important;
+                font-size: 0.9rem !important;
+                min-width: 220px;
+            }
+            
+            .ui-selectonemenu:hover {
+                border-color: var(--primary-color) !important;
+                box-shadow: 0 6px 12px rgba(67, 97, 238, 0.1) !important;
+            }
+            
+            /* Tag Styles - تصميم محسّن */
+            .ui-tag {
+                border-radius: 100px !important;
+                padding: 0.4rem 1rem !important;
+                font-weight: 600 !important;
+                font-size: 0.85rem !important;
+                font-family: 'Inter', sans-serif !important;
+            }
+            
+            /* Responsive Adjustments - تصميم محسّن */
+            @media (max-width: 768px) {
+                .task-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+            
+                .task-footer {
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: flex-start;
+                }
+                
+                .section-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+                
+                .due-date-badge {
+                    position: static;
+                    margin-top: 0.8rem;
+                    display: inline-block;
+                }
+                
+                .task-controls {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.6rem;
+                }
+                
+                .deactivate-tag {
+                    margin-left: 0 !important;
+                    margin-top: 0.6rem !important;
+                }
+                
+                .section-title {
+                    font-size: 1.6rem;
+                }
+                
+                .section-title i {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1.4rem;
+                }
+                
+                .task-content, .task-header, .task-footer {
+                    padding: 1.2rem;
+                }
+                
+                .quick-actions-panel {
+                    padding: 1.5rem;
+                }
+                
+                .button-group {
+                    flex-direction: column;
+                    gap: 0.6rem;
+                }
+                
+                .task-id-container {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                    gap: 0.5rem;
+                }
+            }
+            
+            /* تأثيرات إضافية للتحسين البصري */
+            .gradient-bg {
+                background: linear-gradient(135deg, #f6f9fc 0%, #edf2f7 100%);
+                min-height: 100vh;
+                padding: 1.5rem 0;
+            }
+            
+            .task-management-form {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1.2rem;
+            }
+            
+            .ml-3 {
+                margin-left: 1rem !important;
+            }
+            
+            .mr-2 {
+                margin-right: 0.6rem !important;
+            }
+            
+            .d-flex {
+                display: flex !important;
+            }
+            
+            .align-items-center {
+                align-items: center !important;
+            }
+            
+            .justify-content-between {
+                justify-content: space-between !important;
+            }
+            
+            .flex-wrap {
+                flex-wrap: wrap !important;
+            }
+            
+            .gap-2 {
+                gap: 0.6rem !important;
+            }
+            
+            .text-center {
+                text-align: center !important;
+            }
+            
+            .mt-3 {
+                margin-top: 1.5rem !important;
+            }
+            
+            .mt-2 {
+                margin-top: 1rem !important;
+            }
+            
+            .mb-2 {
+                margin-bottom: 1rem !important;
+            }
+            
+            .p-4 {
+                padding: 1.5rem !important;
+            }
+            
+            .button-group {
+                display: flex;
+                gap: 0.8rem;
+                align-items: center;
+            }
+            
+            .task-id-container {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="section-content">
+        <div class="gradient-bg">
+            <h:form id="taskForm" styleClass="task-management-form">
+                <div class="card" style="border: none; box-shadow: none; background: transparent;">
+                    <!-- Debug Info -->
+                    <h:outputText value="Debug: Tasks loaded: #{taskManagementBean.activeTasks.size()}" 
+                        style="display:none;" id="debugInfo"/>
+
+                    <!-- Empty State for Active Tasks -->
+                    <h:panelGroup rendered="#{empty taskManagementBean.activeTasks and not taskManagementBean.showDeactivatedTasks}">
+                        <div class="empty-state">
+                            <p:graphicImage library="#{appSetting.resourceLib}"
+                                name="images/empty-tasks.svg" />
+                            <h3 style="color: var(--text-dark); margin: 1.5rem 0 0.8rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                #{interfaceLabel.allYourTasksHaveBeenCompleted}</h3>
+                            <p style="color: var(--text-color); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; line-height: 1.6;">
+                                You're all caught up with your tasks. Well done!</p>
+                            
+                            <!-- عرض زر عرض التاسكات المعطلة إذا كان هناك تاسكات معطلة -->
+                            <h:panelGroup rendered="#{not empty taskManagementBean.deactivatedTasks}">
+                                <p style="color: var(--text-color); margin: 1rem 0 1.5rem; font-size: 0.95rem;">
+                                    You have #{taskManagementBean.deactivatedTasks.size()} deactivated task(s).
+                                </p>
+                                <p:commandButton value="View Deactivated Tasks" icon="pi pi-history"
+                                    action="#{taskManagementBean.showDeactivatedTasks()}" update="taskForm"
+                                    styleClass="deactivated-tasks-button"/>
+                            </h:panelGroup>
+                            
+                            <p:commandButton icon="pi pi-refresh"
+                                action="#{taskManagementBean.init()}" update="taskForm"
+                                styleClass="refresh-button-icon" title="Refresh"/>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Empty State for Deactivated Tasks -->
+                    <h:panelGroup rendered="#{empty taskManagementBean.deactivatedTasks and taskManagementBean.showDeactivatedTasks}">
+                        <div class="empty-state">
+                            <p:graphicImage library="#{appSetting.resourceLib}"
+                                name="images/empty-tasks.svg" />
+                            <h3 style="color: var(--text-dark); margin: 1.5rem 0 0.8rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                No Deactivated Tasks</h3>
+                            <p style="color: var(--text-color); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; line-height: 1.6;">
+                                You don't have any deactivated tasks at the moment.</p>
+                            <p:commandButton value="Return to Active Tasks" icon="pi pi-arrow-left"
+                                action="#{taskManagementBean.hideDeactivatedTasks()}" update="taskForm"
+                                styleClass="refresh-button"/>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Tasks Display -->
+                    <h:panelGroup rendered="#{(not empty taskManagementBean.activeTasks and not taskManagementBean.showDeactivatedTasks) or (not empty taskManagementBean.deactivatedTasks and taskManagementBean.showDeactivatedTasks)}"
+                        styleClass="task-container">
+
+                        <!-- Header Section -->
+                        <div class="section-header">
+                            <div class="d-flex align-items-center">
+                                <h2 class="section-title">
+                                    <i class="pi #{taskManagementBean.showDeactivatedTasks ? 'pi-history' : 'pi-check-circle'}"></i>
+                                    #{taskManagementBean.showDeactivatedTasks ? 'Deactivated Tasks' : 'My Tasks'}
+                                </h2>
+                                <span class="task-badge ml-3" style="background: #{taskManagementBean.showDeactivatedTasks ? '#6c757d' : 'var(--primary-color)'};">
+                                    #{taskManagementBean.showDeactivatedTasks ? taskManagementBean.deactivatedTasks.size() : taskManagementBean.activeTasks.size()} 
+                                    #{taskManagementBean.showDeactivatedTasks ? 'Deactivated Task(s)' : 'Active Task(s)'}
+                                </span>
+                            </div>
+                            
+                            <div class="d-flex align-items-center">
+								<p:selectOneMenu value="#{taskManagementBean.sortBy}" style="width: 240px"
+								    styleClass="mr-2">
+								    <f:selectItem itemLabel="Sort by Task ID" itemValue="id" />
+								    <f:selectItem itemLabel="Sort by Date (Newest First)" itemValue="date" />
+								    <f:selectItem itemLabel="Sort by Assigner" itemValue="assigner" />
+								    <f:selectItem itemLabel="Sort by Type" itemValue="type" />
+								    <f:selectItem itemLabel="Sort by Priority" itemValue="priority" />
+								    <p:ajax listener="#{taskManagementBean.handleSortChange()}" 
+								            update="@form"
+								            process="@this"/>
+								</p:selectOneMenu>
+                                
+                                <div class="button-group">
+                                    <p:commandButton icon="pi pi-refresh"
+                                        action="#{taskManagementBean.init()}" update="taskForm"
+                                        styleClass="refresh-button-icon" title="Refresh"
+                                        rendered="#{not taskManagementBean.showDeactivatedTasks}"/>
+                                        
+                                    <p:commandButton value="Deactivated Tasks" icon="pi pi-history"
+                                        action="#{taskManagementBean.showDeactivatedTasks()}" update="taskForm"
+                                        styleClass="deactivated-tasks-button #{taskManagementBean.showDeactivatedTasks ? 'active' : ''}"
+                                        rendered="#{not taskManagementBean.showDeactivatedTasks and not empty taskManagementBean.deactivatedTasks}"/>
+                                        
+                                    <p:commandButton value="Return" icon="pi pi-arrow-left"
+                                        action="#{taskManagementBean.hideDeactivatedTasks()}" update="taskForm"
+                                        styleClass="refresh-button"
+                                        rendered="#{taskManagementBean.showDeactivatedTasks}"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tasks List -->
+                        <div class="task-list">
+                            <ui:repeat value="#{taskManagementBean.showDeactivatedTasks ? taskManagementBean.deactivatedTasks : taskManagementBean.activeTasks}" var="task" varStatus="status">
+                                <div class="task-card" style="--task-header-bg: #{task.equipmentCategory != null ? '#06d6a0' : '#ff9e00'}; #{taskManagementBean.showDeactivatedTasks ? 'opacity: 0.85;' : ''}">
+                                    <!-- Due Date Badge -->
+                                    <span class="due-date-badge">
+                                        <i class="pi pi-calendar"></i>
+                                        #{task.createdDate}
+                                    </span>
+                                    
+                                    <!-- Task Header -->
+                                    <div class="task-header">
+                                        <div class="d-flex align-items-center">
+                                            <span class="task-type-badge">
+                                                #{task.serviceType.name}
+                                            </span>
+                                            
+                                            <!-- Delay Indicator -->
+                                            <h:panelGroup rendered="#{taskManagementBean.calculateTaskDelay(task.createdDate) != 0}">
+                                                <span class="delay-indicator #{taskManagementBean.getDelaySeverity(task.createdDate)}">
+                                                    <i class="pi #{taskManagementBean.calculateTaskDelay(task.createdDate) gt 0 ? 'pi-clock' : 'pi-calendar-plus'} delay-icon"></i>
+                                                    #{taskManagementBean.getDelayDescription(task.createdDate)}
+                                                </span>
+                                            </h:panelGroup>
+                                            
+                                            <!-- Deactivated Badge -->
+                                            <h:panelGroup rendered="#{taskManagementBean.showDeactivatedTasks}">
+                                                <span class="delay-indicator delay-critical">
+                                                    <i class="pi pi-ban delay-icon"></i>
+                                                    Deactivated
+                                                </span>
+                                            </h:panelGroup>
+                                        </div>
+                                        
+                                        <!-- Task Controls -->
+                                        <div class="task-controls" style="display: flex; align-items: center; gap: 10px;">
+                                            <p:commandButton icon="pi pi-eye"
+                                                rendered="#{task.equipmentCategory != null and not taskManagementBean.showDeactivatedTasks}"
+                                                actionListener="#{inspectionFormBean.defineEquipmentCategoryByCode(task.id, task.equipmentCategory.code)}"
+                                                action="pretty:inspection/equipment/form" process="@this"
+                                                title="View Details"
+                                                styleClass="view-button"/>
+                                            
+                                            <p:commandButton icon="pi pi-eye"
+                                                rendered="#{task.equipmentCategory == null and not taskManagementBean.showDeactivatedTasks}"
+                                                actionListener="#{empCertificationBean.assignCert(task.id)}"
+                                                action="pretty:employee/training" process="@this"
+                                                title="View Details"
+                                                styleClass="view-button"/>
+                                                
+                                            <!-- Reactivate Button for Deactivated Tasks -->
+                                            <p:commandButton value="Reactivate" icon="pi pi-refresh"
+                                                action="#{taskManagementBean.updateTaskStatus(task.id, 1)}"
+                                                update="taskForm"
+                                                title="Reactivate Task"
+                                                styleClass="refresh-button"
+                                                rendered="#{taskManagementBean.showDeactivatedTasks}"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Task Content -->
+                                    <div class="task-content">
+                                        <!-- Progress Bar -->
+                                        <div class="task-progress-bar">
+                                            <div class="task-progress #{taskManagementBean.getDelaySeverity(task.createdDate).replace('delay', 'progress')}" 
+                                                 style="width: #{taskManagementBean.getProgressPercentage(task.createdDate)}"></div>
+                                        </div>
+                                        
+                                        <div class="task-info-item">
+                                            <i class="pi pi-user"></i>
+                                            <strong>Assigned by:</strong> 
+                                            #{task.userAliasByAssigner.sysUserBySysUser.fullName}
+                                        </div>
+                                        
+                                        <div class="task-info-item">
+                                            <i class="pi pi-calendar"></i>
+                                            <strong>Date:</strong> 
+                                            #{taskManagementBean.getFormattedTaskDate(task.createdDate)}
+                                        </div>
+                                        
+                                        <div class="task-info-item">
+                                            <i class="pi pi-building"></i>
+                                            <strong>Company:</strong> 
+                                            #{task.company.name}
+                                        </div>
+
+                                        <div class="task-description">
+                                            <i class="pi pi-file" style="margin-right: 0.6rem;"></i>
+                                            #{task.taskDescription}
+                                        </div>
+                                    </div>
+
+                                    <!-- Task Footer -->
+                                    <div class="task-footer">
+                                        <div class="task-id-container">
+                                            <small style="color: var(--text-color); font-size: 0.9rem;">
+                                                <i class="pi pi-id-card" style="margin-right: 0.6rem; color: var(--primary-color);"></i>
+                                                Task ID: #{task.id}
+                                            </small>
+                                            
+                                            <!-- زر Deactivate -->
+                                            <p:commandButton value="Deactivate" icon="pi pi-times-circle"
+                                                action="#{taskManagementBean.updateTaskStatus(task.id, 0)}"
+                                                update="taskForm"
+                                                title="Deactivate Task"
+                                                styleClass="deactivate-tag"
+                                                oncomplete="PF('taskDeactivatedDialog').show()"
+                                                rendered="#{not taskManagementBean.showDeactivatedTasks}"/>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <p:tag value="#{task.equipmentCategory != null ? 'Equipment Inspection' : 'Training Certification'}"
+                                                severity="#{task.equipmentCategory != null ? 'success' : 'warning'}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </ui:repeat>
+                        </div>
+
+                        <!-- Quick Actions Panel -->
+                        <div class="quick-actions-panel">
+                            <h4 style="margin-bottom: 1.5rem; color: var(--text-dark); font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                <i class="pi pi-bolt mr-2" style="color: var(--accent-color);"></i> Quick Actions
+                            </h4>
+                            <div class="d-flex flex-wrap gap-2">
+								
+							
+                                <p:commandButton value="Export Tasks" icon="pi pi-download"
+                                    action="#{taskManagementBean.exportToExcel}" ajax="false"
+                                    styleClass="quick-action-button"/>
+
+
+
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </div>
+                
+                <!-- Dialog لتأكيد إلغاء التاسك -->
+                <p:dialog widgetVar="taskDeactivatedDialog" header="Task Deactivated" modal="true" draggable="false" resizable="false"
+                    style="border-radius: 16px; overflow: hidden; font-family: 'Inter', sans-serif;">
+                    <div class="p-4 text-center">
+                        <i class="pi pi-check-circle" style="font-size: 3rem; color: var(--success-color);"></i>
+                        <h3 class="mt-3" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;">Task has been deactivated successfully</h3>
+                        <p class="mt-2" style="color: var(--text-color); font-size: 1rem;">The task will no longer appear in your task list.</p>
+                    </div>
+                    <f:facet name="footer">
+                        <p:commandButton value="OK" onclick="PF('taskDeactivatedDialog').hide();" styleClass="refresh-button"/>
+                    </f:facet>
+                </p:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

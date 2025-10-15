@@ -1,0 +1,168 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="title">
+		<span class="subitem"> #{interfaceLabel.viewRegisteredOutboundMail}</span>
+	</ui:define>
+	<ui:define name="toolbar">
+		<p:commandLink id="inbox" value="" action="pretty:outBox" ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.outBox}">
+			<i class="fa fa-inbox" style="font-size: 2rem; color: green;"></i>
+		</p:commandLink>
+
+		<p:commandLink id="home" value="" action="pretty:registerOutboundMail"
+			ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.reservation} #{interfaceLabel.outboundMail}">
+			<i class="fa fa-mail-forward" style="font-size: 2rem"></i>
+		</p:commandLink>
+
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+
+	</ui:define>
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="implementation">
+		<h:form id="form">
+			<p:growl id="messages" showDetail="true" showSummary="true" skipDetailIfEqualsSummary="true" />
+            
+			<p:card style="width: 100%; margin:0em">
+				<p:panelGrid columns="3" layout="grid"
+					columnClasses="ui-g-12 ui-md-4 ui-lg-4,ui-g-12 ui-md-4 ui-lg-4,ui-g-12 ui-md-4 ui-lg-4"
+					contentStyleClass="align-items-baseline ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+					<p:column></p:column>
+					<p:staticMessage severity="warn"
+						detail="#{interfaceLabel.infoAboutPreparingMailUi}"></p:staticMessage>
+					<p:column></p:column>
+				</p:panelGrid>
+				<p:divider layout="horizontal" type="dotted"></p:divider>
+				<p:panelGrid columns="5" layout="grid"
+					columnClasses="ui-g-12 ui-md-2 ui-lg-2,ui-g-12 ui-md-2 ui-lg-2,ui-g-12 ui-md-3 ui-lg-3,ui-g-12 ui-md-1 ui-lg-1,ui-g-12 ui-md-4 ui-lg-4"
+					contentStyleClass="align-items-baseline ui-panelgrid-blank ui-fluid"
+					style="background-color:transparent;">
+					<p:column></p:column>
+					<p:outputLabel for="@next"
+						style="font-weight:bolder;font-style:italic;color:black;"
+						value="#{interfaceLabel.select} #{interfaceLabel.divan}"></p:outputLabel>
+					<p:selectOneMenu value="#{registerOutboundMailBean.divan}"
+						style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;"
+						converter="omnifaces.SelectItemsIndexConverter">
+						
+						<f:selectItems itemLabel=" #{divan.name}" itemValue="#{divan}"
+							var="divan" value="#{registerOutboundMailBean.divanListByUser}" />
+					</p:selectOneMenu>
+
+					<p:commandButton
+						value="#{interfaceLabel.view}"
+						actionListener="#{registerOutboundMailBean.view()}"
+						icon="fa fa-search" onstart="PF('waitingDialogWidgetVar').show();"
+						onsuccess="PF('waitingDialogWidgetVar').hide();"
+						styleClass="ui-button-raised ui-button-danger ui-button-flat"
+						update="@([id$=dt-correspondence])">
+						
+					</p:commandButton>
+                    <p:column></p:column>
+				</p:panelGrid>
+				
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px;border-radius:0.25rem;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); background-color:transparent;">
+					<p:dataTable id="dt-correspondence" widgetVar="dtCorrespondence"
+						var="correspondenceVar" multiViewState="true"
+						value="#{registerOutboundMailBean.registeredMailList}" reflow="true"
+						rowKey="#{correspondenceVar.id}" paginator="true" rows="10"
+						emptyMessage="#{interfaceLabel.noRecordsFound}"
+						globalFilterOnly="true" paginatorPosition="bottom">
+						<f:facet name="header">
+							<div class="flex align-items-center justify-content-between">
+								<h:outputText value="#{interfaceLabel.search} : " />
+								<p:inputText id="globalFilter"
+									onkeyup="PF('dtCorrespondence').filter()" style="width:auto"
+									placeholder="#{interfaceLabel.enterKeyword}" />
+							</div>
+						</f:facet>
+						<p:column >
+							<p:commandButton value="#{interfaceLabel.mailProcessing}" style="width:auto;"
+								actionListener="#{registerOutboundMailBean.assignCorrespondence(correspondenceVar)}"
+								icon="#{app.locale.rtl ? 'pi pi-arrow-circle-left':'pi pi-arrow-circle-right'}" action="pretty:outMailProcessingUi"
+								styleClass="ui-button-success ui-button-flat">
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="#{interfaceLabel.creatorUser}"
+							sortBy="#{correspondenceVar.sysUserByCreatorSysUser.displayName}"
+							filterBy="#{correspondenceVar.sysUserByCreatorSysUser.displayName}"
+							filterMatchMode="contains">
+							<h:outputText value=" #{correspondenceVar.sysUserByCreatorSysUser.displayName}"
+								style="font-weight:bolder;font-style:italic;color:#2195F2;" />
+						</p:column>
+						<p:column headerText="#{interfaceLabel.number}"
+							sortBy="#{correspondenceVar.correspondenceSeq}"
+							filterBy="#{correspondenceVar.correspondenceSeq}"
+							filterMatchMode="contains">
+							<h:outputText value="#{correspondenceVar.correspondenceSeq}"
+								style="font-weight:bolder;font-style:italic;color:green;" />
+						</p:column>
+						<p:column headerText="#{interfaceLabel.divan}"
+							sortBy="#{correspondenceVar.organizationByDivan.name}"
+							filterBy="#{correspondenceVar.organizationByDivan.name}"
+							filterMatchMode="contains">
+							<h:outputText
+								value=" #{correspondenceVar.organizationByDivan.name} "
+								style="font-weight:bolder;font-style:italic;color:black;" />
+						</p:column>
+						<p:column headerText="#{interfaceLabel.year}"
+							sortBy="#{correspondenceVar.year}"
+							filterBy="#{correspondenceVar.year}" filterMatchMode="contains">
+							<h:outputText value=" #{correspondenceVar.year} "
+								style="font-weight:bolder;font-style:italic;color:black;" />
+						</p:column>
+						<p:column headerText="#{interfaceLabel.creatorDate}"
+							sortBy="#{correspondenceVar.getLocalDatePattern(correspondenceVar.createdDate)}"
+							filterBy="#{correspondenceVar.getLocalDatePattern(correspondenceVar.createdDate)}"
+							filterMatchMode="contains">
+							<h:outputText
+								value="#{correspondenceVar.getLocalDatePattern(correspondenceVar.createdDate)}"
+								style="font-weight:bolder;font-style:italic;color:#F07427;">
+
+							</h:outputText>
+						</p:column>
+						<p:column width="80px">
+							<p:commandButton title="#{interfaceLabel.delete}"
+								icon="pi pi-trash"
+								styleClass="rounded-button ui-button-danger ui-button-outlined">
+							</p:commandButton>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+				
+			</p:card>
+			<p:scrollTop />
+			<p:confirmDialog global="true" showEffect="fade" width="300">
+				<p:commandButton value="#{interfaceLabel.yes}" type="button"
+					styleClass="ui-button-raised ui-button-info ui-button-flat ui-confirmdialog-yes"
+					icon="pi pi-check-circle" />
+				<p:commandButton value="#{interfaceLabel.no}" type="button"
+					styleClass="ui-button-raised ui-button-danger ui-button-flat ui-confirmdialog-no ui-button-secondary"
+					icon="pi pi-times-circle" />
+			</p:confirmDialog>
+			<p:dialog modal="true" widgetVar="waitingDialogWidgetVar"
+								header="#{interfaceLabel.searching}" draggable="false"
+								closable="false" resizable="false">
+								<i class="fa fa-spinner fa-spin" style="font-size: 3rem;"></i>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

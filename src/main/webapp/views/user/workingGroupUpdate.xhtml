@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="title">
+       #{interfaceLabel.add} / #{interfaceLabel.update} :  #{interfaceLabel.workingGroup} 
+	</ui:define>
+
+
+	<ui:define name="implementation">
+
+		<h:form id="form">
+
+			<div class="card crud-demo">
+				<p:growl id="messages" showDetail="true" />
+				<p:panelGrid columns="6"
+					columnClasses="ui-grid-col-1,ui-grid-col-3,ui-grid-col-1,ui-grid-col-3,ui-grid-col-1,ui-grid-col-3"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+					<h:outputText value="#{interfaceLabel.arabicName}" />
+					<p:inputText value="#{workingGroupBean.workingGroup.arabicName}"></p:inputText>
+
+					<h:outputText value="#{interfaceLabel.englishName}" />
+					<p:inputText value="#{workingGroupBean.workingGroup.englishName}"></p:inputText>
+
+					<h:outputText value="#{interfaceLabel.code}" />
+					<p:inputText value="#{workingGroupBean.workingGroup.code}"></p:inputText>
+
+				</p:panelGrid>
+				<p:toolbar>
+					<p:toolbarGroup>
+						<p:commandButton value="#{interfaceLabel.update}"
+							icon="pi pi-check" action="#{workingGroupBean.update()}"
+							ajax="true" update=":form:messages" />
+					</p:toolbarGroup>
+				</p:toolbar>
+				<p:divider align="center" type="dashed">
+				</p:divider>
+
+				<p:panelGrid columns="1" columnClasses="12" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+
+					<p:fieldset legend="#{interfaceLabel.usersSelectedGroup}">
+						<p:dataTable id="groupMember_datatable" var="groupMemberVar"
+							value="#{workingGroupBean.groupMemberList}"
+							emptyMessage="#{interfaceLabel.noRecordsFound}"
+							paginatorPosition="bottom" rows="8" paginator="true">
+							<f:facet name="header">
+								<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+									action="#{workingGroupBean.getUserAlias()}" ajax="true"
+									process="@this"
+									oncomplete="PF('widgetVarUsersAliasDialog').show()"
+									update="@([id$=dataTable_userAlias])"
+									styleClass="rounded-button ui-button-success ui-button-flat"
+									style="width:100px">
+								</p:commandButton>
+							</f:facet>
+							<p:column headerText="#{interfaceLabel.userName}">
+								<h:outputText
+									value="#{groupMemberVar.userAlias.sysUser.firstName} #{groupMemberVar.userAlias.sysUser.lastName}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.jobPositionTitle}">
+								<h:outputText
+									value="#{groupMemberVar.userAlias.jobPosition.name}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.organization}">
+								<h:outputText
+									value="#{groupMemberVar.userAlias.organization.name}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.creatorUser}">
+								<h:outputText
+									value="#{groupMemberVar.sysUser.firstName} #{groupMemberVar.sysUser.lastName}" />
+							</p:column>
+
+							<p:column headerText="#{interfaceLabel.creatorDate}">
+								<h:outputText value="#{groupMemberVar.createdDate}">
+									<f:convertDateTime pattern="dd-MM-yyyy" />
+								</h:outputText>
+							</p:column>
+
+							<p:column style="width:20px">
+								<f:facet name="header">
+									<h:outputText value="#{interfaceLabel.delete}" />
+								</f:facet>
+								<p:commandButton styleClass="ui-button-danger"
+									icon="pi pi-trash" ajax="true"
+									action="#{workingGroupBean.deleteGroupMember(groupMemberVar)}"
+									update="@([id$=groupMember_datatable])">
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+
+				</p:panelGrid>
+
+				<p:toolbar>
+					<p:toolbarGroup>
+						<p:commandButton value="#{interfaceLabel.back}"
+							styleClass="ui-button-success" action="pretty:workingGroupView"
+							icon="pi pi-undo" />
+					</p:toolbarGroup>
+				</p:toolbar>
+
+				<p:dialog header="#{interfaceLabel.users} " showEffect="fade"
+					modal="true" width="800" widgetVar="widgetVarUsersAliasDialog"
+					responsive="true">
+					<p:dataTable id="dataTable_userAlias" var="userAliasVar"
+						value="#{workingGroupBean.userAliasSource}"
+						emptyMessage="#{interfaceLabel.noRecordsFound}"
+						paginatorPosition="bottom" rows="8" paginator="true">
+
+						<p:column style="width:20px">
+							<p:commandButton styleClass="ui-button-success" icon="pi pi-plus"
+								actionListener="#{workingGroupBean.insertUserAlias(userAliasVar)}"
+								update="@([id$=panelGrid-usersAlias],[id$=groupMember_datatable])"
+								process="@this">
+							</p:commandButton>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{interfaceLabel.userName}" />
+							</f:facet>
+							<h:outputText
+								value="#{userAliasVar.sysUser.firstName} #{userAliasVar.sysUser.lastName}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{interfaceLabel.jobPositionTitle}" />
+							</f:facet>
+							<h:outputText value="#{userAliasVar.jobPosition.name}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="#{interfaceLabel.organization}" />
+							</f:facet>
+							<h:outputText value="#{userAliasVar.organization.name}" />
+						</p:column>
+					</p:dataTable>
+				</p:dialog>
+			</div>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

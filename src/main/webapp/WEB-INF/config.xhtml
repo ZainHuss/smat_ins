@@ -1,0 +1,78 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="layout-config">
+		<div class="layout-config-content-wrapper">
+			<a id="layout-config-button" tabindex="0"
+				class="layout-config-button"> <i class="pi pi-cog" />
+			</a> <a id="layout-config-close-button" tabindex="0"
+				class="layout-config-close"> <i class="pi pi-times" />
+			</a>
+
+			<div class="layout-config-content">
+				<h:form>
+					<p:divider align="center" type="dashed">
+						<div class="inline-flex align-items-center">
+							<i class="pi pi-cog" style="font-size: 2rem; color: green"></i>
+							<p:spacer width="5"></p:spacer>
+							<p:outputLabel value="#{interfaceLabel.userSettings}"
+								style="color:green;font-weight: bold"></p:outputLabel>
+						</div>
+					</p:divider>
+					<p:panelGrid columns="4"
+						columnClasses="ui-grid-col-5 ,ui-grid-col-5,ui-grid-col-1,ui-grid-col-1"
+						layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+						style="border:0px none; background-color:transparent;">
+						<h:outputText value="#{interfaceLabel.dateFormat}" />
+						<p:selectOneMenu appendTo="@(.layout-config)">
+							<f:selectItem itemLabel="#{interfaceLabel.check}" itemValue="" />
+							<f:selectItem itemLabel="dd/MM/yyyy" itemValue="dd/MM/yyyy" />
+							<f:selectItem itemLabel="dd-MM-yyyy" itemValue="dd-MM-yyyy" />
+						</p:selectOneMenu>
+						<p:commandButton type="button" icon="pi pi-check"
+							styleClass="rounded-button ui-button-outlined" />
+						<p:commandButton type="button" icon="pi pi-times"
+							styleClass="rounded-button ui-button-danger ui-button-outlined" />
+						<h:outputText value="#{interfaceLabel.timeFormat}" />
+						<p:selectOneMenu appendTo="@(.layout-config)">
+							<f:selectItem itemLabel="#{interfaceLabel.check}" itemValue="" />
+							<f:selectItem itemLabel="dd/MM/yyyy" itemValue="dd/MM/yyyy" />
+							<f:selectItem itemLabel="dd-MM-yyyy" itemValue="dd-MM-yyyy" />
+						</p:selectOneMenu>
+						<p:commandButton type="button" icon="pi pi-check"
+							styleClass="rounded-button ui-button-outlined" />
+						<p:commandButton type="button" icon="pi pi-times"
+							styleClass="rounded-button ui-button-danger ui-button-outlined" />
+						<h:outputText value="#{interfaceLabel.dateTimeFormat}" />
+						<p:selectOneMenu appendTo="@(.layout-config)">
+							<f:selectItem itemLabel="#{interfaceLabel.check}" itemValue="" />
+							<f:selectItem itemLabel="dd/MM/yyyy" itemValue="dd/MM/yyyy" />
+							<f:selectItem itemLabel="dd-MM-yyyy" itemValue="dd-MM-yyyy" />
+						</p:selectOneMenu>
+						<p:commandButton type="button" icon="pi pi-check"
+							styleClass="rounded-button ui-button-outlined" />
+						<p:commandButton type="button" icon="pi pi-times"
+							styleClass="rounded-button ui-button-danger ui-button-outlined" />
+						<h:outputText value="#{interfaceLabel.language}" />
+						<p:selectOneMenu appendTo="@(.layout-config)">
+						    <p:ajax oncomplete="$('div.layout-config').addClass('layout-config-active'); return false;" ></p:ajax>
+							<f:selectItem itemLabel="#{interfaceLabel.check}" itemValue="" />
+							<f:selectItem itemLabel="#{interfaceLabel.arabicLanguage}"
+								itemValue="#{interfaceLabel.arabicLanguage}" />
+							<f:selectItem itemLabel="#{interfaceLabel.englishLanguage}"
+								itemValue="#{interfaceLabel.englishLanguage}"  />
+						</p:selectOneMenu>
+						<p:commandButton type="button" icon="pi pi-check"
+							styleClass="rounded-button ui-button-outlined" />
+						<p:commandButton type="button" icon="pi pi-times"
+							styleClass="rounded-button ui-button-danger ui-button-outlined" />
+					</p:panelGrid>
+
+				</h:form>
+			</div>
+		</div>
+	</div>
+</ui:composition>

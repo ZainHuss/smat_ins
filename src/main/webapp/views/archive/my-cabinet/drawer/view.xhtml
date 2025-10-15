@@ -1,0 +1,360 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/template.xhtml">
+	<f:metadata>
+		<f:event listener="#{myCabinetBean.onLoad()}" type="preRenderView"></f:event>
+	</f:metadata>
+	<ui:define name="section-head">
+        #{interfaceLabel.view} <span class="subitem">#{interfaceLabel.drawers}
+			/ #{myCabinetBean.cabinet.name}</span>
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+		<h:outputScript library="#{appSetting.resourceLib}"
+			name="script/primefaces-rtl-tree.js"></h:outputScript>
+		<script type="text/javascript">
+
+          function pageNav(){
+        	  setTimeout(function() { 
+            	  PF('caroulsel_drawer_widget').getJQ().find('div.ui-carousel-item-active').find('.ui-button').click();
+      	        
+        	    }, 100);
+              }
+           
+        </script>
+	</ui:define>
+	<ui:define name="toolbar">
+		<p:commandLink id="my-cabinet" value=""
+			action="pretty:my/cabinets/view" ajax="true" process="@this"
+			title="#{interfaceLabel.myCabinets}">
+			<i class="pi pi-server" style="font-size: 2rem"></i>
+		</p:commandLink>
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+
+	</ui:define>
+	<ui:define name="section-content">
+		<style>
+.product-item .product-item-content {
+	border: 1px solid var(- -surface-d);
+	border-radius: 3px;
+	margin: .3rem;
+	text-align: center;
+	padding: 2rem 0;
+}
+
+.product-item .product-image {
+	width: 50%;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+}
+
+.mt-5 {
+	margin-top: 2rem !important;
+}
+
+.mr-2 {
+	margin: 0.5rem !important;
+}
+
+.ui-panelgrid .ui-grid-responsive .ui-panelgrid-cell {
+	text-align: center;
+}
+
+.customPanelGrid .ui-panelgrid-content {
+	align-items: center;
+}
+
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+.product .product-grid-item img {
+	box-shadow:none !important;
+}
+
+.product .product-list-item img {
+	box-shadow: none !important;
+}
+
+.product .product-list-item .product-price {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: .5rem;
+	margin-top: .5rem;
+	align-self: center;
+}
+
+</style>
+
+
+		<h:form id="form">
+			<p:growl id="messages" showDetail="true" showSummary="false" />
+			<pe:remoteCommand name="applyPageIndex" process="@form">
+				<pe:assignableParam name="pageIndex"
+					assignTo="#{myCabinetBean.pageIndex}" />
+			</pe:remoteCommand>
+			<div class="product card">
+
+				<p:panelGrid id="panelGrid_drawers" columns="2" layout="grid"
+					columnClasses="ui-g-12 ui-md-4 ui-lg-3,ui-g-12 ui-md-8 ui-lg-9"
+					contentStyleClass="align-items-baseline ui-fluid"
+					style="border:0px none; background-color:transparent;">
+
+					<p:carousel id="caroulsel_drawers"
+						value="#{myCabinetBean.cabinetDefinitionList}"
+						page="#{myCabinetBean.pageIndex}"
+						widgetVar="caroulsel_drawer_widget" var="cabinetDefinitionVar"
+						verticalViewPortHeight="352px"
+						onPageChange="applyPageIndex(PF('caroulsel_drawer_widget').page); pageNav();"
+						style="max-width: 400px;" orientation="vertical">
+						<f:facet name="header">
+						  #{interfaceLabel.choose} #{interfaceLabel.drawer}
+						  <p:divider align="center" type="solid"></p:divider>
+						</f:facet>
+						<div class="product-item">
+							<div class="product-item-content">
+								<div class="mb-3">
+									<p:graphicImage name="images/drawer-icon.jpg" width="250"
+										height="121.033" library="smat-ins" />
+								</div>
+								<div>
+									<h4 class="mb-1">#{cabinetDefinitionVar.drawerName}</h4>
+									<h6 class="mt-0 mb-3">
+										<p:outputLabel value="#{interfaceLabel.drawerOrder} : "
+											style="color:green;font-weight:bolder;"></p:outputLabel>
+										<h:outputText value="#{cabinetDefinitionVar.drawerOrder}"
+											style="color:green;font-weight:bolder;">
+										</h:outputText>
+									</h6>
+									<span
+										class="product-badge status-#{cabinetDefinitionVar.cabinet.cabinetType.englishName.toLowerCase()}"
+										style="color: green; font-weight: bolder; font-size: 1.4em; font-style: italic;">#{cabinetDefinitionVar.code}</span>
+									<span
+										class="product-badge status-#{cabinetDefinitionVar.cabinet.cabinetType.englishName.toLowerCase()}"
+										style="font-size: 0.9em">#{cabinetDefinitionVar.cabinet.code}
+									</span>
+									<div class="mt-5">
+										<p:commandButton id="commandButton_search" icon="pi pi-search"
+											update="@form"
+											actionListener="#{myCabinetBean.assignCabinetDefinition(cabinetDefinitionVar)}"
+											title="#{interfaceLabel.view} #{interfaceLabel.folders}"
+											styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</p:carousel>
+					<p:column>
+						<p:outputLabel value="#{interfaceLabel.theFoldersIn}"
+							style="text-align: center !important;color: #F4CA16;padding: 10px;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+							<i class="pi pi-ellipsis-h"></i>
+						</p:outputLabel>
+						<p:commandLink action="pretty:my/cabinets/view" class="mr-4"
+							actionListener="#{myCabinetBean.assignCabinet(myCabinetBean.cabinet)}"
+							value="#{myCabinetBean.cabinet.name}"
+							style="text-align: center !important;color: green;padding: 10px;font-size: 1rem;font-style: oblique;font-weight: bolder;">
+							<i
+								class="#{app.locale.rtl ? 'pi pi-angle-left':'pi pi-angle-right'}"></i>
+						</p:commandLink>
+
+						<p:outputLabel
+							value="#{myCabinetBean.cabinetDefinition.drawerName}"
+							style="text-align: center !important;color: #FFC757;padding: 10px;font-size: 1.2rem;font-style: oblique;font-weight: bolder;">
+							<i
+								class="#{app.locale.rtl ? 'pi pi-folder-open':'pi pi-folder-open'}"></i>
+						</p:outputLabel>
+
+						<p:commandButton
+							actionListener="#{myCabinetBean.openNewCabinetFolder()}"
+							oncomplete="PF('addFolderDialog').show()"
+							update=":form:add-folder-content"
+							style="#{app.locale.rtl ? 'float:left':'float:right'}"
+							icon="pi pi-plus-circle"
+							title="#{interfaceLabel.add} #{interfaceLabel.folder}"
+							styleClass="ui-button-raised ui-button-danger ui-button-flat"
+							rendered="#{not empty myCabinetBean.cabinetDefinition.drawerName}" />
+						<p:divider align="center" type="solid"></p:divider>
+						<p:scrollPanel
+							style="border:dashed;border-color:#B9CEF2;height:501.4px"
+							mode="native">
+                                     
+							<p:panelGrid id="panelGrid_folder_empty_image" columns="1"
+								layout="grid" columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+								styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+								style="border:0px none; background-color:transparent;"
+								rendered="#{empty myCabinetBean.cabinetDefinition.drawerName}">
+								<p:staticMessage severity="WARN"
+									summary="#{interfaceLabel.warning}"
+									detail="#{interfaceLabel.noDrawerSelected}" style="width: 100%" />
+								<p:graphicImage name="images/empty-drawer.png"
+									library="smat-ins"></p:graphicImage>
+							</p:panelGrid>
+							<p:dataView id="dv-folders" var="folderVar"
+								rendered="#{not empty myCabinetBean.cabinetDefinition.drawerName}"
+								value="#{myCabinetBean.cabinetFolderList}" rows="3"
+								paginator="true" multiViewState="true"
+								widgetVar="dv-foldersWidget"
+								emptyMessage="#{interfaceLabel.noRecordsFound}"
+								paginatorPosition="bottom"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+								gridIcon="pi pi-th-large" listIcon="pi pi-bars" layout="grid"
+								gridRowStyleClass="lg:col-6 xl:col-4" flex="true">
+
+								<p:dataViewGridItem>
+									<div class="product-grid-item card border-1">
+										<div class="product-grid-item-top">
+											<div>
+												<i class="pi pi-tag product-category-icon" /> <span
+													class="product-category">#{folderVar.cabinetDefinition.drawerName}</span>
+											</div>
+											<span
+												class="product-badge status-#{folderVar.cabinetDefinition.cabinet.cabinetType.englishName.toLowerCase()}">#{folderVar.code}</span>
+										</div>
+										<div class="product-grid-item-content">
+											<p:graphicImage styleClass="imgIcon" name="#{folderVar.cabinetFolderDocuments.size() > 0 ? 'images/cabinet-folder-full.png':'images/cabinet-folder.jpg'}"
+												library="smat-ins" />
+											<div class="product-name">#{folderVar.name}</div>
+											<div class="product-description">#{folderVar.description}</div>
+
+										</div>
+										<div class="product-grid-item-bottom">
+											<h:outputText
+												value="#{interfaceLabel.theNumber}: #{folderVar.cabinetFolderDocuments.size()}"
+												styleClass="product-price">
+
+											</h:outputText>
+											<p:commandButton value="#{interfaceLabel.view}"
+												style="width:auto;" icon="pi pi-sign-in"
+												action="pretty:my/cabinets/folder/documents/view"
+												actionListener="#{myCabinetBean.assignCabinetFolder(folderVar)}"
+												styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat">
+											</p:commandButton>
+										</div>
+									</div>
+								</p:dataViewGridItem>
+
+								<p:dataViewListItem>
+									<div class="product-list-item">
+										<p:graphicImage name="#{folderVar.cabinetFolderDocuments.size() > 0 ? 'images/cabinet-folder-full.png':'images/cabinet-folder.jpg'}"
+											library="smat-ins" />
+										<div class="product-list-detail">
+											<div class="product-name">#{folderVar.name}</div>
+											<div class="product-description">#{folderVar.description}</div>
+
+											<i class="pi pi-tag product-category-icon" /><span
+												class="product-category">#{folderVar.cabinetDefinition.drawerName}</span>
+										</div>
+										<div class="product-list-action">
+											
+											
+											<span
+												class="product-badge status-#{folderVar.cabinetDefinition.cabinet.cabinetType.englishName.toLowerCase()}">#{folderVar.code}</span>
+											<h:outputText
+												value="#{interfaceLabel.theNumber}: #{folderVar.cabinetFolderDocuments.size()}"
+												styleClass="product-price">
+
+											</h:outputText>
+											<p:commandButton value="#{interfaceLabel.view}"
+												style="width:auto;" icon="pi pi-sign-in"
+												action="pretty:my/cabinets/folder/documents/view"
+												actionListener="#{myCabinetBean.assignCabinetFolder(folderVar)}"
+												styleClass="rounded-button ui-button-raised ui-button-danger ui-button-flat">
+											</p:commandButton>
+										</div>
+									</div>
+								</p:dataViewListItem>
+							</p:dataView>
+							<p:scrollTop target="parent" threshold="20"
+								styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+						</p:scrollPanel>
+					</p:column>
+				</p:panelGrid>
+
+			</div>
+			<p:dialog header="#{interfaceLabel.add} #{interfaceLabel.folder}"
+				showEffect="fade" widgetVar="addFolderDialog" closable="true" 
+				blockScroll="true" dynamic="true" cache="true" fitViewport="75%"
+				showHeader="true" responsive="true" width="45%" maximizable="true"
+				minimizable="true">
+				<p:divider layout="horizontal" type="dashed" align="center"></p:divider>
+				<p:outputPanel id="add-folder-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:75%">
+					<p:scrollPanel
+						style="border:dashed;border-color:#B9CEF2;width: auto; height: 85%"
+						mode="native">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-4,ui-g-12 ui-md-12 ui-lg-8"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel value="#{interfaceLabel.arabicName}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputText value="#{myCabinetBean.cabinetFolder.arabicName}"></p:inputText>
+							<p:outputLabel value="#{interfaceLabel.englishName}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputText value="#{myCabinetBean.cabinetFolder.englishName}"></p:inputText>
+							<p:outputLabel value="#{interfaceLabel.arabicDescription}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputTextarea
+								value="#{myCabinetBean.cabinetFolder.arabicDescription}"
+								style="color:black;font-weight:bolder;background-color:#DEEFFF;"></p:inputTextarea>
+							<p:outputLabel value="#{interfaceLabel.englishDescription}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputTextarea
+								value="#{myCabinetBean.cabinetFolder.englishDescription}"
+								style="color:black;font-weight:bolder;background-color:#DEEFFF;"></p:inputTextarea>
+							<p:outputLabel value="#{interfaceLabel.code}"
+								style="font-weight:bold"></p:outputLabel>
+							<p:inputText value="#{myCabinetBean.cabinetFolder.code}"
+								disabled="true" readonly="true"
+								style="color:black;font-weight:bolder;background-color:#FFF0F5;"></p:inputText>
+							<f:facet name="footer">
+								<p:divider type="dashed"></p:divider>
+								<p:panelGrid columns="3"
+									columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-6"
+									layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+									style="border:0px none; background-color:transparent;">
+									<p:commandButton value="#{interfaceLabel.add}"
+										icon="pi pi-plus-circle"
+										styleClass="ui-button-raised ui-button-success ui-button-flat"
+										actionListener="#{myCabinetBean.saveCabinetFolder()}"
+										update="add-folder-content :form:dv-folders"
+										process="add-folder-content @this" />
+									<p:commandButton value="#{interfaceLabel.cancel}"
+										icon="pi pi-times-circle"
+										onclick="PF('addFolderDialog').hide()"
+										styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+								</p:panelGrid>
+							</f:facet>
+
+						</p:panelGrid>
+
+					</p:scrollPanel>
+				</p:outputPanel>
+			</p:dialog>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

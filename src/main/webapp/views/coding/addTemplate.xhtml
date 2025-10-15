@@ -1,0 +1,641 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+
+	<ui:define name="section-head">
+        #{interfaceLabel.addTemplate}
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+		<style>
+.ui-panelgrid .custom-panel-grid {
+	width: 100%;
+	border-spacing: 10px;
+	border: 1px !important;
+}
+
+.ui-panelgrid .custom-panel-grid tr td {
+	padding: 10px;
+	border: 1px !important;
+}
+
+.ui-inputtext {
+	width: 100%;
+	padding: 8px;
+}
+
+body .ui-panelgrid .custom-panel-grid .ui-panelgrid-cell {
+	border: 1px solid #dee2e6 !important;
+}
+
+.custom-panel-grid thead, tbody, tfoot, tr, td, th {
+	border-color: inherit;
+	border-style: solid;
+	border-width: 1px !important;
+}
+
+.ui-commandlink {
+	margin-top: 10px;
+}
+
+div.ui-wizard-navbar {
+	display: inline-block !important;
+}
+
+
+/* تكبير العناصر داخل القائمة */
+.ui-selectonemenu-panel .ui-selectonemenu-list-item {
+    padding: 0.1px 0.5px !important;
+    font-size: 14px !important;
+}
+
+/* إضافة خاصية التمرير الأفقي للقالب المعروض */
+.template-preview-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.template-preview-content {
+    min-width: 100%;
+    width: auto;
+    white-space: nowrap;
+}
+
+.scroll-indicator {
+    text-align: center;
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+</style>
+	</ui:define>
+	<ui:define name="section-content">
+		<h:form id="form">
+
+			<p:growl id="messages" showDetail="true" showSummary="false" />
+			<div class="card" style="height: auto;">
+				<p:staticMessage severity="warn"
+					rendered="#{templateDesignBean.isLocked}"
+					detail="#{interfaceLabel.templateFormIsLocked}"
+					style="margin-right:25%;margin-left:25%;width: 50%;text-align:center;"></p:staticMessage>
+				<H5>#{interfaceLabel.formInfo}</H5>
+				<p:divider type="dashed"></p:divider>
+				<p:panelGrid id="panelGrid_template" columns="2"
+					columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid"
+					style="border: 1px solid #dee2e6 !important; ">
+
+					<p:column style="background-color: #ededede8;">
+						<p:outputLabel value="#{interfaceLabel.equipmentCategory}" />
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:selectOneMenu id="select_equipment_cat" disabled="#{templateDesignBean.isLocked}"
+							value="#{templateDesignBean.formTemplate.equipmentCategory}"
+							style="color:black;font-weight:bolder;font-style:italic;"
+							converter="omnifaces.SelectItemsIndexConverter">
+							<f:selectItem itemLabel="#{interfaceLabel.choose}"
+								itemValue="#{null}" noSelectionOption="true" />
+							<f:selectItems itemLabel=" #{equipmentCategoryVar.name}"
+								itemValue="#{equipmentCategoryVar}" var="equipmentCategoryVar"
+								value="#{templateDesignBean.equipmentCategories}" />
+							<p:ajax event="change"
+								listener="#{templateDesignBean.applyPrefix()}"
+								update="@([id$=input_prefix],[id$=select_equipment_cat],[id$=messages])"></p:ajax>
+						</p:selectOneMenu>
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:outputLabel value="#{interfaceLabel.title} :" />
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:inputText value="#{templateDesignBean.formTemplate.title}"
+							disabled="#{templateDesignBean.isLocked}"
+							style="font-weight: bold;"></p:inputText>
+					</p:column>
+
+					<p:column style="background-color: #ededede8;">
+						<p:outputLabel value="#{interfaceLabel.description} :" />
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:inputText
+							value="#{templateDesignBean.formTemplate.description}"
+							disabled="#{templateDesignBean.isLocked}"
+							style="font-weight: bold;"></p:inputText>
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:outputLabel value="#{interfaceLabel.code} :" />
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:inputText value="#{templateDesignBean.formTemplate.code}"
+							disabled="true" style="font-weight: bold"></p:inputText>
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:outputLabel value="#{interfaceLabel.prefixCode} :" />
+					</p:column>
+					<p:column style="background-color: #ededede8;">
+						<p:inputText id="input_prefix" disabled="true"
+							value="#{templateDesignBean.formTemplate.prefix}"
+							style="font-weight: bold;"></p:inputText>
+					</p:column>
+				</p:panelGrid>
+				<p:divider type="solid" rendered="#{!templateDesignBean.isLocked}"></p:divider>
+				<div style="display: flex">
+					<p:commandButton value="#{interfaceLabel.rowInfo}"
+						rendered="#{!templateDesignBean.isLocked}" icon="pi pi-bars"
+						process="@([id$=wizard_template])"
+						update="@([id$=wizard_template])"
+						onclick="PF('wizardVar').loadStep('tab_addRow', true)"
+						styleClass="ui-button-raised ui-button-info ui-button-flat" />
+					<p:commandButton value="#{interfaceLabel.columnInfo}"
+						rendered="#{!templateDesignBean.isLocked}"
+						icon="pi pi-align-justify" process="@([id$=wizard_template])"
+						update="@([id$=wizard_template])"
+						onclick="PF('wizardVar').loadStep('tab_addColumn', true)"
+						styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+					<p:commandButton value="#{interfaceLabel.addContent}"
+						rendered="#{!templateDesignBean.isLocked}" icon="pi pi-ellipsis-h"
+						process="@([id$=wizard_template])"
+						update="@([id$=wizard_template])"
+						onclick="PF('wizardVar').loadStep('tab_addContent', true)"
+						styleClass="ui-button-raised ui-button-danger ui-button-flat" />
+					<p:commandButton value="#{interfaceLabel.uploadDocumentFiles}"
+						rendered="#{!templateDesignBean.isLocked}"
+						icon="pi pi-cloud-upload" process="@([id$=wizard_template])"
+						update="@([id$=wizard_template])"
+						onclick="PF('wizardVar').loadStep('tab_upload_doc', true)"
+						styleClass="ui-button-raised ui-button-help ui-button-flat" />
+				</div>
+				<p:wizard id="wizard_template" showNavBar="false"
+					rendered="#{!templateDesignBean.isLocked}" widgetVar="wizardVar"
+					style="width:70%;" showStepStatus="false">
+					<p:tab id="tab_addRow" title="#{interfaceLabel.addRow}">
+						<p:panel header="#{interfaceLabel.rowInfo}">
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid">
+								<h:outputText value="#{interfaceLabel.isHearRow}" />
+								<p:selectBooleanCheckbox
+									value="#{templateDesignBean.formRow.isHeader}"></p:selectBooleanCheckbox>
+								<h:outputText value="#{interfaceLabel.isFooterRow}" />
+								<p:selectBooleanCheckbox
+									value="#{templateDesignBean.formRow.isFooter}"></p:selectBooleanCheckbox>
+							</p:panelGrid>
+							<p:commandButton value="#{interfaceLabel.addRow}"
+								action="#{templateDesignBean.addRow()}" process="@form"
+								update="@([id$=panelGridDaynamicContent],[id$=dataTable_rows])"
+								styleClass="ui-button-raised ui-button-secondary ui-button-flat" />
+
+							<p:commandButton value="#{interfaceLabel.next}"
+								onclick="PF('wizardVar').next()"
+								update="@([id$=wizard_template])"
+								styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+						</p:panel>
+						<p:divider type="dotted"></p:divider>
+						<p:dataTable id="dataTable_rows" widgetVar="widgetVarDataTableRow"
+							var="formRowVar" globalFilterOnly="true" selectionMode="single"
+							selection="#{templateDesignBean.selectedFormRow}"
+							value="#{templateDesignBean.formRows}" reflow="true"
+							styleClass="products-table" rowKey="#{formRowVar.id}"
+							paginator="true" rows="10"
+							emptyMessage="#{interfaceLabel.noRecordsFound}"
+							paginatorPosition="bottom">
+							<p:ajax event="rowSelect"
+								listener="#{templateDesignBean.listFormColumnsPerRow()}"
+								process="@([id$=dataTable_rows])"
+								update="@([id$=outputText_row_num],[id$=dataTable_columns])" />
+							<p:ajax event="rowUnselect"
+								listener="#{templateDesignBean.listFormColumnsPerRow()}"
+								process="@([id$=dataTable_rows])"
+								update="@([id$=outputText_row_num],[id$=dataTable_columns])" />
+							<f:facet name="header">
+								<div class="flex align-items-center justify-content-between">
+									<h:outputText value="#{interfaceLabel.search} : " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('widgetVarDataTableRow').filter()"
+										style="width:auto;"
+										placeholder="#{interfaceLabel.enterKeyword}" />
+								</div>
+							</f:facet>
+
+							<p:column headerText="#{interfaceLabel.isHearRow}"
+								sortBy="#{formRowVar.isHeader}"
+								filterBy="#{formRowVar.isHeader}">
+								<p:selectBooleanCheckbox value="#{formRowVar.isHeader}"
+									disabled="true" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.isFooterRow}"
+								sortBy="#{formRowVar.isFooter}"
+								filterBy="#{formRowVar.isFooter}">
+								<p:selectBooleanCheckbox value="#{formRowVar.isFooter}"
+									disabled="true" />
+							</p:column>
+
+							<p:column headerText="#{interfaceLabel.number}"
+								sortBy="#{formRowVar.rowNum}" filterBy="#{formRowVar.rowNum}">
+								<h:outputText value="#{formRowVar.rowNum}" />
+							</p:column>
+
+							<p:column>
+								<p:commandButton value="#{interfaceLabel.delete}"
+									action="#{templateDesignBean.deleteRow(formRowVar)}"
+									update="@([id$=panelGridDaynamicContent],[id$=dataTable_rows],[id$=messages])"
+									icon="pi pi-trash" styleClass="rounded-button ui-button-danger" />
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+					<p:tab id="tab_addColumn" title="#{interfaceLabel.addColumn}">
+
+						<p:panel header="#{interfaceLabel.columnInfo}">
+							<h:outputText value="Row:" style="font-weight:bolder;" />
+							<h:outputText id="outputText_row_num"
+								style="margin-right:5px;margin-left:5px; font-weight:bolder;color:green"
+								value="#{templateDesignBean.selectedFormRow.rowNum}" />
+							<p:divider type="dotted"></p:divider>
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid">
+								<p:column style="background-color: #ededede8;">
+									<h:outputLabel value="#{interfaceLabel.colSpan}: "
+										style="font-weight:bold;" />
+								</p:column>
+								<p:column style="background-color: #ededede8;">
+									<p:inputText value="#{templateDesignBean.formColumn.colSpan}"></p:inputText>
+								</p:column>
+								<p:column style="background-color: #ededede8;">
+									<h:outputLabel value="#{interfaceLabel.rowSpan}: "
+										style="font-weight:bold;" />
+								</p:column>
+								<p:column style="background-color: #ededede8;">
+									<p:inputText value="#{templateDesignBean.formColumn.rowSpan}"></p:inputText>
+								</p:column>
+								<p:column style="background-color: #ededede8;">
+									<h:outputLabel value="#{interfaceLabel.style}: "
+										style="font-weight:bold;" />
+								</p:column>
+								<p:column style="background-color: #ededede8;">
+									<p:inputText value="#{templateDesignBean.formColumn.style}"></p:inputText>
+								</p:column>
+								<p:column style="background-color: #ededede8;">
+									<h:outputLabel value="#{interfaceLabel.styleClass}"
+										style="font-weight:bold;" />
+								</p:column>
+								<p:column style="background-color: #ededede8;">
+									<p:inputText
+										value="#{templateDesignBean.formColumn.styleClass}"></p:inputText>
+								</p:column>
+							</p:panelGrid>
+							<p:commandButton value="#{interfaceLabel.addColumn}"
+								action="#{templateDesignBean.addColumn()}"
+								process="@([id$=tab_addColumn])"
+								update="@([id$=panelGridDaynamicContent],[id$=dataTable_columns],[id$=messages])"
+								style="margin-top:20px;"
+								styleClass="ui-button-raised ui-button-success ui-button-flat" />
+							<p:commandButton value="#{interfaceLabel.back}"
+								onclick="PF('wizardVar').back()"
+								styleClass="ui-button-raised ui-button-success ui-button-flat" />
+							<p:commandButton value="#{interfaceLabel.next}"
+								onclick="PF('wizardVar').next()"
+								styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+						</p:panel>
+						<p:divider type="dotted"></p:divider>
+						<p:dataTable id="dataTable_columns"
+							widgetVar="widgetVarDataTableColumn" var="formColumnVar"
+							globalFilterOnly="true" selectionMode="single"
+							selection="#{templateDesignBean.selectedFormColumn}"
+							value="#{templateDesignBean.formColumnsPerRow}" reflow="true"
+							styleClass="products-table" rowKey="#{formColumnVar.id}"
+							paginator="true" rows="10"
+							emptyMessage="#{interfaceLabel.noRecordsFound}"
+							paginatorPosition="bottom">
+							<p:ajax event="rowSelect"
+								listener="#{templateDesignBean.listColumnContentPerColumn()}"
+								process="@([id$=dataTable_columns])"
+								update="@([id$=outputText_column_num],[id$=dataTable_column_content])" />
+							<p:ajax event="rowUnselect"
+								listener="#{templateDesignBean.listColumnContentPerColumn()}"
+								process="@([id$=dataTable_columns])"
+								update="@([id$=outputText_column_num],[id$=dataTable_column_content])" />
+							<f:facet name="header">
+								<div class="flex align-items-center justify-content-between">
+									<h:outputText value="#{interfaceLabel.search} : " />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('widgetVarDataTableColumn').filter()"
+										style="width:auto;"
+										placeholder="#{interfaceLabel.enterKeyword}" />
+								</div>
+							</f:facet>
+
+							<p:column headerText="#{interfaceLabel.colSpan}"
+								sortBy="#{formColumnVar.colSpan}"
+								filterBy="#{formColumnVar.colSpan}">
+								<h:outputLabel value="#{formColumnVar.colSpan}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.rowSpan}"
+								sortBy="#{formColumnVar.rowSpan}"
+								filterBy="#{formColumnVar.rowSpan}">
+								<h:outputLabel value="#{formColumnVar.rowSpan}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.style}"
+								sortBy="#{formColumnVar.style}"
+								filterBy="#{formColumnVar.style}">
+								<h:outputLabel value="#{formColumnVar.style}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.styleClass}"
+								sortBy="#{formColumnVar.styleClass}"
+								filterBy="#{formColumnVar.styleClass}">
+								<h:outputLabel value="#{formColumnVar.styleClass}" />
+							</p:column>
+							<p:column>
+								<p:commandButton value="#{interfaceLabel.delete}"
+									action="#{templateDesignBean.deleteColumn(formColumnVar)}"
+									update="@([id$=panelGridDaynamicContent],[id$=dataTable_columns],[id$=messages])"
+									icon="pi pi-trash" styleClass="rounded-button ui-button-danger" />
+							</p:column>
+						</p:dataTable>
+
+					</p:tab>
+					<p:tab id="tab_addContent" title="#{interfaceLabel.addContent}">
+					    <p:panel header="#{interfaceLabel.columnContent}">
+					        <h:outputText value="Column:" style="font-weight:bolder;" />
+					        <h:outputText id="outputText_column_num"
+					            style="margin-right:5px;margin-left:5px; font-weight:bolder;color:green"
+					            value="#{templateDesignBean.selectedFormColumn.columnOrder}" />
+					        <p:divider type="dotted"></p:divider>
+					
+					        <p:panelGrid columns="2"
+					            columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+					            styleClass="ui-panelgrid-blank ui-fluid custom-select-menu-container"
+					            style="border: 1px solid #dee2e6 !important;">
+					
+					            <p:column style="background-color: #ededede8;">
+					                <p:outputLabel value="#{interfaceLabel.generalEquipmentItem}:" />
+					            </p:column>
+					
+					            <p:column style="background-color: #ededede8;">
+					                <!-- قائمة منسدلة محسّنة -->
+					                <p:selectOneMenu id="select_generalEquipmentItem"
+					                                 widgetVar="selectGeneralEquipmentItemWV"
+					                                 value="#{templateDesignBean.generalEquipmentItem}"
+					                                 style="color:black;font-weight:bolder;font-style:italic;width:100%;"
+					                                 converter="omnifaces.SelectItemsIndexConverter"
+					                                 filter="true"
+					                                 filterMatchMode="contains"
+					                                 filterPlaceholder="#{interfaceLabel.enterKeyword}"
+					                                 >
+					                    <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" />
+					                    <f:selectItems itemLabel="#{itemVar.itemText} (#{itemVar.itemType.name})"
+					                                   itemValue="#{itemVar}" var="itemVar"
+					                                   value="#{templateDesignBean.generalEquipmentItems}" />
+					                    <p:ajax update="@([id$=input_alias_name],[id$=messages])"
+					                            listener="#{templateDesignBean.applyContentAliasName()}" />
+					                </p:selectOneMenu>
+					
+					                <script>
+					                    // بعد تحميل الصفحة، زد طول القائمة المنسدلة مباشرة
+					                    $(document).ready(function() {
+					                        PF('selectGeneralEquipmentItemWV').panel.css('max-height', '1500px'); // عدّل الرقم كما تريد
+					                    });
+					                </script>
+					            </p:column>
+					
+					            <p:column style="background-color: #ededede8;">
+					                <p:outputLabel value="#{interfaceLabel.aliasName}:" />
+					            </p:column>
+					            <p:column style="background-color: #ededede8;">
+					                <p:inputText id="input_alias_name"
+					                             value="#{templateDesignBean.columnContent.aliasName}"
+					                             disabled="true" />
+					            </p:column>
+					
+					        </p:panelGrid>
+					
+					        <p:divider type="dashed"></p:divider>
+					
+					        <p:commandButton value="#{interfaceLabel.add}" process="@form"
+					                         action="#{templateDesignBean.addColumnContent()}"
+					                         update="@([id$=panelGridDaynamicContent],[id$=dataTable_column_content],[id$=messages])"
+					                         styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+					
+					        <p:commandButton value="#{interfaceLabel.back}"
+					                         onclick="PF('wizardVar').back()"
+					                         styleClass="ui-button-raised ui-button-success ui-button-flat" />
+					    </p:panel>
+					
+					    <p:divider type="dotted"></p:divider>
+					
+					    <p:dataTable id="dataTable_column_content"
+					                 widgetVar="widgetVarDataTableContent" var="columnContentVar"
+					                 globalFilterOnly="true" selectionMode="single"
+					                 selection="#{templateDesignBean.selectedColumnContent}"
+					                 value="#{templateDesignBean.columnContentsPerColumn}"
+					                 reflow="true" styleClass="products-table"
+					                 rowKey="#{columnContentVar.id}" paginator="true" rows="10"
+					                 emptyMessage="#{interfaceLabel.noRecordsFound}"
+					                 paginatorPosition="bottom">
+					
+					        <f:facet name="header">
+					            <div class="flex align-items-center justify-content-between">
+					                <h:outputText value="#{interfaceLabel.search} : " />
+					                <p:inputText id="globalFilter"
+					                             onkeyup="PF('widgetVarDataTableContent').filter()"
+					                             style="width:auto;"
+					                             placeholder="#{interfaceLabel.enterKeyword}" />
+					            </div>
+					        </f:facet>
+					
+					        <p:column headerText="#{interfaceLabel.generalEquipmentItem}"
+					                  sortBy="#{columnContentVar.generalEquipmentItem.itemText}(#{columnContentVar.generalEquipmentItem.itemType.name})"
+					                  filterBy="#{columnContentVar.generalEquipmentItem.itemText}(#{columnContentVar.generalEquipmentItem.itemType.name})">
+					            <h:outputLabel value="#{columnContentVar.generalEquipmentItem.itemText}(#{columnContentVar.generalEquipmentItem.itemType.name})" />
+					        </p:column>
+					
+					        <p:column headerText="#{interfaceLabel.aliasName}"
+					                  sortBy="#{columnContentVar.aliasName}"
+					                  filterBy="#{columnContentVar.aliasName}">
+					            <h:outputLabel value="#{columnContentVar.aliasName}" />
+					        </p:column>
+					
+					        <p:column>
+					            <p:commandButton value="#{interfaceLabel.delete}"
+					                             action="#{templateDesignBean.deleteContent(columnContentVar)}"
+					                             update="@([id$=panelGridDaynamicContent],[id$=dataTable_column_content],[id$=messages])"
+					                             icon="pi pi-trash" styleClass="rounded-button ui-button-danger" />
+					        </p:column>
+					    </p:dataTable>
+					</p:tab>
+
+
+
+
+
+					<p:tab id="tab_upload_doc" title="#{interfaceLabel.uploadTemplate}">
+						<p:outputPanel id="manage-add-doc-file-content" class="ui-fluid"
+							layout="inline" style="width:100%;height:100%">
+							<p:scrollPanel
+								style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+								styleClass="" mode="native">
+								<p:panelGrid id="panelGrid_uploader_document" columns="1"
+									columnClasses="ui-g-12 ui-md-12 ui-lg-12" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid"
+									style="border:0px none; background-color:transparent;">
+
+									<p:column>
+										<p:outputLabel value="#{interfaceLabel.uploadTemplate}"
+											style="color:#FFC757;font-weight:bolder;font-style:italic;"></p:outputLabel>
+									</p:column>
+									<p:divider layout="horizontal" type="solid"
+										style="margin-top:-15px;"></p:divider>
+									<p:dataScroller id="customDropzone_document"
+										widgetVar="dataScrollerdocWidgetVar"
+										style="margin-top:-50px;border:0px none; background-color:transparent;box-sizing: border-box;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;"
+										value="#{templateDesignBean.printedDocs}" var="archiveFile"
+										chunkSize="10" mode="inline" scrollHeight="300">
+										<f:facet name="header">
+                                                            #{interfaceLabel.theTotalNumberOfDocument}: <span
+												style="color: #FFC757; font-weight: bolder; font-style: italic;">#{templateDesignBean.printedDocs.size()}</span>
+
+										</f:facet>
+
+										<div class="product">
+											<div class="product-list-item p-5">
+												<p:graphicImage
+													name="#{templateDesignBean.docImgIconByDocEx(archiveFile.extension)}"
+													library="smat-ins" />
+												<div class="product-list-detail">
+													<div class="product-name">#{archiveFile.name}</div>
+													<div class="product-description">#{archiveFile.extension}</div>
+
+													<span
+														style="#{app.locale.locale eq 'en'? 'margin-left:.5rem' : 'margin-right:.5rem'}"
+														class="pi #{app.locale.locale eq 'en'? 'pi-angle-right':'pi-angle-left'} product-category">
+														#{interfaceLabel.fileSize}: #{archiveFile.fileSize}
+														#{interfaceLabel.byte}</span>
+												</div>
+												<div class="product-list-action">
+
+													<p:commandButton icon="pi pi-trash"
+														value="#{interfaceLabel.delete}"
+														action="#{templateDesignBean.deleteDocFile(archiveFile)}"
+														update="form:customDropzone_document"
+														styleClass="rounded-button ui-button-danger" />
+
+												</div>
+											</div>
+										</div>
+										<p:divider layout="horizontal" type="dashed" style=""
+											styleClass="ui-custom-divider"></p:divider>
+
+									</p:dataScroller>
+									<p:column>
+										<small> #{interfaceLabel.dropHereToStartUpload} <p:link
+												value="#{interfaceLabel.choose}"
+												onclick="PF('uploadFileDocWidgetVar').show(); return false;"
+												style="font-size:1.2rem" />.
+										</small>
+									</p:column>
+									<p:remoteCommand name="autoScrollDownData"
+										oncomplete="$('.ui-scrollpanel').scrollTop($('.ui-scrollpanel').height());"></p:remoteCommand>
+									<p:fileUpload id="advancedupload_document"
+										widgetVar="uploadFileDocWidgetVar" multiple="true"
+										listener="#{templateDesignBean.uploadArchiveDocToSelectedArchive}"
+										oncomplete="autoScrollDownData();" process="@form"
+										update="form:manage-add-doc-file-content form:messages"
+										style="display:none;" sequential="true"
+										allowTypes="/(\.|\/)(dotx)$/"
+										dropZone="customDropzone_document" />
+
+								</p:panelGrid>
+							</p:scrollPanel>
+						</p:outputPanel>
+					</p:tab>
+				</p:wizard>
+				<p:divider type="solid"></p:divider>
+
+				<!-- إضافة حاوية التمرير للقالب المعروض -->
+				<div class="template-preview-container">
+				    <div class="scroll-indicator">
+				       Hint : You can scroll right to see the content 
+				    </div>
+				    <div class="template-preview-content">
+				        <p:panelGrid id="panelGridDaynamicContent" style="margin-top:20px;"
+				            styleClass="custom-panel-grid" layout="tabular" columns="0">
+				            <f:facet name="header">
+				                <p:row>
+				                    <p:column colspan="12">#{templateDesignBean.formTemplate.title} </p:column>
+				                </p:row>
+				            </f:facet>
+				            <ui:repeat value="#{templateDesignBean.formRows}" var="formRow">
+				                <p:row>
+				                    <ui:repeat
+				                        value="#{templateDesignBean.getFormColumnsPerRow(formRow)}"
+				                        var="formColumn">
+				                        <p:column colspan="#{formColumn.colSpan}"
+				                            rowspan="#{formColumn.rowSpan}" style="#{formColumn.style}"
+				                            styleClass="#{formColumn.styleClass}">
+				                            <ui:repeat
+				                                value="#{templateDesignBean.getColumnContentByColumn(formColumn)}"
+				                                var="columnContent">
+
+				                                <p:outputLabel style="margin-left:2px;margin-right:2px;"
+				                                    rendered="#{columnContent.generalEquipmentItem.itemType.code eq '01'}"
+				                                    value="#{columnContent.generalEquipmentItem.itemText}"></p:outputLabel>
+
+				                                <p:inputText style="margin-left:2px;margin-right:2px;"
+				                                    rendered="#{columnContent.generalEquipmentItem.itemType.code eq '02'}" />
+
+
+				                                <p:selectBooleanCheckbox
+				                                    style="margin-left:2px;margin-right:2px;"
+				                                    rendered="#{columnContent.generalEquipmentItem.itemType.code eq '03'}" />
+
+				                                <p:selectOneMenu
+				                                    rendered="#{columnContent.generalEquipmentItem.itemType.code eq '04'}"
+				                                    style="margin-left:2px;margin-right:2px;"
+				                                    value="#{columnContent.contentValue}">
+				                                    <f:selectItem itemLabel="#{interfaceLabel.choose}"
+				                                        itemValue="" />
+				                                    <f:selectItems
+				                                        itemLabel="#{checklistDetailDataSource.itemValue} "
+				                                        itemValue="#{checklistDetailDataSource}"
+				                                        var="checklistDetailDataSource"
+				                                        value="#{templateDesignBean.getBy(columnContent.generalEquipmentItem.checklistDataSource.code)}" />
+				                                </p:selectOneMenu>
+
+				                            </ui:repeat>
+				                        </p:column>
+				                    </ui:repeat>
+				                </p:row>
+				            </ui:repeat>
+				        </p:panelGrid>
+				    </div>
+				</div>
+
+				<div style="display: flex; margin-top: 30px;">
+					<p:commandButton value="#{interfaceLabel.save}" icon="fa fa-save"
+						disabled="#{templateDesignBean.isLocked}"
+						action="#{templateDesignBean.doSave()}" process="@form"
+						update="@([id$=messages],[id$=panelGrid_template],[id$=panelGrid_section],[id$=panelGrid_content])"
+						styleClass="ui-button-raised ui-button-danger ui-button-flat">
+					</p:commandButton>
+					<p:commandButton value="#{interfaceLabel.cancel}"
+						icon="fa fa-cancel" action="pretty:viewTemplate"
+						styleClass="ui-button-raised ui-button-secondary ui-button-flat">
+					</p:commandButton>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

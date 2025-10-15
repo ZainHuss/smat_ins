@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b801fdec-81f3-4227-9827-4d659a748d9d" name="95.111.225.132" url="http://95.111.225.132:8080/smat-ins/">
+        <fileTransfer accessType="SFTP" host="95.111.225.132" port="2244" sshConfigId="3ebeac2c-c2f4-4876-a068-2167fef3c33b" sshConfig="root@95.111.225.132:2244 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

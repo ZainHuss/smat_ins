@@ -1,0 +1,259 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="form_topbar" styleClass="topbar-form">
+		<script type="text/javascript">
+			function updateCounter(newvalue) {
+				$('.ui-badge').text(newvalue);
+			}
+
+			
+		</script>
+		<style type="text/css">
+div[id$=overlayPanel_new_correspondence]>div.ui-overlaypanel-content {
+	background-color: #FDFDFD;
+}
+
+div.notifi>div.ui-datascroller-content {
+	border: none !important;
+	background: #FDFDFD !important;
+}
+
+div[id$=badge_inboxCount] {
+	cursor: pointer;
+}
+</style>
+		<f:websocket channel="inboxCount" user="#{loginBean.user.id}"
+			scope="session" onmessage="updateCounter" />
+		<p:remoteCommand name="updateNotefications"
+			update="@([id$=dataScroller_notifications])"
+			actionListener="#{inBoxBean.viewNotifictions()}"></p:remoteCommand>
+
+		<div class="layout-topbar"
+			style="background-color: #F8F9FA; display: flex; align-content: first baseline; align-items: center;">
+			<a class="menu-button" tabindex="0"> <i class="pi pi-bars"></i>
+			</a>
+			<div
+				style="display: flex; align-content: first baseline; align-items: center;">
+				<p:menubar>
+
+					<p:submenu label="Examination" icon="pi pi-config">
+						<p:menuitem value="#{interfaceLabel.prepareExaminationThorough}"
+							action="pretty:examination/thorough/new" icon="pi pi-server">
+						</p:menuitem>
+
+
+					</p:submenu>
+					<p:submenu label="#{interfaceLabel.archive}" icon="pi pi-folder"
+						rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('001')}">
+						<p:menuitem value="#{interfaceLabel.myCabinets}"
+							action="pretty:my/cabinets/view" icon="pi pi-server"
+							rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('002')}">
+						</p:menuitem>
+						<p:menuitem value="#{interfaceLabel.cabinets}"
+							action="pretty:cabinets/view" icon="pi pi-server"
+							rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('003')}">
+						</p:menuitem>
+
+
+					</p:submenu>
+
+					<p:submenu label="#{interfaceLabel.mailOffice}"
+						icon="pi pi-envelope"
+						rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('004')}">
+						<p:submenu label="#{interfaceLabel.incomingMail}"
+							icon="#{app.locale.rtl ? 'pi pi-arrow-down-left':'pi pi-arrow-down-right'}"
+							rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('005')}">
+							<p:menuitem icon="fas fa-edit"
+								value="#{interfaceLabel.registerMail}"
+								action="pretty:registerIncomingMail">
+							</p:menuitem>
+							<p:menuitem icon="pi pi-envelope"
+								value="#{interfaceLabel.preparingMailForSending}"
+								action="pretty:viewRegisteredIncomingMail">
+							</p:menuitem>
+						</p:submenu>
+
+						<p:submenu label="#{interfaceLabel.outboundMail}"
+							icon="#{app.locale.rtl ? 'pi pi-arrow-down-left':'pi pi-arrow-down-right'}"
+							rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('006')}">
+							<p:menuitem icon="fas fa-edit"
+								value="#{interfaceLabel.registerMail}"
+								action="pretty:registerOutboundMail">
+							</p:menuitem>
+							<p:menuitem icon="pi pi-envelope"
+								value="#{interfaceLabel.preparingMailForSending}"
+								action="pretty:viewRegisteredOutboundMail">
+							</p:menuitem>
+
+						</p:submenu>
+
+						<p:menuitem value="#{interfaceLabel.inBox}" action="pretty:inBox"
+							icon="fa fa-fw fa-envelope-o"
+							rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('007')}"></p:menuitem>
+						<p:menuitem value="#{interfaceLabel.outBox}"
+							action="pretty:outBox" icon="fa fa-envelope-o"
+							rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('008')}"></p:menuitem>
+					</p:submenu>
+
+
+					<p:submenu label="#{interfaceLabel.settings}" icon="pi pi-cog"
+						rendered="#{loginBean.user.isSuperAdmin}">
+						<p:submenu label="#{interfaceLabel.usersSettings}"
+							icon="pi pi-bars">
+							<p:menuitem value="#{interfaceLabel.users}" action="pretty:users"
+								icon="pi pi-user"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.permissions}"
+								action="pretty:permissions" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.roles}" action="pretty:roles"
+								icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.workingGroup}"
+								action="pretty:workingGroupView" icon="pi pi-cog"></p:menuitem>
+						</p:submenu>
+
+						<p:submenu label="#{interfaceLabel.coding}" icon="pi pi-bars">
+							<p:menuitem value="#{interfaceLabel.storageLocations}"
+								action="pretty:cabinets/location/view" icon="fas fa-hdd">
+							</p:menuitem>
+							<p:menuitem value="#{interfaceLabel.jobPositionTitle}"
+								action="pretty:jobPosition" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.organization}"
+								action="pretty:organization" icon="pi pi-cog"></p:menuitem>
+
+							<p:menuitem value="#{interfaceLabel.priorityType}"
+								action="pretty:priorityType" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.transmissionType}"
+								action="pretty:transmissionType" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.correspondenceType}"
+								action="pretty:correspondenceType" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem rendered="false"
+								value="#{interfaceLabel.correspondenceState}"
+								action="pretty:correspondenceState" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.purposeType}"
+								action="pretty:purposeType" icon="pi pi-cog"></p:menuitem>
+
+							<p:menuitem value="#{interfaceLabel.notificationType}"
+								action="pretty:notificationType" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.notificationStyle}"
+								action="pretty:notificationStyle" icon="pi pi-cog"></p:menuitem>
+							<p:menuitem value="#{interfaceLabel.periodType}"
+								action="pretty:periodType" icon="pi pi-cog"></p:menuitem>
+
+							<p:menuitem value="#{interfaceLabel.hierarchySystem}"
+								action="pretty:hierarchySystem" icon="pi pi-cog"></p:menuitem>
+
+							<p:menuitem value="#{interfaceLabel.company}"
+								action="pretty:company" icon="pi pi-cog"></p:menuitem>
+
+						</p:submenu>
+					</p:submenu>
+
+					<p:submenu label="#{interfaceLabel.chooseLanguage}"
+						icon="pi pi-flag">
+						<p:menuitem value="#{interfaceLabel.arabicLanguage}"
+							action="#{app.changeLocal('AR')}" ajax="false">
+
+							<span class="flag flag-sy"></span>
+							<span style="font-weight: bold; margin: 5px;">
+								#{interfaceLabel.arabicLanguage}</span>
+						</p:menuitem>
+						<p:menuitem value="#{interfaceLabel.englishLanguage}"
+							action="#{app.changeLocal('EN')}" ajax="false">
+							<span class="flag flag-us"></span>
+							<span style="font-weight: bold; margin: 5px;">#{interfaceLabel.englishLanguage}</span>
+						</p:menuitem>
+					</p:submenu>
+
+				</p:menubar>
+			</div>
+			<div class="panel-user-settings-menu">
+				<p:badge id="badge_inboxCount"
+					value="#{inBoxBean.calcTotalNumOfNewCorrespondence('new')}"
+					severity="danger">
+					<i class="fas fa-bell" style="font-size: 2rem; color: white;"></i>
+				</p:badge>
+				<p:overlayPanel id="overlayPanel_new_correspondence"
+					for="badge_inboxCount" onShow="updateNotefications();"
+					style="width:300%;background-color:#FDFDFD;border:0px;border-radius:0.95rem;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); background-color:#FDFDFD;overflow:auto">
+					<p:dataScroller id="dataScroller_notifications"
+						var="correspondenceRecipientVar"
+						emptyMessage="#{interfaceLabel.noRecordsFound}" chunkSize="4"
+						lazy="true" scrollHeight="350"
+						value="#{inBoxBean.correspondenceRecipientLazyDataModel}"
+						styleClass="notifi" mode="inline">
+						<div
+							style="width: 90%; height: auto; display: flex; align-items: first baseline;">
+							<p:avatar icon="pi pi-user" styleClass="mr-2" size="large"
+								shape="circle" style="margin:4px;padding:20px;" />
+							<div
+								class="ui-chip ui-widget #{correspondenceRecipientVar.isViewed ? '':'new-notification'}"
+								style="display: block; width: 90%; margin-left: 5px; margin-right: 5px; padding: 3px; background-color: #FFE1F9; border-radius: 6px;">
+								<div
+									style="max-width: 85%; width: auto; margin-bottom: 15px; color: black;">
+									#{interfaceLabel.from}:
+									#{correspondenceRecipientVar.correspondenceNote.userAlias.aliasName}<span
+										style="font-style: italic; color: #6C757D; font-weight: bolder;">[#{correspondenceRecipientVar.correspondenceNote.userAlias.sysUserBySysUser.displayName}]</span>
+								</div>
+								<div
+									style="max-width: 85%; width: auto; margin-bottom: 3px; padding-bottom: 2px; color: black; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 100%; width: auto;">#{interfaceLabel.correspondenceTitle}:
+									#{correspondenceRecipientVar.correspondence.title}</div>
+								<div
+									style="max-width: 85%; width: auto; display: flex; align-items: baseline; margin-inline-start: 30px;">
+									<span class="ui-chip-icon fa fa-comment"></span>
+									<div class="ui-chip-text"
+										style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 4px; max-width: 100%; width: auto; font-weight: normal;"
+										title="#{inBoxBean.decode(correspondenceRecipientVar.correspondenceNote.note)}">
+										<p:commandLink
+											actionListener="#{inBoxBean.assignCorrespondence(correspondenceRecipientVar)}"
+											action="pretty:openInBox" style="color:black;"
+											process="@this"> #{inBoxBean.decode(correspondenceRecipientVar.correspondenceNote.note)}</p:commandLink>
+									</div>
+
+								</div>
+								<div
+									style="max-width: 90%; width: auto; display: flex; align-items: baseline; margin-inline-start: 50px; margin-top: -10px;">
+									<span class="ui-chip-icon fa fa-clock" style="color: green;"></span>
+									<div class="ui-chip-text"
+										style="color: green; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 2px; max-width: 100%; width: auto; font-weight: normal;"
+										title="#{inBoxBean.correspondence.getLocalDateTimePattern(correspondenceRecipientVar.correspondenceNote.noteDate)}">#{inBoxBean.correspondence.getLocalDateTimePattern(correspondenceRecipientVar.correspondenceNote.noteDate)}</div>
+								</div>
+
+							</div>
+						</div>
+
+
+					</p:dataScroller>
+					<div
+						style="width: 100%; height: auto; display: flex; align-items: first baseline; margin-top: 10px; padding: 15px;">
+						<p:commandLink value="#{interfaceLabel.viewAllNotification}"
+							rendered="#{!loginBean.user.isSuperAdmin}" action="pretty:inBox"></p:commandLink>
+					</div>
+				</p:overlayPanel>
+				<p:menubar>
+
+					<p:submenu label="#{loginBean.user.displayName}" icon="pi pi-user">
+						<p:menuitem icon="pi pi-th-large"
+							value="#{interfaceLabel.settings}"></p:menuitem>
+						<p:menuitem value="#{interfaceLabel.logout}"
+							icon="pi pi-power-off" action="#{loginBean.logout()}"></p:menuitem>
+
+					</p:submenu>
+
+				</p:menubar>
+			</div>
+
+		</div>
+		<p:idleMonitor timeout="600000">
+			<p:ajax event="idle"
+				oncomplete="document.getElementById('form_topbar:commandButton_logOut').click();" />
+
+		</p:idleMonitor>
+
+		<p:commandButton id="commandButton_logOut"
+			action="#{loginBean.logout()}" style="display:none;"></p:commandButton>
+
+	</h:form>
+</ui:composition>

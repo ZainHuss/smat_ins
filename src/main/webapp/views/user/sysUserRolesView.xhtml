@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+       #{interfaceLabel.view}  #{interfaceLabel.roles} : #{sysUserBean.sysUser.firstName} #{sysUserBean.sysUser.lastName}
+	</ui:define>
+
+
+	<ui:define name="section-content">
+		<h:form id="form">
+			<div class="card crud-demo">
+				<p:growl id="messages" showDetail="true" />
+				<p:toolbar>
+					<p:toolbarGroup>
+						<p:commandButton ajax="true" styleClass="ui-button-success"
+							value="#{interfaceLabel.addRole}"
+							action="#{sysUserBean.getSysRolesAvailable()}"
+							update=":form:rols_dataTable :form:manage-sysRole-content"
+							oncomplete="PF('sysRoleAddDialog').show()" icon="pi pi-plus">
+						</p:commandButton>
+						<p:spacer width="5px"></p:spacer>
+						<p:commandButton value="#{interfaceLabel.back}"
+							styleClass="ui-button-warning" action="pretty:users"
+							icon="pi pi-undo" />
+					</p:toolbarGroup>
+				</p:toolbar>
+				<p:dataTable id="userRoles_dataTable"
+					value="#{sysUserBean.sysUserRoleList}" var="userRoleVar"
+					paginator="true" paginatorPosition="bottom" rows="8"
+					emptyMessage="#{interfaceLabel.noRecordsFound}">
+					<p:column headerText="#{interfaceLabel.role}">
+						<h:outputText value="#{userRoleVar.sysRole.name}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.description}">
+						<h:outputText value="#{userRoleVar.sysRole.description}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.delete}">
+						<p:commandButton styleClass="ui-button-danger" icon="pi pi-trash"
+							title="#{interfaceLabel.delete}" process="@this"
+							oncomplete="PF('deleteUserRoleDialog').show()">
+							<f:setPropertyActionListener value="#{userRoleVar}"
+								target="#{sysUserBean.sysUserRole}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+
+
+
+				<p:dialog header="#{interfaceLabel.roles}" showEffect="fade"
+					width="700" modal="true" widgetVar="sysRoleAddDialog"
+					responsive="true">
+					<p:outputPanel id="manage-sysRole-content" class="ui-fluid">
+						<p:dataTable id="rols_dataTable"
+							value="#{sysUserBean.sysRoleList}" var="roleVar" paginator="true"
+							paginatorPosition="bottom" rows="8"
+							emptyMessage="#{interfaceLabel.noRecordsFound}"
+							selection="#{sysUserBean.selectedSysRoleList}"
+							rowKey="#{roleVar.id}">
+							<p:column selectionMode="multiple" />
+
+							<p:column headerText="#{interfaceLabel.role}">
+								<h:outputText value="#{roleVar.name}" />
+							</p:column>
+						</p:dataTable>
+					</p:outputPanel>
+					<f:facet name="footer">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+							actionListener="#{sysUserBean.addSysRolesToUser}"
+							update="manage-sysRole-content :form:userRoles_dataTable"
+							process="manage-sysRole-content @this" />
+						<p:commandButton value="#{interfaceLabel.cancel}"
+							icon="pi pi-times" onclick="PF('sysRoleAddDialog').hide()"
+							class="ui-button-secondary" />
+					</f:facet>
+				</p:dialog>
+
+				<p:confirmDialog widgetVar="deleteUserRoleDialog" showEffect="fade"
+					width="300" message="#{interfaceLabel.deleteSelectedRoles}"
+					header="#{interfaceLabel.confirmation}" severity="warn">
+					<p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+						actionListener="#{sysUserBean.deleteSysRolesFromUser}"
+						process="@this" oncomplete="PF('deleteUserRoleDialog').hide()" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-button-secondary" icon="pi pi-times"
+						onclick="PF('deleteUserRoleDialog').hide()" />
+				</p:confirmDialog>
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,1362 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:jsf="http://xmlns.jcp.org/jsf"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:o="http://omnifaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:of="http://omnifaces.org/functions"
+    template="/views/mail/mail-template.xhtml">
+
+    <ui:define name="section-head">
+        <div class="section-header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <i class="pi pi-search"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Active Tasks</h1>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+            name="css/material-theme.css"></h:outputStylesheet>
+        
+        <!-- Premium CSS Design -->
+        <style>
+            /* Modern Color Palette */
+            :root {
+                --primary: #4a6bff; /* Vibrant Blue */
+                --primary-light: #7d9aff;
+                --primary-dark: #1a3dff;
+                --secondary: #00d4b8; /* Teal */
+                --accent: #ff6b9d; /* Pink */
+                --light: #f5f5f5;
+                --light-gray: #e0e0e0;
+                --medium-gray: #9e9e9e;
+                --dark: #212121;
+                --text-dark: #424242;
+                --text-light: #f5f5f5;
+                --success: #2ecc71; /* Vibrant Green */
+                --warning: #f39c12; /* Orange */
+                --danger: #e74c3c; /* Red */
+                --info: #3498db; /* Blue */
+                --purple: #9b59b6;
+                --border-radius: 12px;
+                --border-radius-sm: 8px;
+                --box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                --box-shadow-lg: 0 8px 20px rgba(0,0,0,0.15);
+                --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+                --glass-effect: rgba(255, 255, 255, 0.15);
+                --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+                --section-padding: 24px;
+                --section-margin: 20px;
+                --font-primary: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+                --font-secondary: 'Poppins', var(--font-primary);
+            }
+
+            /* Base Styles */
+            body {
+                background-color: #f8f9fa;
+                color: var(--text-dark);
+                font-family: var(--font-primary);
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            /* Header Styles */
+            .section-header {
+                display: flex;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+                margin-bottom: 24px;
+                padding-bottom: 12px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+            
+            .header-content {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .header-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 56px;
+                height: 56px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                border-radius: 14px;
+                box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3);
+                flex-shrink: 0;
+            }
+            
+            .header-icon i {
+                font-size: 24px;
+                color: white;
+            }
+            
+            .header-text {
+                flex: 1;
+            }
+
+            .section-header i {
+                font-size: 20px;
+                color: white;
+            }
+
+            .section-header h1 {
+                margin: 0;
+                font-weight: 700;
+                font-size: 1.8rem;
+                font-family: var(--font-secondary);
+                color: var(--primary-dark);
+                letter-spacing: -0.5px;
+                background: linear-gradient(to right, var(--primary), var(--primary-dark));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                line-height: 1.2;
+            }
+
+            .section-subtitle {
+                margin: 4px 0 0;
+                color: var(--medium-gray);
+                font-size: 0.95rem;
+                font-weight: 500;
+                letter-spacing: 0.2px;
+            }
+            
+            @media (max-width: 768px) {
+                .header-content {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+                
+                .header-icon {
+                    width: 48px;
+                    height: 48px;
+                }
+                
+                .section-header h1 {
+                    font-size: 1.6rem;
+                }
+            }
+
+            /* Card Design */
+            .premium-card {
+                background: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--box-shadow);
+                transition: var(--transition);
+                overflow: hidden;
+                margin-bottom: 28px;
+                border: none;
+            }
+
+            .premium-card:hover {
+                box-shadow: var(--box-shadow-lg);
+                transform: translateY(-4px);
+            }
+
+            .card-header {
+                padding: 18px 24px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .card-title {
+                font-size: 1.15rem;
+                font-weight: 600;
+                font-family: var(--font-secondary);
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: white;
+            }
+
+            .card-title i {
+                font-size: 1.15rem;
+            }
+
+            .card-body {
+                padding: 24px;
+                background-color: white;
+            }
+
+            /* Form Grid Layout */
+            .form-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 0;
+            }
+
+            /* Section Container */
+            .section-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+                margin-bottom: 24px;
+                padding: 0;
+            }
+
+            /* Enhanced Section Styles */
+            .filter-group-header {
+                grid-column: 1 / -1;
+                margin: 0 0 16px;
+                padding: 14px 20px;
+                border-radius: var(--border-radius-sm);
+                font-weight: 700;
+                font-size: 1rem;
+                font-family: var(--font-secondary);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                background: white;
+                box-shadow: var(--box-shadow);
+                color: var(--dark);
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+                border-left: 4px solid;
+            }
+
+            .filter-group-header::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+                z-index: 1;
+            }
+
+            .filter-group-header i {
+                font-size: 1.2rem;
+                z-index: 2;
+            }
+
+            .form-group {
+                margin-bottom: 0;
+                position: relative;
+                background-color: white;
+                padding: 18px;
+                border-radius: var(--border-radius-sm);
+                box-shadow: var(--box-shadow);
+                border: 1px solid rgba(0,0,0,0.05);
+                transition: var(--transition);
+                overflow: hidden;
+                border-left: 3px solid;
+            }
+
+            .form-group:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            }
+
+            /* Section Colors */
+            .task-info-section .filter-group-header {
+                border-left-color: #4a6bff;
+                background: linear-gradient(90deg, rgba(74, 107, 255, 0.15) 0%, rgba(255,255,255,1) 100%);
+                color: #1a3dff;
+            }
+
+            .task-info-section .form-group {
+                border-left-color: #4a6bff;
+                background: white;
+            }
+
+            .task-info-section .filter-group-header i {
+                color: #4a6bff;
+            }
+
+            .date-range-section .filter-group-header {
+                border-left-color: #00d4b8;
+                background: linear-gradient(90deg, rgba(0, 212, 184, 0.15) 0%, rgba(255,255,255,1) 100%);
+                color: #008a78;
+            }
+
+            .date-range-section .form-group {
+                border-left-color: #00d4b8;
+                background: white;
+            }
+
+            .date-range-section .filter-group-header i {
+                color: #00d4b8;
+            }
+
+            .people-section .filter-group-header {
+                border-left-color: #ff6b9d;
+                background: linear-gradient(90deg, rgba(255, 107, 157, 0.15) 0%, rgba(255,255,255,1) 100%);
+                color: #d43a75;
+            }
+
+            .people-section .form-group {
+                border-left-color: #ff6b9d;
+                background: white;
+            }
+
+            .people-section .filter-group-header i {
+                color: #ff6b9d;
+            }
+
+            .equipment-section .filter-group-header {
+                border-left-color: #9b59b6;
+                background: linear-gradient(90deg, rgba(155, 89, 182, 0.15) 0%, rgba(255,255,255,1) 100%);
+                color: #8e44ad;
+            }
+
+            .equipment-section .form-group {
+                border-left-color: #9b59b6;
+                background: white;
+            }
+
+            .equipment-section .filter-group-header i {
+                color: #9b59b6;
+            }
+
+            /* Form Elements */
+            .form-label {
+                font-weight: 600;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--text-dark);
+                font-size: 0.9rem;
+                position: relative;
+                font-family: var(--font-secondary);
+            }
+
+            .form-label::after {
+                content: ':';
+                margin-left: 2px;
+            }
+
+            .ui-inputfield, 
+            .ui-selectonemenu {
+                width: 100% !important;
+                padding: 10px 14px !important;
+                border: 1px solid var(--light-gray) !important;
+                border-radius: var(--border-radius-sm) !important;
+                transition: var(--transition) !important;
+                background: white !important;
+                font-size: 0.9rem !important;
+                font-family: var(--font-primary);
+                color: var(--text-dark) !important;
+                box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            }
+
+            .ui-inputfield:focus, 
+            .ui-selectonemenu:focus {
+                border-color: var(--primary) !important;
+                box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2) !important;
+                outline: none !important;
+            }
+
+            /* Date Range Styles */
+            .date-range-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .date-range-separator {
+                color: var(--medium-gray);
+                font-weight: 500;
+                font-size: 0.9rem;
+            }
+
+            .date-input-wrapper {
+                flex: 1;
+                position: relative;
+                min-width: 120px;
+            }
+
+            .date-input-field {
+                width: 100% !important;
+                padding: 10px 14px !important;
+                border: 1px solid var(--light-gray) !important;
+                border-radius: var(--border-radius-sm) !important;
+                background: white !important;
+                font-size: 0.9rem !important;
+                font-family: var(--font-primary);
+                box-sizing: border-box !important;
+            }
+
+            /* Button Styles */
+            .btn-group-left {
+                display: flex;
+                gap: 14px;
+                margin-top: 24px;
+                justify-content: flex-end;
+                align-items: center;
+                grid-column: 1 / -1;
+                padding: 16px 0 0;
+                border-top: 1px solid rgba(0,0,0,0.05);
+            }
+
+            .btn {
+                padding: 10px 24px;
+                border-radius: 50px;
+                font-weight: 600;
+                transition: var(--transition);
+                border: none;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font-size: 0.85rem;
+                font-family: var(--font-secondary);
+                height: 40px;
+                letter-spacing: 0.3px;
+                min-width: 120px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .btn-clear {
+                background: white !important;
+                color: var(--medium-gray) !important;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+                border: 1px solid var(--light-gray) !important;
+            }
+
+            .btn-clear:hover {
+                background: white !important;
+                color: var(--primary-dark) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.12) !important;
+                border-color: var(--primary-light) !important;
+            }
+
+            .btn-clear .ui-button-icon-left {
+                color: var(--medium-gray) !important;
+                transition: var(--transition) !important;
+            }
+
+            .btn-clear:hover .ui-button-icon-left {
+                color: var(--primary) !important;
+                animation: shake 0.5s ease;
+            }
+
+            .btn-search {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+                color: white !important;
+                box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3) !important;
+                text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            }
+
+            .btn-search:hover {
+                background: linear-gradient(135deg, var(--primary-dark), var(--primary)) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 20px rgba(74, 107, 255, 0.4) !important;
+            }
+
+            .btn-search .ui-button-icon-left {
+                color: rgba(255,255,255,0.9) !important;
+                transition: var(--transition) !important;
+            }
+
+            .btn-search:hover .ui-button-icon-left {
+                animation: pulse 1s infinite;
+            }
+            
+			.btn-export {
+			    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+			    color: white !important;
+			    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3) !important;
+			    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+			}
+			
+			.btn-export:hover {
+			    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+			    transform: translateY(-2px) !important;
+			    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4) !important;
+			}
+			
+			.btn-export .ui-button-icon-left {
+			    color: rgba(255,255,255,0.9) !important;
+			    transition: var(--transition) !important;
+			}
+			
+			.btn-export:hover .ui-button-icon-left {
+			    animation: pulse 1s infinite;
+			}
+            
+
+            /* Small Buttons */
+            .btn-sm {
+                padding: 8px 18px !important;
+                height: 36px !important;
+                min-width: 110px !important;
+                font-size: 0.8rem !important;
+                border-radius: var(--border-radius-sm) !important;
+            }
+            
+            /* ========== ENHANCED SEARCH RESULTS ========== */
+            /* DataTable Styles */
+            .premium-table {
+                font-family: var(--font-primary) !important;
+                border-radius: var(--border-radius-sm) !important;
+                overflow: hidden !important;
+                border: none !important;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+            }
+            .company-cell, 
+            .equipment-cell, 
+            .service-cell, 
+            .description-cell, 
+            .assignee-cell,
+            .date-cell {
+                display: flex;
+                align-items: center;
+                padding: 4px 0;
+            }
+            .premium-table td {
+                font-size: 0.85rem !important;
+                color: var(--text-dark) !important;
+                font-weight: 500 !important;
+                letter-spacing: 0.03em !important;
+                white-space: normal !important;
+                word-wrap: break-word !important;
+                overflow: visible !important;
+                border-color: rgba(0,0,0,0.05) !important;
+                padding: 12px 16px !important;
+                vertical-align: middle !important;
+                border-bottom: 1px solid rgba(0,0,0,0.03) !important;
+                transition: var(--transition) !important;
+            }
+
+            .premium-table td:nth-child(2) {
+                min-width: 220px !important;
+                max-width: 380px !important;
+            }
+
+            .premium-table .ui-cell-data {
+                line-height: 1.4 !important;
+            }
+
+            .premium-table thead th {
+                font-size: 0.75rem !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.05em !important;
+                color: var(--medium-gray) !important;
+                font-weight: 700 !important;
+                font-family: var(--font-secondary);
+                background: #f9f9f9 !important;
+                border-color: rgba(0,0,0,0.05) !important;
+                padding: 12px 16px !important;
+                border-bottom: 2px solid rgba(0,0,0,0.05) !important;
+            }
+
+            .premium-table tbody tr {
+                transition: var(--transition) !important;
+            }
+
+            .premium-table tbody tr:hover td {
+                background: rgba(74, 107, 255, 0.03) !important;
+                transform: translateX(4px);
+            }
+
+            /* Badges */
+            .badge {
+                font-size: 0.7rem !important;
+                padding: 4px 10px !important;
+                font-weight: 600 !important;
+                font-family: var(--font-secondary);
+                border-radius: 50px !important;
+                letter-spacing: 0.3px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                line-height: 1.2;
+                text-transform: capitalize;
+            }
+
+            .badge i {
+                font-size: 0.7rem;
+            }
+            
+            /* ========== ENHANCED STATUS BADGES ========== */
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 14px;
+                border-radius: 50px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                font-family: var(--font-secondary);
+                text-transform: capitalize;
+                border: 2px solid;
+                transition: var(--transition);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .status-badge::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+                transition: var(--transition);
+            }
+
+            .status-badge:hover::before {
+                left: 100%;
+            }
+
+            .status-badge i {
+                font-size: 0.85rem;
+                transition: var(--transition);
+            }
+
+            .status-badge:hover i {
+                transform: scale(1.2);
+            }
+
+            /* Assigned Status */
+            .status-badge.assigned {
+                background: linear-gradient(135deg, rgba(74, 107, 255, 0.15), rgba(74, 107, 255, 0.08));
+                color: #1a3dff;
+                border-color: rgba(74, 107, 255, 0.3);
+                box-shadow: 0 4px 12px rgba(74, 107, 255, 0.2);
+            }
+
+            .status-badge.assigned i {
+                color: #4a6bff;
+            }
+
+            /* Pending Status */
+            .status-badge.pending {
+                background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.08));
+                color: #ff9800;
+                border-color: rgba(255, 193, 7, 0.3);
+                box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+            }
+
+            .status-badge.pending i {
+                color: #ffc107;
+            }
+
+            /* Inspected Status */
+            .status-badge.inspected {
+                background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(33, 150, 243, 0.08));
+                color: #1976d2;
+                border-color: rgba(33, 150, 243, 0.3);
+                box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+            }
+
+            .status-badge.inspected i {
+                color: #2196f3;
+            }
+
+            /* Under Review Status */
+            .status-badge.under-review {
+                background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(255, 152, 0, 0.08));
+                color: #f57c00;
+                border-color: rgba(255, 152, 0, 0.3);
+                box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+            }
+
+            .status-badge.under-review i {
+                color: #ff9800;
+            }
+
+            /* Reviewed Status */
+            .status-badge.reviewed {
+                background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.08));
+                color: #388e3c;
+                border-color: rgba(76, 175, 80, 0.3);
+                box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+            }
+
+            .status-badge.reviewed i {
+                color: #4caf50;
+            }
+
+            /* Completed Status */
+            .status-badge.completed {
+                background: linear-gradient(135deg, rgba(56, 142, 60, 0.15), rgba(56, 142, 60, 0.08));
+                color: #2e7d32;
+                border-color: rgba(56, 142, 60, 0.3);
+                box-shadow: 0 4px 12px rgba(56, 142, 60, 0.2);
+            }
+
+            .status-badge.completed i {
+                color: #388e3c;
+            }
+
+            /* Finished Status */
+            .status-badge.finished {
+                background: linear-gradient(135deg, rgba(46, 125, 50, 0.15), rgba(46, 125, 50, 0.08));
+                color: #1b5e20;
+                border-color: rgba(46, 125, 50, 0.3);
+                box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+            }
+
+            .status-badge.finished i {
+                color: #2e7d32;
+            }
+
+            /* Rejected Status */
+            .status-badge.rejected {
+                background: linear-gradient(135deg, rgba(244, 67, 54, 0.15), rgba(244, 67, 54, 0.08));
+                color: #d32f2f;
+                border-color: rgba(244, 67, 54, 0.3);
+                box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+            }
+
+            .status-badge.rejected i {
+                color: #f44336;
+            }
+
+            /* Inspected Under Review Status */
+            .status-badge.inspected-under-review {
+                background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), rgba(156, 39, 176, 0.08));
+                color: #7b1fa2;
+                border-color: rgba(156, 39, 176, 0.3);
+                box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
+            }
+
+            .status-badge.inspected-under-review i {
+                color: #9c27b0;
+            }
+
+            /* Closed After Fix Status */
+            .status-badge.closed-after-fix {
+                background: linear-gradient(135deg, rgba(0, 150, 136, 0.15), rgba(0, 150, 136, 0.08));
+                color: #00796b;
+                border-color: rgba(0, 150, 136, 0.3);
+                box-shadow: 0 4px 12px rgba(0, 150, 136, 0.2);
+            }
+
+            .status-badge.closed-after-fix i {
+                color: #009688;
+            }
+
+            /* In Progress Status */
+            .status-badge.in-progress {
+                background: linear-gradient(135deg, rgba(255, 87, 34, 0.15), rgba(255, 87, 34, 0.08));
+                color: #e64a19;
+                border-color: rgba(255, 87, 34, 0.3);
+                box-shadow: 0 4px 12px rgba(255, 87, 34, 0.2);
+            }
+
+            .status-badge.in-progress i {
+                color: #ff5722;
+            }
+
+            /* Done Status */
+            .status-badge.done {
+                background: linear-gradient(135deg, rgba(67, 160, 71, 0.15), rgba(67, 160, 71, 0.08));
+                color: #2e7d32;
+                border-color: rgba(67, 160, 71, 0.3);
+                box-shadow: 0 4px 12px rgba(67, 160, 71, 0.2);
+            }
+
+            .status-badge.done i {
+                color: #43a047;
+            }
+
+            .badge-primary {
+                background: rgba(74, 107, 255, 0.12);
+                color: var(--primary-dark);
+                border: 1px solid rgba(74, 107, 255, 0.2);
+            }
+
+            .badge-success {
+                background: rgba(46, 204, 113, 0.12);
+                color: #27ae60;
+                border: 1px solid rgba(46, 204, 113, 0.2);
+            }
+
+            .badge-warning {
+                background: rgba(243, 156, 18, 0.12);
+                color: #d35400;
+                border: 1px solid rgba(243, 156, 18, 0.2);
+            }
+
+            .badge-danger {
+                background: rgba(231, 76, 60, 0.12);
+                color: #c0392b;
+                border: 1px solid rgba(231, 76, 60, 0.2);
+            }
+
+            .badge-info {
+                background: rgba(52, 152, 219, 0.12);
+                color: #2980b9;
+                border: 1px solid rgba(52, 152, 219, 0.2);
+            }
+
+            .badge-purple {
+                background: rgba(155, 89, 182, 0.12);
+                color: #8e44ad;
+                border: 1px solid rgba(155, 89, 182, 0.2);
+            }
+
+            .ui-paginator .ui-paginator-page,
+            .ui-paginator .ui-paginator-prev,
+            .ui-paginator .ui-paginator-next,
+            .ui-paginator .ui-paginator-last,
+            .ui-paginator .ui-paginator-first {
+                min-width: 32px !important;
+                height: 32px !important;
+                border-radius: 8px !important;
+                margin: 0 4px !important;
+                transition: var(--transition) !important;
+                border: 1px solid var(--light-gray) !important;
+                background: white !important;
+            }
+            
+            .ui-paginator .ui-paginator-page.ui-state-active {
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+                color: white !important;
+                border-color: var(--primary-dark) !important;
+                font-weight: 600 !important;
+            }
+            
+            .ui-paginator .ui-paginator-page:hover,
+            .ui-paginator .ui-paginator-prev:hover,
+            .ui-paginator .ui-paginator-next:hover,
+            .ui-paginator .ui-paginator-last:hover,
+            .ui-paginator .ui-paginator-first:hover {
+                background: var(--light) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+            }
+            
+            .ui-paginator .ui-paginator-current {
+                color: var(--medium-gray) !important;
+                font-size: 0.85rem !important;
+                font-weight: 500 !important;
+            }
+            
+            /* Rows per page dropdown */
+            .ui-paginator .ui-paginator-rpp-options {
+                border-radius: 8px !important;
+                padding: 6px 12px !important;
+                border: 1px solid var(--light-gray) !important;
+                background: white !important;
+                font-size: 0.85rem !important;
+                margin-left: 8px !important;
+            }
+
+            /* Action Buttons */
+            .action-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: var(--transition);
+                background: rgba(74, 107, 255, 0.1);
+                color: var(--primary-dark);
+                border: none;
+                cursor: pointer;
+                font-size: 0.9rem;
+            }
+
+            .action-btn:hover {
+                background: var(--primary-dark);
+                color: white;
+                box-shadow: 0 4px 8px rgba(74, 107, 255, 0.2);
+                transform: translateY(-2px);
+            }
+
+            .action-btn i {
+                transition: var(--transition);
+            }
+
+            .action-btn:hover i {
+                transform: scale(1.1);
+            }
+
+            /* Empty State */
+            .empty-state {
+                background: white;
+                border-radius: var(--border-radius);
+                padding: 40px 20px;
+                margin: 20px 0;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            }
+            .empty-state i {
+                font-size: 48px;
+                color: var(--primary-light);
+                margin-bottom: 16px;
+            }
+            
+            .empty-state h3 {
+                color: var(--dark);
+                font-size: 1.3rem;
+                font-weight: 600;
+                margin-bottom: 8px;
+                font-family: var(--font-secondary);
+            }
+            .empty-state p {
+                color: var(--medium-gray);
+                font-size: 0.95rem;
+                max-width: 400px;
+                margin: 0 auto;
+                line-height: 1.6;
+            }
+
+            /* Result Count Badge */
+            .result-count-badge {
+                background: rgba(255,255,255,0.2) !important;
+                color: white !important;
+                border: 1px solid rgba(255,255,255,0.3) !important;
+                padding: 6px 12px !important;
+                border-radius: 50px !important;
+                font-size: 0.85rem !important;
+                font-weight: 600 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 6px !important;
+                backdrop-filter: blur(5px);
+            }
+            
+            .result-count-badge i {
+                font-size: 0.9rem !important;
+            }
+
+            /* Animations */
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.15); }
+                100% { transform: scale(1); }
+            }
+
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-3px); }
+                40%, 80% { transform: translateX(3px); }
+            }
+
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
+            .filter-group-header:hover {
+                transform: translateX(4px);
+                box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+            }
+
+            /* Responsive Adjustments */
+            @media (max-width: 1200px) {
+                .section-container {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 20px;
+                }
+                
+                .filter-group-header {
+                    padding: 12px 16px;
+                    font-size: 0.95rem;
+                }
+                
+                .form-group {
+                    padding: 16px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .section-container {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+                
+                .filter-group-header {
+                    margin: 20px 0 10px;
+                    padding: 12px 16px;
+                }
+                
+                .card-header {
+                    padding: 14px 18px;
+                }
+                
+                .btn-group-left {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                
+                .section-header h1 {
+                    font-size: 1.5rem;
+                }
+                
+                .card-body {
+                    padding: 18px;
+                }
+                
+                .btn {
+                    width: 100%;
+                }
+                
+                .status-badge {
+                    padding: 6px 10px;
+                    font-size: 0.7rem;
+                }
+            }
+            
+        </style>
+    </ui:define>
+    <ui:define name="section-content">
+        <div class="animate-fade">
+            <h:form id="searchForm">
+                <!-- Search Criteria Card -->
+                <div class="premium-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="pi pi-filter"></i>
+                            Search Filters
+                        </h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <!-- ========== TASK INFORMATION SECTION ========== -->
+                            <div class="task-info-section">
+                                <div class="filter-group-header">
+                                    <i class="pi pi-info-circle"></i>
+                                    Task Information
+                                </div>
+                                
+                                <div class="section-container">
+                                    <!-- Task Status -->
+                                    <div class="form-group">
+                                        <label for="taskStatus" class="form-label">Status</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="taskStatus" value="#{taskSearchBean.taskStatus}"
+                                                styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItem itemLabel="Pending" itemValue="pending" />
+                                                <f:selectItem itemLabel="In Progress" itemValue="in_progress" />
+                                                <f:selectItem itemLabel="Completed" itemValue="completed" />
+                                                <f:selectItem itemLabel="Done" itemValue="done" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Company -->
+                                    <div class="form-group">
+                                        <label for="company" class="form-label">Company</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="company" value="#{taskSearchBean.company}"
+                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    itemLabel="#{company.name}"
+                                                    itemValue="#{company}" var="company"
+                                                    value="#{taskSearchBean.companyList}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Empty cell for alignment -->
+                                    <div></div>
+                                </div>
+                            </div>
+                            
+                            <!-- ========== DATE RANGES SECTION ========== -->
+                            <div class="date-range-section">
+                                <div class="filter-group-header">
+                                    <i class="pi pi-calendar"></i>
+                                    Date Ranges
+                                </div>
+                                
+                                <div class="section-container">
+                                    <!-- Creation Date Range -->
+                                    <div class="form-group">
+                                        <label class="form-label">Creation Date Range</label>
+                                        <div class="date-range-container">
+                                            <div class="date-input-wrapper">
+                                                <p:calendar id="fromDate" value="#{taskSearchBean.fromDate}"
+                                                    pattern="yyyy-MM-dd" styleClass="date-input-field" 
+                                                    placeholder="Start date" />
+                                            </div>
+                                            <span class="date-range-separator">to</span>
+                                            <div class="date-input-wrapper">
+                                                <p:calendar id="toDate" value="#{taskSearchBean.toDate}"
+                                                    pattern="yyyy-MM-dd" styleClass="date-input-field"
+                                                    placeholder="End date" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Completion Date Range -->
+                                    <div class="form-group">
+                                        <label class="form-label">Completion Date Range</label>
+                                        <div class="date-range-container">
+                                            <div class="date-input-wrapper">
+                                                <p:calendar id="completedFromDate" value="#{taskSearchBean.completedFromDate}"
+                                                    pattern="yyyy-MM-dd" styleClass="date-input-field"
+                                                    placeholder="Start date" />
+                                            </div>
+                                            <span class="date-range-separator">to</span>
+                                            <div class="date-input-wrapper">
+                                                <p:calendar id="completedToDate" value="#{taskSearchBean.completedToDate}"
+                                                    pattern="yyyy-MM-dd" styleClass="date-input-field"
+                                                    placeholder="End date" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Empty cell for alignment -->
+                                    <div></div>
+                                </div>
+                            </div>
+                            
+                            <!-- ========== PEOPLE SECTION ========== -->
+                            <div class="people-section">
+                                <div class="filter-group-header">
+                                    <i class="pi pi-users"></i>
+                                    People Involved
+                                </div>
+                                
+                                <div class="section-container">
+                                    <!-- Assignee -->
+                                    <div class="form-group">
+                                        <label for="assignee" class="form-label">Assignee</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="assignee" value="#{taskSearchBean.assignee}"
+                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                                    itemValue="#{userAlias}" var="userAlias"
+                                                    value="#{taskSearchBean.userAliasList}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Assigner -->
+                                    <div class="form-group">
+                                        <label for="assigner" class="form-label">Assigner</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="assigner" value="#{taskSearchBean.assigner}"
+                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                                    itemValue="#{userAlias}" var="userAlias"
+                                                    value="#{taskSearchBean.userAliasList}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Empty cell for alignment -->
+                                    <div></div>
+                                </div>
+                            </div>
+                           
+                            <!-- ========== EQUIPMENT SECTION ========== -->
+                            <div class="equipment-section">
+                                <div class="filter-group-header">
+                                    <i class="pi pi-cog"></i>
+                                    Equipment Details
+                                </div>
+                                
+                                <div class="section-container">
+                                    <!-- Equipment Category -->
+                                    <div class="form-group">
+                                        <label for="equipmentCategory" class="form-label">Category</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="equipmentCategory" value="#{taskSearchBean.equipmentCategory}"
+                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    itemLabel="#{equipmentCategory.name}"
+                                                    itemValue="#{equipmentCategory}" var="equipmentCategory"
+                                                    value="#{taskSearchBean.equipmentCategoryList}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Service Type -->
+                                    <div class="form-group">
+                                        <label for="serviceType" class="form-label">Service Type</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="serviceType" value="#{taskSearchBean.serviceType}"
+                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems
+                                                    itemLabel="#{serviceType.name}"
+                                                    itemValue="#{serviceType}" var="serviceType"
+                                                    value="#{taskSearchBean.serviceTypeList}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Empty cell for alignment -->
+                                    <div></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="btn-group-left">
+                            <!-- Search Button -->
+                            <p:commandButton id="searchBtn" value="Search"
+                                action="#{taskSearchBean.searchTasks}"
+                                styleClass="btn btn-search btn-sm"
+                                icon="pi pi-search"
+                                title="Search tasks"
+                                update="@([id$=resultsTable])" />
+                                
+                            <!-- Clear Button -->
+                            <p:commandButton value="Clear"
+                                action="#{taskSearchBean.clearSearch}"
+                                styleClass="btn btn-clear btn-sm"
+                                icon="pi pi-eraser" 
+                                title="Clear all filters"
+                                update="@form"/>
+							<p:commandButton value="Export Excel"
+							    action="#{taskSearchBean.exportToExcel}"
+							    styleClass="btn btn-export btn-sm"
+							    icon="pi pi-file-excel"
+							    title="Export to Excel"
+							    ajax="false" />
+                                
+                        </div>
+                    </div>
+                </div>
+                
+
+<!-- ========== SEARCH RESULTS SECTION ========== -->
+<div class="premium-card">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="pi pi-table"></i>
+            Search Results
+        </h3>
+        <span class="result-count-badge">
+            <i class="pi pi-bell"></i>
+            #{taskSearchBean.searchResults != null ? taskSearchBean.searchResults.size() : 0} tasks found
+        </span>
+    </div>
+    
+    <div class="card-body">
+        <p:dataTable id="resultsTable" widgetVar="resultsTable"
+                var="task" 
+                value="#{taskSearchBean.searchResults}" 
+                styleClass="premium-table"
+                rowKey="#{task.id}" paginator="true" lazy="true"
+                rows="10" emptyMessage="No tasks found matching your criteria"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15,20,50">
+
+            <f:facet name="empty">
+                <div class="empty-state">
+                    <i class="pi pi-search"></i>
+                    <h3>No Tasks Found</h3>
+                    <p>Try adjusting your search filters to find what you're looking for.</p>
+                </div>
+            </f:facet>
+
+            <!-- Task ID Column -->
+            <p:column headerText="Task ID" style="width: 90px;">
+                <span class="badge badge-primary">
+                    <i class="pi pi-tag"></i> #{task.id}
+                </span>
+            </p:column>
+
+            <!-- Company Column -->
+            <p:column headerText="Company" style="min-width: 160px;">
+                <div class="company-cell">
+                    <i class="pi pi-building" style="color: var(--purple); margin-right: 8px;"></i>
+                    <h:outputText value="#{task.company.name}" style="font-weight: 500;"/>
+                </div>
+            </p:column>
+
+            <!-- Equipment Column -->
+            <p:column headerText="Equipment" style="min-width: 150px;">
+                <div class="equipment-cell">
+                    <i class="pi pi-cog" style="color: var(--info); margin-right: 8px;"></i>
+                    <h:outputText value="#{task.equipmentCategory.name}" style="font-weight: 500;"/>
+                </div>
+            </p:column>
+
+            <!-- Service Column -->
+            <p:column headerText="Service" style="min-width: 140px;">
+                <div class="service-cell">
+                    <i class="pi pi-wrench" style="color: var(--secondary); margin-right: 8px;"></i>
+                    <h:outputText value="#{task.serviceType.name}" style="font-weight: 500;"/>
+                </div>
+            </p:column>
+            
+            <!-- Assignee Column -->
+            <p:column headerText="Assigner" style="min-width: 160px;">
+                <div class="assignee-cell">
+                    <i class="pi pi-user" style="color: var(--accent); margin-right: 8px;"></i>
+                    <h:outputText value="#{task.userAliasByAssigner.sysUserBySysUser.displayName}" style="font-weight: 500;"/>
+                </div>
+            </p:column>
+            
+            <!-- Inspector Column -->
+            <p:column headerText="Inspector" style="min-width: 160px;">
+                <div class="assignee-cell">
+                    <i class="pi pi-user-edit" style="color: var(--warning); margin-right: 8px;"></i>
+                    <h:outputText value="#{taskSearchBean.getInspectorTask(task)}" 
+                                 style="font-weight: 500; color: var(--medium-gray);"
+                                 />
+                </div>
+            </p:column>
+            
+            <!-- Reviewer Column -->
+            <p:column headerText="Reviewer" style="min-width: 160px;">
+                <div class="assignee-cell">
+                    <i class="pi pi-eye" style="color: var(--success); margin-right: 8px;"></i>
+                    <h:outputText value="#{taskSearchBean.getReviewerTask(task)}" 
+                                 style="font-weight: 500; color: var(--medium-gray);"
+                                 />
+                </div>
+            </p:column>
+
+            <!-- Status Column -->
+			<p:column headerText="Status" style="width: 180px;">
+			    <div class="status-badge #{taskSearchBean.getStatusCssClass(taskSearchBean.getInspectionFormWorkflowStatus(task))}">
+			        <i class="pi #{taskSearchBean.getIconForStatusLabel(taskSearchBean.getInspectionFormWorkflowStatus(task))}"></i>
+			        #{taskSearchBean.getInspectionFormWorkflowStatus(task)}
+			    </div>
+			</p:column>
+
+            <!-- Created Date Column -->
+            <p:column headerText="Created" style="width: 120px;">
+                <div class="date-cell">
+                    <i class="pi pi-calendar" style="color: var(--primary); margin-right: 8px;"></i>
+                    <h:outputText value="#{task.createdDate}" style="font-weight: 500;">
+                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                    </h:outputText>
+                </div>
+            </p:column>
+        </p:dataTable>
+    </div>
+</div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

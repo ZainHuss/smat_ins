@@ -1,0 +1,163 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.permissions} 
+	</ui:define>
+
+
+	<ui:define name="section-content">
+		<h:form id="form">
+			<div class="card crud-demo">
+				<p:growl id="messages" showDetail="true" />
+				<p:toolbar>
+					<p:toolbarGroup>
+						<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+							actionListener="#{sysPermessionBean.openNew}"
+							update=":form:manage-sysPermession-content"
+							oncomplete="PF('manageSysPermessionDialog').show()"
+							styleClass="ui-button-success"
+							style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+							<p:resetInput target=":form:manage-sysPermession-content" />
+						</p:commandButton>
+						<p:commandButton id="delete-sysPermession-button"
+							value="#{sysPermessionBean.deleteButtonMessage}"
+							icon="pi pi-trash" styleClass="ui-button-danger"
+							actionListener="#{sysPermessionBean.deleteSelectedSysPermessions()}"
+							disabled="#{!sysPermessionBean.hasSelectedSysPermessions()}"
+							update="@this">
+							<p:confirm header="#{interfaceLabel.confirmation}"
+								message="#{interfaceLabel.deleteSelectedPermessions}"
+								icon="pi pi-exclamation-triangle" />
+						</p:commandButton>
+					</p:toolbarGroup>
+					<p:toolbarGroup
+						align="#{app.locale.locale eq 'en'? 'right':'left'}">
+
+						<p:commandButton value="#{interfaceLabel.export}"
+							icon="pi pi-upload" styleClass="ui-button-help" ajax="false">
+							<p:dataExporter type="pdf" target="dt-sysPermessions"
+								fileName="delete-sysPermession-button" />
+						</p:commandButton>
+					</p:toolbarGroup>
+				</p:toolbar>
+
+
+
+
+				<p:dataTable id="dt-sysPermessions" widgetVar="dtSysPermessions"
+					var="sysPermession" value="#{sysPermessionBean.sysPermessionList}"
+					reflow="true" styleClass="products-table"
+					selection="#{sysPermessionBean.selectedSysPermessionList}"
+					rowKey="#{sysPermession.id}" paginator="true" rows="10"
+					rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
+					paginatorPosition="bottom">
+					<p:ajax event="rowSelect"
+						update=":form:delete-sysPermession-button" />
+					<p:ajax event="rowUnselect"
+						update=":form:delete-sysPermession-button" />
+					<p:ajax event="rowSelectCheckbox"
+						update=":form:delete-sysPermession-button" />
+					<p:ajax event="rowUnselectCheckbox"
+						update=":form:delete-sysPermession-button" />
+					<p:ajax event="toggleSelect"
+						update=":form:delete-sysPermession-button" />
+					<p:column selectionMode="multiple" exportable="false"></p:column>
+					<p:column headerText="#{interfaceLabel.name}"
+						sortBy="#{sysPermession.name}" filterBy="#{sysPermession.name}">
+						<h:outputText value="#{sysPermession.name}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.code}"
+						sortBy="#{sysPermession.code}" filterBy="#{sysPermession.code}">
+						<h:outputText value="#{sysPermession.code}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.description}"
+						sortBy="#{sysPermession.description}"
+						filterBy="#{sysPermession.description}">
+						<h:outputText value="#{sysPermession.description}" />
+					</p:column>
+					<p:column exportable="false" width="20">
+						<p:commandButton icon="pi pi-pencil"
+							update=":form:manage-sysPermession-content"
+							oncomplete="PF('manageSysPermessionDialog').show()"
+							process="@this">
+							<f:setPropertyActionListener value="#{sysPermession}"
+								target="#{sysPermessionBean.sysPermession}" />
+							<p:resetInput target=":form:manage-sysPermession-content" />
+						</p:commandButton>
+					</p:column>
+					<p:column exportable="false" width="20">
+						<p:commandButton styleClass="ui-button-danger" icon="pi pi-trash" process="@this"
+							oncomplete="PF('deleteSysPermessionDialog').show()">
+							<f:setPropertyActionListener value="#{sysPermession}"
+								target="#{sysPermessionBean.sysPermession}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dialog header="#{interfaceLabel.permessionDetail}"
+					showEffect="fade" modal="true"
+					widgetVar="manageSysPermessionDialog" responsive="true">
+					<p:outputPanel id="manage-sysPermession-content" class="ui-fluid">
+						<p:outputPanel
+							rendered="#{not empty sysPermessionBean.sysPermession}">
+							<div class="p-field">
+								<p:outputLabel for="name">#{interfaceLabel.name}</p:outputLabel>
+								<p:inputText id="name"
+									value="#{sysPermessionBean.sysPermession.name}" required="true"
+									requiredMessage="#{interfaceLabel.name}  #{errorLabel.validateInput}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel for="code">#{interfaceLabel.code}</p:outputLabel>
+								<p:inputText id="code"
+									value="#{sysPermessionBean.sysPermession.code}" required="true"
+									requiredMessage="#{interfaceLabel.code}  #{errorLabel.validateInput}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel for="description">#{interfaceLabel.description}</p:outputLabel>
+								<p:inputText id="description"
+									value="#{sysPermessionBean.sysPermession.description}"
+									required="true"
+									requiredMessage="#{interfaceLabel.description}  #{errorLabel.validateInput}" />
+							</div>
+						</p:outputPanel>
+					</p:outputPanel>
+					<f:facet name="footer">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+							actionListener="#{sysPermessionBean.save}"
+							update="manage-sysPermession-content :form:dt-sysPermessions"
+							process="manage-sysPermession-content @this" />
+						<p:commandButton value="#{interfaceLabel.cancel}"
+							icon="pi pi-times"
+							onclick="PF('manageSysPermessionDialog').hide()"
+							class="ui-button-secondary" />
+					</f:facet>
+				</p:dialog>
+				
+				<p:confirmDialog widgetVar="deleteSysPermessionDialog"
+					showEffect="fade" width="300"
+					message="#{interfaceLabel.deleteSelectedPermessions}"
+					header="#{interfaceLabel.confirmation}" severity="warn">
+					<p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+						actionListener="#{sysPermessionBean.deleteSysPermession()}"
+						process="@this"
+						oncomplete="PF('deleteSysPermessionDialog').hide()" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-button-secondary" icon="pi pi-times"
+						onclick="PF('deleteSysPermessionDialog').hide()" />
+				</p:confirmDialog>
+				
+				<p:confirmDialog global="true" showEffect="fade" width="300">
+					<p:commandButton value="#{interfaceLabel.yes}" type="button"
+						styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-confirmdialog-no ui-button-secondary"
+						icon="pi pi-times" />
+				</p:confirmDialog>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

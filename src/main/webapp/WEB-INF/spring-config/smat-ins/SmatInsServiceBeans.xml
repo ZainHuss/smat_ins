@@ -1,0 +1,466 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	                    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	<!-- coding Service's -->
+	<bean name="localizationService"
+		class="com.smat.ins.util.LocalizationService">
+	</bean>
+	<bean name="asposeLicenseService"
+		class="com.smat.ins.util.AsposeLicenseService">
+	</bean>
+	<bean name="systemConfigurationService"
+		class="com.smat.ins.util.SystemConfigurationService">
+		<constructor-arg index="0"
+			ref="cabinetLocationService" />
+	</bean>
+
+	<bean name="accessByJobPositionService"
+		class="com.smat.ins.model.service.impl.AccessByJobPositionServiceImpl">
+		<property name="dao" ref="accessByJobPositionDao"></property>
+	</bean>
+
+	<bean name="accessByUserAliasService"
+		class="com.smat.ins.model.service.impl.AccessByUserAliasServiceImpl">
+		<property name="dao" ref="accessByUserAliasDao"></property>
+	</bean>
+
+	<bean name="accessManagementTypeService"
+		class="com.smat.ins.model.service.impl.AccessManagementTypeServiceImpl">
+		<property name="dao" ref="accessManagementTypeDao"></property>
+	</bean>
+
+	<bean name="accessTypeService"
+		class="com.smat.ins.model.service.impl.AccessTypeServiceImpl">
+		<property name="dao" ref="accessTypeDao"></property>
+	</bean>
+
+	<bean name="archiveAccessManagementService"
+		class="com.smat.ins.model.service.impl.ArchiveAccessManagementServiceImpl">
+		<property name="dao" ref="archiveAccessManagementDao"></property>
+	</bean>
+
+	<bean name="archiveDocumentService"
+		class="com.smat.ins.model.service.impl.ArchiveDocumentServiceImpl">
+		<property name="dao" ref="archiveDocumentDao"></property>
+		<property name="archiveDocumentFileDao"
+			ref="archiveDocumentFileDao"></property>
+		<property name="cabinetFolderDocumentDao"
+			ref="cabinetFolderDocumentDao"></property>
+	</bean>
+
+	<bean name="archiveDocumentFileService"
+		class="com.smat.ins.model.service.impl.ArchiveDocumentFileServiceImpl">
+		<property name="dao" ref="archiveDocumentFileDao"></property>
+	</bean>
+
+	<bean name="archiveDocumentTagService"
+		class="com.smat.ins.model.service.impl.ArchiveDocumentTagServiceImpl">
+		<property name="dao" ref="archiveDocumentTagDao"></property>
+	</bean>
+
+	<bean name="archiveDocumentTypeService"
+		class="com.smat.ins.model.service.impl.ArchiveDocumentTypeServiceImpl">
+		<property name="dao" ref="archiveDocumentTypeDao"></property>
+	</bean>
+
+	<bean name="archiveExtraPropertyService"
+		class="com.smat.ins.model.service.impl.ArchiveExtraPropertyServiceImpl">
+		<property name="dao" ref="archiveExtraPropertyDao"></property>
+	</bean>
+
+	<bean name="archiveSharingService"
+		class="com.smat.ins.model.service.impl.ArchiveSharingServiceImpl">
+		<property name="dao" ref="archiveSharingDao"></property>
+	</bean>
+
+	<bean name="boxTypeService"
+		class="com.smat.ins.model.service.impl.BoxTypeServiceImpl">
+		<property name="dao" ref="boxTypeDao"></property>
+	</bean>
+
+	<bean name="cabinetService"
+		class="com.smat.ins.model.service.impl.CabinetServiceImpl">
+		<property name="dao" ref="cabinetDao"></property>
+	</bean>
+
+	<bean name="cabinetDefinitionService"
+		class="com.smat.ins.model.service.impl.CabinetDefinitionServiceImpl">
+		<property name="dao" ref="cabinetDefinitionDao"></property>
+	</bean>
+
+	<bean name="cabinetFolderService"
+		class="com.smat.ins.model.service.impl.CabinetFolderServiceImpl">
+		<property name="dao" ref="cabinetFolderDao"></property>
+	</bean>
+
+	<bean name="cabinetFolderDocumentService"
+		class="com.smat.ins.model.service.impl.CabinetFolderDocumentServiceImpl">
+		<property name="dao" ref="cabinetFolderDocumentDao"></property>
+	</bean>
+
+	<bean name="cabinetLocationService"
+		class="com.smat.ins.model.service.impl.CabinetLocationServiceImpl">
+		<property name="dao" ref="cabinetLocationDao"></property>
+	</bean>
+
+	<bean name="cabinetTypeService"
+		class="com.smat.ins.model.service.impl.CabinetTypeServiceImpl">
+		<property name="dao" ref="cabinetTypeDao"></property>
+	</bean>
+
+	<bean name="checklistDataSourceService"
+		class="com.smat.ins.model.service.impl.ChecklistDataSourceServiceImpl">
+		<property name="dao" ref="checklistDataSourceDao"></property>
+	</bean>
+
+	<bean name="checklistDetailDataSourceService"
+		class="com.smat.ins.model.service.impl.ChecklistDetailDataSourceServiceImpl">
+		<property name="dao" ref="checklistDetailDataSourceDao"></property>
+	</bean>
+
+	<bean name="companyService"
+		class="com.smat.ins.model.service.impl.CompanyServiceImpl">
+		<property name="dao" ref="companyDao"></property>
+	</bean>
+
+	<bean name="columnContentService"
+		class="com.smat.ins.model.service.impl.ColumnContentServiceImpl">
+		<property name="dao" ref="columnContentDao"></property>
+	</bean>
+
+	<bean name="correspondenceService"
+		class="com.smat.ins.model.service.impl.CorrespondenceServiceImpl">
+		<property name="dao" ref="correspondenceDao"></property>
+		<property name="correspondenceRecipientDao"
+			ref="correspondenceRecipientDao"></property>
+	</bean>
+
+	<bean name="correspondenceArchiveService"
+		class="com.smat.ins.model.service.impl.CorrespondenceArchiveServiceImpl">
+		<property name="dao" ref="correspondenceArchiveDao"></property>
+	</bean>
+
+	<bean name="correspondenceNoteService"
+		class="com.smat.ins.model.service.impl.CorrespondenceNoteServiceImpl">
+		<property name="dao" ref="correspondenceNoteDao"></property>
+	</bean>
+
+	<bean name="correspondenceRecipientService"
+		class="com.smat.ins.model.service.impl.CorrespondenceRecipientServiceImpl">
+		<property name="dao" ref="correspondenceRecipientDao"></property>
+	</bean>
+
+	<bean name="correspondenceStateService"
+		class="com.smat.ins.model.service.impl.CorrespondenceStateServiceImpl">
+		<property name="dao" ref="correspondenceStateDao"></property>
+	</bean>
+
+	<bean name="correspondenceTaskService"
+		class="com.smat.ins.model.service.impl.CorrespondenceTaskServiceImpl">
+		<property name="dao" ref="correspondenceTaskDao"></property>
+	</bean>
+
+	<bean name="correspondenceTransmissionService"
+		class="com.smat.ins.model.service.impl.CorrespondenceTransmissionServiceImpl">
+		<property name="dao" ref="correspondenceTransmissionDao"></property>
+	</bean>
+
+	<bean name="correspondenceTypeService"
+		class="com.smat.ins.model.service.impl.CorrespondenceTypeServiceImpl">
+		<property name="dao" ref="correspondenceTypeDao"></property>
+	</bean>
+
+	<bean name="documentSharingService"
+		class="com.smat.ins.model.service.impl.DocumentSharingServiceImpl">
+		<property name="dao" ref="documentSharingDao"></property>
+	</bean>
+
+	<bean name="effectTypeService"
+		class="com.smat.ins.model.service.impl.EffectTypeServiceImpl">
+		<property name="dao" ref="effectTypeDao"></property>
+	</bean>
+
+	<bean name="equipmentCategoryService"
+		class="com.smat.ins.model.service.impl.EquipmentCategoryServiceImpl">
+		<property name="dao" ref="equipmentCategoryDao"></property>
+	</bean>
+
+	<bean name="equipmentInspectionCertificateService"
+		class="com.smat.ins.model.service.impl.EquipmentInspectionCertificateServiceImpl">
+		<property name="dao" ref="equipmentInspectionCertificateDao"></property>
+	</bean>
+
+	<bean name="equipmentInspectionFormService"
+		class="com.smat.ins.model.service.impl.EquipmentInspectionFormServiceImpl">
+		<property name="dao" ref="equipmentInspectionFormDao"></property>
+		<property name="inspectionFormWorkflowDao" ref="inspectionFormWorkflowDao"></property>
+		<property name="inspectionFormWorkflowStepDao" ref="inspectionFormWorkflowStepDao"></property>
+	</bean>
+
+	<bean name="equipmentInspectionFormItemService"
+		class="com.smat.ins.model.service.impl.EquipmentInspectionFormItemServiceImpl">
+		<property name="dao" ref="equipmentInspectionFormItemDao"></property>
+	</bean>
+
+	<bean name="equipmentTypeService"
+		class="com.smat.ins.model.service.impl.EquipmentTypeServiceImpl">
+		<property name="dao" ref="equipmentTypeDao"></property>
+	</bean>
+	
+	<bean name="empCertificationService"
+		class="com.smat.ins.model.service.impl.EmpCertificationServiceImpl">
+		<property name="dao" ref="empCertificationDao"></property>
+		<property name="employeeDao" ref="employeeDao"></property>
+		<property name="empCertificationWorkflowDao" ref="empCertificationWorkflowDao"></property>
+		<property name="empCertificationWorkflowStepDao" ref="empCertificationWorkflowStepDao"></property>
+	</bean>
+	
+	<bean name="employeeService"
+		class="com.smat.ins.model.service.impl.EmployeeServiceImpl">
+		<property name="dao" ref="employeeDao"></property>
+	</bean>
+	
+	<bean name="empCertificationTypeService"
+		class="com.smat.ins.model.service.impl.EmpCertificationTypeServiceImpl">
+		<property name="dao" ref="empCertificationTypeDao"></property>
+	</bean>
+	
+	<bean name="empCertificationWorkflowService"
+		class="com.smat.ins.model.service.impl.EmpCertificationWorkflowServiceImpl">
+		<property name="dao" ref="empCertificationWorkflowDao"></property>
+	</bean>
+	
+	<bean name="empCertificationWorkflowStepService"
+		class="com.smat.ins.model.service.impl.EmpCertificationWorkflowStepServiceImpl">
+		<property name="dao" ref="empCertificationWorkflowStepDao"></property>
+	</bean>
+
+	<bean name="examinationTypeService"
+		class="com.smat.ins.model.service.impl.ExaminationTypeServiceImpl">
+		<property name="dao" ref="examinationTypeDao"></property>
+	</bean>
+
+
+	<bean name="extraPropertyDefinitionService"
+		class="com.smat.ins.model.service.impl.ExtraPropertyDefinitionServiceImpl">
+		<property name="dao" ref="extraPropertyDefinitionDao"></property>
+	</bean>
+
+	<bean name="folderSharingService"
+		class="com.smat.ins.model.service.impl.FolderSharingServiceImpl">
+		<property name="dao" ref="folderSharingDao"></property>
+	</bean>
+
+	<bean name="formTemplateService"
+		class="com.smat.ins.model.service.impl.FormTemplateServiceImpl">
+		<property name="dao" ref="formTemplateDao"></property>
+		<property name="printedDocDao" ref="printedDocDao"></property>
+	</bean>
+
+	<bean name="formColumnService"
+		class="com.smat.ins.model.service.impl.FormColumnServiceImpl">
+		<property name="dao" ref="formColumnDao"></property>
+	</bean>
+
+	<bean name="formRowService"
+		class="com.smat.ins.model.service.impl.FormRowServiceImpl">
+		<property name="dao" ref="formRowDao"></property>
+	</bean>
+
+	<bean name="generalEquipmentItemService"
+		class="com.smat.ins.model.service.impl.GeneralEquipmentItemServiceImpl">
+		<property name="dao" ref="generalEquipmentItemDao"></property>
+	</bean>
+
+	<bean name="groupMemberService"
+		class="com.smat.ins.model.service.impl.GroupMemberServiceImpl">
+		<property name="dao" ref="groupMemberDao"></property>
+	</bean>
+
+	<bean name="hierarchySystemService"
+		class="com.smat.ins.model.service.impl.HierarchySystemServiceImpl">
+		<property name="dao" ref="hierarchySystemDao"></property>
+	</bean>
+
+	<bean name="hierarchySystemDefService"
+		class="com.smat.ins.model.service.impl.HierarchySystemDefServiceImpl">
+		<property name="dao" ref="hierarchySystemDefDao"></property>
+	</bean>
+
+	<bean name="hierarchyTypeService"
+		class="com.smat.ins.model.service.impl.HierarchyTypeServiceImpl">
+		<property name="dao" ref="hierarchyTypeDao"></property>
+	</bean>
+
+	<bean name="inspectionFormWorkflowService"
+		class="com.smat.ins.model.service.impl.InspectionFormWorkflowServiceImpl">
+		<property name="dao" ref="inspectionFormWorkflowDao"></property>
+	</bean>
+
+	<bean name="inspectionFormWorkflowStepService"
+		class="com.smat.ins.model.service.impl.InspectionFormWorkflowStepServiceImpl">
+		<property name="dao" ref="inspectionFormWorkflowStepDao"></property>
+	</bean>
+
+	<bean name="itemTypeService"
+		class="com.smat.ins.model.service.impl.ItemTypeServiceImpl">
+		<property name="dao" ref="itemTypeDao"></property>
+	</bean>
+
+	<bean name="jobPositionService"
+		class="com.smat.ins.model.service.impl.JobPositionServiceImpl">
+		<property name="dao" ref="jobPositionDao"></property>
+	</bean>
+
+	<bean name="jobPositionHierarchyService"
+		class="com.smat.ins.model.service.impl.JobPositionHierarchyServiceImpl">
+		<property name="dao" ref="jobPositionHierarchyDao"></property>
+	</bean>
+
+	<bean name="linkedCorrespondenceService"
+		class="com.smat.ins.model.service.impl.LinkedCorrespondenceServiceImpl">
+		<property name="dao" ref="linkedCorrespondenceDao"></property>
+	</bean>
+
+
+	<bean name="notificationService"
+		class="com.smat.ins.model.service.impl.NotificationServiceImpl">
+		<property name="dao" ref="notificationDao"></property>
+	</bean>
+
+	<bean name="notificationSettingService"
+		class="com.smat.ins.model.service.impl.NotificationSettingServiceImpl">
+		<property name="dao" ref="notificationSettingDao"></property>
+	</bean>
+
+	<bean name="notificationStyleService"
+		class="com.smat.ins.model.service.impl.NotificationStyleServiceImpl">
+		<property name="dao" ref="notificationStyleDao"></property>
+	</bean>
+
+	<bean name="notificationTypeService"
+		class="com.smat.ins.model.service.impl.NotificationTypeServiceImpl">
+		<property name="dao" ref="notificationTypeDao"></property>
+	</bean>
+
+	<bean name="organizationService"
+		class="com.smat.ins.model.service.impl.OrganizationServiceImpl">
+		<property name="dao" ref="organizationDao"></property>
+	</bean>
+
+	<bean name="periodTypeService"
+		class="com.smat.ins.model.service.impl.PeriodTypeServiceImpl">
+		<property name="dao" ref="periodTypeDao"></property>
+	</bean>
+	
+	<bean name="printedDocService" class="com.smat.ins.model.service.impl.PrintedDocServiceImpl">
+		<property name="dao" ref="printedDocDao"></property>
+	</bean>
+
+	<bean name="priorityTypeService"
+		class="com.smat.ins.model.service.impl.PriorityTypeServiceImpl">
+		<property name="dao" ref="priorityTypeDao"></property>
+	</bean>
+
+	<bean name="propertyTypeService"
+		class="com.smat.ins.model.service.impl.PropertyTypeServiceImpl">
+		<property name="dao" ref="propertyTypeDao"></property>
+	</bean>
+
+	<bean name="purposeTypeService"
+		class="com.smat.ins.model.service.impl.PurposeTypeServiceImpl">
+		<property name="dao" ref="purposeTypeDao"></property>
+	</bean>
+
+	<bean name="serviceTypeService"
+		class="com.smat.ins.model.service.impl.ServiceTypeServiceImpl">
+		<property name="dao" ref="serviceTypeDao"></property>
+	</bean>
+
+	<bean name="sharingToTypeService"
+		class="com.smat.ins.model.service.impl.SharingToTypeServiceImpl">
+		<property name="dao" ref="sharingToTypeDao"></property>
+	</bean>
+
+	<bean name="sharingTypeService"
+		class="com.smat.ins.model.service.impl.SharingTypeServiceImpl">
+		<property name="dao" ref="sharingTypeDao"></property>
+	</bean>
+
+	<bean name="stepService"
+		class="com.smat.ins.model.service.impl.StepServiceImpl">
+		<property name="dao" ref="stepDao"></property>
+	</bean>
+
+	<bean name="stickerService"
+		class="com.smat.ins.model.service.impl.StickerServiceImpl">
+		<property name="dao" ref="stickerDao"></property>
+	</bean>
+
+	<bean name="sysPermissionService"
+		class="com.smat.ins.model.service.impl.SysPermissionServiceImpl">
+		<property name="dao" ref="sysPermissionDao"></property>
+	</bean>
+
+	<bean name="sysRoleService"
+		class="com.smat.ins.model.service.impl.SysRoleServiceImpl">
+		<property name="dao" ref="sysRoleDao"></property>
+	</bean>
+
+	<bean name="sysRolePermissionService"
+		class="com.smat.ins.model.service.impl.SysRolePermissionServiceImpl">
+		<property name="dao" ref="sysRolePermissionDao"></property>
+	</bean>
+
+	<bean name="sysUserService"
+		class="com.smat.ins.model.service.impl.SysUserServiceImpl">
+		<property name="dao" ref="sysUserDao"></property>
+	</bean>
+
+	<bean name="sysUserRoleService"
+		class="com.smat.ins.model.service.impl.SysUserRoleServiceImpl">
+		<property name="dao" ref="sysUserRoleDao"></property>
+	</bean>
+
+	<bean name="sysUserSettingService"
+		class="com.smat.ins.model.service.impl.SysUserSettingServiceImpl">
+		<property name="dao" ref="sysUserSettingDao"></property>
+	</bean>
+
+	<bean name="taskService"
+		class="com.smat.ins.model.service.impl.TaskServiceImpl">
+		<property name="dao" ref="taskDao"></property>
+	</bean>
+
+	<bean name="completedTaskService"
+		class="com.smat.ins.model.service.impl.CompletedTaskServiceImpl">
+		<property name="dao" ref="completedTaskDao"></property>
+	</bean>
+
+	<bean name="transmissionTypeService"
+		class="com.smat.ins.model.service.impl.TransmissionTypeServiceImpl">
+		<property name="dao" ref="transmissionTypeDao"></property>
+	</bean>
+
+	<bean name="userAliasService"
+		class="com.smat.ins.model.service.impl.UserAliasServiceImpl">
+		<property name="dao" ref="userAliasDao"></property>
+	</bean>
+
+	<bean name="workflowService"
+		class="com.smat.ins.model.service.impl.WorkflowServiceImpl">
+		<property name="dao" ref="workflowDao"></property>
+	</bean>
+
+	<bean name="workflowDefinitionService"
+		class="com.smat.ins.model.service.impl.WorkflowDefinitionServiceImpl">
+		<property name="dao" ref="workflowDefinitionDao"></property>
+	</bean>
+
+	<bean name="workingGroupService"
+		class="com.smat.ins.model.service.impl.WorkingGroupServiceImpl">
+		<property name="dao" ref="workingGroupDao"></property>
+	</bean>
+
+</beans>

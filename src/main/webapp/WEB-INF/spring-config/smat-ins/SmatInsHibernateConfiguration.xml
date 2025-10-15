@@ -1,0 +1,186 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                        http://www.springframework.org/schema/jee
+                        http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+                        http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+	<context:property-placeholder
+		location="classpath:database.properties" />
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName"
+			value="com.p6spy.engine.spy.P6SpyDriver"></property>
+		<property name="url" value="${environments.dev.url}"></property>
+		<property name="username"
+			value="${environments.dev.username}"></property>
+		<property name="password"
+			value="${environments.dev.password}"></property>
+			<property name="initialSize" value="1" />
+        <property name="minIdle" value="5" />
+        <property name="maxActive" value="30" />
+        <property name="maxWait" value="3000" />
+        
+	</bean>
+	
+	 <!-- Environment for Spring properties -->
+    <bean id="environment" class="org.springframework.core.env.StandardEnvironment" />
+
+    <!-- QueryAuditInterceptor with setter injection -->
+    <bean id="queryAuditInterceptor" class="com.generic.util.ProductionQueryAuditInterceptor">
+        <constructor-arg ref="environment" />
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+	<bean id="flywayConfig"
+		class="org.flywaydb.core.api.configuration.ClassicConfiguration">
+		<property name="dataSource" ref="dataSource" />
+		<property name="baselineOnMigrate" value="true"></property>
+	</bean>
+
+	<bean id="flyway" class="org.flywaydb.core.Flyway"
+		init-method="migrate">
+		<constructor-arg ref="flywayConfig" />
+	</bean>
+
+	<!-- <bean id="flywayConfig" class="org.flywaydb.core.Flyway" init-method="migrate"> 
+		<property name="dataSource" ref="dataSource" /> <property name="baselineOnMigrate" 
+		value="true"></property> <property name="mixed" value="true"></property> 
+		</bean> -->
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		depends-on="flyway">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+
+		<property name="hibernateProperties">
+			<props>
+				<!-- <prop key="hibernate.hbm2ddl.auto">create</prop> -->
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<!-- <prop key="hibernate.hbm2ddl.auto">validate</prop> -->
+				<prop key="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
+				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext
+				</prop>
+				<!-- <prop key="hibernate.connection.autocommit">false</prop> <prop key="hibernate.connection.release_mode">after_transaction</prop> -->
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.connection.autoReconnect">true</prop>
+				<prop key="hibernate.query.substitutions">true 1, false 0</prop>
+
+				<prop key="org.hibernate.flushMode">COMMIT</prop>
+				<prop key="hibernate.order_inserts">true</prop>
+				<prop key="hibernate.order_updates">true</prop>
+				<prop key="hibernate.jdbc.batch_size">20</prop>
+				<prop key="hibernate.jdbc.fetch_size">20</prop>
+				<prop key="hibernate.jdbc.batch_versioned_data">true</prop>
+				<prop key="hibernate.default_batch_fetch_size">20</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.jcache.internal.JCacheRegionFactory
+				</prop>
+				<prop key="hibernate.javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</prop>
+				<prop key="hibernate.javax.cache.uri">
+					#{ new org.springframework.core.io.ClassPathResource("jcache.xml").getURI().toString()}
+				</prop>
+				<prop key="hibernate.cache.use_structured_entries"> true </prop>
+				<prop key="hibernate.cache.use_second_level_cache"> true </prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.use_minimal_puts">true</prop>
+				<prop key="connection.provider_class">org.hibernate.c3p0.internal.C3P0ConnectionProvider
+				</prop>
+				<prop key="hibernate.c3p0.acquire_increment">5</prop>
+				<prop key="hibernate.c3p0.min_size">5</prop>
+				<prop key="hibernate.c3p0.max_size">30</prop>
+				<prop key="hibernate.c3p0.initialPoolSize">1</prop>
+				<prop key="hibernate.c3p0.timeout">5000</prop>
+				<prop key="hibernate.c3p0.checkoutTimeout">3000</prop>
+				<prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+				<prop key="hibernate.c3p0.testConnectionOnCheckin">false</prop>
+				<prop key="hibernate.c3p0.preferredTestQuery">SELECT 1 from dual</prop>
+				<prop key="hibernate.c3p0.max_statements">150</prop>
+				<prop key="hibernate.c3p0.idle_test_period">3000</prop>
+				<prop key="hibernate.c3p0.numHelperThreads">4</prop>
+				<prop key="hibernate.c3p0.acquireRetryAttempts">3</prop>
+				<prop key="hibernate.c3p0.acquireRetryDelay">10</prop>
+				<prop key="hibernate.c3p0.breakAfterAcquireFailure">false</prop>
+				<prop key="hibernate.c3p0.unreturnedConnectionTimeout">30</prop>
+				<prop key="hibernate.c3p0.debugUnreturnedConnectionStackTraces">true</prop>
+				<prop key="hibernate.enable_lazy_load_no_trans">true</prop>
+				<!-- Enable annotation scanning -->
+				<prop key="hibernate.archive.autodetection">class, hbm</prop>
+
+				<!-- Envers properties -->
+				<prop key="hibernate.envers.audit_table_prefix">AUDIT_</prop>
+				<prop key="org.hibernate.envers.audit_table_suffix">_HISTORY</prop>
+				<prop key="org.hibernate.envers.revision_field_name">REVISION_ID</prop>
+				<prop key="org.hibernate.envers.revision_type_field_name">REV_TYPE</prop>
+				<prop key="org.hibernate.envers.default_schema">smat_ins_db</prop>
+				<prop key="org.hibernate.envers.default_catalog"></prop>
+				<prop key="org.hibernate.envers.store_data_at_delete">true</prop>
+				<prop
+					key="org.hibernate.envers.do_not_audit_optimistic_locking_field">false</prop>
+				<prop key="hibernate.envers.batch_size">50</prop>
+				<prop key="hibernate.envers.revision_on_collection_change">false</prop>
+				<prop key="hibernate.envers.revision_on_relation_change">false</prop>
+				<prop key="hibernate.envers.track_entities_changed_in_revision">true</prop>
+				<!-- Disable foreign keys for audit tables -->
+				<prop key="hibernate.envers.use_revision_entity_with_native_id">true</prop>
+				<!-- Enables date-range queries -->
+				<prop key="hibernate.envers.audit_strategy">org.hibernate.envers.strategy.ValidityAuditStrategy
+				</prop>
+				<prop
+					key="hibernate.envers.audit_strategy_validity_store_revend_timestamp">true</prop>
+				<!-- Custom column types for audit tables -->
+				
+			</props>
+		</property>
+		<property name="entityInterceptor" ref="queryAuditInterceptor" />
+		<property name="packagesToScan"
+			value="com.smat.ins.model.entity" />
+		<property name="mappingLocations"
+			value="classpath:com/smat/ins/model/entity/*.hbm.xml">
+		</property>
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<tx:annotation-driven
+		transaction-manager="transactionManager" />
+
+	<tx:advice id="transactionAdvice"
+		transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" propagation="SUPPORTS"
+				read-only="true" />
+			<tx:method name="find*" propagation="SUPPORTS"
+				read-only="true" />
+			<tx:method name="load*" propagation="SUPPORTS"
+				read-only="true" />
+
+			<tx:method name="*" propagation="REQUIRED"
+				rollback-for="java.lang.Throwable" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut id="allServices"
+			expression="execution(* com.smat.ins.model.service.impl.*.*(..)) || execution(* com.generic.model.service.impl.*.*(..))" />
+		<aop:advisor advice-ref="transactionAdvice"
+			pointcut-ref="allServices" />
+
+	</aop:config>
+
+
+</beans>
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd"
+	version="2.2">
+	<application>
+		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+		<resource-handler>org.omnifaces.resourcehandler.UnmappedResourceHandler</resource-handler>
+		<action-listener>org.primefaces.application.DialogActionListener</action-listener>
+		<navigation-handler>org.ocpsoft.rewrite.faces.RewriteNavigationHandler</navigation-handler>
+		<view-handler>org.ocpsoft.rewrite.faces.RewriteViewHandler</view-handler>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>ar</supported-locale>
+		</locale-config>
+		<resource-bundle>
+			<base-name>com.smat.ins.view.resources.interface</base-name>
+			<var>interfaceLabel</var>
+		</resource-bundle>
+		
+		<resource-bundle>
+			<base-name>com.smat.ins.view.resources.interface-anas</base-name>
+			<var>interfaceLabelAnas</var>
+		</resource-bundle>
+		
+		<resource-bundle>
+			<base-name>com.smat.ins.view.resources.errorMessages</base-name>
+			<var>errorLabel</var>
+		</resource-bundle>
+
+		<resource-bundle>
+			<base-name>com.smat.ins.view.resources.applicationSetting</base-name>
+			<var>appSetting</var>
+		</resource-bundle>
+		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+
+		<resource-bundle>
+			<base-name>build</base-name>
+			<var>build</var>
+		</resource-bundle>
+	</application>
+
+	<lifecycle>
+		<phase-listener>org.primefaces.component.lifecycle.LifecyclePhaseListener</phase-listener>
+	</lifecycle>
+
+	<factory>
+		<faces-context-factory>com.smat.ins.application.Html5ContextFactory</faces-context-factory>
+		<exception-handler-factory>org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory</exception-handler-factory>
+		<lifecycle-factory>org.primefaces.clientwindow.PrimeClientWindowLifecycleFactory</lifecycle-factory>
+	</factory>
+</faces-config>

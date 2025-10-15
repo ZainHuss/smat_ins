@@ -1,0 +1,1 @@
+ALTER TABLE column_content ADD content_order SMALLINT NOT NULL;

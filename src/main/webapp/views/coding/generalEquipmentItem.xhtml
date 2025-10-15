@@ -1,0 +1,215 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.generalEquipmentItem} 
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+		<style>
+			.wrap-text {
+				white-space: normal !important;
+				word-wrap: break-word !important;
+			}
+			.products-table .ui-datatable-tablewrapper table {
+				table-layout: auto;
+			}
+		</style>
+	</ui:define>
+	<ui:define name="section-content">
+		<h:form id="form">
+			<div class="card">
+				<p:growl id="messages" showDetail="true" />
+				<div class="row">
+					<div class="col-lg-9 col-xl-8 col-xxl-7">
+						<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+							actionListener="#{generalEquipmentItemBean.openNew}"
+							update=":form:outputPanel-content"
+							oncomplete="PF('widgetVarDetailDialog').show()"
+							styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+							style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+							<p:resetInput target=":form:outputPanel-content" />
+						</p:commandButton>
+						<p:commandButton id="delete-button"
+							value="#{generalEquipmentItemBean.deleteButtonMessage}"
+							icon="pi pi-trash"
+							styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+							actionListener="#{generalEquipmentItemBean.delete()}"
+							disabled="#{!generalEquipmentItemBean.hasSelected()}"
+							update="@this">
+							<p:confirm header="#{interfaceLabel.confirmation}"
+								message="#{interfaceLabel.deleteSelected}"
+								icon="pi pi-exclamation-triangle" />
+						</p:commandButton>
+					</div>
+				</div>
+
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+
+				<p:dataTable id="dataTable" widgetVar="widgetVarDataTable"
+					var="generalEquipmentItemVar" globalFilterOnly="true"
+					value="#{generalEquipmentItemBean.generalEquipmentItemList}"
+					reflow="true" styleClass="products-table"
+					selection="#{generalEquipmentItemBean.selectGeneralEquipmentItemList}"
+					rowKey="#{generalEquipmentItemVar.id}" paginator="true" rows="10"
+					rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
+					paginatorPosition="bottom">
+					<p:ajax event="rowSelect" update=":form:delete-button" />
+					<p:ajax event="rowUnselect" update=":form:delete-button" />
+					<p:ajax event="rowSelectCheckbox" update=":form:delete-button" />
+					<p:ajax event="rowUnselectCheckbox" update=":form:delete-button" />
+					<p:ajax event="toggleSelect" update=":form:delete-button" />
+					<f:facet name="header">
+						<div class="flex align-items-center justify-content-between">
+							<h:outputText value="#{interfaceLabel.search} : " />
+							<p:inputText id="globalFilter"
+								onkeyup="PF('widgetVarDataTable').filter()" style="width:auto;"
+								placeholder="#{interfaceLabel.enterKeyword}" />
+						</div>
+					</f:facet>
+					<p:column selectionMode="multiple" exportable="false"></p:column>
+					<p:column headerText="#{interfaceLabel.itemText}"
+						sortBy="#{generalEquipmentItemVar.itemText}"
+						filterBy="#{generalEquipmentItemVar.itemText}"
+						styleClass="wrap-text" style="min-width: 200px;">
+						<h:outputText value="#{generalEquipmentItemVar.itemText}" />
+					</p:column>
+
+					<p:column headerText="#{interfaceLabel.code}"
+						sortBy="#{generalEquipmentItemVar.itemCode}"
+						filterBy="#{generalEquipmentItemVar.itemCode}">
+						<h:outputText value="#{generalEquipmentItemVar.itemCode}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabelAnas.itemType}"
+						sortBy="#{generalEquipmentItemVar.itemType.name}"
+						filterBy="#{generalEquipmentItemVar.itemType.name}">
+						<h:outputText value="#{generalEquipmentItemVar.itemType.name}" />
+					</p:column>
+
+					<p:column headerText="#{interfaceLabel.dataSource}"
+						sortBy="#{generalEquipmentItemVar.checklistDataSource.name}"
+						filterBy="#{generalEquipmentItemVar.checklistDataSource.name}">
+						<h:outputText
+							value="#{generalEquipmentItemVar.checklistDataSource.name}" />
+					</p:column>
+
+					<p:column exportable="false" width="20">
+						<p:commandButton icon="pi pi-pencil"
+							update=":form:outputPanel-content"
+							oncomplete="PF('widgetVarDetailDialog').show()" process="@this">
+							<f:setPropertyActionListener value="#{generalEquipmentItemVar}"
+								target="#{generalEquipmentItemBean.generalEquipmentItem}" />
+							<p:resetInput target=":form:outputPanel-content" />
+						</p:commandButton>
+					</p:column>
+					<p:column exportable="false" width="20">
+						<p:commandButton styleClass="ui-button-danger" icon="pi pi-trash"
+							process="@this" oncomplete="PF('widgetVarDeleteDialog').show()">
+							<f:setPropertyActionListener value="#{generalEquipmentItemVar}"
+								target="#{generalEquipmentItemBean.generalEquipmentItem}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dialog
+					header="#{interfaceLabel.details} #{interfaceLabel.generalEquipmentItem}"
+					showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog"
+					responsive="true">
+					<p:outputPanel id="outputPanel-content" class="ui-fluid">
+						<p:outputPanel
+							rendered="#{not empty generalEquipmentItemBean.generalEquipmentItem}">
+							<div class="p-field">
+								<p:outputLabel for="itemLabel">#{interfaceLabelAnas.itemLabel}</p:outputLabel>
+								<p:inputText id="itemLabel"
+									value="#{generalEquipmentItemBean.generalEquipmentItem.itemText}"
+									required="true"
+									requiredMessage="#{interfaceLabelAnas.itemLabel}  #{errorLabel.validateInput}" />
+							</div>
+
+
+
+							<div class="p-field">
+								<p:outputLabel for="itemType">#{interfaceLabel.forItem}</p:outputLabel>
+								<p:selectOneMenu id="generalEquipItem"
+									value="#{generalEquipmentItemBean.generalEquipmentItem.forItem}"
+									converter="omnifaces.SelectItemsIndexConverter">
+									<f:selectItem itemLabel="#{interfaceLabel.choose}" />
+									<f:selectItems
+										itemLabel="#{itemGVar.itemText}(#{itemGVar.itemType.name})"
+										itemValue="#{itemGVar.itemCode}" var="itemGVar"
+										value="#{generalEquipmentItemBean.generalEquipmentItemList}" />
+									
+								</p:selectOneMenu>
+							</div>
+
+							<div class="p-field">
+								<p:outputLabel for="code">#{interfaceLabel.code}</p:outputLabel>
+								<p:inputText id="code"
+									value="#{generalEquipmentItemBean.generalEquipmentItem.itemCode}" />
+							</div>
+
+							<div class="p-field">
+								<p:outputLabel for="itemType">#{interfaceLabelAnas.itemType}</p:outputLabel>
+								<p:selectOneMenu id="itemType"
+									value="#{generalEquipmentItemBean.generalEquipmentItem.itemType}"
+									converter="omnifaces.SelectItemsIndexConverter">
+									<f:selectItems itemLabel="#{itemType.name}"
+										itemValue="#{itemType}" var="itemType"
+										value="#{generalEquipmentItemBean.itemTypes}" />
+									<p:ajax update="@([id$=dataSource])"></p:ajax>
+								</p:selectOneMenu>
+							</div>
+
+							<div class="p-field">
+								<p:outputLabel for="itemType">#{interfaceLabel.dataSource}</p:outputLabel>
+								<p:selectOneMenu id="dataSource"
+									disabled="#{generalEquipmentItemBean.generalEquipmentItem.itemType.code != '04'}"
+									value="#{generalEquipmentItemBean.generalEquipmentItem.checklistDataSource}"
+									converter="omnifaces.SelectItemsIndexConverter">
+									<f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" />
+									<f:selectItems itemLabel="#{dataSourceObj.name}"
+										itemValue="#{dataSourceObj}" var="dataSourceObj"
+										value="#{generalEquipmentItemBean.checklistDataSources}" />
+								</p:selectOneMenu>
+							</div>
+
+						</p:outputPanel>
+					</p:outputPanel>
+					<f:facet name="footer">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+							actionListener="#{generalEquipmentItemBean.save()}"
+							update=":form:outputPanel-content :form:dataTable"
+							process="outputPanel-content @this" />
+						<p:commandButton value="#{interfaceLabel.cancel}"
+							icon="pi pi-times" onclick="PF('widgetVarDetailDialog').hide()"
+							class="ui-button-secondary" />
+					</f:facet>
+				</p:dialog>
+
+				<p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
+					width="300" message="#{interfaceLabel.deleteSelected}"
+					header="#{interfaceLabel.confirmation}" severity="warn">
+					<p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+						actionListener="#{generalEquipmentItemBean.delete()}"
+						process="@this" oncomplete="PF('widgetVarDeleteDialog').hide()" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-button-secondary" icon="pi pi-times"
+						onclick="PF('widgetVarDeleteDialog').hide()" />
+				</p:confirmDialog>
+				<p:confirmDialog global="true" showEffect="fade" width="300">
+					<p:commandButton value="#{interfaceLabel.yes}" type="button"
+						styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-confirmdialog-no ui-button-secondary"
+						icon="pi pi-times" />
+				</p:confirmDialog>
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

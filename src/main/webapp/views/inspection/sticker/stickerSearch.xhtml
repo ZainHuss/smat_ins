@@ -1,0 +1,1045 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    template="/WEB-INF/template.xhtml">
+
+    <ui:define name="section-head">
+        
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+            name="css/material-theme.css"></h:outputStylesheet>
+        <style type="text/css">
+            /* Animation Keyframes */
+            @keyframes fadeInDown {
+                from { 
+                    opacity:0;
+                    transform: translateY(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @keyframes slideInLeft {
+                from { 
+                    opacity:0;
+                    transform: translateX(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes pulse { 
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes shimmer { 
+                0% { background-position: -200px 0; }
+                100% { background-position: calc(200px + 100%) 0; }
+            }
+            
+            @keyframes buttonShine {
+                0% { transform: translateX(-100%) rotate(45deg); }
+                100% { transform: translateX(200%) rotate(45deg); }
+            }
+            
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-5px); }
+                100% { transform: translateY(0px); }
+            }
+            
+            @keyframes iconPulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+
+            /* Main Container */
+            .sticker-container {
+                animation: fadeInDown 0.8s ease-out;
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                border-radius: 15px;
+                padding: 1.5rem;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+                position: relative;
+                overflow: hidden;
+                margin-bottom: 1.5rem;
+                border: 1px solid #cbd5e0;
+            }
+
+            .sticker-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                animation: shimmer 3s infinite;
+            }
+
+            /* Header Section */
+            .header-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                animation: slideInLeft 0.6s ease-out;
+                transition: all 0.3s ease;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-section:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+            .header-title {
+                color: #4a5568;
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                position: relative;
+                animation: float 6s ease-in-out infinite;
+                text-align: left;
+                margin-right: auto;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .header-title::after {
+                content: '';
+                position: absolute;
+                bottom: -8px;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+                border-radius: 2px;
+            }
+
+            .header-icon {
+                font-size: 1.8rem;
+                color: #667eea;
+                animation: iconPulse 3s infinite;
+                transition: all 0.3s ease;
+            }
+
+            .header-section:hover .header-icon {
+                animation: rotate 2s ease;
+                color: #764ba2;
+            }
+
+            /* Combined Search and Filter Section */
+            .search-filter-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                animation: slideInLeft 0.8s ease-out;
+                transition: all 0.3s ease;
+            }
+
+            .search-filter-section:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+            .input-group {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.2rem;
+                flex-wrap: wrap;
+            }
+
+            .input-label {
+                font-weight: 600;
+                color: #4a5568;
+                min-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .input-icon {
+                font-size: 1.1rem;
+                color: #667eea;
+                transition: all 0.3s ease;
+            }
+
+            .input-group:hover .input-icon {
+                transform: scale(1.2);
+                color: #764ba2;
+            }
+
+            .input-field {
+                flex: 1;
+                min-width: 220px;
+            }
+
+            .input-field .ui-inputtext,
+            .input-field .ui-selectonemenu {
+                width: 100% !important;
+                padding: 0.8rem 1rem;
+                border: 2px solid #cbd5e0;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.9);
+            }
+
+            .input-field .ui-inputtext:focus,
+            .input-field .ui-selectonemenu:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                transform: translateY(-1px);
+            }
+
+            /* Filter Options */
+            .filter-options-row {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e2e8f0;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .filter-title {
+                font-weight: 600;
+                color: #4a5568;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .filter-options {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            .filter-option {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: all 0.3s ease;
+                padding: 0.4rem 0.8rem;
+                border-radius: 8px;
+                background: rgba(102, 126, 234, 0.05);
+                font-size: 0.85rem;
+                cursor: pointer;
+            }
+
+            .filter-option:hover {
+                background: rgba(102, 126, 234, 0.1);
+                transform: translateY(-1px);
+            }
+
+            .filter-option input[type="checkbox"] {
+                cursor: pointer;
+            }
+
+            /* Button Section - Right Aligned */
+            .button-section {
+                display: flex;
+                gap: 0.8rem;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                margin-top: 1rem;
+            }
+
+            .enhanced-button {
+                position: relative;
+                overflow: hidden;
+                border-radius: 20px !important;
+                padding: 0.5rem 1.2rem !important;
+                font-weight: 500 !important;
+                font-size: 0.85rem !important;
+                transition: all 0.3s ease !important;
+                border: none !important;
+                min-width: 100px;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .enhanced-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+                z-index: -1;
+                transform: scale(0);
+                transition: transform 0.5s ease;
+                border-radius: 20px;
+            }
+
+            .enhanced-button:hover::before {
+                transform: scale(1);
+            }
+
+            .enhanced-button::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 50%;
+                height: 200%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                transform: rotate(45deg);
+                animation: buttonShine 2s infinite;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .enhanced-button:hover::after {
+                opacity: 1;
+            }
+
+            .enhanced-button:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .enhanced-button:active {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .search-btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                color: white !important;
+                box-shadow: 0 3px 10px rgba(102, 126, 234, 0.25) !important;
+            }
+
+            .reset-btn {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+                color: white !important;
+                box-shadow: 0 3px 10px rgba(245, 87, 108, 0.25) !important;
+            }
+
+            .button-icon {
+                font-size: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .enhanced-button:hover .button-icon {
+                transform: scale(1.2);
+            }
+
+            /* Custom Checkbox Styling */
+            .ui-chkbox-box {
+                transition: all 0.3s ease !important;
+                border-radius: 4px !important;
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            .ui-chkbox-box:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            }
+
+            .ui-chkbox-box.ui-state-active {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border-color: #667eea !important;
+            }
+
+            /* Data Table Section */
+            .table-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                animation: fadeInDown 1s ease-out;
+                transition: all 0.3s ease;
+                overflow-x: auto;
+            }
+
+            .table-section:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+            .table-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 0.8rem 1rem;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .table-header:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            }
+
+            .table-header h3 {
+                margin: 0;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 1.1rem;
+            }
+
+            /* Results Counter Badge */
+            .results-counter {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                font-weight: 600;
+                font-size: 0.85rem;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                margin-left: 0.8rem;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(5px);
+                animation: pulse 2s infinite;
+                transition: all 0.3s ease;
+            }
+
+            .results-counter:hover {
+                transform: scale(1.05);
+                background: rgba(255, 255, 255, 0.25);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            }
+
+            .search-container {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 0.4rem 0.8rem;
+                border-radius: 18px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            .search-container:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateY(-1px);
+            }
+
+            .search-container input {
+                background: transparent !important;
+                border: none !important;
+                color: white !important;
+                font-size: 0.85rem !important;
+                padding: 0.2rem 0.4rem !important;
+                width: 180px;
+            }
+
+            .search-container input::placeholder {
+                color: rgba(255, 255, 255, 0.7) !important;
+            }
+
+            /* QR Code Styling */
+            canvas {
+                width: 100px !important;
+                max-width: 100px !important;
+                height: 100px !important;
+                border-radius: 8px;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+
+            canvas:hover {
+                transform: scale(1.08);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Table Enhancements */
+            .ui-datatable {
+                width: 100% !important;
+                min-width: 900px;
+            }
+            
+            .ui-datatable .ui-datatable-header {
+                background: transparent !important;
+                border: none !important;
+                padding: 0 !important;
+            }
+
+            .ui-datatable .ui-datatable-data tr {
+                transition: all 0.3s ease;
+            }
+
+            .ui-datatable .ui-datatable-data tr:hover {
+                background: rgba(102, 126, 234, 0.05) !important;
+                transform: translateX(3px);
+            }
+
+            .ui-datatable .ui-datatable-data tr td {
+                padding: 0.8rem !important;
+                border-bottom: 1px solid #e2e8f0 !important;
+                transition: all 0.3s ease;
+                white-space: nowrap;
+                font-size: 0.9rem;
+            }
+
+            .ui-datatable .ui-datatable-thead tr th {
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+                color: #4a5568 !important;
+                font-weight: 600 !important;
+                padding: 0.8rem !important;
+                border-bottom: 2px solid #e2e8f0 !important;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+                white-space: nowrap;
+                font-size: 0.9rem;
+            }
+
+            .ui-datatable .ui-datatable-thead tr th::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+                transition: width 0.3s ease;
+            }
+
+            .ui-datatable .ui-datatable-thead tr th:hover::after {
+                width: 100%;
+            }
+
+            /* Status Badge */
+            .status-badge {
+                padding: 0.2rem 0.6rem;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                transition: all 0.3s ease;
+                display: inline-block;
+            }
+
+            .status-badge:hover {
+                transform: scale(1.04);
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .status-used {
+                background: linear-gradient(135deg, #feb2b2 0%, #fc8181 100%);
+                color: #742a2a;
+            }
+
+            .status-available {
+                background: linear-gradient(135deg, #9ae6b4 0%, #68d391 100%);
+                color: #22543d;
+            }
+
+            /* Action Buttons */
+            .action-btn {
+                transition: all 0.3s ease !important;
+                border-radius: 50% !important;
+                width: 2rem !important;
+                height: 2rem !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1) !important;
+                margin: 0.2rem;
+                font-size: 0.8rem !important;
+            }
+
+            .action-btn:hover {
+                transform: translateY(-2px) rotate(5deg) !important;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .view-btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border: none !important;
+            }
+
+            .print-btn {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+                border: none !important;
+            }
+
+            /* Statistics Panel */
+            .stats-panel {
+                margin-top: 1.5rem;
+                padding: 1.2rem;
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+                border-radius: 12px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            .stats-panel:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            }
+
+            .stat-item {
+                text-align: center;
+                padding: 0.8rem;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.7);
+                transition: all 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .stat-item:hover {
+                transform: translateY(-3px);
+                background: rgba(255, 255, 255, 0.85);
+                box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            .stat-value {
+                font-size: 1.2rem;
+                font-weight: 600;
+                margin-bottom: 0.4rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .stat-item:hover .stat-value {
+                transform: scale(1.08);
+            }
+
+            .stat-icon {
+                font-size: 1.1rem;
+                transition: all 0.3s ease;
+            }
+
+            .stat-item:hover .stat-icon {
+                animation: iconPulse 1s ease;
+            }
+
+            /* Responsive Design */
+            @media (max-width : 768px) {
+                .input-group {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .input-label {
+                    min-width: auto;
+                }
+                .input-field {
+                    min-width: 100%;
+                }
+                .button-section {
+                    flex-direction: column;
+                    align-items: flex-end;
+                }
+                .filter-options-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+                .filter-options {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .enhanced-button {
+                    width: auto;
+                }
+                .table-header {
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .search-container {
+                    width: 100%;
+                    justify-content: center;
+                }
+                .ui-datatable {
+                    min-width: 100%;
+                }
+                .action-buttons {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.4rem;
+                }
+                .header-section {
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .header-title {
+                    margin-right: 0;
+                    text-align: center;
+                }
+                .header-title::after {
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                .results-counter {
+                    margin-top: 0.5rem;
+                    margin-left: 0;
+                }
+            }
+
+            /* Loading Animation */
+            .loading-shimmer {
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+            }
+
+            /* Ripple Effect for Buttons */
+            .ripple {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .ripple:after {
+                content: "";
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+                background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+                background-repeat: no-repeat;
+                background-position: 50%;
+                transform: scale(10, 10);
+                opacity: 0;
+                transition: transform .5s, opacity 1s;
+            }
+
+            .ripple:active:after {
+                transform: scale(0, 0);
+                opacity: .3;
+                transition: 0s;
+            }
+            
+            /* Fix for selectOneMenu alignment */
+            .ui-selectonemenu .ui-selectonemenu-label {
+                display: flex;
+                align-items: center;
+                height: 100%;
+            }
+            
+            /* Ensure table responsiveness */
+            .table-responsive-container {
+                overflow-x: auto;
+                width: 100%;
+                border-radius: 8px;
+            }
+            
+            /* Improved icon styling */
+            .icon-wrapper {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+            
+            .interactive-icon {
+                transition: all 0.3s ease;
+                cursor: pointer;
+            }
+            
+            .interactive-icon:hover {
+                transform: scale(1.2);
+                color: #667eea;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="section-content">
+        <h:form id="form">
+            <div class="sticker-container">
+                <p:growl id="messages" showDetail="true" />
+
+                <!-- Header Section -->
+                <div class="header-section">
+                    <h2 class="header-title">
+                        <i class="pi pi-qrcode header-icon"></i> 
+                        Sticker Search
+                    </h2>
+                </div>
+
+                <!-- Combined Search and Filter Section -->
+                <div class="search-filter-section">
+                    <div class="input-group">
+                        <div class="input-label">
+                            <i class="pi pi-user input-icon"></i> 
+                            Search by User:
+                        </div>
+                        <div class="input-field">
+                            <p:selectOneMenu id="selectoneMenu_UserAlias"
+                                style="width:100%;" filter="true" filterMatchMode="contains"
+                                widgetVar="widgetVar_SelectOneMenu"
+                                converter="omnifaces.SelectItemsIndexConverter"
+                                value="#{stickerManagementBean.selectedUserAlias}">
+                                <f:selectItem itemLabel="Select user..." value="#{null}" noSelectionOption="true" />
+                                <f:selectItems
+                                    itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                    itemValue="#{userAlias}" var="userAlias"
+                                    value="#{stickerManagementBean.userAliasList}" />
+                                <p:ajax event="change" listener="#{stickerManagementBean.searchStickersByUser()}" 
+                                    update="datatable-stickers results-counter"></p:ajax>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-label">
+                            <i class="pi pi-search input-icon"></i> 
+                            Text Search:
+                        </div>
+                        <div class="input-field">
+                            <p:inputText id="searchText" value="#{stickerManagementBean.searchText}" 
+                                placeholder="Enter user name, serial number, or sticker number"
+                                style="width: 100%;"/>
+                        </div>
+                    </div>
+
+                    <div class="filter-options-row">
+                        <div class="filter-title">
+                            <i class="pi pi-filter-slash input-icon"></i>
+                            Filter by Status:
+                        </div>
+                        <div class="filter-options">
+                            <div class="filter-option">
+                                <p:selectBooleanCheckbox id="showAvailable" value="#{stickerManagementBean.showAvailable}">
+                                    <p:ajax event="change" listener="#{stickerManagementBean.filterStickers()}" 
+                                        update="datatable-stickers results-counter" />
+                                </p:selectBooleanCheckbox>
+                                <label for="showAvailable">Available</label>
+                            </div>
+                            <div class="filter-option">
+                                <p:selectBooleanCheckbox id="showUsed" value="#{stickerManagementBean.showUsed}">
+                                    <p:ajax event="change" listener="#{stickerManagementBean.filterStickers()}" 
+                                        update="datatable-stickers results-counter" />
+                                </p:selectBooleanCheckbox>
+                                <label for="showUsed">Used</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search and Reset Buttons -->
+                    <div class="button-section">
+                        <p:commandButton value="Search" styleClass="enhanced-button search-btn ripple"
+                            action="#{stickerManagementBean.searchStickers()}" 
+                            update="datatable-stickers results-counter">
+                            
+                        </p:commandButton>
+                        <p:commandButton value="Reset" styleClass="enhanced-button reset-btn ripple"
+                            onclick="resetForm()" 
+                            update="selectoneMenu_UserAlias searchText showAvailable showUsed datatable-stickers results-counter">
+                            
+                        </p:commandButton>
+                            <!-- Export button (Excel) -->
+						<p:commandButton value="Export" icon="pi pi-file-excel"
+						                 styleClass="enhanced-button ripple"
+						                 action="#{stickerManagementBean.exportToExcel}" ajax="false" />
+
+                    </div>
+                    
+                    <!-- Statistics Panel -->
+                    <div class="stats-panel">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.8rem;">
+                            <div class="stat-item">
+                                <div class="stat-value" style="color: #667eea;">
+                                    <i class="pi pi-tags stat-icon"></i> #{stickerManagementBean.stickers.size()}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #4a5568;">Total Stickers</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" style="color: #38a169;">
+                                    <i class="pi pi-check-circle stat-icon"></i> #{stickerManagementBean.availableStickers}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #4a5568;">Available</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" style="color: #e53e3e;">
+                                    <i class="pi pi-ban stat-icon"></i> #{stickerManagementBean.usedStickers}
+                                </div>
+                                <div style="font-size: 0.8rem; color: #4a5568;">Used</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Section -->
+                <div class="table-section">
+                    <div class="table-header">
+                        <h3>
+                            <i class="pi pi-table"></i> Search Results
+                            <p:outputPanel id="results-counter" styleClass="results-counter">
+                                #{stickerManagementBean.filteredStickers.size()} Results
+                            </p:outputPanel>
+                        </h3>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <p:dataTable id="datatable-stickers" widgetVar="widgetVarSticker"
+                            var="stickerVar" value="#{stickerManagementBean.filteredStickers}"
+                            reflow="true" styleClass="products-table" globalFilterOnly="true"
+                            rowKey="#{stickerVar.id}" paginator="true" rows="10"
+                            emptyMessage="No stickers found matching your criteria"
+                            paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,15,20"
+                            scrollable="true" scrollWidth="100%">
+
+                            <p:column headerText="ID" width="8%" sortBy="#{stickerVar.id}" filterBy="#{stickerVar.id}">
+                                <div style="text-align: center; font-weight: 600; color: #4a5568;">
+                                    <i class="pi pi-id-card" style="margin-right: 5px; color: #667eea;"></i>
+                                    #{stickerVar.id}
+                                </div>
+                            </p:column>
+
+                            
+                            
+                            <p:column headerText="Serial Number" width="15%" sortBy="#{stickerVar.serialNo}" filterBy="#{sticker极速Var.serialNo}">
+                                <div style="font-family: monospace; font-weight: 600; color: #2d3748;">
+                                    <i class="pi pi-key" style="margin-right: 5px; color: #667eea;"></i>
+                                    #{stickerVar.serialNo}
+                                </div>
+                            </p:column>
+
+                            <p:column headerText="Sticker Number" width="15%" sortBy="#{stickerVar.stickerNo}" filterBy="#{stickerVar.stickerNo}">
+                                <div style="font-family: monospace; font-weight: 600; color: #2d3748;">
+                                    <i class="pi pi-hashtag" style="margin-right: 5px; color: #667eea;"></i>
+                                    #{stickerVar.stickerNo}
+                                </div>
+                            </p:column>
+                            
+                            <p:column headerText="Assigned To" width="20%" sortBy="#{stickerVar.sysUserByForUser.displayName}" filterBy="#{stickerVar.sysUserByForUser.displayName}">
+                                <div style="font-weight: 600; color: #2d3748;">
+                                    <i class="pi pi-user" style="margin-right: 5px; color: #667eea;"></i>
+                                    #{stickerVar.sysUserByForUser.displayName}
+                                </div>
+                            </p:column>
+
+                            <p:column headerText="Status" width="12%" sortBy="#{极速stickerVar.isUsed}" filterBy="#{stickerVar.isUsed}">
+                                <span class="status-badge #{stickerVar.isUsed ? 'status-used' : 'status-available'}">
+                                    <i class="pi #{stickerVar.isUsed ? 'pi-ban' : 'pi-check-circle'}" style="margin-right: 3px;"></i>
+                                    #{stickerVar.isUsed ? 'Used' : 'Available'} 
+                                </span>
+                            </p:column>
+
+                            <p:column headerText="QR Code" width="15%">
+                                <div style="text-align: center; padding: 0.4rem;">
+                                    <pe:qrCode id="qrCodeElem" renderMethod="canvas" renderMode="3"
+                                        text="#{stickerVar.serialNo.concat(stickerVar.stickerNo)}"
+                                        label="SMAT" size="80" fillColor="#667eea" fontName="Arial"
+                                        fontColor="#2d3748" ecLevel="H" radius="0.5"
+                                        title="Click to view larger" />
+                                    <div style="margin-top: 0.4rem; font-size: 0.65rem; color: #667eea;">
+                                        <i class="pi pi-camera" style="margin-right: 3px;"></i> Scan QR Code
+                                    </div>
+                                </div>
+                            </p:column>
+
+                            <p:column headerText="Actions" width="5%">
+                                <div class="action-buttons">
+                                    <p:commandButton icon="pi pi-eye" styleClass="action-btn view-btn ripple"
+                                        title="View Details" />
+                                    <p:commandButton icon="pi pi-print" styleClass="action-btn print-btn ripple"
+                                        title="Print Sticker" />
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <script type="text/javascript">
+            // دالة لإعادة تعيين النموذج
+            function resetForm() {
+                // إعادة تعيين حقل البحث النصي
+                document.getElementById('form:searchText').value = '';
+                
+                // إعادة تعيين خانتي الاختيار
+                document.getElementById('form:showAvailable').checked = false;
+                document.getElementById('form:showUsed').checked = false;
+                
+                // إعادة تعيين قائمة التحديد
+                PF('widgetVar_SelectOneMenu').clear();
+                
+                // إعادة تحميل الصفحة لتطبيق التغييرات
+                location.reload();
+            }
+            
+            function updateResultsCounter() {
+                var count = #{stickerManagementBean.filteredStickers.size()};
+                document.getElementById('results-counter').textContent = count + ' Results';
+            }
+            
+            // استدعاء هذه الدالة بعد كل تحديث AJAX
+            $(document).ajaxComplete(function() {
+                updateResultsCounter();
+            });
+            
+            // إضافة تأثيرات تفاعلية للأيقونات
+            document.querySelectorAll('.interactive-icon').forEach(icon => {
+                icon.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.2)';
+                    this.style.color = '#667eea';
+                });
+                
+                icon.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.color = '';
+                });
+            });
+        </script>
+    </ui:define>
+</ui:composition>

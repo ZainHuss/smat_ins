@@ -1,0 +1,184 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="title">
+		<span class="subitem"> #{interfaceLabel.registerIncomingMail}</span>
+	</ui:define>
+	<ui:define name="toolbar">
+		<p:commandLink id="inbox" value="" action="pretty:inBox" ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.inBoxMail}">
+			<i class="fa fa-inbox" style="font-size: 2rem; color: green;"></i>
+		</p:commandLink>
+
+		<p:commandLink id="home" value="" action="pretty:viewRegisteredIncomingMail"
+			ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.reservation} #{interfaceLabel.inBoxMail}">
+			<i class="fa fa-mail-forward" style="font-size: 2rem"></i>
+		</p:commandLink>
+
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+
+	</ui:define>
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+
+	</ui:define>
+	<ui:define name="implementation">
+		<style>
+.ui-sticky {
+	top: 90px !important;
+}
+
+@media ( max-width : 960px) {
+	.ui-sticky {
+		top: 130px !important;
+	}
+}
+</style>
+		<p:tooltip trackMouse="true" widgetVar="tooltip_widgetVar" />
+		<h:form id="form">
+			<p:growl id="messages" showDetail="true" showSummary="false" />
+
+			<p:panelGrid id="panelGrid_registeration" columns="1" layout="flex"
+				columnClasses="col-12 md:col-12 xl:col-12"
+				styleClass="customPanelGrid" contentStyleClass="ui-fluid"
+				style="border:0px none;margin-right:15%;margin-left:15%;word-wrap: break-word;border-radius: .25rem;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important; background-color:transparent;">
+				<p:outputLabel value="#{interfaceLabel.mailInfo}"
+					style="font-weight:bolder;font-style:italic;color:black;font-size:20px;"></p:outputLabel>
+				<p:divider layout="horizontal" type="dashed" style="margin-top:-20px;"></p:divider>
+				<p:toolbar id="toolbar_events" style="margin-top:-20px;">
+					<f:facet name="left">
+						<p:commandButton id="commandButton_save"
+							value="#{interfaceLabel.save}"
+							disabled="#{registerIncomingMailBean.correspondence.seq eq null}"
+							action="#{registerIncomingMailBean.doSaveRegisteredMail()}"
+							icon="pi pi-save"
+							pt:data-tooltip="#{interfaceLabel.infoAboutSaveRegisteredMail}"
+							styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat mr-2"
+							style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'};width:auto; ">
+						</p:commandButton>
+
+
+						<p:commandButton value="#{interfaceLabel.new}"
+							disabled="#{registerIncomingMailBean.correspondence.seq eq null}"
+							icon="pi pi-envelope"
+							actionListener="#{registerIncomingMailBean.newCorrespondence()}"
+							style="width:auto;"
+							pt:data-tooltip="#{interfaceLabel.newCorrespondence}"
+							styleClass="rounded-button ui-button-help ui-button-raised ui-button-flat mr-2">
+						</p:commandButton>
+					</f:facet>
+					<f:facet name="right">
+						<p:commandButton value="#{interfaceLabel.saveAndContinue}"
+							disabled="#{registerIncomingMailBean.correspondence.seq eq null}"
+							icon="#{app.locale.rtl ? 'pi pi-arrow-circle-left':'pi pi-arrow-circle-right'}"
+							actionListener="#{registerIncomingMailBean.doSaveRegisteredMailAndContinue()}"
+							style="width:auto;" action="pretty:mailProcessingUi"
+							pt:data-tooltip="#{interfaceLabel.infoAboutSaveAndContinueRegisteredMail}"
+							styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat mr-2">
+						</p:commandButton>
+					</f:facet>
+
+				</p:toolbar>
+				<p:sticky id="sticky_events" target="toolbar_events"></p:sticky>
+				<p:staticMessage severity="warn"
+					detail="#{interfaceLabel.infoAboutRegisteringMailUi}"
+					style="margin-right:25%;margin-left:25%;width: 50%;margin-top:-40px;text-align:center;"></p:staticMessage>
+
+				<p:panelGrid columns="5" layout="flex"
+					columnClasses="col-12 md:col-1 xl:col-1,col-12 md:col-2 xl:col-2,col-12 md:col-4 xl:col-4,col-12 md:col-2 xl:col-2,col-12 md:col-3 xl:col-3"
+					styleClass="customPanelGrid" contentStyleClass="ui-fluid">
+					<p:column></p:column>
+					<p:outputLabel for="@next"
+						style="font-weight:bolder;font-style:italic;color:black;"
+						value="#{interfaceLabel.divan}"></p:outputLabel>
+					<p:selectOneMenu value="#{registerIncomingMailBean.divan}"
+						style="background-color:#FFF0F5;color:black;font-weight:bolder;font-style:italic;"
+						converter="omnifaces.SelectItemsIndexConverter">
+						<p:ajax listener="#{registerIncomingMailBean.getLastSeq}"
+							update="@([id$=outputLabel_seq])"></p:ajax>
+						<f:selectItems itemLabel=" #{divan.name}" itemValue="#{divan}"
+							var="divan" value="#{registerIncomingMailBean.divanListByUser}" />
+					</p:selectOneMenu>
+
+					<p:commandButton value="#{interfaceLabel.reserve}"
+						actionListener="#{registerIncomingMailBean.registerNewCorrespondence()}"
+						icon="fa fa-edit" style="width:auto;"
+						disabled="#{registerIncomingMailBean.correspondence.seq !=null}"
+						styleClass="ui-button-raised ui-button-danger ui-button-flat">
+						<p:confirm header="#{interfaceLabel.confirmation}"
+							message="#{interfaceLabel.doYouWantToReservationMail}"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+					<p:column>
+						<p:outputLabel value="#{interfaceLabel.lastAvailableNumber} :  "
+							style="font-weight:bolder;font-style:italic;color:green;text-decoration: underline;"></p:outputLabel>
+						<p:spacer width="20px"></p:spacer>
+						<p:badge id="badge_seq" value="#{registerIncomingMailBean.seq}"
+							size="large" severity="danger"></p:badge>
+					</p:column>
+				</p:panelGrid>
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<p:panelGrid id="panelGrid_correspondence" columns="4" layout="flex"
+					columnClasses="col-12 md:col-1 xl:col-1,col-12 md:col-2 xl:col-2,col-12 md:col-4 xl:col-4,col-12 md:col-5 xl:col-5"
+					styleClass="customPanelGrid" contentStyleClass="ui-fluid">
+					<p:column></p:column>
+					<p:outputLabel for="@next" value="#{interfaceLabel.number}" />
+					<p:inputText readonly="true" disabled="true" style="color:#2196F3"
+						value="#{registerIncomingMailBean.correspondence.correspondenceSeq}"></p:inputText>
+					<p:column></p:column>
+					<p:column></p:column>
+					<p:outputLabel for="@next" value="#{interfaceLabel.date}" />
+					<p:datePicker
+						value="#{registerIncomingMailBean.correspondence.correspondenceDate}"
+						pattern="#{app.locale.rtl ? 'yyyy/MM/dd':'dd/MM/yyyy'}"
+						disabled="#{registerIncomingMailBean.correspondence.seq eq null}"></p:datePicker>
+					<p:column></p:column>
+					<p:column></p:column>
+					<p:outputLabel for="@next" value="#{interfaceLabel.creatorDate}" />
+					<p:datePicker disabled="true" readonly="true"
+						value="#{registerIncomingMailBean.correspondence.createdDate}"
+						pattern="#{app.locale.rtl ? 'yyyy/MM/dd':'dd/MM/yyyy'}"></p:datePicker>
+					<p:column></p:column>
+				</p:panelGrid>
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<p:panelGrid columns="4" layout="flex"
+					columnClasses="col-12 md:col-1 xl:col-1,col-12 md:col-2 xl:col-2,col-12 md:col-8 xl:col-8,col-12 md:col-1 xl:col-1"
+					styleClass="customPanelGrid" contentStyleClass="ui-fluid">
+					<p:column></p:column>
+					<p:outputLabel value="#{interfaceLabel.correspondenceTitle}"
+						style="font-weight:bolder;font-style:italic;color:black" />
+					<p:inputText
+						disabled="#{registerIncomingMailBean.correspondence.seq eq null}"
+						placeholder="#{interfaceLabel.correspondenceTitle}"
+						widgetVar="widgetVar_title"
+						style="font-weight:bolder;font-style:italic;color:black"
+						value="#{registerIncomingMailBean.correspondence.title}"></p:inputText>
+					<p:column></p:column>
+				</p:panelGrid>
+
+			</p:panelGrid>
+
+			<p:scrollTop threshold="20" widgetVar="scrollTop_widgetVar" />
+			<p:confirmDialog global="true" showEffect="fade" width="300">
+				<p:commandButton value="#{interfaceLabel.yes}" type="button"
+					styleClass="ui-button-raised ui-button-info ui-button-flat ui-confirmdialog-yes"
+					icon="pi pi-check-circle" />
+				<p:commandButton value="#{interfaceLabel.no}" type="button"
+					styleClass="ui-button-raised ui-button-danger ui-button-flat ui-confirmdialog-no ui-button-secondary"
+					icon="pi pi-times-circle" />
+			</p:confirmDialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

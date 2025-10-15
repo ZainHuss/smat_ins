@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui" xmlns:jsf="http://xmlns.jcp.org/jsf"
+	lang="#{p:language()}" xml:lang="#{p:language()}"
+	dir="#{app.locale.rtl ? 'rtl':'ltr'}">
+
+<h:head>
+	<h:outputScript library="#{appSetting.resourceLib}"
+		name="script/googletagmanager.js"></h:outputScript>
+	<h:outputScript library="#{appSetting.resourceLib}"
+		name="script/analytics.js"></h:outputScript>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+        
+	</f:facet>
+	<title>#{interfaceLabel.applicationTitle}</title>
+
+
+	<h:outputStylesheet library="webjars"
+		name="primeflex/3.2.0/primeflex.min.css" />
+	<h:outputStylesheet name="css/flags/flags.css"
+		library="#{appSetting.resourceLib}" />
+
+	<h:outputStylesheet library="webjars"
+		name="font-awesome/6.3.0/css/solid.min-jsf.css" />
+	<h:outputStylesheet library="webjars"
+		name="font-awesome/6.3.0/css/fontawesome.min-jsf.css" />
+	<h:outputStylesheet library="webjars"
+		name="font-awesome/6.3.0/css/v4-shims.min-jsf.css" />
+	<h:outputStylesheet library="webjars"
+		name="metroui/4.2.46/css/metro-icons.css" />
+	<h:outputStylesheet library="webjars"
+		name="line-awesome/1.3.0/dist/line-awesome/css/line-awesome.css" />
+		
+
+	<title>#{interfaceLabel.applicationTitle}</title>
+
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{resource['smat-ins:images/smt_logo_tb.png']}" />
+	
+	<ui:insert name="head" />
+    
+
+
+</h:head>
+
+<h:body class="nk-body" pt:data-menu-collapse="lg">
+
+	<h:inputHidden id="hidden_lang" value="#{app.locale.language}" />
+	<f:view locale="#{app.locale.language}" encoding="UTF-8">
+	    <script type="text/javascript">
+	    function changez_index(){
+	    	$('.nk-header has-mask').removeClass('first-layer').addClass('second-layer');
+	      	$('.nk-pages').removeClass('second-layer').addClass('first-layer'); 
+		 }
+
+	    function reset_index(){
+	    	$('.nk-header has-mask').removeClass('second-layer').addClass('first-layer');
+	      	$('.nk-pages').removeClass('first-layer').addClass('second-layer'); 
+		 }
+	    $(function() {
+	    	
+			 
+		    var dialog=$( ".ui-dialog" );
+		    dialog.on("show",function() {
+		    	
+		      	$('.nk-header has-mask').removeClass('first-layer').addClass('second-layer');
+		      	$('.nk-pages').removeClass('second-layer').addClass('first-layer');  
+		    });
+
+            dialog.on("hide",function() {
+		    	
+		      	$('.nk-header has-mask').removeClass('second-layer').addClass('first-layer');
+		      	$('.nk-pages').removeClass('first-layer').addClass('second-layer');  
+		    });
+	    });
+
+   
+    </script>
+		<div class="nk-app-root">
+		  <h:form id="form_header" >
+			<header class="nk-header has-mask first-layer" >
+				<ui:include src="./topbar.xhtml" />
+			</header>
+		  </h:form>
+			<main class="nk-pages second-layer" >
+				<section class="section section-bottom-0 has-shape">
+					<div
+						class="nk-shape bg-shape-blur-a mt-8 start-50 top-0 translate-middle-x"></div>
+					<div class="container">
+						<div class="section-head">
+						  <ui:insert name="section-head"></ui:insert>
+						</div>
+						<div class="section-content" >
+						   <ui:insert name="section-content"></ui:insert>
+						</div>
+						
+					</div>
+				</section>
+			</main>
+			<div class="top-layer">
+			  <ui:insert name="section-dialogs"></ui:insert>
+			</div>
+			<footer class="nk-footer">
+				<ui:include src="./footer.xhtml" />
+			</footer>
+		</div>
+		
+		<h:outputStylesheet name="css/primefaces-override-style.css"
+			library="#{appSetting.resourceLib}" />
+		<h:outputStylesheet name="css/layout/layout.css"
+			library="#{appSetting.resourceLib}" />
+		<h:outputStylesheet
+			name="css/custom-#{app.locale.rtl ? 'rtl':'ltr'}.css"
+			library="#{appSetting.resourceLib}" />
+		<h:outputStylesheet name="copygen/css/style#{app.locale.rtl ? '.rtl':''}.css?v1.3.0"
+		library="#{appSetting.resourceLib}"></h:outputStylesheet>
+		<h:outputStylesheet
+			name="copygen/css/theme#{app.locale.rtl ? '.rtl':''}.css"
+			library="#{appSetting.resourceLib}" />
+		<h:outputScript name="copygen/js/bundle.js?v1.3.0"
+			library="#{appSetting.resourceLib}"></h:outputScript>
+		<h:outputScript name="copygen/js/scripts.js?v1.3.0"
+			library="#{appSetting.resourceLib}"></h:outputScript>
+		<h:outputScript name="jquery/jquery.js" library="primefaces" />
+		<h:outputScript name="jquery/jquery-plugins.js" library="primefaces" />
+		<h:outputScript name="locales/locale-#{app.locale.language}.js"
+			library="primefaces" />
+		<h:outputScript name="script/prism.js"
+			library="#{appSetting.resourceLib}" />
+	</f:view>
+</h:body>
+
+</html>

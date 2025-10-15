@@ -1,0 +1,361 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	                    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	<!-- coding DAO's -->
+   <bean name="accessByJobPositionDao" class="com.smat.ins.model.dao.impl.AccessByJobPositionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="accessByUserAliasDao" class="com.smat.ins.model.dao.impl.AccessByUserAliasDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="accessManagementTypeDao" class="com.smat.ins.model.dao.impl.AccessManagementTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="accessTypeDao" class="com.smat.ins.model.dao.impl.AccessTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="archiveAccessManagementDao" class="com.smat.ins.model.dao.impl.ArchiveAccessManagementDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="archiveDocumentDao" class="com.smat.ins.model.dao.impl.ArchiveDocumentDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="archiveDocumentFileDao" class="com.smat.ins.model.dao.impl.ArchiveDocumentFileDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="archiveDocumentTagDao" class="com.smat.ins.model.dao.impl.ArchiveDocumentTagDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="archiveDocumentTypeDao" class="com.smat.ins.model.dao.impl.ArchiveDocumentTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="archiveExtraPropertyDao" class="com.smat.ins.model.dao.impl.ArchiveExtraPropertyDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="archiveSharingDao" class="com.smat.ins.model.dao.impl.ArchiveSharingDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="boxTypeDao" class="com.smat.ins.model.dao.impl.BoxTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="cabinetDao" class="com.smat.ins.model.dao.impl.CabinetDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="cabinetDefinitionDao" class="com.smat.ins.model.dao.impl.CabinetDefinitionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="cabinetFolderDao" class="com.smat.ins.model.dao.impl.CabinetFolderDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="cabinetFolderDocumentDao" class="com.smat.ins.model.dao.impl.CabinetFolderDocumentDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="cabinetLocationDao" class="com.smat.ins.model.dao.impl.CabinetLocationDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="cabinetTypeDao" class="com.smat.ins.model.dao.impl.CabinetTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="checklistDataSourceDao" class="com.smat.ins.model.dao.impl.ChecklistDataSourceDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="checklistDetailDataSourceDao" class="com.smat.ins.model.dao.impl.ChecklistDetailDataSourceDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="companyDao" class="com.smat.ins.model.dao.impl.CompanyDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="columnContentDao" class="com.smat.ins.model.dao.impl.ColumnContentDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="correspondenceDao" class="com.smat.ins.model.dao.impl.CorrespondenceDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="correspondenceArchiveDao" class="com.smat.ins.model.dao.impl.CorrespondenceArchiveDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="correspondenceNoteDao" class="com.smat.ins.model.dao.impl.CorrespondenceNoteDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="correspondenceRecipientDao" class="com.smat.ins.model.dao.impl.CorrespondenceRecipientDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="correspondenceStateDao" class="com.smat.ins.model.dao.impl.CorrespondenceStateDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="correspondenceTaskDao" class="com.smat.ins.model.dao.impl.CorrespondenceTaskDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="correspondenceTransmissionDao" class="com.smat.ins.model.dao.impl.CorrespondenceTransmissionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="correspondenceTypeDao" class="com.smat.ins.model.dao.impl.CorrespondenceTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="documentSharingDao" class="com.smat.ins.model.dao.impl.DocumentSharingDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="effectTypeDao" class="com.smat.ins.model.dao.impl.EffectTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="equipmentCategoryDao" class="com.smat.ins.model.dao.impl.EquipmentCategoryDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	
+
+	<bean name="equipmentInspectionCertificateDao" class="com.smat.ins.model.dao.impl.EquipmentInspectionCertificateDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	
+
+	<bean name="equipmentInspectionFormDao" class="com.smat.ins.model.dao.impl.EquipmentInspectionFormDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="equipmentInspectionFormItemDao" class="com.smat.ins.model.dao.impl.EquipmentInspectionFormItemDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="equipmentTypeDao" class="com.smat.ins.model.dao.impl.EquipmentTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="empCertificationDao" class="com.smat.ins.model.dao.impl.EmpCertificationDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="employeeDao" class="com.smat.ins.model.dao.impl.EmployeeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="empCertificationTypeDao" class="com.smat.ins.model.dao.impl.EmpCertificationTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="empCertificationWorkflowDao" class="com.smat.ins.model.dao.impl.EmpCertificationWorkflowDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="empCertificationWorkflowStepDao" class="com.smat.ins.model.dao.impl.EmpCertificationWorkflowStepDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="examinationTypeDao" class="com.smat.ins.model.dao.impl.ExaminationTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="extraPropertyDefinitionDao" class="com.smat.ins.model.dao.impl.ExtraPropertyDefinitionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="folderSharingDao" class="com.smat.ins.model.dao.impl.FolderSharingDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="formColumnDao" class="com.smat.ins.model.dao.impl.FormColumnDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="formRowDao" class="com.smat.ins.model.dao.impl.FormRowDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="formTemplateDao" class="com.smat.ins.model.dao.impl.FormTemplateDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+
+	<bean name="generalEquipmentItemDao" class="com.smat.ins.model.dao.impl.GeneralEquipmentItemDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="groupMemberDao" class="com.smat.ins.model.dao.impl.GroupMemberDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="hierarchySystemDao" class="com.smat.ins.model.dao.impl.HierarchySystemDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="hierarchySystemDefDao" class="com.smat.ins.model.dao.impl.HierarchySystemDefDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="hierarchyTypeDao" class="com.smat.ins.model.dao.impl.HierarchyTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="inspectionFormWorkflowDao" class="com.smat.ins.model.dao.impl.InspectionFormWorkflowDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="inspectionFormWorkflowStepDao" class="com.smat.ins.model.dao.impl.InspectionFormWorkflowStepDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="itemTypeDao" class="com.smat.ins.model.dao.impl.ItemTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="jobPositionDao" class="com.smat.ins.model.dao.impl.JobPositionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="jobPositionHierarchyDao" class="com.smat.ins.model.dao.impl.JobPositionHierarchyDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="linkedCorrespondenceDao" class="com.smat.ins.model.dao.impl.LinkedCorrespondenceDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="notificationDao" class="com.smat.ins.model.dao.impl.NotificationDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="notificationSettingDao" class="com.smat.ins.model.dao.impl.NotificationSettingDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="notificationStyleDao" class="com.smat.ins.model.dao.impl.NotificationStyleDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="notificationTypeDao" class="com.smat.ins.model.dao.impl.NotificationTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="organizationDao" class="com.smat.ins.model.dao.impl.OrganizationDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="periodTypeDao" class="com.smat.ins.model.dao.impl.PeriodTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="priorityTypeDao" class="com.smat.ins.model.dao.impl.PriorityTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="printedDocDao" class="com.smat.ins.model.dao.impl.PrintedDocDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="propertyTypeDao" class="com.smat.ins.model.dao.impl.PropertyTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="purposeTypeDao" class="com.smat.ins.model.dao.impl.PurposeTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	
+	<bean name="serviceTypeDao" class="com.smat.ins.model.dao.impl.ServiceTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="sharingToTypeDao" class="com.smat.ins.model.dao.impl.SharingToTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="sharingTypeDao" class="com.smat.ins.model.dao.impl.SharingTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="stepDao" class="com.smat.ins.model.dao.impl.StepDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="stickerDao" class="com.smat.ins.model.dao.impl.StickerDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="sysPermissionDao" class="com.smat.ins.model.dao.impl.SysPermissionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="sysRoleDao" class="com.smat.ins.model.dao.impl.SysRoleDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="sysRolePermissionDao" class="com.smat.ins.model.dao.impl.SysRolePermissionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="sysUserDao" class="com.smat.ins.model.dao.impl.SysUserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="sysUserRoleDao" class="com.smat.ins.model.dao.impl.SysUserRoleDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="sysUserSettingDao" class="com.smat.ins.model.dao.impl.SysUserSettingDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="taskDao" class="com.smat.ins.model.dao.impl.TaskDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="completedTaskDao" class="com.smat.ins.model.dao.impl.CompletedTaskDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="transmissionTypeDao" class="com.smat.ins.model.dao.impl.TransmissionTypeDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="userAliasDao" class="com.smat.ins.model.dao.impl.UserAliasDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean name="workflowDao" class="com.smat.ins.model.dao.impl.WorkflowDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="workflowDefinitionDao" class="com.smat.ins.model.dao.impl.WorkflowDefinitionDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<bean name="workingGroupDao" class="com.smat.ins.model.dao.impl.WorkingGroupDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+</beans>

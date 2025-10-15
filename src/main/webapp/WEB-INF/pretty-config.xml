@@ -1,0 +1,356 @@
+<pretty-config
+	xmlns="http://ocpsoft.org/schema/rewrite-config-prettyfaces"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ocpsoft.org/schema/rewrite-config-prettyfaces   
+                      http://ocpsoft.org/xml/ns/prettyfaces/rewrite-config-prettyfaces.xsd">
+
+	<url-mapping id="auth">
+		<pattern value="/auth" />
+		<view-id value="/views/login/login.jsf" />
+	</url-mapping>
+
+	<url-mapping id="view-expired">
+		<pattern value="/view-expired" />
+		<view-id value="/viewExpired.jsf" />
+	</url-mapping>
+	<url-mapping id="error">
+		<pattern value="/error" />
+		<view-id value="/error.jsf" />
+	</url-mapping>
+
+	<url-mapping id="index">
+		<pattern value="/index" />
+		<view-id value="/index.jsf" />
+	</url-mapping>
+
+	<url-mapping id="home">
+		<pattern value="/" />
+		<view-id value="/home.jsf" />
+	</url-mapping>
+
+
+	<url-mapping id="organization">
+		<pattern value="/organization" />
+		<view-id value="/views/organizationTree/organizations.jsf" />
+	</url-mapping>
+
+	<url-mapping id="jobPosition">
+		<pattern value="/jobPosition" />
+		<view-id value="/views/coding/jobPosition.jsf" />
+	</url-mapping>
+
+	<url-mapping id="priorityType">
+		<pattern value="/priorityType" />
+		<view-id value="/views/coding/priorityType.jsf" />
+	</url-mapping>
+
+	<url-mapping id="equipmentCategory">
+		<pattern value="/equipmentCategory" />
+		<view-id value="/views/coding/equipmentCategory.jsf" />
+	</url-mapping>
+
+	<url-mapping id="transmissionType">
+		<pattern value="/transmissionType" />
+		<view-id value="/views/coding/transmissionType.jsf" />
+	</url-mapping>
+
+	<url-mapping id="correspondenceType">
+		<pattern value="/correspondenceType" />
+		<view-id value="/views/coding/correspondenceType.jsf" />
+	</url-mapping>
+
+	<url-mapping id="permissions">
+		<pattern value="/permissions" />
+		<view-id value="/views/user/sysPermession.jsf" />
+	</url-mapping>
+	<url-mapping id="roles">
+		<pattern value="/roles" />
+		<view-id value="/views/user/sysRoleView.jsf" />
+	</url-mapping>
+
+	<url-mapping id="roleAdd">
+		<pattern value="/roleAdd" />
+		<view-id value="/views/user/sysRoleAdd.jsf" />
+	</url-mapping>
+
+	<url-mapping id="roleUpdate">
+		<pattern value="/roleUpdate" />
+		<view-id value="/views/user/sysRoleUpdate.jsf" />
+		<query-param name="ru">#{sysRoleBean.sysRoleStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="userAdd">
+		<pattern value="/userAdd" />
+		<view-id value="/views/user/sysUserAdd.jsf" />
+		<query-param name="su">#{sysUserBean.sysUserStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="defineUserAlias">
+		<pattern value="/defineUserAlias" />
+		<view-id value="/views/user/sysUserAdd.jsf" />
+		<query-param name="ua">#{sysUserBean.sysUserForUserAliasStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="users">
+		<pattern value="/users" />
+		<view-id value="/views/user/sysUserView.jsf" />
+	</url-mapping>
+
+	<url-mapping id="userRoles">
+		<pattern value="/userRoles" />
+		<view-id value="/views/user/sysUserRolesView.jsf" />
+		<query-param name="ur">#{sysUserBean.sysUserForRoleStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="transmissionType">
+		<pattern value="/transmissionType" />
+		<view-id value="/views/coding/transmissionType.jsf" />
+	</url-mapping>
+
+	<url-mapping id="workingGroupView">
+		<pattern value="/workingGroupView" />
+		<view-id value="/views/user/workingGroupView.jsf" />
+	</url-mapping>
+
+	<url-mapping id="workingGroupAdd">
+		<pattern value="/workingGroupAdd" />
+		<view-id value="/views/user/workingGroupAdd.jsf" />
+		<query-param name="si">#{workingGroupBean.workingGroupStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="workingGroupUpdate">
+		<pattern value="/workingGroupUpdate" />
+		<view-id value="/views/user/workingGroupUpdate.jsf" />
+		<query-param name="si">#{workingGroupBean.workingGroupStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="notificationType">
+		<pattern value="/notificationType" />
+		<view-id value="/views/coding/notificationType.jsf" />
+	</url-mapping>
+	
+	<url-mapping id="sticker-search">
+	    <pattern value="/sticker/search" />
+	    <view-id value="/views/inspection/sticker/stickerSearch.xhtml" />
+	</url-mapping>
+	
+	
+
+	<url-mapping id="notificationStyle">
+		<pattern value="/notificationStyle" />
+		<view-id value="/views/coding/notificationStyle.jsf" />
+	</url-mapping>
+
+	<url-mapping id="periodType">
+		<pattern value="/periodType" />
+		<view-id value="/views/coding/periodType.jsf" />
+	</url-mapping>
+
+	<url-mapping id="correspondenceState">
+		<pattern value="/correspondenceState" />
+		<view-id value="/views/coding/correspondenceState.jsf" />
+	</url-mapping>
+
+	<url-mapping id="purposeType">
+		<pattern value="/purposeType" />
+		<view-id value="/views/coding/purposeType.jsf" />
+	</url-mapping>
+
+	<url-mapping id="purposeType">
+		<pattern value="/purposeType" />
+		<view-id value="/views/coding/purposeType.jsf" />
+	</url-mapping>
+
+	<url-mapping id="company">
+		<pattern value="/company" />
+		<view-id value="/views/coding/company.jsf" />
+	</url-mapping>
+
+	<url-mapping id="viewTemplate">
+		<pattern value="/view-template" />
+		<view-id value="/views/coding/viewTemplate.jsf" />
+	</url-mapping>
+
+	<url-mapping id="addTemplate">
+		<pattern value="/add-template" />
+		<view-id value="/views/coding/addTemplate.jsf" />
+		<query-param name="ft">#{templateDesignBean.ftStr}</query-param>
+	</url-mapping>
+
+
+	<url-mapping id="generalEquipItem">
+		<pattern value="/general-equipment-item" />
+		<view-id value="/views/coding/generalEquipmentItem.jsf" />
+	</url-mapping>
+
+	<url-mapping id="generalCheckListItem">
+		<pattern value="/general-checklist-item" />
+		<view-id value="/views/coding/generalChecklistItem.jsf" />
+	</url-mapping>
+
+	<url-mapping id="mail/create">
+		<pattern value="/mail/create" />
+		<view-id value="/views/mail/create.jsf" />
+	</url-mapping>
+
+	<url-mapping id="registerIncomingMail">
+		<pattern value="/correspondence/incoming/register" />
+		<view-id
+			value="/views/correspondence/incoming/register/register.jsf" />
+	</url-mapping>
+
+	<url-mapping id="mailProcessingUi">
+		<pattern value="/correspondence/incoming/mailProcessingUi" />
+		<view-id
+			value="/views/correspondence/incoming/register/mailProcessing.jsf" />
+		<query-param name="ci">#{registerIncomingMailBean.correspondenceStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="viewRegisteredIncomingMail">
+		<pattern value="/correspondence/incoming/mail-preparation" />
+		<view-id
+			value="/views/correspondence/incoming/register/view.jsf" />
+	</url-mapping>
+
+	<url-mapping id="registerOutboundMail">
+		<pattern value="/correspondence/outbound/register" />
+		<view-id
+			value="/views/correspondence/outbound/register/register.jsf" />
+	</url-mapping>
+
+	<url-mapping id="outMailProcessingUi">
+		<pattern value="/correspondence/outbound/mailProcessingUi" />
+		<view-id
+			value="/views/correspondence/outbound/register/mailProcessing.jsf" />
+		<query-param name="ci">#{registerOutboundMailBean.correspondenceStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="viewRegisteredOutboundMail">
+		<pattern value="/correspondence/outbound/mail-preparation" />
+		<view-id
+			value="/views/correspondence/outbound/register/view.jsf" />
+	</url-mapping>
+
+
+	<url-mapping id="mail/inbox/view">
+		<pattern value="/mail/inbox/view" />
+		<view-id value="/views/mail/inbox/view.jsf" />
+	</url-mapping>
+
+	<url-mapping id="mail/outbox/view">
+		<pattern value="/mail/outbox/view" />
+		<view-id value="/views/mail/outbox/view.jsf" />
+	</url-mapping>
+
+	<url-mapping id="mail/inbox/open">
+		<pattern value="/mail/inbox/open" />
+		<view-id value="/views/mail/inbox/open.jsf" />
+		<query-param name="oi">#{inBoxBean.correspondenceStr}</query-param>
+		<query-param name="oicr">#{inBoxBean.correspondenceRecipientStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="mail/outbox/open">
+		<pattern value="/mail/outbox/open" />
+		<view-id value="/views/mail/outbox/open.jsf" />
+		<query-param name="ob">#{outBoxBean.correspondenceStr}</query-param>
+		<query-param name="obn">#{outBoxBean.correspondenceNoteStr}</query-param>
+	</url-mapping>
+
+
+	<url-mapping id="hierarchySystem">
+		<pattern value="/hierarchySystem" />
+		<view-id
+			value="/views/coding/hierarchySystem/hierarchySystemView.jsf" />
+	</url-mapping>
+
+
+	<url-mapping id="hierarchySystemAdd">
+		<pattern value="/hierarchySystemAdd" />
+		<view-id
+			value="/views/coding/hierarchySystem/hierarchySystemAdd.jsf" />
+		<query-param name="hs">#{hierarchySystemBean.hierarchySystemStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="cabinets/view">
+		<pattern value="/cabinets/view" />
+		<view-id value="/views/archive/cabinet/view.jsf" />
+	</url-mapping>
+
+	<url-mapping id="cabinets/add">
+		<pattern value="/cabinets/add" />
+		<view-id value="/views/archive/cabinet/create.jsf" />
+		<query-param name="ca">#{cabinetBean.cabinetStr}</query-param>
+
+	</url-mapping>
+
+	<url-mapping id="cabinets/location/view">
+		<pattern value="/cabinets/location/view" />
+		<view-id value="/views/archive/cabinet-location/view.jsf" />
+	</url-mapping>
+
+	<url-mapping id="my/cabinets/view">
+		<pattern value="/my/cabinets/view" />
+		<view-id value="/views/archive/my-cabinet/view.jsf" />
+	</url-mapping>
+
+
+	<url-mapping id="my/cabinets/drawer/view">
+		<pattern value="/my/cabinets/drawer/view" />
+		<view-id value="/views/archive/my-cabinet/drawer/view.jsf" />
+		<query-param name="cd">#{myCabinetBean.cabinetStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="my/cabinets/folder/documents/view">
+		<pattern value="/my/cabinets/folder/documents/view" />
+		<view-id value="/views/archive/my-cabinet/document/view.jsf" />
+		<query-param name="cd">#{myCabinetBean.cabinetStr}</query-param>
+		<query-param name="cf">#{myCabinetBean.cabinetFolderStr}</query-param>
+	</url-mapping>
+
+	<url-mapping id="inspection/equipment/form">
+		<pattern value="/inspection/equipment/form" />
+		<view-id
+			value="/views/inspection/form/equipment/inspection-form.jsf" />
+		<query-param name="eqct">#{inspectionFormBean.equipmentCatStr}</query-param>
+		<query-param name="t">#{inspectionFormBean.taskIdStr}</query-param>
+		<query-param name="p">#{inspectionFormBean.permission}</query-param>
+		<query-param name="m">#{inspectionFormBean.persistentMode}</query-param>
+	</url-mapping>
+	
+	<url-mapping id="employee/training">
+		<pattern value="/employee/training" />
+		<view-id
+			value="/views/inspection/form/employee/emp-training-form.jsf" />
+		<query-param name="cert">#{empCertificationBean.certIdStr}</query-param>
+		<query-param name="t">#{empCertificationBean.taskIdStr}</query-param>
+		<query-param name="p">#{empCertificationBean.permission}</query-param>
+		<query-param name="m">#{empCertificationBean.persistentMode}</query-param>
+	</url-mapping>
+
+	<url-mapping id="search-inspection">
+		<pattern value="/views/inspection/form/equipment/search" />
+		<view-id value="/views/inspection/form/equipment/searchInspectionForm.jsf" />
+	</url-mapping>
+	
+	<url-mapping id="completed-task">
+		<pattern value="/views/task/completed/search" />
+		<view-id value="/views/inspection/form/equipment/completed-tasks-search.jsf" />
+	</url-mapping>
+
+	<url-mapping id="inspection/sticker/stickerManagement">
+		<pattern value="/inspection/sticker/stickerManagement" />
+		<view-id
+			value="/views/inspection/sticker/stickerManagement.jsf" />
+	</url-mapping>
+
+	<url-mapping id="inspection/my-tasks">
+		<pattern value="/tasks/my-tasks" />
+		<view-id value="/views/tasks/my-tasks.jsf" />
+	</url-mapping>
+
+	<url-mapping id="task/search">
+		<pattern value="/task/search" />
+		<view-id value="/views/tasks/tasksearch.jsf" />
+	</url-mapping>
+	
+</pretty-config>

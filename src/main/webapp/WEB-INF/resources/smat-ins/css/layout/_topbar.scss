@@ -1,0 +1,61 @@
+.layout-topbar {
+    background-color: var(--surface-a);
+    padding: 0;
+    height: 70px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 997;
+    box-shadow: 0 0 4px rgba(0,0,0,0.25);
+    border-bottom: 1px solid var(--surface-d);
+    display: flex;
+    align-items: center;
+    padding: 0 35px;
+    .menu-button {
+        display: none;
+        color: var(--text-color);
+        width: 70px;
+        height: 70px;
+        line-height: 70px;
+        text-align: center;
+        transition: background-color .2s;
+        overflow: hidden;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--surface-c);
+        }
+
+        i {
+            font-size: 24px;
+            line-height: inherit;
+        }
+    }
+    .topbar-form {
+        margin-left: 0px;
+        left:0px;
+    }
+    
+    .app-logo{  
+        .logo {
+            img {
+            width: 180px;
+           }
+
+        &:focus {
+            outline: 0 none;
+            transition: box-shadow .2s;
+            box-shadow: 0 0 0 0.2rem $focusBorderColor;
+           }
+          }
+       }
+    
+       .app-title{
+	        padding:.5rem;
+        }
+    
+      
+    
+}
+

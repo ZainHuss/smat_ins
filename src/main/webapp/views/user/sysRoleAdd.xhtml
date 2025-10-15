@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<script type="text/javascript">
+    function handleDrop(event, ui) {
+        var droppedProduct = ui.draggable;
+
+        droppedProduct.fadeOut('fast');
+    }
+    </script>
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}" name="css/material-theme.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="section-head"> #{interfaceLabel.roleAdd} 
+	</ui:define>
+
+	<ui:define name="section-content">
+		<h:form id="form_addSysRole">
+			<div class="card crud-demo">
+				<p:growl id="messages" showDetail="true" />
+				<p:panelGrid columns="3"
+					columnClasses="ui-grid-col-1,ui-grid-col-9,ui-grid-col-2"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+					<h:outputText value="#{interfaceLabel.name}" />
+					<p:inputText value="#{sysRoleBean.sysRole.name}"></p:inputText>
+					<p:column></p:column>
+
+					<h:outputText value="#{interfaceLabel.code}" />
+					<p:inputText value="#{sysRoleBean.sysRole.code}"></p:inputText>
+					<p:column></p:column>
+
+					<h:outputText value="#{interfaceLabel.description}" />
+					<p:inputTextarea rows="4"
+						value="#{sysRoleBean.sysRole.description}"></p:inputTextarea>
+					<p:column></p:column>
+				</p:panelGrid>
+				<h:outputText value="#{interfaceLabel.permissions}"
+					style="font-weight:bolder;color:green;" />
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<p:panelGrid columns="4"
+					columnClasses="ui-grid-col-5,ui-grid-col-1,ui-grid-col-5,ui-grid-col-1"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+						style="border:0px none; background-color:transparent;">
+						<h:outputText value="#{interfaceLabel.permissionsAvailableGroup}"
+							style="font-weight:bolder;font-style:italic;color:green;" />
+						<p:dataTable id="permissionsSource_datatable" var="permissionVar"
+							value="#{sysRoleBean.permissionsSource}"
+							emptyMessage="#{interfaceLabel.noRecordsFound}"
+							paginatorPosition="bottom" rows="8" paginator="true">
+
+							<p:column style="width:20px">
+								<p:commandButton styleClass="ui-button-success"
+									icon="pi pi-plus" ajax="true"
+									action="#{sysRoleBean.addPermission(permissionVar)}"
+									update="@([id$=permissionTarget_datatable],[id$=permissionsSource_datatable])">
+								</p:commandButton>
+							</p:column>
+							<p:column>
+								<f:facet name="header">
+									<h:outputText value="#{interfaceLabel.permission}" />
+								</f:facet>
+								<h:outputText value="#{permissionVar.name}" />
+							</p:column>
+						</p:dataTable>
+					</p:panelGrid>
+					<p:divider layout="vertical" type="dashed"></p:divider>
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+						style="border:0px none; background-color:transparent;">
+						<h:outputText value="#{interfaceLabel.permissionsGrantedGroup}"
+							style="font-weight:bolder;font-style:italic;color:green;" />
+						<p:outputPanel id="dropArea">
+							<p:dataTable id="permissionTarget_datatable" var="permissionVar"
+								value="#{sysRoleBean.permissionsTarget}"
+								emptyMessage="#{interfaceLabel.noRecordsFound}"
+								paginatorPosition="bottom" rows="8" paginator="true">
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="#{interfaceLabel.permission}" />
+									</f:facet>
+									<h:outputText value="#{permissionVar.name}" />
+								</p:column>
+								<p:column>
+									<f:facet name="header">
+										<h:outputText value="#{interfaceLabel.delete}" />
+									</f:facet>
+									<p:commandButton styleClass="ui-button-danger"
+										icon="pi pi-trash" ajax="true"
+										action="#{sysRoleBean.deleteFromPermissionSelected(permissionVar)}"
+										update="@([id$=permissionTarget_datatable],[id$=permissionsSource_datatable])">
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
+					</p:panelGrid>
+
+				</p:panelGrid>
+				<p:toolbar id="toolbar">
+					<f:facet name="left">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-save"
+						    styleClass="ui-button-raised ui-button-success ui-button-flat"
+							action="#{sysRoleBean.save()}" ajax="true"
+							update=":form_addSysRole:messages" />
+                        <p:spacer width="5px"></p:spacer>
+						<p:commandButton value="#{interfaceLabel.back}"
+							styleClass="ui-button-raised ui-button-danger ui-button-flat" action="pretty:roles"
+							icon="pi pi-undo" />
+					</f:facet>
+				</p:toolbar>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,650 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        #{interfaceLabel.define} <span class="subitem">#{interfaceLabel.user}</span>
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+		<h:outputScript library="#{appSetting.resourceLib}"
+			name="script/primefaces-rtl-tree.js"></h:outputScript>
+		<h:outputScript library="#{appSetting.resourceLib}"
+			name="script/sysUserAdd.js"></h:outputScript>
+		<script type="text/javascript">
+		  function updateDialog(){
+			  $('div.ui-blockui-content').addClass('ui-shadow');
+       	      $('i.pi-spinner').css('display','block');
+			  $('div.ui-blockui').css('z-index','0');
+       	      $('div.ui-blockui-content').css('z-index','0');
+       	      $('div.img-loader').css('z-index','0');
+			  PF('blockWidget').show();
+			  PF('blockWidget').hide();
+			  $('div.ui-blockui').css('z-index','1007');
+			  $('div.ui-blockui-content').css('z-index','1011');
+			  $('div.ui-blockui').css('right',$('div.ui-blockui').css('left'));
+			  PF('blockWidget').show();     
+		  }
+
+		  function updateDialogPos(){
+			  $('div.ui-blockui').css('z-index','0');
+       	      $('div.ui-blockui-content').css('z-index','0');
+       	      $('div.ui-blockui').css('display','none');
+    	      $('div.ui-blockui-content').css('display','none');
+       	      $('div.ui-blockui-content').removeClass('ui-shadow');
+       	      $('i.pi-spinner').css('display','none');
+       	         
+		  }
+		  
+	    </script>
+	</ui:define>
+	<ui:define name="section-content">
+		<h:form id="form">
+			<p:growl id="messages" showDetail="true" showSummary="false" />
+			<p:card style="width: 100%; margin:0em">
+				<p:panelGrid columns="3" layout="grid"
+					columnClasses="ui-g-12 ui-md-12 ui-lg-5,ui-g-12 ui-md-12 ui-lg-1, ui-g-12 ui-md-12 ui-lg-6"
+					contentStyleClass="align-items-baseline ui-fluid"
+					style="border:0px none; background-color:transparent;">
+					<p:panelGrid id="panelGrid_SysUserInfo" columns="3" layout="grid"
+						columnClasses="ui-g-5 ui-md-6 ui-lg-4,ui-g-5 ui-md-5 ui-lg-7, ui-g-2 ui-md-1 ui-lg-1"
+						contentStyleClass="align-items-baseline ui-fluid"
+						style="border:0px none; background-color:transparent;">
+						<p:outputLabel for="@next" value="#{interfaceLabel.firstName}"></p:outputLabel>
+						<p:inputText value="#{sysUserBean.sysUser.firstName}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							style="#{sysUserBean.defineUserStyle()}"></p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.surname}"></p:outputLabel>
+						<p:inputText value="#{sysUserBean.sysUser.lastName}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							style="#{sysUserBean.defineUserStyle()}">
+						</p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.fatherName}"></p:outputLabel>
+						<p:inputText value="#{sysUserBean.sysUser.fatherName}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							style="#{sysUserBean.defineUserStyle()}"></p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.motherName}"></p:outputLabel>
+						<p:inputText value="#{sysUserBean.sysUser.motherName}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							style="#{sysUserBean.defineUserStyle()}"></p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.arDisplayName}"></p:outputLabel>
+						<p:inputText value="#{sysUserBean.sysUser.arDisplayName}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							style="#{sysUserBean.defineUserStyle()}"></p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.enDisplayName}"></p:outputLabel>
+						<p:inputText value="#{sysUserBean.sysUser.enDisplayName}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							style="#{sysUserBean.defineUserStyle()}"></p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next">#{interfaceLabel.organization}</p:outputLabel>
+						<p:inputText id="inputText_sys_user_organization"
+							style="color:black;font-weight:bolder;background-color:#CFEAF0;"
+							readonly="true" disabled="true"
+							value="#{sysUserBean.sysUser.organizationByOrganization}"></p:inputText>
+						<p:commandButton icon="pi pi-search"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							styleClass="rounded-button ui-button-info ui-button-outlined"
+							onclick="PF('sysUserOrganizationVar').show(); return false;"
+							ajax="true" title="#{interfaceLabel.search}"></p:commandButton>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.userCode}"></p:outputLabel>
+						<p:inputText id="inputText_sys_user_code"
+							value="#{sysUserBean.sysUser.sysUserCode}" disabled="true"
+							readonly="true"
+							style="color:black;font-weight:bolder;background-color:#CFEAF0;"></p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.userName}"></p:outputLabel>
+						<p:inputText id="inputText_sys_user_name"
+							value="#{sysUserBean.sysUser.userName}" disabled="false"
+							readonly="false"
+							style="color:black;font-weight:bolder;background-color:#FFF0F5;"></p:inputText>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next" value="#{interfaceLabel.password}"
+							rendered="#{!sysUserBean.sysUser.isAlterUserAliasMode}"></p:outputLabel>
+						<p:password value="#{sysUserBean.sysUser.password}"
+							feedback="true" inline="true" widgetVar="passWidgetVar"
+							rendered="#{!sysUserBean.sysUser.isAlterUserAliasMode}"
+							promptLabel="#{interfaceLabel.promptLabel}"
+							goodLabel="#{interfaceLabel.goodPass}"
+							weakLabel="#{interfaceLabel.weakPass}"
+							strongLabel="#{interfaceLabel.strongPass}" />
+						<p:column rendered="#{!sysUserBean.sysUser.isAlterUserAliasMode}"></p:column>
+
+						<p:selectBooleanCheckbox
+							value="#{sysUserBean.sysUser.passMustChangeFirstTime}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"></p:selectBooleanCheckbox>
+						<p:outputLabel
+							value="#{interfaceLabel.passwordMustChangeFirstTime}"></p:outputLabel>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next"
+							value="#{interfaceLabel.passwordValidity}"></p:outputLabel>
+						<p:datePicker
+							value="#{sysUserBean.sysUser.passMustChangeFirstTime}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"></p:datePicker>
+						<p:column></p:column>
+
+						<p:selectBooleanCheckbox value="#{sysUserBean.sysUser.disabled}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"></p:selectBooleanCheckbox>
+						<p:outputLabel value="#{interfaceLabel.disabled}"></p:outputLabel>
+						<p:column></p:column>
+
+						<p:outputLabel for="@next"
+							value="#{interfaceLabel.disabledUntilDate}"></p:outputLabel>
+						<p:datePicker value="#{sysUserBean.sysUser.disabledUntilDate}"
+							disabled="#{sysUserBean.sysUser.isAlterUserAliasMode}"
+							readonly="#{sysUserBean.sysUser.isAlterUserAliasMode}"></p:datePicker>
+						<p:column></p:column>
+
+					</p:panelGrid>
+					<p:divider layout="vertical" type="dashed"></p:divider>
+					<p:panelGrid columns="1" layout="grid"
+						columnClasses="ui-g-12 ui-md-12 ui-lg-12"
+						contentStyleClass="align-items-baseline ui-fluid"
+						style="border:0px none; background-color:transparent;">
+						<p:toolbar id="toolbar">
+							<f:facet name="left">
+								<p:commandButton
+									value="#{interfaceLabel.add} #{interfaceLabel.jobPositionTitle}"
+									icon="pi pi-plus" ajax="true" partialSubmit="true"
+									process="@this" action="#{sysUserBean.openNewUserAlias()}"
+									update="@([id$=manage-userAlias-content])"
+									oncomplete="PF('manageUserAliasDialog').show()"
+									styleClass="ui-button-raised ui-button-success ui-button-flat">
+								</p:commandButton>
+							</f:facet>
+						</p:toolbar>
+
+
+						<p:dataTable id="dt-userAlias" widgetVar="userAlias-widgetVar"
+							var="userAlias" value="#{sysUserBean.userAliasList}"
+							reflow="true" styleClass="products-table" resizeMode="fit"
+							rowKey="#{userAlias.id}" paginator="true" rows="6"
+							emptyMessage="#{interfaceLabel.noRecordsFound}"
+							paginatorPosition="bottom">
+							<p:column headerText="#{interfaceLabel.jobPositionTitle}">
+								<h:outputText value="#{userAlias.jobPosition.name}" />
+							</p:column>
+
+							<p:column headerText="#{interfaceLabel.aliasName}">
+								<h:outputText value="#{userAlias.aliasName}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.code}">
+								<h:outputText value="#{userAlias.userCode}" />
+							</p:column>
+							<p:column headerText="#{interfaceLabel.isDefault}">
+								<p:selectBooleanCheckbox disabled="true"
+									value="#{userAlias.isDefault}" />
+							</p:column>
+							<p:column width="20">
+								<p:commandButton
+									styleClass="rounded-button ui-button-success ui-button-flat"
+									icon="pi pi-check-square" title="#{interfaceLabel.edit}"
+									action="#{sysUserBean.updateExistingUserAlias(userAlias)}"
+									update="@([id$=manage-userAlias-content]"
+									oncomplete="PF('manageUserAliasDialog').show()" process="@this"
+									ajax="true"></p:commandButton>
+							</p:column>
+							<p:column width="20">
+								<p:commandButton
+									styleClass="rounded-button ui-button-danger ui-button-flat"
+									icon="pi pi-trash" title="#{interfaceLabel.delete}"
+									process="@this" update=":form:dt-userAlias"
+									action="#{sysUserBean.removeUserAlias(userAlias)}"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<p:divider type="dashed"></p:divider>
+						<div class="row">
+							<div class="field">
+								<p:tabView>
+									<p:tab title="#{interfaceLabel.pleaseEnterYourSignture}">
+										<h:outputLabel
+											value="#{interfaceLabel.pleaseEnterYourSignture}"
+											style="font-size: medium;" styleClass="smat-label" />
+										<p:signature value="#{sysUserBean.sysUser.signture}"
+											style="width:100%;height:200px;" widgetVar="sig"
+											required="true" guideline="true" />
+										<p:commandButton ajax="true" value="#{interfaceLabel.delete}"
+											process="@this" style="width:auto;"
+											onclick="PF('sig').clear()"
+											styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+											icon="pi pi-times" />
+									</p:tab>
+									<p:tab title="#{interfaceLabel.uploadYourSignture}">
+										<p:outputPanel id="manage-add-photo-signture"
+											class="ui-fluid" layout="inline"
+											style="width:100%;height:100%">
+											<p:scrollPanel
+												style="border:dotted;border-color:#B9CEF2;width: auto; height:89%"
+												styleClass="" mode="native">
+												<p:panelGrid id="panelGrid_uploader_document" columns="1"
+													columnClasses="ui-g-12 ui-md-12 ui-lg-12" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid"
+													style="border:0px none; background-color:transparent;">
+
+													<p:column>
+														<p:outputLabel
+															value="#{interfaceLabel.uploadYourSignture}"
+															style="color:#FFC757;font-weight:bolder;font-style:italic;"></p:outputLabel>
+													</p:column>
+													<p:divider layout="horizontal" type="solid"
+														style="margin-top:-15px;"></p:divider>
+													<p:dataScroller id="customDropzone_signture"
+														widgetVar="dataScrollerdocWidgetVar"
+														style="margin-top:-50px;border:0px none; background-color:transparent;"
+														value="#{sysUserBean.genericArchiveDocs}"
+														var="archiveFile" chunkSize="10" mode="inline"
+														scrollHeight="300">
+														<f:facet name="header">
+                                                            #{interfaceLabel.theTotalNumberOfDocument}: <span
+																style="color: #FFC757; font-weight: bolder; font-style: italic;">#{templateDesignBean.printedDocs.size()}</span>
+
+														</f:facet>
+
+														<div class="product">
+															<div class="product-list-item p-5">
+																<p:graphicImage stream="false"
+																	value="#{archiveFile.dynamicImage}" />
+																<div class="product-list-detail">
+																	<div class="product-name"></div>
+																	<div class="product-description"></div>
+
+																	<span
+																		style="#{app.locale.locale eq 'en'? 'margin-left:.5rem' : 'margin-right:.5rem'}"
+																		class="pi #{app.locale.locale eq 'en'? 'pi-angle-right':'pi-angle-left'} product-category">
+																		</span>
+																</div>
+																<div class="product-list-action">
+
+																	<p:commandButton icon="pi pi-trash"
+																		value="#{interfaceLabel.delete}" process="@this"
+																		action="#{sysUserBean.deleteDocFile(archiveFile)}"
+																		update="@([id$=customDropzone_signture])"
+																		styleClass="rounded-button ui-button-danger" />
+
+																</div>
+															</div>
+														</div>
+														<p:divider layout="horizontal" type="dashed" style=""
+															styleClass="ui-custom-divider"></p:divider>
+
+													</p:dataScroller>
+													<p:column>
+														<small> #{interfaceLabel.dropHereToStartUpload} <p:link
+																value="#{interfaceLabel.choose}"
+																onclick="PF('uploadFileDocWidgetVar').show(); return false;"
+																style="font-size:1.2rem" />.
+														</small>
+													</p:column>
+													<p:remoteCommand name="autoScrollDownData"
+														oncomplete="$('.ui-scrollpanel').scrollTop($('.ui-scrollpanel').height());"></p:remoteCommand>
+													<p:fileUpload id="advancedupload_document"
+														widgetVar="uploadFileDocWidgetVar" multiple="true"
+														listener="#{sysUserBean.uploadArchiveDocToSelectedArchive}"
+														oncomplete="autoScrollDownData();" process="@([id$=advancedupload_document])"
+														update="@([id$=panelGrid_uploader_document],[id$=messages]) "
+														style="display:none;" sequential="true"
+														allowTypes="/(\.|\/)(jpg|jpeg|png|gif|bmp|webp)$/"
+														dropZone="customDropzone_signture" />
+
+												</p:panelGrid>
+											</p:scrollPanel>
+										</p:outputPanel>
+									</p:tab>
+								</p:tabView>
+							</div>
+						</div>
+						<p:divider type="dashed"></p:divider>
+						<p:panelGrid columns="2" layout="flex"
+							columnClasses="col-3 md:col-5 xl:col-6, col-3 md:col-5 xl:col-6"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-save"
+								action="#{sysUserBean.save()}" ajax="true"
+								update=":form:messages"
+								styleClass="rounded-button ui-button-primary ui-button-raised ui-button-flat" />
+
+							<p:commandButton value="#{interfaceLabel.back}" ajax="true"
+								process="@this"
+								styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+								action="pretty:users" icon="pi pi-undo" />
+
+						</p:panelGrid>
+					</p:panelGrid>
+
+				</p:panelGrid>
+
+			</p:card>
+
+
+			<p:scrollTop />
+		</h:form>
+	</ui:define>
+	<ui:define name="section-dialogs">
+		<p:dialog
+			header="#{interfaceLabel.add} #{interfaceLabel.jobPositionTitle}"
+			showEffect="fade" widgetVar="manageUserAliasDialog" closable="true"
+			blockScroll="true" dynamic="true" cache="true" fitViewport="75%"
+			showHeader="true" responsive="true" width="85%" maximizable="true"
+			minimizable="true">
+			<h:form id="form_user_alias">
+				<p:divider layout="horizontal" type="dashed" align="center"></p:divider>
+				<p:outputPanel id="manage-userAlias-content" class="ui-fluid"
+					layout="inline" style="width:100%;height:75%">
+					<p:scrollPanel
+						style="border:dashed;border-color:#B9CEF2;width: auto; max-height: 500px;height:auto;"
+						mode="native">
+						<p:panelGrid columns="3" layout="grid"
+							columnClasses="ui-g-12 ui-md-12 ui-lg-5,ui-g-12 ui-md-12 ui-lg-2, ui-g-12 ui-md-12 ui-lg-5"
+							contentStyleClass="align-items-baseline ui-fluid"
+							style="border:0px none; background-color:transparent;">
+							<p:panelGrid columns="3"
+								columnClasses="ui-grid-col-4,ui-grid-col-7,ui-grid-col-1"
+								layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+								style="border:0px none; background-color:transparent;">
+								<p:outputLabel for="@next">#{interfaceLabel.organization}</p:outputLabel>
+								<p:inputText id="inputText_organization" style="color:blue;"
+									readonly="true" disabled="true"
+									value="#{sysUserBean.userAlias.organizationByOrganization}"></p:inputText>
+								<p:commandButton icon="pi pi-search"
+									styleClass="rounded-button ui-button-info ui-button-outlined"
+									onclick="PF('organizationVar').show(); return false;"
+									ajax="true" title="#{interfaceLabel.add}"></p:commandButton>
+
+								<p:outputLabel for="@next">#{interfaceLabel.rootOrganization}</p:outputLabel>
+								<p:inputText id="inputText_rootOrganization" style="color:red;"
+									readonly="true" disabled="true"
+									value="#{sysUserBean.userAlias.organizationByRootOrganization}"></p:inputText>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.divan}</p:outputLabel>
+								<p:inputText id="inputText_divan" style="color:orange;"
+									readonly="true" disabled="true"
+									value="#{sysUserBean.userAlias.organizationByDivan}"></p:inputText>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.jobPositionTitle}</p:outputLabel>
+								<p:selectOneMenu value="#{sysUserBean.userAlias.jobPosition}"
+									converter="omnifaces.SelectItemsIndexConverter">
+									<p:ajax listener="#{sysUserBean.defineAuthorityLevel}"
+										process="@this"></p:ajax>
+									<f:selectItems itemLabel="#{jobPosition.name}"
+										itemValue="#{jobPosition}" var="jobPosition"
+										value="#{sysUserBean.jobPositionList}" />
+
+								</p:selectOneMenu>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.definedLevel}</p:outputLabel>
+								<p:inputText id="inputText_definedLevel"
+									style="color:black;font-weight:bolder;font-style:italic;background-color:#D4E6F7;"
+									disabled="true" value="#{sysUserBean.userAlias.definedLevel}"></p:inputText>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.lowSendLevel}</p:outputLabel>
+								<p:inputText id="inputText_lowSendLevel" style="color:blue;"
+									value="#{sysUserBean.userAlias.lowSendLevel}"></p:inputText>
+								<p:column></p:column>
+
+								<p:outputLabel for="@next">#{interfaceLabel.highSendLevel}</p:outputLabel>
+								<p:inputText id="inputText_highSendLevel" style="color:blue;"
+									value="#{sysUserBean.userAlias.highSendLevel}"></p:inputText>
+								<p:column></p:column>
+
+							</p:panelGrid>
+							<p:divider layout="vertical" type="dashed"></p:divider>
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-5,ui-grid-col-7" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel for="@next">#{interfaceLabel.arAliasName}</p:outputLabel>
+								<p:inputText value="#{sysUserBean.userAlias.arAliasName}" />
+
+								<p:outputLabel for="@next">#{interfaceLabel.enAliasName}</p:outputLabel>
+								<p:inputText value="#{sysUserBean.userAlias.enAliasName}" />
+
+								<p:outputLabel for="@next">#{interfaceLabel.code}</p:outputLabel>
+								<p:inputText id="inputText_userCode"
+									value="#{sysUserBean.userAlias.userCode}" disabled="true"
+									readonly="true" style="color:blue;" />
+
+								<p:outputLabel for="@next">#{interfaceLabel.weight}</p:outputLabel>
+								<p:inputText id="inputText_weight"
+									value="#{sysUserBean.userAlias.weight}" />
+
+								<p:selectBooleanCheckbox itemLabel="#{interfaceLabel.isDefault}"
+									value="#{sysUserBean.userAlias.isDefault}"></p:selectBooleanCheckbox>
+								<p:selectBooleanCheckbox
+									itemLabel="#{interfaceLabel.hierarchyClosure}"
+									value="#{sysUserBean.userAlias.hierarchyClosure}"></p:selectBooleanCheckbox>
+
+								<f:facet name="footer">
+									<p:divider type="dashed"></p:divider>
+									<p:panelGrid columns="3"
+										columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-6"
+										layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+										style="border:0px none; background-color:transparent;">
+										<p:commandButton value="#{interfaceLabel.add}"
+											icon="pi pi-plus-circle"
+											styleClass="ui-button-raised ui-button-success ui-button-flat"
+											actionListener="#{sysUserBean.addUserAlias}"
+											update="manage-userAlias-content :form:dt-userAlias"
+											process="manage-userAlias-content @this" />
+										<p:commandButton value="#{interfaceLabel.cancel}"
+											icon="pi pi-times-circle"
+											onclick="PF('manageUserAliasDialog').hide()"
+											styleClass="ui-button-raised ui-button-warning ui-button-flat" />
+									</p:panelGrid>
+								</f:facet>
+
+							</p:panelGrid>
+
+						</p:panelGrid>
+					</p:scrollPanel>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		<p:dialog id="dialog_selectOrgFromUserAlias"
+			header="#{interfaceLabel.selectOrganization}" closable="true"
+			closeOnEscape="true" position="top"
+			dir="#{app.locale.rtl ? 'rtl':'ltr'}" showHeader="true"
+			blockScroll="true" width="40%" dynamic="true" appendTo="@(body)"
+			widgetVar="organizationVar" showEffect="fade" modal="true"
+			responsive="true" onShow="updateDialog();">
+
+			<script type="text/javascript">
+				   
+                   $(function (){
+                	    
+                	   
+                	      
+                	     
+                       });
+				</script>
+
+			<style>
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+</style>
+			<h:form id="form_organizations">
+				<p:divider />
+
+				<div class="p-grid">
+					<div class="p-col-12">
+
+						<p:scrollPanel
+							style="border:dashed;border-color:#B9CEF2;width: auto; max-height:300px; height: auto"
+							mode="native">
+
+							<p:tree id="tree_organizations" value="#{organizationBean.root}"
+								highlight="true" animate="true" selectionMode="single"
+								selection="#{organizationBean.selectedNode}"
+								widgetVar="treeWidgetVar" var="node" cache="false"
+								dynamic="true">
+								<p:ajax event="expand"
+									oncomplete="reverseTreeChildExpandedIcon();"
+									listener="#{organizationBean.onNodeExpand}" />
+								<p:ajax event="collapse"
+									listener="#{organizationBean.onNodeCollapse}" />
+								<p:ajax event="select"
+									listener="#{organizationBean.onNodeSelect}" delay="100" />
+								<p:treeNode>
+									<span> <span
+										style="color: black !important; font-weight: bolder !important;">(#{node.code})</span>
+										#{node.name}
+									</span>
+									<p:spacer width="6px"></p:spacer>
+									<p:commandButton icon="pi pi-check-circle" ajax="true"
+										styleClass="rounded-button ui-button-help ui-button-flat"
+										process="@this" global="false"
+										action="#{sysUserBean.selectOrganization(node)}"
+										update="@([id$=inputText_organization],[id$=inputText_rootOrganization],[id$=inputText_divan],[id$=inputText_userCode])"
+										oncomplete="updateDialogPos();PF('organizationVar').hide();"></p:commandButton>
+									<p:spacer width="6px"></p:spacer>
+								</p:treeNode>
+							</p:tree>
+							<p:blockUI id="blockUI_tree_orgniztion"
+								block="form_organizations:tree_organizations"
+								trigger="form_organizations:tree_organizations"
+								widgetVar="blockWidget">
+								<i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+							</p:blockUI>
+							<p:scrollTop target="parent" threshold="20"
+								styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+
+						</p:scrollPanel>
+
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+		<p:dialog id="dialog_selectOrg"
+			header="#{interfaceLabel.selectOrganization}" closable="true"
+			closeOnEscape="true" position="top"
+			dir="#{app.locale.rtl ? 'rtl':'ltr'}" showHeader="true"
+			dynamic="true" blockScroll="true" appendTo="@(body)" width="40%"
+			widgetVar="sysUserOrganizationVar" showEffect="fade" modal="true"
+			responsive="true" onShow="updateDialog();">
+
+			<script type="text/javascript">
+				   
+                   $(function (){
+                	    
+                	   
+                	      
+                	     
+                       });
+				</script>
+
+			<style>
+.custom-scrolltop.ui-scrolltop {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 4px;
+	outline: 0 none;
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop:hover {
+	background-color: #B9CEF2;
+}
+
+.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+	font-size: 1rem;
+	color: var(- -primary-color-text);
+}
+</style>
+			<h:form id="form_sy_user_organizations">
+				<p:divider />
+				<div class="p-grid">
+					<div class="p-col-12">
+
+						<p:scrollPanel
+							style="border:dashed;border-color:#B9CEF2;width: auto; max-height:300px; height: auto"
+							mode="native">
+							<p:tree id="tree_sys_user_organizations"
+								value="#{organizationBean.root}" highlight="true" animate="true"
+								selectionMode="single"
+								selection="#{organizationBean.selectedNode}" var="node"
+								cache="false" dynamic="true">
+								<p:ajax event="expand"
+									oncomplete="reverseTreeChildExpandedIcon();"
+									listener="#{organizationBean.onNodeExpand}" />
+								<p:ajax event="collapse"
+									listener="#{organizationBean.onNodeCollapse}" />
+								<p:ajax event="select"
+									listener="#{organizationBean.onNodeSelect}" delay="100" />
+								<p:treeNode>
+									<span> <span
+										style="color: black !important; font-weight: bolder !important;">(#{node.code})</span>
+										#{node.name}
+									</span>
+									<p:spacer width="6px"></p:spacer>
+									<p:commandButton icon="pi pi-check-circle" ajax="true"
+										styleClass="rounded-button ui-button-help ui-button-flat"
+										process="@this" global="false"
+										action="#{sysUserBean.selectSysUserOrganization(node)}"
+										update="@([id$=inputText_sys_user_organization],[id$=inputText_sys_user_code],[id$=inputText_sys_user_name])"
+										oncomplete="updateDialogPos();PF('sysUserOrganizationVar').hide();"></p:commandButton>
+									<p:spacer width="6px"></p:spacer>
+								</p:treeNode>
+							</p:tree>
+							<p:scrollTop target="parent" threshold="20"
+								styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+
+						</p:scrollPanel>
+						<p:blockUI block="tree_sys_user_organizations"
+							trigger="tree_sys_user_organizations" widgetVar="blockWidget">
+							<i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+						</p:blockUI>
+					</div>
+				</div>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

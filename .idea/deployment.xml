@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="95.111.225.132">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/opt/jboss-eap-7.4/standalone/deployments/smat_ins.war" local="$PROJECT_DIR$/target/smat-ins-0.0.1-SNAPSHOT" web="http://95.111.225.132:8080/smat_ins/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/target/smat-ins-0.0.1-SNAPSHOT/WEB-INF/lib" />
+            <excludedPath local="true" path="$PROJECT_DIR$/target/smat-ins-0.0.1-SNAPSHOT/WEB-INF/classes/database.properties" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

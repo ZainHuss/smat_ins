@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panelGrid id="panelGrid_editOrganizationDetails" columns="2"
+		layout="grid"
+		columnClasses="ui-g-12 ui-md-4 ui-lg-3, ui-g-12 ui-md-8 ui-lg-9"
+		contentStyleClass="align-items-baseline ui-fluid"
+		style="border:0px none; background-color:transparent;">
+
+		<h:outputLabel value="#{interfaceLabel.parentOrganization}" />
+		<p:inputText
+			value="#{organizationBean.selectedOrganization.organization.name}"
+			disabled="true" />
+
+		<h:outputLabel value="#{interfaceLabel.arabicName}" />
+		<p:inputText
+			value="#{organizationBean.selectedOrganization.arabicName}"></p:inputText>
+
+		<h:outputLabel value="#{interfaceLabel.englishName}" />
+		<p:inputText
+			value="#{organizationBean.selectedOrganization.englishName}"></p:inputText>
+
+		<h:outputLabel value="#{interfaceLabel.prefixCode}" />
+		<p:inputText
+			value="#{organizationBean.selectedOrganization.prefixCode}"
+			style="background-color:#F5F5F5;border-bottom-color:black;color:black;">
+			<p:ajax event="keyup" update="@([id$=inputText_FullCode])"></p:ajax>
+		</p:inputText>
+		<h:outputLabel value="#{interfaceLabel.suffixCode}" />
+		<p:inputText
+			value="#{organizationBean.selectedOrganization.suffixCode}"
+			style="background-color:#FFF0F5;border-bottom-color:black;color:black;">
+			<p:ajax event="keyup" update="@([id$=inputText_FullCode])"></p:ajax>
+		</p:inputText>
+		<h:outputLabel value="#{interfaceLabel.code}" />
+		<p:inputText id="inputText_Code"
+			value="#{organizationBean.selectedOrganization.code}"
+			style="background-color:#E3F2FD;border-bottom-color:black;color:orange;"
+			readonly="true" disabled="true" />
+		<h:outputLabel value="#{interfaceLabel.fullOrgCode}" />
+		<p:inputText id="inputText_FullCode"
+			value="#{organizationBean.selectedOrganization.organizationCode}"
+			style="background-color:#FFFFE0;border-bottom-color:black;color:black;font-style: oblique;font-weight: bolder;"
+			readonly="true" disabled="true" />
+		<h:outputLabel value="#{interfaceLabel.divan}" />
+		<p:selectBooleanCheckbox
+			value="#{organizationBean.selectedOrganization.isDivan}"></p:selectBooleanCheckbox>
+	</p:panelGrid>
+	<p:divider type="dashed"></p:divider>
+	<p:panelGrid columns="2" layout="grid"
+		columnClasses="ui-g-12 ui-md-4 ui-lg-2, ui-g-12 ui-md-4 ui-lg-2"
+		contentStyleClass="align-items-baseline ui-fluid"
+		style="border:0px none; background-color:transparent;">
+		<p:commandButton value="#{interfaceLabel.update}" ajax="true"
+			action="#{organizationBean.update()}"
+			update="form_organizations:panel_tree_organization form_organizations:panelGrid_editOrganizationDetails form_organizations:messages"
+			icon="pi pi-check" styleClass="ui-button-success"></p:commandButton>
+	</p:panelGrid>
+	
+
+</ui:composition>

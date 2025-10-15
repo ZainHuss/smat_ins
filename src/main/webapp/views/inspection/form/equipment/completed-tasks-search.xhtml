@@ -1,0 +1,724 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
+    template="/WEB-INF/template.xhtml">
+
+<ui:define name="head">
+    <h:outputStylesheet library="#{appSetting.resourceLib}" name="css/rtl-support.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Exo+2:wght@400;700&amp;family=Rajdhani:wght@400;700&amp;display=swap" rel="stylesheet" />    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+:root {
+    --lux-blue-dark: #183153;
+    --lux-blue-main: #2463a7;
+    --lux-blue-light: #f4f8fb;
+    --lux-blue-muted: #e2eaf3;
+    --lux-border: #e0e7ef;
+    --lux-card-bg: #fff;
+    --lux-shadow: 0 2px 12px 0 rgba(24,49,83,0.06);
+    --lux-shadow-hover: 0 4px 24px 0 rgba(24,49,83,0.10);
+    --lux-radius: 14px;
+    --lux-font-primary: 'Cairo', 'Montserrat', 'Exo 2', sans-serif;
+    --lux-font-secondary: 'Montserrat', sans-serif;
+    --lux-text-main: #1a2233;
+    --lux-text-muted: #7b8ca7;
+    --lux-btn-bg: #2463a7;
+    --lux-btn-bg-hover: #183153;
+    --lux-btn-bg-secondary: #e2eaf3;
+    --lux-btn-bg-success: #e0f2fe;
+    --lux-btn-text: #fff;
+    --lux-btn-text-secondary: #2463a7;
+    --lux-btn-text-success: #2463a7;
+    --lux-transition: all 0.28s cubic-bezier(.4,0,.2,1);
+}
+
+.lux-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    min-width: 70px;
+    justify-content: center;
+    font-family: var(--lux-font-secondary);
+    letter-spacing: 0.5px;
+    background: var(--lux-blue-light);
+    color: var(--lux-blue-main);
+    border: 1px solid var(--lux-blue-main);
+    box-shadow: none;
+}
+.lux-badge-silver {
+    background: var(--lux-blue-muted);
+    color: var(--lux-blue-dark);
+    border: 1px solid var(--lux-blue-main);
+}
+
+body {
+    font-family: var(--lux-font-primary);
+    background: var(--lux-blue-light);
+    color: var(--lux-text-main);
+    min-height: 100vh;
+    background-image: none;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    display: none;
+}
+
+.lux-glitter {
+    display: none;
+}
+
+.lux-search-container {
+    max-width: 1400px; /* Increased to accommodate more columns */
+    margin: 2rem auto 1rem auto;
+    padding: 1.5rem 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.lux-search-card {
+    border-radius: var(--lux-radius);
+    box-shadow: var(--lux-shadow);
+    padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+    background: var(--lux-card-bg);
+    border: 1.5px solid var(--lux-border);
+    position: relative;
+    overflow: hidden;
+    transition: var(--lux-transition);
+    margin-bottom: 1.2rem;
+}
+.lux-search-card:hover {
+    box-shadow: var(--lux-shadow-hover);
+    border-color: var(--lux-blue-main);
+}
+
+.lux-search-header {
+    font-size: 1.25rem;
+    font-weight: 900;
+    font-family: var(--lux-font-secondary);
+    color: var(--lux-blue-dark);
+    letter-spacing: 1.2px;
+    margin-bottom: 1.1rem;
+    display: flex; align-items: center; gap: 0.7rem;
+}
+.lux-search-header i {
+    font-size: 1.2rem;
+    color: var(--lux-blue-main);
+    margin-right: 0.2rem;
+}
+
+.lux-fields-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* ثلاثة حقول لكل صف */
+    gap: 1.1rem;
+    margin-top: 1rem;
+    align-items: end;
+    width: 100%;
+}
+
+.lux-field-group {
+    display: flex; flex-direction: column; gap: 0.35rem; position: relative;
+}
+.lux-field-label {
+    font-size: 0.97rem;
+    font-weight: 700;
+    color: var(--lux-blue-main);
+    font-family: var(--lux-font-secondary);
+    letter-spacing: 0.5px;
+    margin-bottom: 0.2rem;
+    padding-left: 0.5rem;
+    border-left: 2.5px solid var(--lux-blue-main);
+}
+
+.ui-selectonemenu, .ui-inputtext, .ui-calendar input {
+    height: 40px !important;
+    border-radius: var(--lux-radius) !important;
+    border: 1.2px solid var(--lux-border) !important;
+    background: var(--lux-blue-light) !important;
+    color: var(--lux-text-main) !important;
+    font-size: 1.01rem !important;
+    font-family: var(--lux-font-primary) !important;
+    box-shadow: none;
+    transition: var(--lux-transition) !important;
+    padding: 0.5rem 0.9rem !important;
+}
+.ui-selectonemenu:focus, .ui-inputtext:focus, .ui-calendar input:focus {
+    border-color: var(--lux-blue-main) !important;
+    box-shadow: 0 0 8px #2463a71a !important;
+    outline: none !important;
+    background: #fff !important;
+}
+
+.lux-btn-group {
+    display: flex; justify-content: flex-end; gap: 0.7rem;
+    margin-top: 1.5rem; padding-top: 1rem;
+    border-top: 1px solid var(--lux-border);
+}
+.ui-button {
+    border-radius: var(--lux-radius) !important;
+    font-family: var(--lux-font-secondary) !important;
+    font-weight: 700 !important;
+    font-size: 0.98rem !important;
+    min-height: 38px; padding: 0.5rem 1.2rem !important;
+    letter-spacing: 0.5px;
+    box-shadow: none !important;
+    border: none !important;
+    transition: var(--lux-transition) !important;
+    position: relative; overflow: hidden; z-index: 1;
+}
+.ui-button:before {
+    display: none;
+}
+.ui-button-primary {
+    background: var(--lux-btn-bg) !important;
+    color: var(--lux-btn-text) !important;
+}
+.ui-button-primary:hover {
+    background: var(--lux-btn-bg-hover) !important;
+    color: #fff !important;
+}
+.ui-button-secondary {
+    background: var(--lux-btn-bg-secondary) !important;
+    color: var(--lux-btn-text-secondary) !important;
+    border: 1.2px solid var(--lux-blue-main) !important;
+}
+.ui-button-secondary:hover {
+    background: #fff !important;
+    color: var(--lux-blue-main) !important;
+}
+.ui-button-success {
+    background: var(--lux-btn-bg-success) !important;
+    color: var(--lux-btn-text-success) !important;
+}
+.ui-button-success:hover {
+    background: var(--lux-blue-main) !important;
+    color: #fff !important;
+}
+
+.lux-stats-card {
+    background: var(--lux-card-bg);
+    border-radius: var(--lux-radius);
+    padding: 1.2rem 1rem;
+    margin-bottom: 1.2rem;
+    box-shadow: var(--lux-shadow);
+    border: 1.5px solid var(--lux-border);
+    position: relative; overflow: hidden;
+}
+.lux-stats-card::after {
+    display: none;
+}
+.lux-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.1rem;
+}
+.lux-stat-item {
+    text-align: center;
+    padding: 0.9rem 0.5rem;
+    background: var(--lux-blue-light);
+    border-radius: var(--lux-radius);
+    border: 1px solid var(--lux-border);
+    box-shadow: none;
+    position: relative;
+    overflow: hidden;
+    transition: var(--lux-transition);
+}
+.lux-stat-item:hover {
+    border-color: var(--lux-blue-main);
+    box-shadow: 0 0 12px #2463a71a;
+}
+.lux-stat-number {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--lux-blue-main);
+    font-family: var(--lux-font-secondary);
+    margin-bottom: 0.3rem;
+}
+.lux-stat-label {
+    font-size: 0.98rem;
+    color: var(--lux-blue-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+}
+
+.lux-results-table {
+    border-radius: var(--lux-radius);
+    overflow: auto; /* Changed from hidden to auto for horizontal scrolling */
+    box-shadow: var(--lux-shadow);
+    background: var(--lux-card-bg);
+    border: 1.5px solid var(--lux-border);
+    margin-top: 1.1rem;
+    position: relative;
+}
+.lux-results-table::after {
+    display: none;
+}
+
+.ui-datatable {
+    background: transparent !important;
+    border: none !important;
+    width: 100% !important;
+    font-size: 0.97rem !important;
+    min-width: 1400px; /* Increased minimum width to accommodate all columns including Organization */
+}
+.ui-datatable .ui-datatable-header {
+    background: var(--lux-blue-light) !important;
+    color: var(--lux-blue-dark) !important;
+    font-weight: 900;
+    font-size: 1rem;
+    font-family: var(--lux-font-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none !important;
+    padding: 0.8rem !important;
+    text-shadow: none;
+}
+.ui-datatable .ui-paginator {
+    background: var(--lux-blue-light) !important;
+    border: none !important;
+    padding: 0.7rem !important;
+    border-top: 1px solid var(--lux-border) !important;
+    color: var(--lux-blue-main) !important;
+}
+.ui-datatable .ui-datatable-data tr {
+    background: var(--lux-blue-light) !important;
+    transition: var(--lux-transition);
+}
+.ui-datatable .ui-datatable-data tr.ui-state-hover {
+    background: var(--lux-blue-muted) !important;
+    box-shadow: none;
+}
+.ui-datatable .ui-datatable-data>tr>td {
+    padding: 0.7rem 0.8rem !important;
+    border: none !important;
+    border-bottom: 1px solid var(--lux-border) !important;
+    font-size: 0.97rem;
+    font-weight: 500;
+    color: var(--lux-text-main);
+    font-family: var(--lux-font-primary);
+    vertical-align: middle;
+    word-wrap: break-word;
+    max-width: 180px; /* Reduced to accommodate more columns */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Special styling for Organization column to ensure it's visible */
+.ui-datatable .ui-datatable-data>tr>td.lux-org-column {
+    max-width: 200px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+.ui-datatable .ui-datatable-thead>tr>th {
+    background: var(--lux-blue-light) !important;
+    color: var(--lux-blue-main) !important;
+    border: none !important;
+    padding: 0.7rem 0.8rem !important;
+    font-weight: 900;
+    font-size: 0.97rem;
+    font-family: var(--lux-font-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid var(--lux-blue-main) !important;
+    text-shadow: none;
+}
+.lux-table-icon {
+    font-size: 1rem;
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--lux-blue-muted);
+    color: var(--lux-blue-main);
+    margin-left: 0.2rem;
+}
+.lux-action-buttons {
+    display: flex; gap: 0.4rem; justify-content: center;
+}
+.lux-action-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--lux-blue-muted);
+    color: var(--lux-blue-main);
+    border: 1px solid var(--lux-blue-main);
+    transition: var(--lux-transition);
+    font-size: 1rem;
+}
+.lux-action-btn:hover {
+    background: var(--lux-blue-main);
+    color: #fff;
+    border-color: var(--lux-blue-dark);
+    transform: scale(1.11);
+}
+.lux-no-results, .lux-initial-msg {
+    text-align: center;
+    padding: 2.2rem 1rem;
+    color: var(--lux-blue-main);
+    font-style: italic;
+    background: var(--lux-card-bg);
+    border-radius: var(--lux-radius);
+    border: 1.5px solid var(--lux-border);
+    margin-top: 1rem;
+    box-shadow: var(--lux-shadow);
+}
+.lux-no-results i, .lux-initial-msg i {
+    font-size: 2.1rem;
+    color: var(--lux-blue-main);
+    margin-bottom: 0.7rem;
+    text-shadow: none;
+}
+
+/* وصف كامل مع التفاف */
+.lux-description-full {
+    white-space: pre-line !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+    display: block !important;
+    font-size: 0.97rem;
+    font-family: var(--lux-font-primary);
+    color: var(--lux-text-main);
+    padding: 0.2rem 0;
+}
+.ui-datatable .ui-datatable-data>tr>td.lux-description-full {
+    max-width: none !important;
+    white-space: pre-line !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+@media (max-width: 1400px) {
+    .lux-search-container {
+        max-width: 1200px;
+    }
+    .lux-fields-grid { 
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 1200px) {
+    .lux-search-container {
+        max-width: 100%;
+        padding: 0.8rem;
+    }
+    .lux-fields-grid { 
+        grid-template-columns: 1fr;
+    }
+    .ui-datatable .ui-datatable-data>tr>td { 
+        max-width: 140px;
+    }
+}
+@media (max-width: 800px) {
+    .lux-stats-grid { 
+        grid-template-columns: 1fr;
+    }
+    .lux-search-card { 
+        padding: 0.7rem;
+    }
+    .lux-search-header { 
+        font-size: 1.05rem;
+    }
+    .ui-datatable {
+        min-width: 1200px; /* Increased minimum width for smaller screens */
+    }
+}
+    </style>
+</ui:define>
+
+<ui:define name="section-content">
+    <div class="lux-search-container">
+        <!-- Search Form -->
+        <div class="lux-search-card animate__animated animate__fadeIn">
+            <div class="lux-search-header">
+                <i class="fas fa-search"></i>
+                Completed Tasks Search 
+            </div>
+            <h:form id="searchForm">
+                <div class="lux-fields-grid">
+                    <!-- Task Type -->
+                    <div class="lux-field-group">
+                        <label class="lux-field-label">Task Type</label>
+                        <p:selectOneMenu value="#{completedTaskSearchBean.taskType}" styleClass="ui-selectonemenu">
+                            <f:selectItem itemLabel="All Types" itemValue="" />
+                            <f:selectItem itemLabel="Equipment Inspection" itemValue="equipment" />
+                            <f:selectItem itemLabel="Employee Certification" itemValue="employee" />
+                            <p:ajax update="@([id$=equipmentCategoryGroup])" />
+                        </p:selectOneMenu>
+                    </div>
+                    <!-- Company -->
+                    <div class="lux-field-group">
+                        <label class="lux-field-label">Company</label>
+                        <p:selectOneMenu value="#{completedTaskSearchBean.company}" 
+                                         converter="omnifaces.SelectItemsConverter"
+                                         styleClass="ui-selectonemenu">
+                            <f:selectItem itemLabel="All Companies" itemValue="#{null}" />
+                            <f:selectItems value="#{completedTaskSearchBean.companyList}" 
+                                           var="company" 
+                                           itemLabel="#{company.name}" 
+                                           itemValue="#{company}" />
+                        </p:selectOneMenu>
+                    </div>
+                    <!-- Equipment Category (conditional) -->
+                    <h:panelGroup id="equipmentCategoryGroup" layout="block" styleClass="lux-field-group">
+                        <label class="lux-field-label">Equipment Category</label>
+                        <p:selectOneMenu value="#{completedTaskSearchBean.equipmentCategory}" 
+                                         converter="omnifaces.SelectItemsConverter"
+                                         styleClass="ui-selectonemenu"
+                                         rendered="#{completedTaskSearchBean.equipmentCategoryFilterVisible}">
+                            <f:selectItem itemLabel="All Categories" itemValue="#{null}" />
+                            <f:selectItems value="#{completedTaskSearchBean.equipmentCategoryList}" 
+                                           var="category" 
+                                           itemLabel="#{category.arabicName}" 
+                                           itemValue="#{category}" />
+                        </p:selectOneMenu>
+                        <h:outputText value=" " rendered="#{not completedTaskSearchBean.equipmentCategoryFilterVisible}" />
+                    </h:panelGroup>
+                    <!-- From Date -->
+                    <div class="lux-field-group">
+                        <label class="lux-field-label">From Date</label>
+                        <p:calendar value="#{completedTaskSearchBean.fromDate}" 
+                                    pattern="dd/MM/yyyy" 
+                                    navigator="true" 
+                                    yearRange="c-10:c+10" />
+                    </div>
+                    <!-- To Date -->
+                    <div class="lux-field-group">
+                        <label class="lux-field-label">To Date</label>
+                        <p:calendar value="#{completedTaskSearchBean.toDate}" 
+                                    pattern="dd/MM/yyyy" 
+                                    navigator="true" 
+                                    yearRange="c-10:c+10" />
+                    </div>
+                    
+                    <!-- Cert Number (search field) -->
+                    <div class="lux-field-group">
+                        <label class="lux-field-label">Cert Num</label>
+                        <p:inputText value="#{completedTaskSearchBean.certNumberSearch}"
+                                     styleClass="ui-inputtext"
+                                     placeholder="Enter Cert Number" />
+                    </div>
+                    
+					<!-- Organization (use id as itemValue to avoid converter/instance issues) -->
+					<div class="lux-field-group">
+					    <label class="lux-field-label">Branch</label>
+						<p:selectOneMenu value="#{completedTaskSearchBean.organizationId}" styleClass="ui-selectonemenu">
+						    <f:selectItem itemLabel="All Branches" itemValue="#{null}" />
+						    <f:selectItems value="#{completedTaskSearchBean.organizationList}" var="org" itemLabel="#{org.name}" itemValue="#{org.id}" />
+						</p:selectOneMenu>
+
+					</div>
+
+                    
+                    
+                    
+
+                </div>
+                <div class="lux-btn-group">
+					<p:commandButton value="Search"
+					    icon="fas fa-search"
+					    styleClass="ui-button-primary"
+					    action="#{completedTaskSearchBean.searchCompletedTasks}"
+					    process="@form"
+					    update="@([id$=resultsPanel] @([id$=statisticsPanel]) @([id$=messages]))" />
+
+                    <p:commandButton value="Clear"
+                                     icon="fas fa-eraser"
+                                     styleClass="ui-button-secondary"
+                                     action="#{completedTaskSearchBean.clearSearch}"
+                                     process="@this"
+                                     update="@form :messages :statisticsPanel :resultsPanel"
+                                     resetInput="true"
+                                     immediate="true" />
+
+                    <p:commandButton value="Export"
+                                     icon="fas fa-download"
+                                     styleClass="ui-button-success"
+                                     action="#{completedTaskSearchBean.exportToExcel}"
+                                     ajax="false"
+                                     disabled="#{not completedTaskSearchBean.searchPerformed or empty completedTaskSearchBean.searchResults}" />
+
+                </div>
+            </h:form>
+        </div>
+        <!-- Statistics Panel -->
+        <h:panelGroup id="statisticsPanel" rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.statistics}">
+            <div class="lux-stats-card animate__animated animate__fadeInUp">
+                <div class="lux-stats-grid">
+                    <div class="lux-stat-item">
+                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['totalTasksCount']}</div>
+                        <div class="lux-stat-label">Total Completed Tasks</div>
+                    </div>
+                    <div class="lux-stat-item">
+                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['equipmentTasksCount']}</div>
+                        <div class="lux-stat-label">Equipment Tasks</div>
+                    </div>
+                    <div class="lux-stat-item">
+                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['employeeTasksCount']}</div>
+                        <div class="lux-stat-label">Employee Tasks</div>
+                    </div>
+                    <div class="lux-stat-item">
+                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['equipmentTasksPercentage']}%</div>
+                        <div class="lux-stat-label">Equipment Percentage</div>
+                    </div>
+                </div>
+            </div>
+        </h:panelGroup>
+        <!-- Results Panel -->
+        <h:panelGroup id="resultsPanel">
+            <h:panelGroup layout="block" styleClass="lux-results-table animate__animated animate__fadeInUp" 
+                          rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.searchResults}">
+                <p:dataTable value="#{completedTaskSearchBean.searchResults}" 
+                             var="task" 
+                             paginator="true" 
+                             rows="20"
+                             paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="10,20,50,100"
+                             emptyMessage="No completed tasks found"
+                             styleClass="compact-table">
+                    <f:facet name="header">
+                        Completed Tasks (#{completedTaskSearchBean.searchResults.size()} results)
+                    </f:facet>
+                    <!-- Task ID -->
+                    <p:column headerText="Task ID" sortBy="#{task['taskId']}" style="width: 80px;">
+                        <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
+                        <h:outputText value="#{task['taskId']}" />
+                    </p:column>
+                    
+                    <!-- Type -->
+                    <p:column headerText="Type" sortBy="#{task['taskType']}" style="width: 120px;">
+                        <span class="lux-badge"
+                              style="#{fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'equipment') 
+                                           ? 'background: linear-gradient(135deg, #2980f2, #f1c40f); color:#fff; border:1px solid #2980f2;' 
+                                           : (fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'employee') 
+                                              ? 'background: linear-gradient(135deg, #f1c40f, #e67e22); color:#fff; border:1px solid #e67e22;' 
+                                              : 'background:#bdc3c7;color:#21343b;border:1px solid #aab7c4;')}">
+                            #{completedTaskSearchBean.getTaskTypeDisplayText(task['taskType'])}
+                        </span>
+                    </p:column>
+
+                    <!-- Description -->
+                    <p:column headerText="Description" sortBy="#{task['taskDescription']}" style="width: 180px;">
+                        <h:outputText value="#{task['taskDescription']}" styleClass="lux-description-full" />
+                    </p:column>
+                    <p:column headerText="Job no"  style="width: 180px;">
+                        <h:outputText value="#{task['jobNo']}" styleClass="lux-description-full" />
+                    </p:column>
+                    <p:column headerText="Time sheet no"  style="width: 180px;">
+                        <h:outputText value="#{task['timeSheetNo']}" styleClass="lux-description-full" />
+                    </p:column>
+                    <!-- Reference -->
+                    <p:column headerText="Cert Num" style="width: 100px;">
+                        <span class="lux-table-icon"><i class="fas fa-file-alt"></i></span>
+                        <h:outputText value="#{task['reportNo']}" rendered="#{not empty task['reportNo']}" styleClass="lux-description-full" />
+                        <h:outputText value="#{task['certNumber']}" rendered="#{not empty task['certNumber']}" styleClass="lux-description-full"/>
+                        <h:outputText value="-" rendered="#{empty task['reportNo'] and empty task['certNumber']}" styleClass="lux-description-full"/>
+                    </p:column>
+          
+                    
+                    <!-- Company -->
+                    <p:column headerText="Company" sortBy="#{task['companyName']}" style="width: 140px;">
+                        <span class="lux-table-icon"><i class="fas fa-building"></i></span>
+                        <h:outputText value="#{task['companyName']}" styleClass="lux-description-full" />
+                    </p:column>
+                    <!-- Sticker Number -->
+                    <p:column headerText="Sticker Number" sortBy="#{task['stickerNo']}" filterBy="#{task['stickerNo']}" style="width: 120px;">
+                        <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
+                        <h:outputText value="#{task['stickerNo']}" />
+                    </p:column>
+                    
+                    <!-- Created Date -->
+                    <p:column headerText="Created Date" sortBy="#{task['createdDate']}" style="width: 100px;">
+                        <span class="lux-table-icon"><i class="fas fa-calendar-plus"></i></span>
+                        <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
+                    </p:column>
+                    <!-- Completed Date -->
+                    <p:column headerText="Completed Date" sortBy="#{task['completedDate']}" style="width: 100px;">
+                        <span class="lux-table-icon"><i class="fas fa-calendar-check"></i></span>
+                        <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}" />
+                    </p:column>
+                    <!-- Assigner -->
+                    <p:column headerText="Assigner" sortBy="#{task['assignerUserDisplayName']}" style="width:110px;">
+                        <span class="lux-table-icon"><i class="fas fa-user"></i></span>
+                        <h:outputText value="#{task['assignerUserDisplayName']}" />
+                    </p:column>
+                    <!-- Inspector -->
+                    <p:column headerText="Inspector" style="width: 110px;">
+                        <span class="lux-table-icon"><i class="fas fa-user-check"></i></span>
+                        <h:outputText value="#{task['inspectorName']}" />
+                    </p:column>
+                    <!-- Reviewer -->
+                    <p:column headerText="Reviewer" style="width: 110px;">
+                        <span class="lux-table-icon"><i class="fas fa-user-edit"></i></span>
+                        <h:outputText value="#{task['reviewerName']}" />
+                    </p:column>
+                    <!-- Organization Column - Modified to ensure visibility -->
+					<p:column headerText="Branch" style="width: 180px;"
+					          sortBy="#{task['organizationName']}"
+					          filterBy="#{task['organizationName']}"
+					          filterMatchMode="contains">
+					    <span class="lux-table-icon"><i class="fas fa-sitemap"></i></span>
+					    <h:outputText value="#{not empty task['organizationName'] ? task['organizationName'] : '-'}"
+					                  styleClass="lux-org-column" />
+					</p:column>
+
+                    <!-- Actions -->
+                    <p:column headerText="Actions" style="width: 90px; text-align: center;">
+                        <h:form prependId="false">
+                            <div class="lux-action-buttons">
+        
+                                <!-- Download PDF: Equipment Inspection -->
+                                <p:commandLink styleClass="lux-action-btn" title="Download PDF"
+                                               rendered="#{task['taskType'] eq 'Equipment Inspection'}"
+                                               action="#{inspectionFormBean.downloadCert(task['taskId'])}"
+                                               process="@this" ajax="false">
+                                    <i class="fas fa-eye"></i>
+                                </p:commandLink>
+                        
+                                <!-- Download PDF: Other -->
+                                <p:commandLink styleClass="lux-action-btn" title="Download PDF"
+                                               rendered="#{task['taskType'] ne 'Equipment Inspection'}"
+                                               action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}"
+                                               process="@this" ajax="false">
+                                    <i class="fas fa-eye"></i>
+                                </p:commandLink>
+                        
+                            </div>
+                            
+                        </h:form>
+                    </p:column>
+
+                </p:dataTable>
+            </h:panelGroup>
+            <!-- No Results Message -->
+            <h:panelGroup layout="block" styleClass="lux-no-results animate__animated animate__fadeIn"
+                          rendered="#{completedTaskSearchBean.searchPerformed and empty completedTaskSearchBean.searchResults}">
+                <i class="fas fa-search"></i>
+                <h3>No completed tasks found</h3>
+                <p>Try adjusting your search criteria to find more results.</p>
+            </h:panelGroup>
+            <!-- Initial State Message -->
+            <h:panelGroup layout="block" styleClass="lux-initial-msg animate__animated animate__fadeIn"
+                          rendered="#{not completedTaskSearchBean.searchPerformed}">
+                <i class="fas fa-info-circle"></i>
+                <h3>Welcome to Luxury Completed Tasks Search</h3>
+                <p>Use the search form above to find completed equipment inspection and employee certification tasks.</p>
+            </h:panelGroup>
+        </h:panelGroup>
+    </div>
+    <p:messages id="messages" showDetail="true" closable="true" />
+</ui:define>
+</ui:composition>

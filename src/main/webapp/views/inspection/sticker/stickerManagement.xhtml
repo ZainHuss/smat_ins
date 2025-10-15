@@ -1,0 +1,580 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        Sticker Management System
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+		<style type="text/css">
+/* Animation Keyframes */
+@
+keyframes fadeInDown {from { opacity:0;
+	transform: translateY(-30px);
+}
+
+to {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+}
+@
+keyframes slideInLeft {from { opacity:0;
+	transform: translateX(-30px);
+}
+
+to {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+}
+@
+keyframes pulse { 0% {
+	transform: scale(1);
+}
+
+50
+%
+{
+transform
+:
+scale(
+1.05
+);
+}
+100
+%
+{
+transform
+:
+scale(
+1
+);
+}
+}
+@
+keyframes shimmer { 0% {
+	background-position: -200px 0;
+}
+
+100
+%
+{
+background-position
+:
+calc(
+200px
++
+ 
+100%
+)
+0;
+}
+}
+
+/* Main Container */
+.sticker-container {
+	animation: fadeInDown 0.8s ease-out;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-radius: 20px;
+	padding: 2rem;
+	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+	position: relative;
+	overflow: hidden;
+}
+
+.sticker-container::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1),
+		transparent);
+	animation: shimmer 3s infinite;
+}
+
+/* Header Section */
+.header-section {
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	border-radius: 15px;
+	padding: 2rem;
+	margin-bottom: 2rem;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	animation: slideInLeft 0.6s ease-out;
+}
+
+.header-title {
+	color: #2d3748;
+	font-size: 2rem;
+	font-weight: 700;
+	margin-bottom: 1rem;
+	text-align: center;
+	position: relative;
+}
+
+.header-title::after {
+	content: '';
+	position: absolute;
+	bottom: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 80px;
+	height: 4px;
+	background: linear-gradient(90deg, #667eea, #764ba2);
+	border-radius: 2px;
+}
+
+/* Input Section */
+.input-section {
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	border-radius: 15px;
+	padding: 2rem;
+	margin-bottom: 2rem;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	animation: slideInLeft 0.8s ease-out;
+}
+
+.input-group {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.input-label {
+	font-weight: 600;
+	color: #4a5568;
+	min-width: 150px;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.input-field {
+	flex: 1;
+	min-width: 250px;
+}
+
+.input-field .ui-inputtext {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: 2px solid #e2e8f0;
+	border-radius: 10px;
+	font-size: 1rem;
+	transition: all 0.3s ease;
+	background: rgba(255, 255, 255, 0.9);
+}
+
+.input-field .ui-inputtext:focus {
+	border-color: #667eea;
+	box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+	transform: translateY(-2px);
+}
+
+/* Button Section */
+.button-section {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-bottom: 2rem;
+}
+
+.enhanced-button {
+	position: relative;
+	overflow: hidden;
+	border-radius: 25px !important;
+	padding: 0.75rem 2rem !important;
+	font-weight: 600 !important;
+	font-size: 1rem !important;
+	transition: all 0.3s ease !important;
+	border: none !important;
+	min-width: 160px;
+}
+
+.enhanced-button:hover {
+	transform: translateY(-3px) !important;
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.enhanced-button:active {
+	transform: translateY(-1px) !important;
+}
+
+.generate-btn {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+	color: white !important;
+}
+
+.export-btn {
+	background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+	color: white !important;
+}
+
+.enhanced-button::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2),
+		transparent);
+	transition: left 0.5s;
+}
+
+.enhanced-button:hover::before {
+	left: 100%;
+}
+
+/* Data Table Section */
+.table-section {
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	border-radius: 15px;
+	padding: 2rem;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	animation: fadeInDown 1s ease-out;
+}
+
+.table-header {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	padding: 1rem;
+	border-radius: 10px;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.table-header h3 {
+	margin: 0;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.search-container {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	background: rgba(255, 255, 255, 0.1);
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.search-container input {
+	background: transparent !important;
+	border: none !important;
+	color: white !important;
+	font-size: 0.9rem !important;
+	padding: 0.25rem 0.5rem !important;
+	width: 200px;
+}
+
+.search-container input::placeholder {
+	color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* QR Code Styling */
+canvas {
+	width: 120px !important;
+	max-width: 120px !important;
+	height: 120px !important;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+canvas:hover {
+	transform: scale(1.1);
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Table Enhancements */
+.ui-datatable .ui-datatable-header {
+	background: transparent !important;
+	border: none !important;
+	padding: 0 !important;
+}
+
+.ui-datatable .ui-datatable-data tr {
+	transition: all 0.3s ease;
+}
+
+.ui-datatable .ui-datatable-data tr:hover {
+	background: rgba(102, 126, 234, 0.05) !important;
+	transform: translateX(5px);
+}
+
+.ui-datatable .ui-datatable-data tr td {
+	padding: 1rem !important;
+	border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.ui-datatable .ui-datatable-thead tr th {
+	background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%) !important;
+	color: #4a5568 !important;
+	font-weight: 600 !important;
+	padding: 1rem !important;
+	border-bottom: 2px solid #cbd5e0 !important;
+}
+
+/* Status Badge */
+.status-badge {
+	padding: 0.25rem 0.75rem;
+	border-radius: 15px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.status-used {
+	background: #fed7d7;
+	color: #c53030;
+}
+
+.status-available {
+	background: #c6f6d5;
+	color: #2f855a;
+}
+
+/* Responsive Design */
+@media ( max-width : 768px) {
+	.input-group {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.input-label {
+		min-width: auto;
+	}
+	.input-field {
+		min-width: 100%;
+	}
+	.button-section {
+		flex-direction: column;
+		align-items: center;
+	}
+	.enhanced-button {
+		width: 100%;
+		max-width: 250px;
+	}
+}
+
+/* Loading Animation */
+.loading-shimmer {
+	background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+	background-size: 200% 100%;
+	animation: shimmer 1.5s infinite;
+}
+</style>
+	</ui:define>
+
+	<ui:define name="section-content">
+		<h:form id="form">
+			<div class="sticker-container">
+				<p:growl id="messages" showDetail="true" />
+
+				<!-- Header Section -->
+				<div class="header-section">
+					<h2 class="header-title">
+						<i class="pi pi-qrcode"
+							style="margin-right: 0.5rem; color: #667eea;"></i> Sticker
+						Management System
+					</h2>
+					<p style="text-align: center; color: #718096; margin: 0;">
+						Generate, manage, and track your stickers with QR codes</p>
+				</div>
+
+				<!-- Input Section -->
+				<div class="input-section">
+					<div class="input-group">
+						<div class="input-label">
+							<i class="pi pi-hashtag" style="color: #667eea;"></i> Sticker
+							Number:
+						</div>
+						<div class="input-field">
+							<p:inputText value="#{stickerManagementBean.generatedStickerNum}"
+								placeholder="Enter sticker number or leave blank for auto-generation" />
+						</div>
+					</div>
+
+					<div class="input-group">
+						<div class="input-label">
+							<i class="pi pi-hashtag" style="color: #667eea;"></i> For User:
+						</div>
+						<div class="input-field">
+							<p:selectOneMenu id="selectoneMenu_UserAlias"
+								style="width:100%;" filter="true" filterMatchMode="contains"
+								widgetVar="widgetVar_SelectOneMenu"
+								converter="omnifaces.SelectItemsIndexConverter"
+								value="#{stickerManagementBean.selectedUserAlias}">
+								<f:selectItem itemLabel="Choose user please:" value="#{null}" noSelectionOption="true" />
+								<f:selectItems
+									itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+									itemValue="#{userAlias}" var="userAlias"
+									value="#{stickerManagementBean.userAliasList}" />
+								<p:ajax event="change" listener="#{stickerManagementBean.findStickerForSelectedUser()}" update="@([id$=datatable-stickers])"></p:ajax>
+
+							</p:selectOneMenu>
+						</div>
+					</div>
+
+					<div class="button-section">
+						<p:commandButton value="Generate Stickers"
+							icon="pi pi-plus-circle"
+							action="#{stickerManagementBean.generateStickers()}"
+							styleClass="enhanced-button generate-btn"
+							update="@([id$=datatable-stickers])" />
+
+						<p:commandButton value="Export Stickers" icon="pi pi-download"
+							action="#{stickerManagementBean.exportStickers()}"
+							styleClass="enhanced-button export-btn"
+							onclick="windows.open('_blank')" />
+					</div>
+				</div>
+
+				<!-- Table Section -->
+				<div class="table-section">
+					<div class="table-header">
+						<h3>
+							<i class="pi pi-table"></i> Stickers Overview
+						</h3>
+						<div class="search-container">
+							<i class="pi pi-search" style="color: rgba(255, 255, 255, 0.7);"></i>
+							<p:inputText id="globalFilter"
+								onkeyup="PF('widgetVarSticker').filter()"
+								placeholder="Search stickers..." />
+						</div>
+					</div>
+
+					<p:dataTable id="datatable-stickers" widgetVar="widgetVarSticker"
+						var="stickerVar" value="#{stickerManagementBean.stickers}"
+						reflow="true" styleClass="products-table" globalFilterOnly="true"
+						rowKey="#{stickerVar.id}" paginator="true" rows="10"
+						emptyMessage="#{interfaceLabel.noRecordsFound}"
+						paginatorPosition="bottom"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15,20">
+
+						<p:column headerText="Sequence" width="10%"
+							sortBy="#{stickerVar.seq}" filterBy="#{stickerVar.seq}">
+							<div
+								style="text-align: center; font-weight: 600; color: #4a5568;">
+								##{stickerVar.seq}</div>
+						</p:column>
+
+						<p:column headerText="Serial Number" width="20%"
+							sortBy="#{stickerVar.serialNo}" filterBy="#{stickerVar.serialNo}">
+							<div
+								style="font-family: monospace; font-weight: 600; color: #2d3748;">
+								#{stickerVar.serialNo}</div>
+						</p:column>
+
+						<p:column headerText="Sticker Number" width="20%"
+							sortBy="#{stickerVar.stickerNo}"
+							filterBy="#{stickerVar.stickerNo}">
+							<div
+								style="font-family: monospace; font-weight: 600; color: #2d3748;">
+								#{stickerVar.stickerNo}</div>
+						</p:column>
+						
+						<p:column headerText="For user" width="20%"
+							sortBy="#{stickerVar.sysUserByForUser.displayName}"
+							filterBy="#{stickerVar.sysUserByForUser.displayName}">
+							<div
+								style="font-family: monospace; font-weight: 600; color: #2d3748;">
+								#{stickerVar.sysUserByForUser.displayName}</div>
+						</p:column>
+
+						<p:column headerText="Status" width="15%"
+							sortBy="#{stickerVar.isUsed}" filterBy="#{stickerVar.isUsed}">
+							<span
+								class="status-badge #{stickerVar.isUsed ? 'status-used' : 'status-available'}">
+								#{stickerVar.isUsed ? 'Used' : 'Available'} </span>
+						</p:column>
+
+						<p:column headerText="QR Code" width="25%">
+							<div style="text-align: center; padding: 1rem;">
+								<pe:qrCode id="qrCodeElem" renderMethod="canvas" renderMode="3"
+									text="#{stickerVar.serialNo.concat(stickerVar.stickerNo)}"
+									label="SMAT" size="120" fillColor="#667eea" fontName="Arial"
+									fontColor="#2d3748" ecLevel="H" radius="0.5"
+									title="Click to view larger" />
+								<div
+									style="margin-top: 0.5rem; font-size: 0.8rem; color: #718096;">
+									Click to enlarge</div>
+							</div>
+						</p:column>
+
+						<p:column headerText="Actions" width="10%">
+							<div style="text-align: center;">
+								
+								<p:commandButton icon="pi pi-print" action="#{stickerManagementBean.exportStickers(stickerVar)}"
+									styleClass="ui-button-rounded ui-button-secondary ui-button-outlined" onclick="windows.open('_blank')"
+									title="Print QR Code" />
+							</div>
+						</p:column>
+					</p:dataTable>
+				</div>
+
+				<!-- Statistics Panel -->
+				<div class="input-section" style="margin-top: 2rem;">
+					<div class="table-header" style="margin-bottom: 1rem;">
+						<h3>
+							<i class="pi pi-chart-bar"></i> Statistics
+						</h3>
+					</div>
+					<div
+						style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+						<div
+							style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+							<i class="pi pi-list"
+								style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+							<div style="font-size: 2rem; font-weight: 700;">#{stickerManagementBean.stickers.size()}</div>
+							<div style="opacity: 0.9;">Total Stickers</div>
+						</div>
+						<div
+							style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+							<i class="pi pi-check-circle"
+								style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+							<div style="font-size: 2rem; font-weight: 700;">#{stickerManagementBean.availableStickers}</div>
+							<div style="opacity: 0.9;">Available</div>
+						</div>
+						<div
+							style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+							<i class="pi pi-times-circle"
+								style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+							<div style="font-size: 2rem; font-weight: 700;">#{stickerManagementBean.usedStickers}</div>
+							<div style="opacity: 0.9;">Used</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

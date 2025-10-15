@@ -1,0 +1,137 @@
+/* roboto-regular - latin-ext_latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Light'), local('Roboto-Light'),
+       url("\#{resource['smat-ins:css/fonts/roboto/roboto-v20-latin-ext_latin-regular.woff2']}") format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url("\#{resource['smat-ins:css/fonts/roboto/roboto-v20-latin-ext_latin-regular.woff']}") format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* roboto-500 - latin-ext_latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Roboto'), local('Roboto-Regular'),
+       url("\#{resource['smat-ins:css/fonts/roboto/roboto-v20-latin-ext_latin-500.woff2']}") format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url("\#{resource['smat-ins:css/fonts/roboto/roboto-v20-latin-ext_latin-500.woff']}") format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* roboto-700 - latin-ext_latin */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Bold'), local('Roboto-Bold'),
+       url("\#{resource['smat-ins:css/fonts/roboto/roboto-v20-latin-ext_latin-700.woff2']}") format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url("\#{resource['smat-ins:css/fonts/roboto/roboto-v20-latin-ext_latin-700.woff']}") format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+@font-face {
+    font-family: 'JF Flat Jozoor';
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/JF-Flat-regular.eot']}");
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/JF-Flat-regular.eot?#iefix']}") format('embedded-opentype'),
+    url("\#{resource['smat-ins:css/fonts/arabic-fonts/JF-Flat-regular.svg#JF Flat Regular']}") format('svg'),
+    url("\#{resource['smat-ins:css/fonts/arabic-fonts/JF-Flat-regular.woff']}") format('woff'),
+    url("\#{resource['smat-ins:css/fonts/arabic-fonts/JF-Flat-regular.ttf']}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+	font-family: 'Ara Jozoor';
+	src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/AraJozoor-Regular.eot']}");
+	src: local('?'), url("\#{resource['smat-ins:css/fonts/arabic-fonts/AraJozoor-Regular.woff']}") format('woff'), url('fonts/AraJozoor-Regular.ttf') format('truetype'), url('fonts/AraJozoor-Regular.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: 'KFGQPC Uthman Taha Naskh';
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/UthmanicHafs1Ver09.otf']}") format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'PDMS Saleem QuranFont';
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/PDMS_Saleem_QuranFont-signed.ttf']}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: AmiriWeb;
+    font-style: normal;
+    font-weight: 400;
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-regular.eot?']}") format('eot'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-regular.woff']}") format('woff'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-regular.ttf']}")  format('truetype');
+}
+
+@font-face {
+    font-family: Amiri QuranWeb;
+    font-style: normal;
+    font-weight: 400;
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-quran.eot?']}") format('eot'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-quran.woff']}") format('woff'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-quran.ttf']}")  format('truetype');
+}
+
+@font-face {
+    font-family: AmiriWeb;
+    font-style: normal;
+    font-weight: 700;
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-bold.eot?']}") format('eot'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-bold.woff']}") format('woff'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-bold.ttf']}")  format('truetype');
+}
+
+@font-face {
+    font-family: AmiriWeb;
+    font-style: oblique;
+    font-weight: 400;
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-slanted.eot?']}") format('eot'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-slanted.woff']}") format('woff'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-slanted.ttf']}")  format('truetype');
+}
+
+@font-face {
+    font-family: AmiriWeb;
+    font-style: oblique;
+    font-weight: 700;
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-boldslanted.eot']}") format('eot'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-boldslanted.woff']}") format('woff'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/amiri-boldslanted.ttf']}")  format('truetype');
+}
+
+
+
+@font-face {
+    font-family: 'Thabit';
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/Thabit.ttf']}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Thabit';
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/Thabit-Bold.ttf']}") format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Scheherazade';
+    src: url("\#{resource['smat-ins:css/fonts/arabic-fonts/ScheherazadeRegOT.ttf']}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Jozoor';
+    src: local('Jozoor'), local('Jozoor'),
+         url("\#{resource['smat-ins:css/fonts/arabic-fonts/Jozoor Font Regular.otf']}") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

@@ -1,0 +1,162 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+	<ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.priorityType} 
+	</ui:define>
+
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="section-content">
+		<h:form id="form">
+			<div class="card">
+				<p:growl id="messages" showDetail="true" />
+				<div class="row">
+					<div class="col-lg-9 col-xl-8 col-xxl-7">
+					<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+						actionListener="#{codingPriorityTypeBean.openNew}"
+						update=":form:outputPanel-content"
+						oncomplete="PF('widgetVarDetailDialog').show()"
+						styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+						style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+						<p:resetInput target=":form:outputPanel-content" />
+					</p:commandButton>
+					<p:commandButton id="delete-priorityType-button"
+						value="#{codingPriorityTypeBean.deleteButtonMessage}"
+						icon="pi pi-trash" styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+						actionListener="#{codingPriorityTypeBean.deleteSelectedPriorityType()}"
+						disabled="#{!codingPriorityTypeBean.hasSelectedPriorityType()}"
+						update="@this">
+						<p:confirm header="#{interfaceLabel.confirmation}"
+							message="#{interfaceLabel.deleteSelectedPriorityType}"
+							icon="pi pi-exclamation-triangle" />
+					</p:commandButton>
+				</div>
+				</div>
+
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+
+				<p:dataTable id="dataTable-priorityType" widgetVar="dtPriorityType"
+					var="priorityType" globalFilterOnly="true"
+					value="#{codingPriorityTypeBean.priorityTypeList}" reflow="true"
+					styleClass="products-table"
+					selection="#{codingPriorityTypeBean.selectedPriorityTypeList}"
+					rowKey="#{priorityType.id}" paginator="true" rows="10"
+					rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
+					paginatorPosition="bottom">
+					<p:ajax event="rowSelect" update=":form:delete-priorityType-button" />
+					<p:ajax event="rowUnselect"
+						update=":form:delete-priorityType-button" />
+					<p:ajax event="rowSelectCheckbox"
+						update=":form:delete-priorityType-button" />
+					<p:ajax event="rowUnselectCheckbox"
+						update=":form:delete-priorityType-button" />
+					<p:ajax event="toggleSelect"
+						update=":form:delete-priorityType-button" />
+					<f:facet name="header">
+						<div class="flex align-items-center justify-content-between">
+							<h:outputText value="#{interfaceLabel.search} : " />
+							<p:inputText id="globalFilter"
+								onkeyup="PF('dtPriorityType').filter()"
+								style="width:auto;" placeholder="#{interfaceLabel.enterKeyword}" />
+						</div>
+					</f:facet>
+					<p:column selectionMode="multiple" exportable="false"></p:column>
+					<p:column headerText="#{interfaceLabel.arabicName}"
+						sortBy="#{priorityType.arabicName}"
+						filterBy="#{priorityType.arabicName}">
+						<h:outputText value="#{priorityType.arabicName}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.englishName}"
+						sortBy="#{priorityType.englishName}"
+						filterBy="#{priorityType.englishName}">
+						<h:outputText value="#{priorityType.englishName}" />
+					</p:column>
+					<p:column headerText="#{interfaceLabel.code}"
+						sortBy="#{priorityType.code}" filterBy="#{priorityType.code}">
+						<h:outputText value="#{priorityType.code}" />
+					</p:column>
+
+					<p:column exportable="false" width="20">
+						<p:commandButton icon="pi pi-pencil"
+							update=":form:outputPanel-content"
+							oncomplete="PF('widgetVarDetailDialog').show()" process="@this">
+							<f:setPropertyActionListener value="#{priorityType}"
+								target="#{codingPriorityTypeBean.priorityType}" />
+							<p:resetInput target=":form:outputPanel-content" />
+						</p:commandButton>
+					</p:column>
+					<p:column exportable="false" width="20">
+						<p:commandButton styleClass="ui-button-danger" icon="pi pi-trash"
+							process="@this" oncomplete="PF('widgetVarDeleteDialog').show()">
+							<f:setPropertyActionListener value="#{priorityType}"
+								target="#{codingPriorityTypeBean.priorityType}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:dialog
+					header="#{interfaceLabel.details} #{interfaceLabel.priorityType}"
+					showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog"
+					responsive="true">
+					<p:outputPanel id="outputPanel-content" class="ui-fluid">
+						<p:outputPanel
+							rendered="#{not empty codingPriorityTypeBean.priorityType}">
+							<div class="p-field">
+								<p:outputLabel for="arabicName">#{interfaceLabel.arabicName}</p:outputLabel>
+								<p:inputText id="arabicName"
+									value="#{codingPriorityTypeBean.priorityType.arabicName}"
+									required="true"
+									requiredMessage="#{interfaceLabel.arabicName}  #{errorLabel.validateInput}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel for="englishName">#{interfaceLabel.englishName}</p:outputLabel>
+								<p:inputText id="englishName"
+									value="#{codingPriorityTypeBean.priorityType.englishName}" />
+							</div>
+							<div class="p-field">
+								<p:outputLabel for="code">#{interfaceLabel.code}</p:outputLabel>
+								<p:inputText id="code"
+									value="#{codingPriorityTypeBean.priorityType.code}" />
+							</div>
+
+						</p:outputPanel>
+					</p:outputPanel>
+					<f:facet name="footer">
+						<p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+							actionListener="#{codingPriorityTypeBean.save}"
+							update=":form:outputPanel-content :form:dataTable-priorityType"
+							process="outputPanel-content @this" />
+						<p:commandButton value="#{interfaceLabel.cancel}"
+							icon="pi pi-times" onclick="PF('widgetVarDetailDialog').hide()"
+							class="ui-button-secondary" />
+					</f:facet>
+				</p:dialog>
+
+				<p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
+					width="300" message="#{interfaceLabel.deleteSelectedPriorityType}"
+					header="#{interfaceLabel.confirmation}" severity="warn">
+					<p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+						actionListener="#{codingPriorityTypeBean.deletePriorityType()}"
+						process="@this" oncomplete="PF('widgetVarDeleteDialog').hide()" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-button-secondary" icon="pi pi-times"
+						onclick="PF('widgetVarDeleteDialog').hide()" />
+				</p:confirmDialog>
+				<p:confirmDialog global="true" showEffect="fade" width="300">
+					<p:commandButton value="#{interfaceLabel.yes}" type="button"
+						styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+					<p:commandButton value="#{interfaceLabel.no}" type="button"
+						styleClass="ui-confirmdialog-no ui-button-secondary"
+						icon="pi pi-times" />
+				</p:confirmDialog>
+
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

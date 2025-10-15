@@ -1,0 +1,237 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/template.xhtml">
+	<ui:define name="title">
+		<span class="subitem"> #{interfaceLabel.outBox}</span>
+	</ui:define>
+	<ui:define name="toolbar">
+		<p:commandLink id="inbox" value="" action="pretty:inBox" ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.outBox}">
+			<i class="fa fa-inbox" style="font-size: 2rem; color: green;"></i>
+		</p:commandLink>
+
+		<p:commandLink id="home" value="" action="pretty:registerIncomingMail"
+			ajax="true"
+			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.registerIncomingMail}">
+			<i class="fa fa-mail-forward" style="font-size: 2rem"></i>
+		</p:commandLink>
+
+		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
+			title="#{interfaceLabel.close}">
+			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+		</p:commandLink>
+
+	</ui:define>
+	<ui:define name="head">
+		<h:outputStylesheet library="#{appSetting.resourceLib}"
+			name="css/material-theme.css"></h:outputStylesheet>
+		<script>
+
+	   function filterPanel(){
+     	  setTimeout(function() { 
+     		 PF('filter_search').jq.addClass('filter_search_top');
+     	    }, 10);
+           }
+       
+
+	    
+	   </script>
+	</ui:define>
+	<ui:define name="implementation">
+	    <style type="text/css">
+	    .ui-divider.ui-divider-dashed.ui-divider-horizontal::before {
+	           border-top-style: dashed;
+             }
+         body .ui-divider.ui-divider-horizontal::before {
+	         border-top: 1px #B739F2;
+             }
+	    body .ui-menu {
+	         background:#2196F3 !important;
+             }  
+        body .ui-overlaypanel .ui-overlaypanel-content {
+	           padding: 1rem;
+	           background-color: #fff;
+             }  
+         .text-outbox-datatable{
+               display:block;
+               text-overflow: ellipsis;
+               overflow: hidden; 
+               width: auto; 
+               white-space: nowrap;
+               padding: 2px;
+             } 
+             
+            .text-new{
+               color: #F4CA16 !important;
+             }  
+             .text-open{
+               color: #6C757D !important;
+             }  
+	    </style>
+	    <p:tooltip trackMouse="true" widgetVar="tooltip_widgetVar" />
+		<h:form id="form">
+		
+			<p:growl id="messages" showDetail="true" showSummary="true" skipDetailIfEqualsSummary="true" />
+            <div class="Mezkw">
+              <p:commandButton value="#{interfaceLabel.newCorrespondence}" icon="pi pi-envelope" styleClass="ui-button-raised ui-button-danger ui-button-flat" style="margin-left:2px;margin-right:2px;"></p:commandButton>
+             
+			  <p:commandButton value="#{interfaceLabel.delete}" icon="pi pi-trash" styleClass="ui-button-info ui-button-flat" style="margin-left:2px;margin-right:2px;" disabled="true"></p:commandButton>	
+			  
+			  <p:commandButton value="#{interfaceLabel.archiveMail}" icon="fa fa-archive" styleClass="ui-button-info ui-button-flat" style="margin-left:2px;margin-right:2px;" disabled="true"></p:commandButton>	
+			</div>
+   
+			<p:card style="width: 100%; margin:0em">
+				
+			    <div class="RNNXgb" >
+                  <p:commandButton id="btn_search" icon="fa fa-search" pt:data-tooltip="#{interfaceLabel.search}" styleClass="RNNXgb-btn-round ui-button-success ui-button-outlined ui-button-flat" ></p:commandButton>
+			      <p:inputText placeholder="#{interfaceLabel.searchWord}" style="flex-grow:2;border:none;font: normal 16px Google Sans,Roboto,Helvetica,Arial,sans-serif;"/>
+			      <p:commandButton id="btn_filter_search" icon="pi pi-filter" pt:data-tooltip="#{interfaceLabel.advancedSearch}" oncomplete="filterPanel();" styleClass="RNNXgb-btn  ui-button-flat ui-button-help" ></p:commandButton>
+			    </div>
+				<p:overlayPanel id="overlayPanel_filter_search" for="btn_filter_search" widgetVar="filter_search"  onShow="filterPanel();" 
+					style="width:57.5%;background-color:#FDFDFD;border:0px;border-radius:0.25rem;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); background-color:#FDFDFD;">
+					<p:panelGrid columns="2"
+						columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid"
+						styleClass=" ui-fluid" style="background-color:#FDFDFD;"
+						contentStyle="background-color: #FDFDFD;">
+						<p:outputLabel for="@next"
+							style="color:#B739F2 !important;font-weight:bolder;">#{interfaceLabel.from}</p:outputLabel>
+						<p:selectCheckboxMenu id="selectCheckBoxMenu_UserAliasRecpient"
+							multiple="true" filter="true" filterMatchMode="contains"
+							updateLabel="true" widgetVar="widgetVar_SelectCheckBoxMenu"
+							emptyLabel="#{interfaceLabel.noRecipientsSelected}"
+							value="#{registerIncomingMailBean.selectedUserAliasRecipients}">
+							<f:selectItems
+								itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+								itemValue="#{userAlias}" var="userAlias"
+								value="#{registerIncomingMailBean.userAliasRecipientList}" />
+							<o:converter converterId="omnifaces.ListIndexConverter"
+								list="#{registerIncomingMailBean.userAliasRecipientList}" />
+						</p:selectCheckboxMenu>
+						<p:outputLabel for="@next"
+							style="color:#B739F2 !important;font-weight:bolder;">#{interfaceLabel.subject}</p:outputLabel>
+						<p:inputText></p:inputText>
+
+						<p:outputLabel for="@next"
+							style="color:#B739F2 !important;font-weight:bolder;">#{interfaceLabel.hasAttachement}</p:outputLabel>
+						<p:toggleSwitch onIcon="pi pi-check" offIcon="pi pi-times" />
+						<p:outputLabel for="@next"
+							style="color:#B739F2 !important;font-weight:bolder;">#{interfaceLabel.year}</p:outputLabel>
+						<p:inputText style="width:auto;"></p:inputText>
+					</p:panelGrid>
+					<p:panelGrid columns="4"
+						columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-3,ui-grid-col-3" layout="grid"
+						styleClass=" ui-fluid" style="background-color:#FDFDFD;"
+						contentStyle="background-color: #FDFDFD;">
+						<p:outputLabel for="@next"
+							style="color:#B739F2 !important;font-weight:bolder;">#{interfaceLabel.fromDate}</p:outputLabel>
+						<p:datePicker></p:datePicker>
+						<p:outputLabel for="@next"
+							style="color:#B739F2 !important;font-weight:bolder;">#{interfaceLabel.toDate}</p:outputLabel>
+						<p:datePicker></p:datePicker>
+					</p:panelGrid>
+					<p:divider type="dashed" layout="horizontal"></p:divider>
+					<p:toolbar id="toolbar_events">
+						<f:facet name="left">
+							<p:commandButton id="commandButton_send"
+								value="#{interfaceLabel.search}" icon="fa fa-search"
+								styleClass="rounded-button ui-button-warning ui-button-raised ui-button-flat mr-2"
+								style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'};width:auto; ">
+
+							</p:commandButton>
+
+							<p:commandButton value="#{interfaceLabel.reset}"
+								icon="pi pi-times-circle" style="width:auto;"
+								styleClass="rounded-button ui-button-help ui-button-raised ui-button-flat mr-2">
+
+							</p:commandButton>
+						</f:facet>
+					</p:toolbar>
+				</p:overlayPanel>
+				<p:divider layout="horizontal" type="dashed"></p:divider>
+				<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px;border-radius:0.25rem;box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); background-color:transparent;">
+					<p:dataTable id="dt-correspondence" widgetVar="dtCorrespondence"
+						var="correspondenceNoteVar" 
+						value="#{outBoxBean.correspondenceNoteLazyDataModel}" reflow="true"
+						rowKey="#{correspondenceNoteVar.id}" paginator="true" lazy="true"
+						rows="10" emptyMessage="#{interfaceLabel.noRecordsFound}"
+						globalFilterOnly="true" paginatorPosition="bottom">
+						<f:facet name="header">
+							<div class="flex align-items-center justify-content-between">
+								<h:outputText value="#{interfaceLabel.filter} : " />
+								<p:selectOneMenu
+									style="width:25%"
+									value="#{outBoxBean.userAliasOwner}"
+									converter="omnifaces.SelectItemsIndexConverter">
+									<f:selectItems itemLabel="#{userAliasVar.aliasName}"
+										itemValue="#{userAliasVar}" var="userAliasVar"
+										value="#{outBoxBean.myUserAliasList}" />
+								</p:selectOneMenu>
+							</div>
+						</f:facet>
+						<p:column width="auto">
+							<p:commandButton title="#{interfaceLabel.open}" actionListener="#{outBoxBean.assignCorrespondence(correspondenceNoteVar)}"
+								action="pretty:openOutBox" 
+								icon="fa fa-envelope-open-o text-open"
+								styleClass="ui-button-raised ui-button-success ui-button-flat">
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="#{interfaceLabel.to}" width="22%">
+							<h:outputText value="#{outBoxBean.getBy(correspondenceNoteVar).userAlias.aliasName}"
+								style="font-weight:bolder;font-style:italic;color:#2195F2;" styleClass="text-outbox-datatable" />
+						</p:column>
+						
+						<p:column headerText="#{interfaceLabel.number}" width="10%">
+							<h:outputText value="#{correspondenceNoteVar.correspondence.correspondenceSeq}"
+								style="font-weight:bolder;font-style:italic;color:green;" styleClass="text-outbox-datatable"/>
+						</p:column>
+						
+						<p:column headerText="#{interfaceLabel.subject}" width="50%">
+							<h:outputText
+								value="#{correspondenceNoteVar.correspondence.title}"
+								style="font-weight:bolder;font-style:italic;color:#F07427;" styleClass="text-outbox-datatable">
+
+							</h:outputText>
+						</p:column>
+						
+					
+						
+						<p:column width="auto;">
+						
+						<div class="div_events" style="display: flex;">
+							<p:commandButton title="#{interfaceLabel.delete}"
+								icon="pi pi-trash"
+								styleClass="rounded-button ui-button-danger ui-button-outlined">
+							</p:commandButton>
+						</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+				
+			</p:card>
+			<p:scrollTop />
+			<p:confirmDialog global="true" showEffect="fade" width="300">
+				<p:commandButton value="#{interfaceLabel.yes}" type="button"
+					styleClass="ui-button-raised ui-button-info ui-button-flat ui-confirmdialog-yes"
+					icon="pi pi-check-circle" />
+				<p:commandButton value="#{interfaceLabel.no}" type="button"
+					styleClass="ui-button-raised ui-button-danger ui-button-flat ui-confirmdialog-no ui-button-secondary"
+					icon="pi pi-times-circle" />
+			</p:confirmDialog>
+			<p:dialog modal="true" widgetVar="waitingDialogWidgetVar"
+								header="#{interfaceLabel.searching}" draggable="false"
+								closable="false" resizable="false">
+								<i class="fa fa-spinner fa-spin" style="font-size: 3rem;"></i>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
