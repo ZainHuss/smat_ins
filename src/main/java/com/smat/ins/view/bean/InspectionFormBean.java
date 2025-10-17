@@ -794,141 +794,225 @@ public class InspectionFormBean implements Serializable {
 		return true;
 	}
 
-	public String doSave() {
-		if (!doValidate())
-			return "";
-		try {
-			WorkflowDefinition workflowDefinitionInit = workflowDefinitionService.getInitStep((short) 1);
-			WorkflowDefinition workflowDefinitionFinal = workflowDefinitionService.getFinalStep((short) 1);
-			Set<InspectionFormWorkflow> inspectionFormWorkflows = new HashSet<InspectionFormWorkflow>();
-			Set<InspectionFormWorkflowStep> inspectionFormWorkflowSteps = new HashSet<InspectionFormWorkflowStep>();
+    public String doSave() {
+        if (!doValidate())
+            return "";
+        try {
+            WorkflowDefinition workflowDefinitionInit = workflowDefinitionService.getInitStep((short) 1);
+            WorkflowDefinition workflowDefinitionFinal = workflowDefinitionService.getFinalStep((short) 1);
+            Set<InspectionFormWorkflow> inspectionFormWorkflows = new HashSet<InspectionFormWorkflow>();
+            Set<InspectionFormWorkflowStep> inspectionFormWorkflowSteps = new HashSet<InspectionFormWorkflowStep>();
 
-			Short maxStepSeq = null;
-			equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
+            Short maxStepSeq = null;
+            // protect against null sticker (keep original behavior)
+            if (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null) {
+                equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
+            }
 
-			if (UtilityHelper.decipher(persistentMode).equals("changeStep")) {
+            // ----------------- CHANGE STEP (Reviewer approves) - MODIFIED -----------------
+            if (UtilityHelper.decipher(persistentMode).equals("changeStep")) {
 
-				maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(equipmentInspectionForm.getId());
-				InspectionFormWorkflow inspectionFormWorkflow = inspectionFormWorkflowService
-						.getCurrentInspectionFormWorkFlow(equipmentInspectionForm.getId());
-				equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
-				equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
-				inspectionFormWorkflow.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflow.setWorkflowDefinition(workflowDefinitionFinal);
-				inspectionFormWorkflow.setTask(task);
+                // ensure sticker no kept (defensive)
+                if (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null) {
+                    equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
+                }
 
-				InspectionFormWorkflowStep inspectionFormWorkflowStep = new InspectionFormWorkflowStep();
-				inspectionFormWorkflowStep.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflowStep.setInspectionFormDocument("document-final".getBytes());
-				inspectionFormWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
-				inspectionFormWorkflowStep.setSysUser(loginBean.getUser());
-				inspectionFormWorkflowStep.setSysUserComment(comment);
-				inspectionFormWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
-				inspectionFormWorkflowStep.setWorkflowDefinition(workflowDefinitionFinal);
+                // 1) Sync dynamic columnContents -> EquipmentInspectionFormItem (update existing or create new)
+                // ensure collection initialized
+                if (equipmentInspectionForm.getEquipmentInspectionFormItems() == null) {
+                    equipmentInspectionForm.setEquipmentInspectionFormItems(new HashSet<EquipmentInspectionFormItem>());
+                }
 
-				equipmentInspectionFormService.saveToStep(equipmentInspectionForm, inspectionFormWorkflow,
-						inspectionFormWorkflowStep);
-				step = "03";
-				doPrint();
-				UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
-				return "";
-			}
+                // build a map of existing items by alias for quick lookup
+                Map<String, EquipmentInspectionFormItem> existingItemsByAlias = new HashMap<>();
+                for (Object existingObj : equipmentInspectionForm.getEquipmentInspectionFormItems()) {
+                    if (existingObj instanceof EquipmentInspectionFormItem) {
+                        EquipmentInspectionFormItem existingItem = (EquipmentInspectionFormItem) existingObj;
+                        if (existingItem.getAliasName() != null) {
+                            existingItemsByAlias.put(existingItem.getAliasName().toLowerCase(), existingItem);
+                        }
+                    }
+                }
 
-			for (ColumnContent columnContent : columnContents) {
-				EquipmentInspectionFormItem equipmentInspectionFormItem = new EquipmentInspectionFormItem();
-				equipmentInspectionFormItem.setEquipmentInspectionForm(equipmentInspectionForm);
-				equipmentInspectionFormItem.setGeneralEquipmentItem(columnContent.getGeneralEquipmentItem());
-				equipmentInspectionFormItem.setAliasName(columnContent.getAliasName());
-				equipmentInspectionFormItem.setItemValue(columnContent.getContentValue());
-				equipmentInspectionForm.getEquipmentInspectionFormItems().add(equipmentInspectionFormItem);
-			}
+                // iterate columnContents and update/create items
+                for (ColumnContent cc : columnContents) {
+                    String alias = cc.getAliasName();
+                    if (alias == null) continue;
+                    String key = alias.toLowerCase();
+                    Object value = cc.getContentValue();
 
-			equipmentInspectionForm.setEquipmentCategory(equipmentCategory);
-			equipmentInspectionForm.setEquipmentType(equipmentType);
-			equipmentInspectionForm.setExaminationType(examinationType);
+                    EquipmentInspectionFormItem item = existingItemsByAlias.get(key);
+                    if (item == null) {
+                        item = new EquipmentInspectionFormItem();
+                        item.setEquipmentInspectionForm(equipmentInspectionForm);
+                        item.setAliasName(cc.getAliasName());
+                        item.setGeneralEquipmentItem(cc.getGeneralEquipmentItem());
+                        // add newly created item to the form's collection
+                        equipmentInspectionForm.getEquipmentInspectionFormItems().add(item);
+                        existingItemsByAlias.put(key, item);
+                    }
 
-			if (UtilityHelper.decipher(persistentMode).equals("update")) {
-				maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(equipmentInspectionForm.getId());
+                    // convert incoming value to String because setItemValue expects String
+                    String valueAsString = null;
+                    if (value != null) {
+                        if (value instanceof Date) {
+                            // use existing helper to format date (date-only)
+                            valueAsString = formatDate((Date) value);
+                        } else {
+                            valueAsString = String.valueOf(value);
+                        }
+                    }
+                    item.setItemValue(valueAsString);
+                }
 
-				equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
-				equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
+                // 2) keep other important fields up-to-date (name/address, reviewer)
+                equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
+                equipmentInspectionForm.setNameAndAddressOfEmployer(
+                        equipmentInspectionForm.getCompany() != null
+                                ? equipmentInspectionForm.getCompany().getName()
+                                : equipmentInspectionForm.getNameAndAddressOfEmployer());
 
-				((InspectionFormWorkflow) equipmentInspectionForm.getInspectionFormWorkflows().iterator().next())
-						.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
-				((InspectionFormWorkflow) equipmentInspectionForm.getInspectionFormWorkflows().iterator().next())
-						.setReviewedBy(selectedUserAliasRecipient.getSysUserBySysUser());
+                // 3) prepare workflow and step as before
+                maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(equipmentInspectionForm.getId());
+                InspectionFormWorkflow inspectionFormWorkflow = inspectionFormWorkflowService
+                        .getCurrentInspectionFormWorkFlow(equipmentInspectionForm.getId());
 
-				InspectionFormWorkflowStep inspectionFormWorkflowStepTwo = new InspectionFormWorkflowStep();
-				inspectionFormWorkflowStepTwo.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflowStepTwo
-						.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
-				inspectionFormWorkflowStepTwo.setInspectionFormDocument("doc".getBytes());
-				inspectionFormWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
-				inspectionFormWorkflowStepTwo.setSysUser(loginBean.getUser());
-				inspectionFormWorkflowStepTwo.setSysUserComment(comment);
-				inspectionFormWorkflowStepTwo.setStepSeq((short) (maxStepSeq + 1));
+                inspectionFormWorkflow.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflow.setWorkflowDefinition(workflowDefinitionFinal);
+                inspectionFormWorkflow.setTask(task);
 
-				equipmentInspectionForm.getInspectionFormWorkflowSteps().add(inspectionFormWorkflowStepTwo);
+                InspectionFormWorkflowStep inspectionFormWorkflowStep = new InspectionFormWorkflowStep();
+                inspectionFormWorkflowStep.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflowStep.setInspectionFormDocument("document-final".getBytes());
+                inspectionFormWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
+                inspectionFormWorkflowStep.setSysUser(loginBean.getUser());
+                inspectionFormWorkflowStep.setSysUserComment(comment);
+                inspectionFormWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
+                inspectionFormWorkflowStep.setWorkflowDefinition(workflowDefinitionFinal);
 
-				equipmentInspectionFormService.merge(equipmentInspectionForm);
-				UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+                // 4) finally persist (this should save the updated items too)
+                equipmentInspectionFormService.saveToStep(equipmentInspectionForm, inspectionFormWorkflow,
+                        inspectionFormWorkflowStep);
 
-				return "pretty:inspection/my-tasks";
+                // 5) set local state and print if you want same behavior
+                step = "03";
+                doPrint();
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+                return "";
+            }
+            // ----------------- END changeStep -----------------
 
-			} else if (UtilityHelper.decipher(persistentMode).equals("insert")) {
-				maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(null);
-				equipmentInspectionForm.setSysUserByInspectionBy(loginBean.getUser());
-				equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
+            // original behavior for building items in other branches (insert/update)
+            for (ColumnContent columnContent : columnContents) {
+                EquipmentInspectionFormItem equipmentInspectionFormItem = new EquipmentInspectionFormItem();
+                equipmentInspectionFormItem.setEquipmentInspectionForm(equipmentInspectionForm);
+                equipmentInspectionFormItem.setGeneralEquipmentItem(columnContent.getGeneralEquipmentItem());
+                equipmentInspectionFormItem.setAliasName(columnContent.getAliasName());
 
-				InspectionFormWorkflow inspectionFormWorkflow = new InspectionFormWorkflow();
-				inspectionFormWorkflow.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflow.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
-				inspectionFormWorkflow.setTask(task);
-				inspectionFormWorkflow.setReviewedBy(selectedUserAliasRecipient.getSysUserBySysUser());
-				inspectionFormWorkflow.setInspectionFormDocument("document-init".getBytes());
-				inspectionFormWorkflows.add(inspectionFormWorkflow);
-				equipmentInspectionForm.setInspectionFormWorkflows(inspectionFormWorkflows);
+                // convert content value to String (defensive, since setItemValue expects String)
+                Object ccVal = columnContent.getContentValue();
+                String ccValStr = null;
+                if (ccVal != null) {
+                    if (ccVal instanceof Date) {
+                        ccValStr = formatDate((Date) ccVal);
+                    } else {
+                        ccValStr = String.valueOf(ccVal);
+                    }
+                }
+                equipmentInspectionFormItem.setItemValue(ccValStr);
 
-				InspectionFormWorkflowStep inspectionFormWorkflowStepOne = new InspectionFormWorkflowStep();
-				inspectionFormWorkflowStepOne.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflowStepOne.setWorkflowDefinition(workflowDefinitionInit);
-				inspectionFormWorkflowStepOne.setInspectionFormDocument("doc".getBytes());
-				inspectionFormWorkflowStepOne.setProcessDate(Calendar.getInstance().getTime());
-				inspectionFormWorkflowStepOne.setSysUser(loginBean.getUser());
-				inspectionFormWorkflowStepOne.setSysUserComment(comment);
-				inspectionFormWorkflowStepOne.setStepSeq((short) (maxStepSeq + 1));
-				inspectionFormWorkflowSteps.add(inspectionFormWorkflowStepOne);
-				InspectionFormWorkflowStep inspectionFormWorkflowStepTwo = new InspectionFormWorkflowStep();
-				inspectionFormWorkflowStepTwo.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflowStepTwo
-						.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
-				inspectionFormWorkflowStepTwo.setInspectionFormDocument("doc".getBytes());
-				inspectionFormWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
-				inspectionFormWorkflowStepTwo.setSysUser(loginBean.getUser());
-				inspectionFormWorkflowStepTwo.setSysUserComment(comment);
-				inspectionFormWorkflowStepTwo.setStepSeq((short) (inspectionFormWorkflowStepOne.getStepSeq() + 1));
+                equipmentInspectionForm.getEquipmentInspectionFormItems().add(equipmentInspectionFormItem);
+            }
 
-				inspectionFormWorkflowSteps.add(inspectionFormWorkflowStepTwo);
-				equipmentInspectionForm.setInspectionFormWorkflowSteps(inspectionFormWorkflowSteps);
+            equipmentInspectionForm.setEquipmentCategory(equipmentCategory);
+            equipmentInspectionForm.setEquipmentType(equipmentType);
+            equipmentInspectionForm.setExaminationType(examinationType);
 
-				equipmentInspectionFormService.saveOrUpdate(equipmentInspectionForm);
-				Sticker sticker = stickerService.findByUniqueField("stickerNo", equipmentInspectionForm.getStickerNo());
-				sticker.setIsUsed(true);
-				sticker.setIsPrinted(true);
-				sticker.setSysUserByCreatedBy(loginBean.getUser());
-				sticker.setSysUserByPrintedBy(loginBean.getUser());
-				stickerService.update(sticker);
-				UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
-				return "pretty:inspection/my-tasks";
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			UtilityHelper.addInfoMessage(localizationService.getErrorMessage().getString("operationFaild"));
-			return "";
-		}
-		return "";
-	}
+            if (UtilityHelper.decipher(persistentMode).equals("update")) {
+                maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(equipmentInspectionForm.getId());
+
+                equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
+                equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
+
+                ((InspectionFormWorkflow) equipmentInspectionForm.getInspectionFormWorkflows().iterator().next())
+                        .setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
+                ((InspectionFormWorkflow) equipmentInspectionForm.getInspectionFormWorkflows().iterator().next())
+                        .setReviewedBy(selectedUserAliasRecipient.getSysUserBySysUser());
+
+                InspectionFormWorkflowStep inspectionFormWorkflowStepTwo = new InspectionFormWorkflowStep();
+                inspectionFormWorkflowStepTwo.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflowStepTwo
+                        .setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
+                inspectionFormWorkflowStepTwo.setInspectionFormDocument("doc".getBytes());
+                inspectionFormWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
+                inspectionFormWorkflowStepTwo.setSysUser(loginBean.getUser());
+                inspectionFormWorkflowStepTwo.setSysUserComment(comment);
+                inspectionFormWorkflowStepTwo.setStepSeq((short) (maxStepSeq + 1));
+
+                equipmentInspectionForm.getInspectionFormWorkflowSteps().add(inspectionFormWorkflowStepTwo);
+
+                equipmentInspectionFormService.merge(equipmentInspectionForm);
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+
+                return "pretty:inspection/my-tasks";
+
+            } else if (UtilityHelper.decipher(persistentMode).equals("insert")) {
+                maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(null);
+                equipmentInspectionForm.setSysUserByInspectionBy(loginBean.getUser());
+                equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
+
+                InspectionFormWorkflow inspectionFormWorkflow = new InspectionFormWorkflow();
+                inspectionFormWorkflow.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflow.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
+                inspectionFormWorkflow.setTask(task);
+                inspectionFormWorkflow.setReviewedBy(selectedUserAliasRecipient.getSysUserBySysUser());
+                inspectionFormWorkflow.setInspectionFormDocument("document-init".getBytes());
+                inspectionFormWorkflows.add(inspectionFormWorkflow);
+                equipmentInspectionForm.setInspectionFormWorkflows(inspectionFormWorkflows);
+
+                InspectionFormWorkflowStep inspectionFormWorkflowStepOne = new InspectionFormWorkflowStep();
+                inspectionFormWorkflowStepOne.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflowStepOne.setWorkflowDefinition(workflowDefinitionInit);
+                inspectionFormWorkflowStepOne.setInspectionFormDocument("doc".getBytes());
+                inspectionFormWorkflowStepOne.setProcessDate(Calendar.getInstance().getTime());
+                inspectionFormWorkflowStepOne.setSysUser(loginBean.getUser());
+                inspectionFormWorkflowStepOne.setSysUserComment(comment);
+                inspectionFormWorkflowStepOne.setStepSeq((short) (maxStepSeq + 1));
+                inspectionFormWorkflowSteps.add(inspectionFormWorkflowStepOne);
+
+                InspectionFormWorkflowStep inspectionFormWorkflowStepTwo = new InspectionFormWorkflowStep();
+                inspectionFormWorkflowStepTwo.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflowStepTwo
+                        .setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
+                inspectionFormWorkflowStepTwo.setInspectionFormDocument("doc".getBytes());
+                inspectionFormWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
+                inspectionFormWorkflowStepTwo.setSysUser(loginBean.getUser());
+                inspectionFormWorkflowStepTwo.setSysUserComment(comment);
+                inspectionFormWorkflowStepTwo.setStepSeq((short) (inspectionFormWorkflowStepOne.getStepSeq() + 1));
+
+                inspectionFormWorkflowSteps.add(inspectionFormWorkflowStepTwo);
+                equipmentInspectionForm.setInspectionFormWorkflowSteps(inspectionFormWorkflowSteps);
+
+                equipmentInspectionFormService.saveOrUpdate(equipmentInspectionForm);
+                Sticker sticker = stickerService.findByUniqueField("stickerNo", equipmentInspectionForm.getStickerNo());
+                if (sticker != null) {
+                    sticker.setIsUsed(true);
+                    sticker.setIsPrinted(true);
+                    sticker.setSysUserByCreatedBy(loginBean.getUser());
+                    sticker.setSysUserByPrintedBy(loginBean.getUser());
+                    stickerService.update(sticker);
+                }
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+                return "pretty:inspection/my-tasks";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addInfoMessage(localizationService.getErrorMessage().getString("operationFaild"));
+            return "";
+        }
+        return "";
+    }
+
 
 	public String returnToInspector() {
 		if (!doValidate())
