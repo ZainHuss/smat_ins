@@ -685,33 +685,37 @@ span.ui-chip-remove-icon {
 							</div>
 						</div>
 					</div>
-					<div class="row sidebar-field-row">
-						<div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
-							<h:outputLabel value="#{interfaceLabel.equipmentCategory}"
-								rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03' 
-           and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}" 
-           styleClass="field-label required-field"/>
-						</div>
-						<div class="col-12 col-lg-10 col-xl-10 col-xxl-10 sidebar-field-col">
-							<div class="field-container service-field">
-								<p:selectOneMenu id="select_equipment_cat"
-									rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03' 
-           and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
-									styleClass="enhanced-field"
-									value="#{registerOutboundMailBean.equipmentCategory}"
-									converter="omnifaces.SelectItemsIndexConverter"
-									required="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03' 
-           and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
-									requiredMessage="#{interfaceLabel.equipmentCategory} #{errorLabel.validateInput}">
-									<f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
-										noSelectionOption="true" />
-									<f:selectItems itemLabel="#{equipmentCategory.name} "
-										itemValue="#{equipmentCategory}" var="equipmentCategory"
-										value="#{registerOutboundMailBean.equipmentCategories}" />
-								</p:selectOneMenu>
-							</div>
-						</div>
-					</div>
+                    <div class="row sidebar-field-row">
+                        <div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
+                            <h:outputLabel value="#{interfaceLabel.equipmentCategory}"
+                                           rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03'
+                          and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
+                                           styleClass="field-label required-field"/>
+                        </div>
+                        <div class="col-12 col-lg-10 col-xl-10 col-xxl-10 sidebar-field-col">
+                            <div class="field-container service-field">
+                                <p:selectOneMenu id="select_equipment_cat"
+                                                 rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03'
+                                 and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
+                                                 styleClass="enhanced-field"
+                                                 value="#{registerOutboundMailBean.equipmentCategory}"
+                                                 converter="omnifaces.SelectItemsIndexConverter"
+                                                 required="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03'
+                                 and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
+                                                 requiredMessage="#{interfaceLabel.equipmentCategory} #{errorLabel.validateInput}"
+                                                 filter="true"
+                                                 filterMatchMode="contains"
+                                                 widgetVar="widgetVar_equipmentCat">
+                                    <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true" />
+                                    <f:selectItems itemLabel="#{equipmentCategory.name}"
+                                                   itemValue="#{equipmentCategory}" var="equipmentCategory"
+                                                   value="#{registerOutboundMailBean.equipmentCategories}" />
+                                    <p:ajax event="change" update="@([id$=panelGroup_Task])" listener="#{registerOutboundMailBean.onEquipmentCategoryChange()}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+
 				</h:panelGroup>
 				<div class="row sidebar-field-row">
 					<div class="col-12 col-lg-3 col-xl-2 col-xxl-2 sidebar-label-col">
