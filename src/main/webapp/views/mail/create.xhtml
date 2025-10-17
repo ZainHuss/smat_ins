@@ -704,17 +704,16 @@ span.ui-chip-remove-icon {
                                  and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
                                                  requiredMessage="#{interfaceLabel.equipmentCategory} #{errorLabel.validateInput}"
                                                  filter="true"
-                                                 filterMatchMode="contains"
-                                                 widgetVar="widgetVar_equipmentCat">
+                                                 filterMatchMode="contains">
                                     <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true" />
-                                    <f:selectItems itemLabel="#{equipmentCategory.name}"
-                                                   itemValue="#{equipmentCategory}" var="equipmentCategory"
+                                    <f:selectItems itemLabel="#{ec.name}"
+                                                   itemValue="#{ec}" var="ec"
                                                    value="#{registerOutboundMailBean.equipmentCategories}" />
-                                    <p:ajax event="change" update="@([id$=panelGroup_Task])" listener="#{registerOutboundMailBean.onEquipmentCategoryChange()}" />
                                 </p:selectOneMenu>
                             </div>
                         </div>
                     </div>
+
 
 				</h:panelGroup>
 				<div class="row sidebar-field-row">
