@@ -7,14 +7,14 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
     template="/WEB-INF/template.xhtml">
-    
+
     <ui:define name="head">
         <h:outputStylesheet library="#{appSetting.resourceLib}"
             name="css/material-theme.css"></h:outputStylesheet>
         <!-- إضافة خطوط Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Poppins:wght@400;500;600;700&amp;family=Playfair+Display:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
 		<style>
-		/* Golden Luxury Design System with Premium Glassmorphism */
+		/* update on branch review */
 		:root {
 		    --gold-50: #fffbf0;
 		    --gold-100: #fef7e0;
@@ -26,7 +26,7 @@
 		    --gold-700: #b26d00;
 		    --gold-800: #925a00;
 		    --gold-900: #783f00;
-		    
+
 		    --primary-50: var(--gold-50);
 		    --primary-100: var(--gold-100);
 		    --primary-200: var(--gold-200);
@@ -37,7 +37,7 @@
 		    --primary-700: var(--gold-700);
 		    --primary-800: var(--gold-800);
 		    --primary-900: var(--gold-900);
-		    
+
 		    --secondary-50: #fefce8;
 		    --secondary-100: #fef9c3;
 		    --secondary-200: #fef08a;
@@ -48,7 +48,7 @@
 		    --secondary-700: #a16207;
 		    --secondary-800: #854d0e;
 		    --secondary-900: #713f12;
-		    
+
 		    --accent-50: #fef3c7;
 		    --accent-100: #fde68a;
 		    --accent-200: #fcd34d;
@@ -59,7 +59,7 @@
 		    --accent-700: #92400e;
 		    --accent-800: #78350f;
 		    --accent-900: #451a03;
-		    
+
 		    --success-50: #ecfdf5;
 		    --success-100: #d1fae5;
 		    --success-200: #a7f3d0;
@@ -70,7 +70,7 @@
 		    --success-700: #047857;
 		    --success-800: #065f46;
 		    --success-900: #064e3b;
-		    
+
 		    --warning-50: #fffbeb;
 		    --warning-100: #fef3c7;
 		    --warning-200: #fde68a;
@@ -81,7 +81,7 @@
 		    --warning-700: #b45309;
 		    --warning-800: #92400e;
 		    --warning-900: #78350f;
-		    
+
 		    --danger-50: #fef2f2;
 		    --danger-100: #fee2e2;
 		    --danger-200: #fecaca;
@@ -92,7 +92,7 @@
 		    --danger-700: #b91c1c;
 		    --danger-800: #991b1b;
 		    --danger-900: #7f1d1d;
-		    
+
 		    --info-50: #f0f9ff;
 		    --info-100: #e0f2fe;
 		    --info-200: #bae6fd;
@@ -103,7 +103,7 @@
 		    --info-700: #0369a1;
 		    --info-800: #075985;
 		    --info-900: #0c4a6e;
-		    
+
 		    --surface-0: #ffffff;
 		    --surface-50: #fffdf7;
 		    --surface-100: #fffbf0;
@@ -116,7 +116,7 @@
 		    --surface-800: #925a00;
 		    --surface-900: #783f00;
 		    --surface-950: #451a03;
-		    
+
 		    --shadow-sm: 0 1px 3px rgba(120, 63, 0, 0.08);
 		    --shadow: 0 1px 3px rgba(120, 63, 0, 0.1), 0 1px 2px rgba(120, 63, 0, 0.06);
 		    --shadow-md: 0 4px 12px rgba(120, 63, 0, 0.12);
@@ -126,7 +126,7 @@
 		    --shadow-inner: inset 0 2px 4px 0 rgba(120, 63, 0, 0.06);
 		    --glass-shadow: 0 8px 32px 0 rgba(120, 63, 0, 0.15);
 		    --golden-glow: 0 0 20px rgba(253, 180, 20, 0.4);
-		    
+
 		    --radius-sm: 8px;
 		    --radius: 12px;
 		    --radius-md: 14px;
@@ -135,11 +135,11 @@
 		    --radius-2xl: 24px;
 		    --radius-3xl: 32px;
 		    --radius-full: 9999px;
-		    
+
 		    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 		    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-		    
+
 		    --gradient-primary: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-700) 100%);
 		    --gradient-premium: linear-gradient(135deg, #fdb414 0%, #dc9200 50%, #b26d00 100%);
 		    --gradient-gold: linear-gradient(135deg, #fdb414 0%, #b26d00 100%);
@@ -149,11 +149,11 @@
 		    --gradient-success: linear-gradient(135deg, var(--success-500), var(--success-700));
 		    --gradient-card: linear-gradient(135deg, rgba(255, 253, 248, 0.96) 0%, rgba(255, 252, 242, 0.98) 100%);
 		}
-		
+
 		/* تحسينات الخطوط والمظهر العام */
 		body {
 		    background-color: #fefaf0 !important;
-		    background-image: 
+		    background-image:
 		        radial-gradient(at 40% 20%, rgba(254, 244, 215, 0.7) 0px, transparent 50%),
 		        radial-gradient(at 80% 0%, rgba(254, 247, 224, 0.5) 0px, transparent 50%),
 		        radial-gradient(at 0% 50%, rgba(255, 251, 240, 0.6) 0px, transparent 50%),
@@ -165,7 +165,7 @@
 		    -moz-osx-font-smoothing: grayscale;
 		    font-size: 0.9375rem;
 		}
-		
+
 		/* تحسين تنسيق النصوص والعناوين */
 		h1, h2, h3, h4, h5, h6 {
 		    font-family: 'Playfair Display', 'Poppins', serif;
@@ -173,7 +173,7 @@
 		    line-height: 1.3;
 		    margin-bottom: 1rem;
 		}
-		
+
 		/* Premium Card Styling with Golden Glassmorphism */
 		.card {
 		    background: var(--gradient-card);
@@ -190,7 +190,7 @@
 		    padding: 2rem;
 		    border-top: 4px solid var(--gold-500);
 		}
-		
+
 		.card::before {
 		    content: '';
 		    position: absolute;
@@ -201,7 +201,7 @@
 		    background: var(--gradient-premium);
 		    z-index: 1;
 		}
-		
+
 		@keyframes cardSlideIn {
 		    from {
 		        opacity: 0;
@@ -212,12 +212,12 @@
 		        transform: translateY(0);
 		    }
 		}
-		
+
 		.card:hover {
 		    transform: translateY(-8px);
 		    box-shadow: var(--shadow-xl), var(--golden-glow), 0 8px 25px rgba(253, 180, 20, 0.25);
 		}
-		
+
 		/* Typography with Golden Headings */
 		.smat-label {
 		    font-weight: 600;
@@ -229,7 +229,7 @@
 		    display: block;
 		    font-family: 'Poppins', sans-serif;
 		}
-		
+
 		h3.smat-label {
 		    font-size: 1.85rem;
 		    font-weight: 700;
@@ -246,7 +246,7 @@
 		    font-family: 'Playfair Display', serif;
 		    position: relative;
 		}
-		
+
 		h3.smat-label:after {
 		    content: "";
 		    position: absolute;
@@ -257,9 +257,9 @@
 		    background: var(--gradient-gold);
 		    border-radius: 3px;
 		}
-		
+
 		/* Premium Form Elements with Golden Focus States */
-		.ui-inputtext, 
+		.ui-inputtext,
 		.ui-selectonemenu,
 		.ui-inputtextarea,
 		.ui-calendar {
@@ -274,8 +274,8 @@
 		    color: var(--surface-800);
 		    font-family: 'Inter', sans-serif;
 		}
-		
-		.ui-inputtext:focus, 
+
+		.ui-inputtext:focus,
 		.ui-selectonemenu:focus,
 		.ui-inputtextarea:focus,
 		.ui-calendar:focus {
@@ -285,8 +285,8 @@
 		    background-color: var(--gold-50);
 		    transform: translateY(-2px);
 		}
-		
-		.ui-inputtext:hover, 
+
+		.ui-inputtext:hover,
 		.ui-selectonemenu:hover,
 		.ui-inputtextarea:hover,
 		.ui-calendar:hover {
@@ -294,13 +294,13 @@
 		    background-color: var(--surface-50);
 		    box-shadow: var(--shadow-sm), 0 0 0 1px rgba(253, 180, 20, 0.2);
 		}
-		
+
 		.input-text-smat-background {
 		    background: var(--surface-50);
 		    border-color: var(--surface-300);
 		    box-shadow: var(--shadow-inner);
 		}
-		
+
 		/* Golden SelectOneMenu */
 		.ui-selectonemenu {
 		    appearance: none;
@@ -310,7 +310,7 @@
 		    background-size: 1.25rem;
 		    padding-right: 2.5rem;
 		}
-		
+
 		/* Golden Checkbox Styling */
 		body .ui-chkbox .ui-chkbox-box {
 		    width: 1.25rem;
@@ -321,22 +321,22 @@
 		    transition: var(--transition);
 		    position: relative;
 		}
-		
+
 		body .ui-chkbox .ui-chkbox-box.ui-state-active {
 		    background: var(--gradient-gold);
 		    border-color: var(--gold-500);
 		    box-shadow: 0 0 0 2px var(--gold-100);
 		}
-		
+
 		body .ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
 		    color: white;
 		}
-		
+
 		body .ui-chkbox .ui-chkbox-box.ui-state-focus {
 		    box-shadow: 0 0 0 3px var(--gold-100);
 		    border-color: var(--gold-500);
 		}
-		
+
 		/* Panel Grid - Premium Table with Golden Header */
 		.ui-panelgrid .custom-panel-grid {
 		    width: 100%;
@@ -348,7 +348,7 @@
 		    background: var(--surface-0);
 		    border: 1px solid rgba(255, 248, 225, 0.3);
 		}
-		
+
 		.ui-panelgrid .custom-panel-grid tr td {
 		    padding: 1rem;
 		    border: 1px solid var(--gold-100);
@@ -356,16 +356,16 @@
 		    transition: var(--transition);
 		    font-family: 'Inter', sans-serif;
 		}
-		
+
 		.ui-panelgrid .custom-panel-grid tr:hover td {
 		    background: var(--surface-50);
 		}
-		
+
 		.ui-panelgrid .custom-panel-grid thead tr {
 		    background: var(--gradient-premium);
 		    color: white;
 		}
-		
+
 		.ui-panelgrid .custom-panel-grid thead tr td {
 		    font-weight: 600;
 		    text-transform: uppercase;
@@ -376,7 +376,7 @@
 		    font-family: 'Poppins', sans-serif;
 		    font-size: 0.9rem;
 		}
-		
+
 		/* Premium Golden Buttons with Hover Effects */
 		.ui-button {
 		    border-radius: var(--radius-full);
@@ -397,7 +397,7 @@
 		    height: 44px;
 		    font-family: 'Poppins', sans-serif;
 		}
-		
+
 		.ui-button::after {
 		    content: '';
 		    position: absolute;
@@ -411,11 +411,11 @@
 		    transform: scale(1, 1) translate(-50%);
 		    transform-origin: 50% 50%;
 		}
-		
+
 		.ui-button:hover::after {
 		    animation: ripple 1s ease-out;
 		}
-		
+
 		@keyframes ripple {
 		    0% {
 		        transform: scale(0, 0);
@@ -426,42 +426,42 @@
 		        opacity: 0;
 		    }
 		}
-		
+
 		.ui-button:hover {
 		    transform: translateY(-4px) scale(1.02);
 		    box-shadow: var(--shadow-lg), var(--golden-glow);
 		}
-		
+
 		.ui-button:active {
 		    transform: translateY(0);
 		    box-shadow: var(--shadow-md);
 		}
-		
+
 		.ui-button-danger {
 		    background: var(--gradient-danger) !important;
 		    color: white !important;
 		}
-		
+
 		.ui-button-warning {
 		    background: var(--gradient-warning) !important;
 		    color: white !important;
 		}
-		
+
 		.ui-button-success {
 		    background: var(--gradient-success) !important;
 		    color: white !important;
 		}
-		
+
 		.ui-button-help {
 		    background: var(--gradient-premium) !important;
 		    color: white !important;
 		}
-		
+
 		.ui-button-info {
 		    background: var(--gradient-accent) !important;
 		    color: white !important;
 		}
-		
+
 		/* Action Buttons Container */
 		.action-buttons {
 		    display: flex;
@@ -472,20 +472,20 @@
 		    padding-top: 1.5rem;
 		    border-top: 1px solid rgba(220, 200, 167, 0.3);
 		}
-		
+
 		/* Responsive adjustments for buttons */
 		@media (max-width: 768px) {
 		    .action-buttons {
 		        flex-direction: column;
 		        gap: 0.75rem;
 		    }
-		    
+
 		    .ui-button {
 		        width: 100%;
 		        margin-bottom: 0;
 		    }
 		}
-		
+
 		/* Golden Chip Styling */
 		.ui-chip {
 		    background: linear-gradient(90deg, var(--gold-100), var(--accent-100));
@@ -501,37 +501,37 @@
 		    font-family: 'Inter', sans-serif;
 		    backdrop-filter: blur(8px);
 		}
-		
+
 		.ui-chip:hover {
 		    transform: translateY(-2px);
 		    box-shadow: var(--shadow);
 		    background: linear-gradient(90deg, var(--gold-200), var(--accent-200));
 		}
-		
+
 		.ui-chip-icon {
 		    margin-right: 0.5rem;
 		    color: var(--gold-600);
 		}
-		
+
 		/* Signature Styling with Golden Border */
 		.ui-signature {
 		    border: 2px dashed var(--gold-200);
 		    border-radius: var(--radius-lg);
 		    background: var(--surface-50);
 		    transition: var(--transition);
-		    background-image: 
+		    background-image:
 		        linear-gradient(to right, var(--gold-50) 1px, transparent 1px),
 		        linear-gradient(to bottom, var(--gold-50) 1px, transparent 1px);
 		    background-size: 20px 20px;
 		    backdrop-filter: blur(4px);
 		}
-		
+
 		.ui-signature:hover {
 		    border-color: var(--gold-400);
 		    background-color: var(--gold-50);
 		    box-shadow: var(--golden-glow);
 		}
-		
+
 		/* Golden Divider Styling */
 		.ui-divider {
 		    margin: 2rem 0;
@@ -540,18 +540,18 @@
 		    background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
 		    opacity: 0.5;
 		}
-		
+
 		.ui-divider-solid {
 		    background: var(--gold-300);
 		}
-		
+
 		/* Field Group Styling with Golden Accent */
 		.field {
 		    margin-bottom: 1.5rem;
 		    position: relative;
 		    padding-left: 1.5rem;
 		}
-		
+
 		.field::before {
 		    content: '';
 		    position: absolute;
@@ -564,12 +564,12 @@
 		    opacity: 0.8;
 		    transition: var(--transition);
 		}
-		
+
 		.field:focus-within::before {
 		    opacity: 1;
 		    width: 6px;
 		}
-		
+
 		/* Premium Dialog Styling */
 		.ui-dialog {
 		    border-radius: var(--radius-2xl);
@@ -580,7 +580,7 @@
 		    backdrop-filter: blur(12px);
 		    background: rgba(255, 253, 248, 0.95);
 		}
-		
+
 		.ui-dialog .ui-dialog-titlebar {
 		    background: var(--gradient-premium);
 		    color: white;
@@ -590,18 +590,18 @@
 		    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 		    font-family: 'Poppins', sans-serif;
 		}
-		
+
 		.ui-dialog .ui-dialog-content {
 		    padding: 1.5rem;
 		    background: transparent;
 		}
-		
+
 		/* Premium Growl Notifications */
 		.ui-growl {
 		    top: 25px;
 		    right: 25px;
 		}
-		
+
 		.ui-growl-item-container {
 		    border-radius: var(--radius-lg);
 		    box-shadow: var(--shadow-xl), var(--glass-shadow);
@@ -611,29 +611,29 @@
 		    background: rgba(255, 253, 248, 0.95);
 		    border: 1px solid rgba(255, 248, 225, 0.3);
 		}
-		
+
 		.ui-growl-message {
 		    padding: 1rem;
 		    font-family: 'Inter', sans-serif;
 		}
-		
+
 		.ui-growl-icon-close {
 		    top: 0.5rem;
 		    right: 0.5rem;
 		}
-		
+
 		/* Status Dialog with Golden Animation */
 		.pi-spinner {
 		    animation: spin 1s linear infinite;
 		    color: var(--gold-500);
 		    filter: drop-shadow(0 0 2px rgba(253, 180, 20, 0.5));
 		}
-		
+
 		@keyframes spin {
 		    from { transform: rotate(0deg); }
 		    to { transform: rotate(360deg); }
 		}
-		
+
 		/* Additional Premium Elements */
 		.pe\:documentViewer {
 		    border-radius: var(--radius-lg);
@@ -641,13 +641,13 @@
 		    box-shadow: var(--shadow);
 		    border: 1px solid var(--gold-200);
 		}
-		
+
 		/* Hover effects for all interactive elements */
-		a, button, .ui-button, .ui-selectonemenu, 
+		a, button, .ui-button, .ui-selectonemenu,
 		.ui-inputtext, .ui-inputtextarea, .ui-chkbox {
 		    transition: var(--transition);
 		}
-		
+
 		/* Responsive adjustments */
 		@media (max-width: 768px) {
 		    .card {
@@ -655,26 +655,26 @@
 		        border-radius: var(--radius-lg);
 		        padding: 1.5rem;
 		    }
-		    
+
 		    .ui-inputtext, .ui-selectonemenu, .ui-inputtextarea {
 		        font-size: 1rem;
 		        padding: 1rem;
 		    }
-		    
-		    .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, 
-		    .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, 
+
+		    .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4,
+		    .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8,
 		    .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12,
-		    .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, 
-		    .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, 
+		    .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4,
+		    .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8,
 		    .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12,
-		    .col-xxl-1, .col-xxl-2, .col-xxl-3, .col-xxl-4, 
-		    .col-xxl-5, .col-xxl-6, .col-xxl-7, .col-xxl-8, 
+		    .col-xxl-1, .col-xxl-2, .col-xxl-3, .col-xxl-4,
+		    .col-xxl-5, .col-xxl-6, .col-xxl-7, .col-xxl-8,
 		    .col-xxl-9, .col-xxl-10, .col-xxl-11, .col-xxl-12 {
 		        flex: 0 0 100%;
 		        max-width: 100%;
 		    }
 		}
-		
+
 		/* Button Size Variants */
 		.btn-sm {
 		    padding: 0.65rem 1.5rem !important;
@@ -682,7 +682,7 @@
 		    min-width: 120px !important;
 		    height: 38px !important;
 		}
-		
+
 		.action-buttons {
 		    display: flex;
 		    gap: 0.75rem;
@@ -692,7 +692,7 @@
 		    padding-top: 1rem;
 		    border-top: 1px solid rgba(220, 200, 167, 0.3);
 		}
-		
+
 		/* Extra Small Button Styles */
 		.btn-xs {
 		    padding: 0.5rem 1rem !important;
@@ -701,7 +701,7 @@
 		    border-radius: 20px !important;
 		    height: 32px !important;
 		}
-		
+
 		/* Compact action buttons container */
 		.action-buttons-compact {
 		    display: flex;
@@ -713,12 +713,12 @@
 		    border-top: 1px solid rgba(220, 200, 167, 0.3);
 		    width: 100%;
 		}
-		
+
 		/* Make icons slightly smaller in xs buttons */
 		.btn-xs .ui-icon {
 		    font-size: 0.75rem !important;
 		}
-		
+
 		.rounded-btn {
 		    border-radius: 24px !important;
 		    padding: 0.5rem 1.2rem !important;
@@ -726,7 +726,7 @@
 		    min-width: 100px;
 		    height: 36px;
 		}
-		
+
 		/* Premium Golden Button Styles */
 		.btn-golden-primary {
 		    background: var(--gradient-premium) !important;
@@ -734,53 +734,53 @@
 		    border: none !important;
 		    box-shadow: 0 4px 12px rgba(253, 180, 20, 0.3) !important;
 		}
-		
+
 		.btn-golden-orange {
 		    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
 		    color: white !important;
 		    border: none !important;
 		    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3) !important;
 		}
-		
+
 		.btn-golden-blue {
 		    background: linear-gradient(135deg, #0ea5e9, #0369a1) !important;
 		    color: white !important;
 		    border: none !important;
 		    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3) !important;
 		}
-		
+
 		.btn-golden-red {
 		    background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
 		    color: white !important;
 		    border: none !important;
 		    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
 		}
-		
+
 		/* Hover Effects for Golden Buttons */
 		.btn-golden-primary:hover {
 		    background: linear-gradient(135deg, #dc9200, #b26d00) !important;
 		    transform: translateY(-3px) scale(1.05) !important;
 		    box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4), var(--golden-glow) !important;
 		}
-		
+
 		.btn-golden-orange:hover {
 		    background: linear-gradient(135deg, #d97706, #b45309) !important;
 		    transform: translateY(-3px) scale(1.05) !important;
 		    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4) !important;
 		}
-		
+
 		.btn-golden-blue:hover {
 		    background: linear-gradient(135deg, #0284c7, #075985) !important;
 		    transform: translateY(-3px) scale(1.05) !important;
 		    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4) !important;
 		}
-		
+
 		.btn-golden-red:hover {
 		    background: linear-gradient(135deg, #dc2626, #991b1b) !important;
 		    transform: translateY(-3px) scale(1.05) !important;
 		    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
 		}
-		
+
 		/* Active/Pressed State */
 		.btn-golden-primary:active,
 		.btn-golden-orange:active,
@@ -789,7 +789,7 @@
 		    transform: translateY(0) scale(1) !important;
 		    box-shadow: 0 2px 8px rgba(120, 63, 0, 0.2) !important;
 		}
-		
+
 		/* Disabled State */
 		.btn-golden-primary.ui-state-disabled,
 		.btn-golden-orange.ui-state-disabled,
@@ -801,7 +801,7 @@
 		    box-shadow: none !important;
 		    transform: none !important;
 		}
-		
+
 		/* علامات الحقول الإجبارية */
 		.field-required .smat-label::after {
 		    content: " *";
@@ -809,11 +809,11 @@
 		    font-weight: bold;
 		    margin-left: 2px;
 		}
-		
+
 		.field-required .smat-label {
 		    position: relative;
 		}
-		
+
 		.field-required .smat-label::before {
 		    content: "";
 		    position: absolute;
@@ -827,7 +827,7 @@
 		    animation: pulse 2s infinite;
 		    box-shadow: 0 0 0 2px rgba(217, 119, 110, 0.4);
 		}
-		
+
 		@keyframes pulse {
 		    0% {
 		        transform: translateY(-50%) scale(1);
@@ -842,7 +842,7 @@
 		        opacity: 1;
 		    }
 		}
-		
+
 		/* تحسين مظهر الحقول الإجبارية */
 		.field-required .ui-inputtext,
 		.field-required .ui-selectonemenu,
@@ -851,7 +851,7 @@
 		    border-left: 3px solid var(--danger-300) !important;
 		    background-color: var(--danger-50) !important;
 		}
-		
+
 		.field-required .ui-inputtext:focus,
 		.field-required .ui-selectonemenu:focus,
 		.field-required .ui-inputtextarea:focus,
@@ -859,71 +859,71 @@
 		    border-color: var(--danger-500) !important;
 		    box-shadow: 0 0 0 3px var(--danger-100), var(--shadow-md) !important;
 		}
-		
+
 		/* تحسينات إضافية للخطوط */
 		p, span, div, td, li {
 		    font-family: 'Inter', sans-serif;
 		    letter-spacing: -0.01em;
 		}
-		
+
 		strong, b {
 		    font-weight: 600;
 		}
-		
+
 		/* تحسين التباعد بين العناصر */
 		.row {
 		    margin-bottom: 0.5rem;
 		}
-		
+
 		/* تحسين مظهر الأيقونات */
 		.pi {
 		    font-size: 1.1em;
 		}
-		
+
 		/* تحسين مظهر الرسائل */
 		.ui-message {
 		    font-family: 'Inter', sans-serif;
 		    font-size: 0.875rem;
 		    margin-top: 0.25rem;
 		}
-		
+
 		/* تحسين مظهر التبويبات إذا وجدت */
 		.ui-tabs .ui-tabs-nav li {
 		    font-family: 'Poppins', sans-serif;
 		    font-weight: 500;
 		}
-		
+
 		/* تحسين مظهر القوائم المنسدلة */
 		.ui-selectonemenu-items {
 		    font-family: 'Inter', sans-serif;
 		}
-		
+
 		/* تحسين مظهر عناصر الواجهة الصغيرة */
 		small, .small-text {
 		    font-size: 0.8125rem;
 		    font-family: 'Inter', sans-serif;
 		}
-		
+
 		/* Custom Scrollbar */
 		::-webkit-scrollbar {
 		    width: 10px;
 		    height: 10px;
 		}
-		
+
 		::-webkit-scrollbar-track {
 		    background: rgba(220, 200, 167, 0.1);
 		    border-radius: 10px;
 		}
-		
+
 		::-webkit-scrollbar-thumb {
 		    background: linear-gradient(to bottom, var(--gold-400), var(--gold-600));
 		    border-radius: 10px;
 		}
-		
+
 		::-webkit-scrollbar-thumb:hover {
 		    background: linear-gradient(to bottom, var(--gold-500), var(--gold-700));
 		}
-		
+
 		/* Premium Section Headers */
 		.section-header {
 		    display: flex;
@@ -934,7 +934,7 @@
 		    border-bottom: 1px solid rgba(220, 200, 167, 0.3);
 		    position: relative;
 		}
-		
+
 		.section-header:after {
 		    content: "";
 		    position: absolute;
@@ -1035,14 +1035,14 @@
 <ui:define name="section-content">
         <h:form id="form">
             <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" life="5000" />
-            
+
             <!-- Main Form Card -->
             <div class="card">
                 <div class="section-header">
                     <h3 class="smat-label">#{inspectionFormBean.formTemplate.title}</h3>
                     <p:badge value="INSPECTION FORM" severity="info" styleClass="badge-lg" />
                 </div>
-                
+
                 <!-- Comment Section -->
                 <div class="row">
                     <div class="col-lg-12 col-xl-12 col-xxl-12">
@@ -1057,9 +1057,9 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
-                
+
                 <!-- Basic Information Section -->
                 <div class="row">
                     <div class="col-lg-6 col-xl-3 col-xxl-3">
@@ -1091,7 +1091,7 @@
                             <h:outputText value="#{interfaceLabel.stickerNo}" styleClass="smat-label" />
                             <p:inputText rendered="#{inspectionFormBean.disabled or inspectionFormBean.disableSticker}"
                                 value="#{inspectionFormBean.equipmentInspectionForm.stickerNo}"
-                                disabled="true" styleClass="block input-text-smat-background" />    
+                                disabled="true" styleClass="block input-text-smat-background" />
                             <p:selectOneMenu id="selectoneMenu_sticker"
                                 style="width:100%;" filter="true" filterMatchMode="contains"
                                 widgetVar="widgetVarSticker" rendered="#{!inspectionFormBean.disabled and !inspectionFormBean.disableSticker}"
@@ -1193,9 +1193,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
-            
+
             <!-- Dynamic Content Panel with Horizontal Scroll -->
             <div class="card">
                 <div class="section-header">
@@ -1204,7 +1204,7 @@
                         #{inspectionFormBean.formTemplate.title} - Details
                     </h4>
                 </div>
-                
+
                 <!-- إضافة حاوية التمرير الأفقي للقالب -->
                 <div class="template-scroll-container">
                     <div class="template-scroll-content">
@@ -1242,11 +1242,11 @@
                                                     style="margin-left:2px;margin-right:2px;"
                                                     rendered="#{columnContent.generalEquipmentItem.itemType.code eq '03'}" />
 
-                                                <p:selectOneMenu 
+                                                <p:selectOneMenu
                                                     rendered="#{columnContent.generalEquipmentItem.itemType.code eq '04'}"
                                                     style="margin-left:2px;margin-right:2px;" dynamic="true"
                                                     immediate="true" value="#{columnContent.contentValue}">
-                                                    
+
                                                     <f:selectItems
                                                         itemLabel="#{checklistDetailDataSource.itemValue} "
                                                         itemValue="#{checklistDetailDataSource.itemValue}"
@@ -1271,7 +1271,7 @@
                         </p:panelGrid>
                     </div>
                 </div>
-                
+
                 <!-- مؤشر التمرير -->
                 <div class="scroll-indicator">
                     <i class="pi pi-arrow-left"></i>
@@ -1279,9 +1279,9 @@
                     <i class="pi pi-arrow-right"></i>
                 </div>
             </div>
-            
+
             <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
-            
+
 			<!-- Review and Actions Section -->
 			<div class="card">
 			    <div class="section-header">
@@ -1290,20 +1290,20 @@
 			            Approval Process
 			        </h4>
 			    </div>
-			    
+
 			    <div class="row">
 			        <div class="col-12 col-lg-3 col-xl-2 col-xxl-2">
-			            <h:outputText value="#{interfaceLabel.reviewerEngineer}" 
+			            <h:outputText value="#{interfaceLabel.reviewerEngineer}"
 			                styleClass="smat-label" rendered="#{!inspectionFormBean.disabled}" />
 			        </div>
-			
+
 			        <div class="col-12 col-lg-9 col-xl-10 col-xxl-10">
 			            <div class="field field-required">
-			                <h:outputText value="#{interfaceLabel.reviewerEngineer}" 
+			                <h:outputText value="#{interfaceLabel.reviewerEngineer}"
 			                    styleClass="smat-label" rendered="#{!inspectionFormBean.disabled}" />
 			                <p:selectOneMenu id="selectoneMenu_UserAliasRecpient" rendered="#{!inspectionFormBean.disabled}"
 			                    style="width:100%;" filter="true"
-			                    filterMatchMode="contains" 
+			                    filterMatchMode="contains"
 			                    widgetVar="widgetVar_SelectOneMenu"
 			                    converter="omnifaces.SelectItemsIndexConverter"
 			                    value="#{inspectionFormBean.selectedUserAliasRecipient}"
@@ -1319,22 +1319,22 @@
 			            </div>
 			        </div>
 			    </div>
-			    
+
 			    <div class="row">
 			        <div class="col-lg-12 col-xl-12 col-xxl-12">
 			            <div class="field field-required">
 			                <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label" />
 			                <p:inputTextarea id="comment" value="#{inspectionFormBean.comment}" rows="3"
 			                    styleClass="block" required="true"
-			                    requiredMessage="Comment is required" 
+			                    requiredMessage="Comment is required"
 			                    placeholder="Enter your approval comments here..." />
 			                <p:message for="comment" display="icon" />
 			            </div>
 			        </div>
 			    </div>
-			    
+
 			    <p:divider type="solid" styleClass="mt-4 mb-4" />
-			    
+
 			    <div class="row">
 			        <div class="#{inspectionFormBean.disabled ? 'col-lg-6 col-xl-6 col-xxl-6' : 'col-lg-12 col-xl-12 col-xxl-12'}">
 			            <div class="field">
@@ -1358,7 +1358,7 @@
 			            </div>
 			        </div>
 			    </div>
-			    
+
 				<div class="action-buttons-compact">
 				    <!-- Save/Done Button - Golden Primary -->
 				    <p:commandButton id="commandButton_save"
@@ -1368,7 +1368,7 @@
 				        process="@form" action="#{inspectionFormBean.doSave()}"
 				        update="@form" disabled="#{inspectionFormBean.step.equals('03')}"
 				        styleClass="btn-golden-primary rounded-btn" />
-				    
+
 				    <!-- Return Button - Golden Orange -->
 				    <p:commandButton id="commandButton_return"
 				        value="#{interfaceLabel.returnToInspector}"
@@ -1378,7 +1378,7 @@
 				        process="@form" update="@([id$=messages])"
 				        action="#{inspectionFormBean.returnToInspector()}"
 				        styleClass="btn-golden-orange rounded-btn" />
-				    
+
 				    <!-- Print Button - Golden Blue -->
 				    <p:commandButton id="commandButton_print"
 				        rendered="#{inspectionFormBean.step.equals('03')}"
@@ -1388,7 +1388,7 @@
 				        styleClass="btn-golden-blue rounded-btn"
 				        onstart="PF('statusDialog').show();"
 				        oncomplete="PF('statusDialog').hide();" />
-				    
+
 				    <!-- Cancel Button - Golden Red -->
 				    <p:button id="commandButton_cancel"
 				        value="Return"
@@ -1400,7 +1400,7 @@
 			</div>
         </h:form>
     </ui:define>
-    
+
     <ui:define name="section-dialogs">
         <!-- Premium Status Dialog -->
         <p:dialog modal="true" widgetVar="statusDialog"
@@ -1412,11 +1412,11 @@
 			    <p style="color: var(--text-secondary); font-size: 0.9rem;">Please wait while we complete your action</p>
 			</div>
         </p:dialog>
-        
+
         <!-- Premium Document Viewer Dialog -->
-        <p:dialog header="#{interfaceLabel.viewer}" widgetVar="viewerWidgetVar" 
+        <p:dialog header="#{interfaceLabel.viewer}" widgetVar="viewerWidgetVar"
             modal="true" responsive="true" width="90%" height="90%"
-            showEffect="fade" hideEffect="fade" closable="true" 
+            showEffect="fade" hideEffect="fade" closable="true"
             draggable="true" resizable="true" maximizable="true"
             styleClass="max-w-screen">
             <h:form id="form_viewer">
