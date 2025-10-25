@@ -212,12 +212,12 @@ public class EmpCertificationBean implements Serializable {
     }
 
     public String doSave() {
-    	// normalize before save to ensure DB gets noon-time
-    	empCertification.setIssueDate(toNoon(empCertification.getIssueDate()));
-    	empCertification.setExpiryDate(toNoon(empCertification.getExpiryDate()));
-    	if (empCertification.getEmployee() != null) {
-    	    empCertification.getEmployee().setDateOfBirth(toNoon(empCertification.getEmployee().getDateOfBirth()));
-    	}
+        // normalize before save to ensure DB gets noon-time
+        empCertification.setIssueDate(toNoon(empCertification.getIssueDate()));
+        empCertification.setExpiryDate(toNoon(empCertification.getExpiryDate()));
+        if (empCertification.getEmployee() != null) {
+            empCertification.getEmployee().setDateOfBirth(toNoon(empCertification.getEmployee().getDateOfBirth()));
+        }
 
         if (!doValidate())
             return "";
@@ -227,16 +227,43 @@ public class EmpCertificationBean implements Serializable {
             Set<EmpCertificationWorkflow> empCertificationWorkflows = new HashSet<>();
             Set<EmpCertificationWorkflowStep> empCertificationWorkflowSteps = new HashSet<>();
             empCertification.setEmpCertificationType(empCertificationType);
-            employee.setCompany(task.getCompany());
+            if (task != null && task.getCompany() != null) {
+                employee.setCompany(task.getCompany());
+            }
             Short maxStepSeq;
 
+            // ----------------- CHANGE STEP (Reviewer approves) - MODIFIED -----------------
             if (UtilityHelper.decipher(persistentMode).equals("changeStep")) {
+                // get last seq (protect null -> treat as 0)
                 maxStepSeq = empCertificationWorkflowStepService.getLastStepSeq(empCertification.getId());
-                EmpCertificationWorkflow empCertificationWorkflow = empCertificationWorkflowService.getCurrentInspectionFormWorkFlow(empCertification.getId());
+                if (maxStepSeq == null) {
+                    maxStepSeq = 0;
+                }
+
+                // mark reviewer on entity
                 empCertification.setSysUserByReviewedBy(loginBean.getUser());
+
+                // MERGE current changes first so any edits the reviewer made on bound fields are persisted
+                try {
+                    empCertificationService.merge(empCertification, employee);
+                } catch (Exception mergeEx) {
+                    // log and continue - saveToStep may still operate, but bubble up if it fails
+                    mergeEx.printStackTrace();
+                }
+
+                // prepare workflow object (current)
+                EmpCertificationWorkflow empCertificationWorkflow = empCertificationWorkflowService.getCurrentInspectionFormWorkFlow(empCertification.getId());
+                if (empCertificationWorkflow == null) {
+                    // defensive: create new workflow if somehow missing
+                    empCertificationWorkflow = new EmpCertificationWorkflow();
+                    empCertificationWorkflow.setEmpCertification(empCertification);
+                    empCertificationWorkflow.setTask(task);
+                }
                 empCertificationWorkflow.setEmpCertification(empCertification);
                 empCertificationWorkflow.setWorkflowDefinition(workflowDefinitionFinal);
                 empCertificationWorkflow.setTask(task);
+
+                // prepare workflow step
                 EmpCertificationWorkflowStep empCertificationWorkflowStep = new EmpCertificationWorkflowStep();
                 empCertificationWorkflowStep.setEmpCertification(empCertification);
                 empCertificationWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
@@ -244,17 +271,36 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStep.setSysUserComment(comment);
                 empCertificationWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
                 empCertificationWorkflowStep.setWorkflowDefinition(workflowDefinitionFinal);
+
+                // persist step & workflow (this should keep merged changes)
                 empCertificationService.saveToStep(empCertification, employee, empCertificationWorkflow, empCertificationWorkflowStep);
+
+                // update local state
                 step = "03";
                 UtilityHelper.addInfoMessage("Operation successful");
                 return "";
             }
+            // ----------------- END changeStep -----------------
 
+            // update existing (inspector -> send to reviewer)
             if (UtilityHelper.decipher(persistentMode).equals("update")) {
                 maxStepSeq = empCertificationWorkflowStepService.getLastStepSeq(empCertification.getId());
-                empCertification.setSysUserByReviewedBy(selectedUserAliasRecipient.getSysUserBySysUser());
-                ((EmpCertificationWorkflow) empCertification.getEmpCertificationWorkflows().iterator().next()).setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
-                ((EmpCertificationWorkflow) empCertification.getEmpCertificationWorkflows().iterator().next()).setSysUser(selectedUserAliasRecipient.getSysUserBySysUser());
+                if (maxStepSeq == null) maxStepSeq = 0;
+
+                // set reviewer (selected)
+                if (selectedUserAliasRecipient != null && selectedUserAliasRecipient.getSysUserBySysUser() != null) {
+                    empCertification.setSysUserByReviewedBy(selectedUserAliasRecipient.getSysUserBySysUser());
+                }
+
+                // update current workflow entry
+                if (empCertification.getEmpCertificationWorkflows() != null && !empCertification.getEmpCertificationWorkflows().isEmpty()) {
+                    EmpCertificationWorkflow currentWorkflow = (EmpCertificationWorkflow) empCertification.getEmpCertificationWorkflows().iterator().next();
+                    currentWorkflow.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
+                    if (selectedUserAliasRecipient != null) {
+                        currentWorkflow.setSysUser(selectedUserAliasRecipient.getSysUserBySysUser());
+                    }
+                }
+
                 EmpCertificationWorkflowStep empCertificationWorkflowStepTwo = new EmpCertificationWorkflowStep();
                 empCertificationWorkflowStepTwo.setEmpCertification(empCertification);
                 empCertificationWorkflowStepTwo.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
@@ -263,19 +309,28 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStepTwo.setSysUserComment(comment);
                 empCertificationWorkflowStepTwo.setStepSeq((short) (maxStepSeq + 1));
                 empCertification.getEmpCertificationWorkflowSteps().add(empCertificationWorkflowStepTwo);
+
+                // merge to save changes (including reviewer assignment)
                 empCertificationService.merge(empCertification, employee);
                 UtilityHelper.addInfoMessage("Operation successful");
                 return "pretty:inspection/my-tasks";
+
             } else if (UtilityHelper.decipher(persistentMode).equals("insert")) {
                 maxStepSeq = empCertificationWorkflowStepService.getLastStepSeq(null);
+                if (maxStepSeq == null) maxStepSeq = 0;
+
                 empCertification.setSysUserByInspectedBy(loginBean.getUser());
+
                 EmpCertificationWorkflow empCertificationWorkflow = new EmpCertificationWorkflow();
                 empCertificationWorkflow.setEmpCertification(empCertification);
                 empCertificationWorkflow.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
                 empCertificationWorkflow.setTask(task);
-                empCertificationWorkflow.setSysUser(selectedUserAliasRecipient.getSysUserBySysUser());
+                if (selectedUserAliasRecipient != null && selectedUserAliasRecipient.getSysUserBySysUser() != null) {
+                    empCertificationWorkflow.setSysUser(selectedUserAliasRecipient.getSysUserBySysUser());
+                }
                 empCertificationWorkflows.add(empCertificationWorkflow);
                 empCertification.setEmpCertificationWorkflows(empCertificationWorkflows);
+
                 EmpCertificationWorkflowStep empCertificationWorkflowStepOne = new EmpCertificationWorkflowStep();
                 empCertificationWorkflowStepOne.setEmpCertification(empCertification);
                 empCertificationWorkflowStepOne.setWorkflowDefinition(workflowDefinitionInit);
@@ -284,6 +339,7 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStepOne.setSysUserComment(comment);
                 empCertificationWorkflowStepOne.setStepSeq((short) (maxStepSeq + 1));
                 empCertificationWorkflowSteps.add(empCertificationWorkflowStepOne);
+
                 EmpCertificationWorkflowStep empCertificationWorkflowStepTwo = new EmpCertificationWorkflowStep();
                 empCertificationWorkflowStepTwo.setEmpCertification(empCertification);
                 empCertificationWorkflowStepTwo.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
@@ -292,6 +348,7 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStepTwo.setSysUserComment(comment);
                 empCertificationWorkflowStepTwo.setStepSeq((short) (empCertificationWorkflowStepOne.getStepSeq() + 1));
                 empCertificationWorkflowSteps.add(empCertificationWorkflowStepTwo);
+
                 empCertification.setEmpCertificationWorkflowSteps(empCertificationWorkflowSteps);
                 empCertificationService.saveOrUpdate(empCertification, employee);
                 UtilityHelper.addInfoMessage("Operation successful");
@@ -304,6 +361,7 @@ public class EmpCertificationBean implements Serializable {
         }
         return "";
     }
+
 
     public String returnToIssuer() {
     	// normalize before save to ensure DB gets noon-time

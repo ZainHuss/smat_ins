@@ -22,6 +22,7 @@ import com.smat.ins.util.BCrypt;
 import com.smat.ins.util.BeanUtility;
 import com.smat.ins.util.LocalizationService;
 import com.smat.ins.util.UtilityHelper;
+import org.primefaces.PrimeFaces;
 
 @Named
 @SessionScoped
@@ -244,9 +245,8 @@ public class LoginBean implements Serializable {
     }
 
 
-    
-   
- // طريقة لتغيير كلمة المرور - معدلة لاستخدام رسائل ثابتة بدلاً من المفاتيج
+
+
     public void changePassword() {
         try {
             if (user != null) {
@@ -255,9 +255,9 @@ public class LoginBean implements Serializable {
                     UtilityHelper.addErrorMessage("The passwords do not match.");
                     return;
                 }
-                
+
                 String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-                
+
                 if (user.getIsSuperAdmin() !=null && user.getIsSuperAdmin()) {
                     // للمستخدمين المسؤولين
                     UtilityHelper.addInfoMessage("Password changed successfully");
@@ -267,14 +267,13 @@ public class LoginBean implements Serializable {
                     userService.update(user);
                     UtilityHelper.addInfoMessage("Password changed successfully");
                 }
-                
+
                 // إعادة تعيين الحقول
                 resetPasswordForm();
-                
-                // إعادة التوجيه إلى الصفحة الرئيسية
-                FacesContext.getCurrentInstance().getExternalContext().redirect(
-                    FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + 
-                    "/views/tasks/my-tasks.xhtml");
+
+                // إضافة باراميتر للإشارة إلى النجاح بدلاً من إعادة التوجيه المباشر
+                PrimeFaces.current().executeScript("handlePasswordChangeSuccess();");
+
             }
         } catch (Exception e) {
             UtilityHelper.addErrorMessage("فشل تغيير كلمة المرور");

@@ -1,9 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
-    
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
     <style>
         /* خلفية متحركة ملونة وشبه شفافة - تحسين الوضوح */
         .nk-header-main::before {
@@ -13,25 +13,25 @@
             left: 0;
             right: 0;
             height: 80px;
-            background: linear-gradient(135deg, 
-                rgba(52, 152, 219, 0.12) 0%, 
-                rgba(155, 89, 182, 0.12) 25%, 
-                rgba(26, 188, 156, 0.12) 50%, 
-                rgba(241, 196, 15, 0.12) 75%, 
-                rgba(230, 126, 34, 0.12) 100%);
+            background: linear-gradient(135deg,
+            rgba(52, 152, 219, 0.12) 0%,
+            rgba(155, 89, 182, 0.12) 25%,
+            rgba(26, 188, 156, 0.12) 50%,
+            rgba(241, 196, 15, 0.12) 75%,
+            rgba(230, 126, 34, 0.12) 100%);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             z-index: 999;
             animation: gradientShift 20s ease infinite;
             background-size: 400% 400%;
         }
-        
+
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        
+
         /* تحسينات التصميم للقائمة الرئيسية - تحسين الوضوح */
         .nk-header-main {
             background: rgba(255, 255, 255, 0.92);
@@ -46,11 +46,11 @@
             z-index: 1000;
             width: 100%;
         }
-        
+
         .nk-header-main.will-shrink {
             padding: 6px 0;
         }
-        
+
         .nk-menu-link {
             font-weight: 600;
             font-size: 15px;
@@ -65,7 +65,7 @@
             display: flex;
             align-items: center;
         }
-        
+
         .nk-menu-link::before {
             content: '';
             position: absolute;
@@ -77,7 +77,7 @@
             transition: all 0.6s ease;
             z-index: -1;
         }
-        
+
         .nk-menu-link::after {
             content: '';
             position: absolute;
@@ -91,22 +91,22 @@
             z-index: -2;
             border-radius: 12px;
         }
-        
+
         .nk-menu-link:hover::before {
             left: 100%;
         }
-        
+
         .nk-menu-link:hover::after {
             opacity: 1;
         }
-        
+
         .nk-menu-link:hover {
             background: rgba(255, 255, 255, 0.7);
             transform: translateY(-2px);
             color: #2980b9 !important;
             box-shadow: 0 6px 18px rgba(52, 152, 219, 0.2);
         }
-        
+
         .nk-menu-link.nk-menu-toggle:after {
             content: '\f107';
             font-family: 'FontAwesome';
@@ -114,17 +114,17 @@
             font-size: 13px;
             transition: transform 0.3s ease;
         }
-        
+
         .nk-menu-item.has-dropdown:hover .nk-menu-toggle:after {
             transform: rotate(180deg);
         }
-        
+
         .nk-menu-text {
             font-size: 15px;
             letter-spacing: 0.3px;
             position: relative;
         }
-        
+
         .nk-menu-dropdown {
             border-radius: 16px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
@@ -141,13 +141,13 @@
             z-index: 1001;
             min-width: 200px;
         }
-        
+
         .nk-menu-item.has-dropdown:hover > .nk-menu-dropdown {
             transform: translateY(8px) scale(1);
             opacity: 1;
             visibility: visible;
         }
-        
+
         .nk-menu-sub .nk-menu-link {
             padding: 12px 24px !important;
             font-size: 14px;
@@ -156,43 +156,43 @@
             border-radius: 0;
             transition: all 0.25s ease;
         }
-        
+
         .nk-menu-sub .nk-menu-link:hover {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(26, 188, 156, 0.1));
             color: #2980b9 !important;
             padding-left: 30px !important;
             transform: translateX(3px);
         }
-        
+
         /* ألوان زاهية ومتناسقة مع اللوجو */
         .primary-color {
             color: #2980b9 !important;
         }
-        
+
         .primary-bg {
             background-color: #2980b9;
         }
-        
+
         .secondary-color {
             color: #2c3e50 !important;
         }
-        
+
         .accent-color {
             color: #16a085 !important;
         }
-        
+
         .vibrant-1 {
             color: #8e44ad !important;
         }
-        
+
         .vibrant-2 {
             color: #c0392b !important;
         }
-        
+
         .vibrant-3 {
             color: #d35400 !important;
         }
-        
+
         .logo-container {
             display: flex;
             align-items: center;
@@ -203,13 +203,13 @@
             min-width: 200px;
             text-decoration: none; /* إزالة التزيين من الرابط */
         }
-        
+
         .logo-link {
             display: flex;
             align-items: center;
             text-decoration: none;
         }
-        
+
         .logo-img {
             margin-top: -3px !important;
             margin-bottom: 0;
@@ -219,18 +219,18 @@
             transition: all 0.3s ease;
             filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.1));
         }
-        
+
         .logo-img:hover {
             transform: scale(1.04) rotate(1deg);
             filter: drop-shadow(0 4px 8px rgba(52, 152, 219, 0.25));
         }
-        
+
         .user-menu {
             border-left: 1px solid rgba(52, 152, 219, 0.2);
             padding-left: 20px;
             margin-left: 20px;
         }
-        
+
         .dark-mode-toggle {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.12), rgba(155, 89, 182, 0.12));
             border-radius: 50%;
@@ -247,14 +247,14 @@
             -webkit-backdrop-filter: blur(6px);
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
         }
-        
+
         .dark-mode-toggle:hover {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(155, 89, 182, 0.2));
             transform: rotate(180deg) scale(1.05);
             box-shadow: 0 6px 15px rgba(52, 152, 219, 0.25);
             color: #8e44ad;
         }
-        
+
         .header-menu-toggle {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.12), rgba(26, 188, 156, 0.12)) !important;
             border: none !important;
@@ -267,13 +267,13 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
         }
-        
+
         .header-menu-toggle:hover {
             transform: scale(1.05) rotate(90deg);
             box-shadow: 0 6px 15px rgba(26, 188, 156, 0.25);
             color: #16a085 !important;
         }
-        
+
         /* تحسينات للعرض على الجوال */
         @media (max-width: 1199px) {
             .nk-header-menu {
@@ -286,7 +286,7 @@
                 margin-top: 12px;
                 border: 1px solid rgba(255, 255, 255, 0.5);
             }
-            
+
             .user-menu {
                 border-left: none;
                 padding-left: 0;
@@ -295,7 +295,7 @@
                 padding-top: 15px;
                 margin-top: 15px;
             }
-            
+
             .nk-menu-dropdown {
                 box-shadow: none;
                 border: none;
@@ -307,25 +307,25 @@
                 visibility: visible;
                 display: none;
             }
-            
+
             .nk-menu-item.has-dropdown:hover > .nk-menu-dropdown,
             .nk-menu-item.has-dropdown.open > .nk-menu-dropdown {
                 display: block;
             }
-            
+
             .logo-img {
                 max-height: 80px;
             }
-            
-           .logo-container {
-                    display: flex;
-                    align-items: center;
-                    height: 100%;
-                    padding-left: 20px;
-                    margin-right: 50px;
-                    transform: translateX(150px);
-                    min-width: 220px; /* Increased from 200px */
-                }
+
+            .logo-container {
+                display: flex;
+                align-items: center;
+                height: 100%;
+                padding-left: 20px;
+                margin-right: 50px;
+                transform: translateX(150px);
+                min-width: 220px; /* Increased from 200px */
+            }
         }
 
         /* تأثيرات إضافية للواجهة */
@@ -337,7 +337,7 @@
             transition: all 0.3s ease;
             font-size: 16px;
         }
-        
+
         .nk-menu-link:hover .menu-icon {
             transform: scale(1.15) rotate(8deg);
             color: #16a085;
@@ -357,36 +357,36 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 3px 8px rgba(52, 152, 219, 0.2);
         }
-        
+
         .nk-menu-link:hover .user-avatar {
             transform: scale(1.08) rotate(4deg);
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(26, 188, 156, 0.2));
         }
-        
+
         /* تأثيرات للعناصر النشطة */
         .nk-menu-item.active .nk-menu-link {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.12), rgba(26, 188, 156, 0.12));
             color: #2980b9 !important;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
         }
-        
+
         /* تحسينات للفاصل بين العناصر */
         .nk-menu-list > .nk-menu-item:not(:last-child) {
             margin-right: 6px;
         }
-        
+
         /* تأثيرات ضوئية عند التمرير */
         .nk-menu-link.highlight {
             animation: highlightPulse 2s infinite;
         }
-        
+
         @keyframes highlightPulse {
             0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4); }
             70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
             100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
         }
-        
+
         /* تأثيرات للزر الرئيسي */
         .primary-btn {
             background: linear-gradient(135deg, #2980b9, #2471a3);
@@ -398,26 +398,26 @@
             transition: all 0.3s ease;
             box-shadow: 0 5px 12px rgba(52, 152, 219, 0.25);
         }
-        
+
         .primary-btn:hover {
             background: linear-gradient(135deg, #2471a3, #2980b9);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(52, 152, 219, 0.35);
         }
-        
+
         /* تأثيرات النص المتوهج */
         .glow-text {
             text-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
             animation: textGlow 3s infinite alternate;
         }
-        
+
         @keyframes textGlow {
             from { text-shadow: 0 0 4px rgba(52, 152, 219, 0.4); }
             to { text-shadow: 0 0 12px rgba(52, 152, 219, 0.6), 0 0 15px rgba(52, 152, 219, 0.5); }
         }
-        
+
         /* إصلاحات للهيكل */
-               .nk-header-wrap {
+        .nk-header-wrap {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -425,12 +425,12 @@
             min-height: 85px; /* Increased from 70px */
         }
 
-        
+
         .nk-header-menu {
             display: flex;
             align-items: center;
         }
-        
+
         .nk-menu-list {
             display: flex;
             align-items: center;
@@ -438,11 +438,11 @@
             margin: 0;
             padding: 0;
         }
-        
+
         .nk-menu-item {
             position: relative;
         }
-        
+
         .nk-menu-buttons {
             display: flex;
             align-items: center;
@@ -450,14 +450,14 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* تحسينات للشعار - زيادة الوضوح */
         .nk-header-logo {
             position: relative;
             z-index: 1002;
         }
-        
-               .logo-img {
+
+        .logo-img {
             margin-top: -3px !important;
             margin-bottom: 0;
             max-height: 90px; /* Increased from 80px */
@@ -467,76 +467,76 @@
             transition: all 0.3s ease;
             filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.1));
         }
-        
+
         /* إصلاحات للعرض على الشاشات الصغيرة */
-                @media (max-width: 1199px) {
+        @media (max-width: 1199px) {
             .logo-img {
                 max-height: 75px; /* Slightly smaller on mobile */
                 height: 75px;
             }
-            
+
             .nk-menu-list {
                 flex-direction: column;
                 width: 100%;
                 align-items: flex-start;
             }
-            
+
             .nk-menu-item {
                 width: 100%;
             }
-            
+
             .nk-menu-link {
                 width: 100%;
                 margin: 4px 0;
             }
-            
+
             .nk-menu-buttons {
                 flex-direction: column;
                 width: 100%;
                 align-items: flex-start;
             }
-            
+
             .nk-header-wrap {
                 min-height: 60px;
             }
         }
-        
+
         /* مساحة لحماية المحتوى من التوب بار الثابت */
         body {
             padding-top: 75px;
         }
-        
+
         /* تحسينات إضافية للوضوح */
         .nk-header-main {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        
+
         .nk-menu-text {
             font-weight: 500;
         }
-        
+
         /* تحسين التباين للألوان */
         .vibrant-1 {
             color: #8e44ad !important;
         }
-        
+
         .vibrant-2 {
             color: #c0392b !important;
         }
-        
+
         .vibrant-3 {
             color: #d35400 !important;
         }
-        
+
         .accent-color {
             color: #16a085 !important;
         }
-        
+
         .primary-color {
             color: #2980b9 !important;
         }
-        
+
         /* تحسينات لقسم المستخدم - Display Name و Role */
         .user-info-container {
             display: flex;
@@ -544,7 +544,7 @@
             align-items: flex-start;
             justify-content: center;
         }
-        
+
         .user-display-name {
             font-weight: 600;
             font-size: 15px;
@@ -554,7 +554,7 @@
             text-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
             animation: textGlow 3s infinite alternate;
         }
-        
+
         .user-role {
             font-size: 12px;
             padding: 2px 8px;
@@ -566,12 +566,12 @@
             border: 1px solid rgba(26, 188, 156, 0.2);
             box-shadow: 0 2px 5px rgba(26, 188, 156, 0.1);
         }
-        
+
         .nk-menu-link:hover .user-display-name {
             color: #2980b9;
             transform: translateY(-1px);
         }
-        
+
         .nk-menu-link:hover .user-role {
             background: linear-gradient(135deg, rgba(26, 188, 156, 0.25), rgba(52, 152, 219, 0.25));
             color: #2980b9;
@@ -579,20 +579,20 @@
             box-shadow: 0 3px 8px rgba(26, 188, 156, 0.2);
         }
     </style>
-    
+
     <script>
         // دالة لاستخراج الكلمة الأولى من الدور
         function extractFirstWord(roleText) {
             if (!roleText) return '';
-            
+
             // إزالة كلمة "Role" إذا كانت موجودة
             let cleanText = roleText.replace(/Role/gi, '').trim();
-            
+
             // استخراج الكلمة الأولى
             let words = cleanText.split(/\s+/);
             return words.length > 0 ? words[0] : '';
         }
-        
+
         // دالة لتطبيق التعديل على جميع عناصر الدور
         function updateRoleDisplay() {
             // البحث عن جميع عناصر الدور وتحديثها
@@ -600,19 +600,19 @@
             roleElements.forEach(function(element) {
                 let originalText = element.textContent || element.innerText;
                 let firstWord = extractFirstWord(originalText);
-                
+
                 // تحديث النص إذا تم استخراج كلمة بنجاح
                 if (firstWord) {
                     element.textContent = firstWord;
                 }
             });
         }
-        
+
         // تنفيذ الدالة عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', function() {
             updateRoleDisplay();
         });
-        
+
         // تنفيذ الدالة أيضاً بعد أي تحديث للصفحة (لحالات AJAX)
         if (window.PrimeFaces) {
             PrimeFaces.onAjaxComplete = function() {
@@ -620,27 +620,27 @@
             };
         }
     </script>
-    
+
     <div class="nk-mask bg-gradient-a"></div>
     <div class="nk-mask bg-pattern-dot bg-blend-top"></div>
-    
+
     <div class="nk-header-main nk-menu-main will-shrink is-transparent ignore-mask">
         <div class="container-fluid">
             <div class="nk-header-wrap">
                 <div class="nk-header-logo">
                     <a href="https://smat-ins.com" class="logo-link" target="_blank">
                         <h:panelGroup layout="block" styleClass="logo-container">
-                            <p:graphicImage styleClass="logo-img logo-light" 
-                                name="images/smt_logo_tb.png"
-                                library="#{appSetting.resourceLib}" alt=""/>
-                            <p:graphicImage styleClass="logo-img logo-dark" 
-                                name="images/smt_logo_tb.png"
-                                library="#{appSetting.resourceLib}" alt=""/>
+                            <p:graphicImage styleClass="logo-img logo-light"
+                                            name="images/smt_logo_tb.png"
+                                            library="#{appSetting.resourceLib}" alt=""/>
+                            <p:graphicImage styleClass="logo-img logo-dark"
+                                            name="images/smt_logo_tb.png"
+                                            library="#{appSetting.resourceLib}" alt=""/>
                         </h:panelGroup>
                     </a>
                 </div>
                 <!-- .nk-header-logo -->
-                
+
                 <div class="nk-header-toggle">
                     <button class="dark-mode-toggle">
                         <em class="off icon ni ni-sun-fill"></em>
@@ -650,12 +650,12 @@
                         <em class="icon ni ni-menu"></em>
                     </button>
                 </div>
-                
+
                 <nav class="nk-header-menu nk-menu">
                     <ul class="nk-menu-list mx-auto">
                         <li class="nk-menu-item has-dropdown">
                             <h:link styleClass="nk-menu-link nk-menu-toggle"
-                                rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('001')}">
+                                    rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('001')}">
                                 <span class="menu-icon"><i class="fa fa-archive vibrant-1" aria-hidden="true"></i></span>
                                 <span class="nk-menu-text glow-text">#{interfaceLabel.archive}</span>
                             </h:link>
@@ -663,14 +663,14 @@
                                 <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('002')}"
-                                            styleClass="nk-menu-link" outcome="pretty:my/cabinets/view">
+                                                styleClass="nk-menu-link" outcome="pretty:my/cabinets/view">
                                             <span class="menu-icon"><i class="fa fa-cube vibrant-2" aria-hidden="true"></i></span>
                                             #{interfaceLabel.myCabinets}
                                         </h:link>
                                     </li>
                                     <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('003')}"
-                                            styleClass="nk-menu-link" outcome="pretty:cabinets/view">
+                                                styleClass="nk-menu-link" outcome="pretty:cabinets/view">
                                             <span class="menu-icon"><i class="fa fa-cubes vibrant-3" aria-hidden="true"></i></span>
                                             #{interfaceLabel.cabinets}
                                         </h:link>
@@ -681,7 +681,7 @@
 
                         <li class="nk-menu-item has-dropdown">
                             <h:link styleClass="nk-menu-link nk-menu-toggle"
-                                rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('004')}">
+                                    rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('004')}">
                                 <span class="menu-icon"><i class="fa fa-envelope accent-color" aria-hidden="true"></i></span>
                                 <span class="nk-menu-text">#{interfaceLabel.mail}</span>
                             </h:link>
@@ -689,32 +689,32 @@
                                 <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <h:link outcome="pretty:mail/create"
-                                            rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('005')}"
-                                            styleClass="nk-menu-link">
+                                                rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('005')}"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-pen-square primary-color" aria-hidden="true"></i></span>
                                             #{interfaceLabel.create}
                                         </h:link>
                                     </li>
-                                        <li class="nk-menu-item">
+                                    <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('013')}"
-                                            outcome="pretty:inspection/my-tasks"
-                                            styleClass="nk-menu-link">
+                                                outcome="pretty:inspection/my-tasks"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-tasks vibrant-2" aria-hidden="true"></i></span>
                                             #{interfaceLabel.myTasks}
                                         </h:link>
                                     </li>
-                                         <li class="nk-menu-item">
+                                    <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('012')}"
-                                            outcome="pretty:inspection/sticker/stickerManagement"
-                                            styleClass="nk-menu-link">
+                                                outcome="pretty:inspection/sticker/stickerManagement"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-sticky-note vibrant-1" aria-hidden="true"></i></span>
                                             #{interfaceLabel.stickerManagemnt}
                                         </h:link>
                                     </li>
                                     <li class="nk-menu-item">
                                         <h:link outcome="pretty:mail/inbox/view"
-                                            rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('007')}"
-                                            styleClass="nk-menu-link">
+                                                rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('007')}"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-inbox vibrant-3" aria-hidden="true"></i></span>
                                             #{interfaceLabel.inBox}
                                             <f:param name="i" value="0"></f:param>
@@ -722,8 +722,8 @@
                                     </li>
                                     <li class="nk-menu-item">
                                         <h:link outcome="pretty:mail/inbox/view"
-                                            rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('008')}"
-                                            styleClass="nk-menu-link">
+                                                rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('008')}"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-paper-plane accent-color" aria-hidden="true"></i></span>
                                             #{interfaceLabel.outBox}
                                             <f:param name="i" value="1"></f:param>
@@ -735,34 +735,34 @@
 
                         <li class="nk-menu-item has-dropdown">
                             <h:link styleClass="nk-menu-link nk-menu-toggle"
-                                rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('009')}">
+                                    rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('009')}">
                                 <span class="menu-icon"><i class="fa fa-search-plus primary-color" aria-hidden="true"></i></span>
                                 <span class="nk-menu-text">Advanced Task Search</span>
                             </h:link>
                             <div class="nk-menu-dropdown">
                                 <ul class="nk-menu-sub">
-                                   <li class="nk-menu-item">
+                                    <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('013')}"
-                                            outcome="pretty:completed-task"
-                                            styleClass="nk-menu-link">
+                                                outcome="pretty:completed-task"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-check-circle vibrant-1" aria-hidden="true"></i></span>
                                             Completed Search Tasks
                                         </h:link>
                                     </li>
-                                   
-                                    
+
+
                                     <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('013')}"
-                                            outcome="pretty:sticker-search"
-                                            styleClass="nk-menu-link">
+                                                outcome="pretty:sticker-search"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-search vibrant-3" aria-hidden="true"></i></span>
                                             User Sticker Search
                                         </h:link>
                                     </li>
                                     <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('012')}"
-                                            outcome="pretty:task/search"
-                                            styleClass="nk-menu-link">
+                                                outcome="pretty:task/search"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-play-circle vibrant-2" aria-hidden="true"></i></span>
                                             Active Tasks
                                         </h:link>
@@ -772,7 +772,7 @@
                         </li>
                         <li class="nk-menu-item has-dropdown">
                             <h:link rendered="#{loginBean.user.isSuperAdmin}"
-                                styleClass="nk-menu-link nk-menu-toggle">
+                                    styleClass="nk-menu-link nk-menu-toggle">
                                 <span class="menu-icon"><i class="fa fa-cogs vibrant-3" aria-hidden="true"></i></span>
                                 <span class="nk-menu-text">System setting </span>
                             </h:link>
@@ -791,7 +791,7 @@
 
                         <li class="nk-menu-item has-dropdown">
                             <h:link rendered="#{loginBean.user.isSuperAdmin}"
-                                styleClass="nk-menu-link nk-menu-toggle">
+                                    styleClass="nk-menu-link nk-menu-toggle">
                                 <span class="menu-icon"><i class="fa fa-user-cog primary-color" aria-hidden="true"></i></span>
                                 <span class="nk-menu-text">#{interfaceLabel.usersSettings}</span>
                             </h:link>
@@ -821,7 +821,7 @@
 
                         <li class="nk-menu-item has-dropdown">
                             <h:link rendered="#{loginBean.user.isSuperAdmin}"
-                                styleClass="nk-menu-link nk-menu-toggle">
+                                    styleClass="nk-menu-link nk-menu-toggle">
                                 <span class="menu-icon"><i class="fa fa-clipboard-check accent-color" aria-hidden="true"></i></span>
                                 <span class="nk-menu-text">Inspection Setting</span>
                             </h:link>
@@ -857,10 +857,10 @@
                                 </ul>
                             </div>
                         </li>
-                        
+
                         <li class="nk-menu-item has-dropdown">
                             <h:link rendered="#{loginBean.user.isSuperAdmin}"
-                                styleClass="nk-menu-link nk-menu-toggle">
+                                    styleClass="nk-menu-link nk-menu-toggle">
                                 <span class="menu-icon"><i class="fa fa-envelope-open-text vibrant-1" aria-hidden="true"></i></span>
                                 <span class="nk-menu-text">Correspondence setting</span>
                             </h:link>
@@ -917,7 +917,7 @@
                         </li>
                     </ul>
                     <!-- .nk-menu-list -->
-                    
+
 
 
                     <ul class="nk-menu-buttons flex-lg-row-reverse user-menu">
@@ -935,13 +935,13 @@
                                 <ul class="nk-menu-sub">
                                     <!-- زر تغيير كلمة المرور -->
                                     <li class="nk-menu-item">
-                                        <h:link outcome="/views/login/change-password" 
-                                               styleClass="nk-menu-link">
+                                        <h:link outcome="/views/login/change-password"
+                                                styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-key vibrant-1" aria-hidden="true"></i></span>
                                             <span>Change Password</span>
                                         </h:link>
                                     </li>
-                                    
+
                                     <!-- زر تسجيل الخروج -->
                                     <li class="nk-menu-item">
                                         <h:commandLink action="#{loginBean.logout()}" styleClass="nk-menu-link" immediate="true">
@@ -962,14 +962,14 @@
         <!-- .container -->
     </div>
     <!-- .nk-header-main -->
-    
+
     <p:idleMonitor timeout="600000">
         <p:ajax event="idle"
-            oncomplete="document.getElementById('form_header:commandButton_logOut').click();" />
+                oncomplete="document.getElementById('form_header:commandButton_logOut').click();" />
     </p:idleMonitor>
 
     <h:form id="form_header">
         <p:commandButton id="commandButton_logOut"
-            action="#{loginBean.logout()}" style="display:none;" immediate="true"/>
-    </h:form> 
-</ui:composition>  
+                         action="#{loginBean.logout()}" style="display:none;" immediate="true"/>
+    </h:form>
+</ui:composition>

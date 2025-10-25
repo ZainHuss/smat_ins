@@ -189,51 +189,58 @@ public class StickerManagementBean implements Serializable {
 		searchStickers();
 	}
 
-	public void generateStickers() {
-		try {
-			if (selectedUserAlias == null) {
-				UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldSelectUser"));
-				return;
-			}
+    public void generateStickers() {
+        try {
+            if (selectedUserAlias == null) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldSelectUser"));
+                return;
+            }
 
-			if (generatedStickerNum == null || generatedStickerNum <= 0) {
-				UtilityHelper
-						.addErrorMessage(localizationService.getErrorMessage().getString("youShouldEnterPositiveVal"));
-				return;
-			}
-			if (generatedStickerNum > 1000) {
-				UtilityHelper.addErrorMessage(
-						localizationService.getErrorMessage().getString("youShouldEnterValSmallThan1000"));
-				return;
-			}
+            if (generatedStickerNum == null || generatedStickerNum <= 0) {
+                UtilityHelper
+                        .addErrorMessage(localizationService.getErrorMessage().getString("youShouldEnterPositiveVal"));
+                return;
+            }
+            if (generatedStickerNum > 1000) {
+                UtilityHelper.addErrorMessage(
+                        localizationService.getErrorMessage().getString("youShouldEnterValSmallThan1000"));
+                return;
+            }
 
-			Calendar now = Calendar.getInstance();
-			int year = now.get(Calendar.YEAR);
-			int month = now.get(Calendar.MONTH) + 1;
-			int day = now.get(Calendar.DAY_OF_MONTH);
+            // إضافة تأخير بسيط لإظهار الأنيميشن
+            try {
+                Thread.sleep(1500); // تأخير 1.5 ثانية
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
 
-			for (int i = 0; i < generatedStickerNum; i++) {
-				Sticker sticker = new Sticker();
-				sticker.setSeq(stickerService.getLastSeq());
-				sticker.setSerialNo(
-						String.format("%d%02d%02d%04d", year, month, day, stickerService.getLastSerialID() + 1));
-				sticker.setStickerNo("SK" + String.format("%05d", stickerService.getLastStickerNo() + 1));
-				sticker.setSysUserByCreatedBy(loginBean.getUser());
-				sticker.setYear((short) year);
-				sticker.setIsUsed(false);
-				sticker.setIsPrinted(false);
-				sticker.setSysUserByForUser(selectedUserAlias.getSysUserBySysUser());
-				stickerService.save(sticker);
-			}
+            Calendar now = Calendar.getInstance();
+            int year = now.get(Calendar.YEAR);
+            int month = now.get(Calendar.MONTH) + 1;
+            int day = now.get(Calendar.DAY_OF_MONTH);
 
-			// بعد الإنشاء، نقوم بالبحث مرة أخرى لتحديث النتائج
-			searchStickers();
-			UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
-		} catch (Exception e) {
-			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
-			log.error("Failed to generate stickers", e);
-		}
-	}
+            for (int i = 0; i < generatedStickerNum; i++) {
+                Sticker sticker = new Sticker();
+                sticker.setSeq(stickerService.getLastSeq());
+                sticker.setSerialNo(
+                        String.format("%d%02d%02d%04d", year, month, day, stickerService.getLastSerialID() + 1));
+                sticker.setStickerNo("SK" + String.format("%05d", stickerService.getLastStickerNo() + 1));
+                sticker.setSysUserByCreatedBy(loginBean.getUser());
+                sticker.setYear((short) year);
+                sticker.setIsUsed(false);
+                sticker.setIsPrinted(false);
+                sticker.setSysUserByForUser(selectedUserAlias.getSysUserBySysUser());
+                stickerService.save(sticker);
+            }
+
+            // بعد الإنشاء، نقوم بالبحث مرة أخرى لتحديث النتائج
+            searchStickers();
+            UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+            log.error("Failed to generate stickers", e);
+        }
+    }
 
 	public void exportStickers() {
 		try {

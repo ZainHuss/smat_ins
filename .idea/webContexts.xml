@@ -6,6 +6,7 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/employee/emp-training-form.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/employee" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment/completed-tasks-search.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment/inspection-form.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/views/inspection/sticker/stickerManagement.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/inspection/sticker" />
       </map>
     </option>
   </component>
