@@ -22,146 +22,178 @@ import com.smat.ins.util.UtilityHelper;
 @ViewScoped
 public class CodingEquipmentCategoryBean implements Serializable {
 
-	// #region "CodingProperties"
-	private static final long serialVersionUID = 4600306662046762257L;
-	
-	private EquipmentCategory equipmentCategory;
+    // #region "CodingProperties"
+    private static final long serialVersionUID = 4600306662046762257L;
 
-	private List<EquipmentCategory> equipmentCategoryList;
+    private EquipmentCategory equipmentCategory;
 
-	private List<EquipmentCategory> selectedEquipmentCategoryList;
+    private List<EquipmentCategory> equipmentCategoryList;
 
-	
+    private List<EquipmentCategory> selectedEquipmentCategoryList;
 
-	private EquipmentCategoryService equipmentCategoryService;
-	private LocalizationService localizationService;
-	// #endregion
-	@PostConstruct
-	public void init() {
 
-		try {
-			equipmentCategory = new EquipmentCategory();
-			equipmentCategoryList= new ArrayList<EquipmentCategory>();
-			selectedEquipmentCategoryList= new ArrayList<EquipmentCategory>();
-			equipmentCategoryList=equipmentCategoryService.findAll();
-			
-		} catch (Exception e) {
-			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("errorDuringGetData"));
-			e.printStackTrace();
-		}
-	}
-	
-	public CodingEquipmentCategoryBean() {
-		equipmentCategoryService = (EquipmentCategoryService) BeanUtility.getBean("equipmentCategoryService");
-		localizationService = (LocalizationService) BeanUtility.getBean("localizationService");
-	}
-	
-	@PreDestroy
-	public void destroy() {
 
-	}
+    private EquipmentCategoryService equipmentCategoryService;
+    private LocalizationService localizationService;
+    // #endregion
+    @PostConstruct
+    public void init() {
 
-	public void openNew() {
+        try {
+            equipmentCategory = new EquipmentCategory();
+            equipmentCategoryList= new ArrayList<EquipmentCategory>();
+            selectedEquipmentCategoryList= new ArrayList<EquipmentCategory>();
+            equipmentCategoryList=equipmentCategoryService.findAll();
 
-		this.equipmentCategory = new EquipmentCategory();
-	}
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("errorDuringGetData"));
+            e.printStackTrace();
+        }
+    }
 
-	public boolean doValidate() {
-		boolean result = true;
-		if (equipmentCategory.getArabicName() == null || equipmentCategory.getArabicName().trim().isEmpty()) {
-			UtilityHelper.addWarnMessage(localizationService.getInterfaceLabel().getString("arabicName") + "  "
-					+ localizationService.getErrorMessage().getString("validateInput"));
-			result = false;
-		}
+    public CodingEquipmentCategoryBean() {
+        equipmentCategoryService = (EquipmentCategoryService) BeanUtility.getBean("equipmentCategoryService");
+        localizationService = (LocalizationService) BeanUtility.getBean("localizationService");
+    }
 
-		return result;
-	}
-	
-	public void save() {
-		if (doValidate()) {
-			try {
-				equipmentCategoryService.saveOrUpdate(equipmentCategory);
-				equipmentCategoryList=equipmentCategoryService.findAll();
-				UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
-				PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
-				PrimeFaces.current().executeScript("PF('widgetVarDetailDialog').hide()");
-			} catch (Exception e) {
-				UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
-				PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
-				e.printStackTrace();
-			}
-		}
-	}
+    @PreDestroy
+    public void destroy() {
 
-	public boolean hasSelectedEquipmentCategory() {
-		return this.selectedEquipmentCategoryList != null && !this.selectedEquipmentCategoryList.isEmpty();
-	}
-	
-	public String getDeleteButtonMessage() {
+    }
 
-		if (hasSelectedEquipmentCategory()) {
-			int size = this.selectedEquipmentCategoryList.size();
-			return size > 1 ? size + " " + localizationService.getInterfaceLabel().getString("equipmentCategoriesSelectedNum")
-					: localizationService.getInterfaceLabel().getString("oneEquipmentCategorySelected");
-		}
+    public void openNew() {
 
-		return localizationService.getInterfaceLabel().getString("delete");
-	}
+        this.equipmentCategory = new EquipmentCategory();
+    }
 
-	public void deleteEquipmentCategory() {
-		try {
+    public boolean doValidate() {
+        boolean result = true;
+        if (equipmentCategory.getArabicName() == null || equipmentCategory.getArabicName().trim().isEmpty()) {
+            UtilityHelper.addWarnMessage(localizationService.getInterfaceLabel().getString("arabicName") + "  "
+                    + localizationService.getErrorMessage().getString("validateInput"));
+            result = false;
+        }
 
-			equipmentCategoryService.delete(equipmentCategory);
-			this.equipmentCategory = null;
-			equipmentCategoryList = equipmentCategoryService.findAll();
-			UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
-			PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
-			PrimeFaces.current().executeScript("PF('widgetVarEquipmentCategory').clearFilters()");
-		} catch (Exception e) {
-			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
-			PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
-			e.printStackTrace();
-		}
-	}
+        return result;
+    }
 
-	public void deleteSelectedEquipmentCategory() {
-		try {   
-			equipmentCategoryService.delete(selectedEquipmentCategoryList);
-			this.selectedEquipmentCategoryList = null;
-			equipmentCategoryList = equipmentCategoryService.findAll();
-			UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
-			PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
-			PrimeFaces.current().executeScript("PF('widgetVarEquipmentCategory').clearFilters()");
-		} catch (Exception e) {
-			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
-			PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
-			e.printStackTrace();
-		}
+    public void save() {
+        if (doValidate()) {
+            try {
+                equipmentCategoryService.saveOrUpdate(equipmentCategory);
+                equipmentCategoryList=equipmentCategoryService.findAll();
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+                PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
+                PrimeFaces.current().executeScript("PF('widgetVarDetailDialog').hide()");
+            } catch (Exception e) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+                PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
+                e.printStackTrace();
+            }
+        }
+    }
 
-	}
+    public boolean hasSelectedEquipmentCategory() {
+        return this.selectedEquipmentCategoryList != null && !this.selectedEquipmentCategoryList.isEmpty();
+    }
 
-	public EquipmentCategory getEquipmentCategory() {
-		return equipmentCategory;
-	}
+    public String getDeleteButtonMessage() {
 
-	public void setEquipmentCategory(EquipmentCategory equipmentCategory) {
-		this.equipmentCategory = equipmentCategory;
-	}
+        if (hasSelectedEquipmentCategory()) {
+            int size = this.selectedEquipmentCategoryList.size();
+            return size > 1 ? size + " " + localizationService.getInterfaceLabel().getString("equipmentCategoriesSelectedNum")
+                    : localizationService.getInterfaceLabel().getString("oneEquipmentCategorySelected");
+        }
 
-	public List<EquipmentCategory> getEquipmentCategoryList() {
-		return equipmentCategoryList;
-	}
+        return localizationService.getInterfaceLabel().getString("delete");
+    }
 
-	public void setEquipmentCategoryList(List<EquipmentCategory> equipmentCategoryList) {
-		this.equipmentCategoryList = equipmentCategoryList;
-	}
+    public void deleteEquipmentCategory() {
+        try {
 
-	public List<EquipmentCategory> getSelectedEquipmentCategoryList() {
-		return selectedEquipmentCategoryList;
-	}
+            equipmentCategoryService.delete(equipmentCategory);
+            this.equipmentCategory = null;
+            equipmentCategoryList = equipmentCategoryService.findAll();
+            UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+            PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
+            PrimeFaces.current().executeScript("PF('widgetVarEquipmentCategory').clearFilters()");
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+            PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
+            e.printStackTrace();
+        }
+    }
 
-	public void setSelectedEquipmentCategoryList(List<EquipmentCategory> selectedEquipmentCategoryList) {
-		this.selectedEquipmentCategoryList = selectedEquipmentCategoryList;
-	}
+    public void deleteSelectedEquipmentCategory() {
+        try {
+            equipmentCategoryService.delete(selectedEquipmentCategoryList);
+            this.selectedEquipmentCategoryList = null;
+            equipmentCategoryList = equipmentCategoryService.findAll();
+            UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+            PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
+            PrimeFaces.current().executeScript("PF('widgetVarEquipmentCategory').clearFilters()");
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+            PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
+            e.printStackTrace();
+        }
+
+    }
+
+    // يستخدم EquipmentCategory الممرّر من الـ xhtml
+    public void toggleDisabled(EquipmentCategory rowCategory) {
+        try {
+            if (rowCategory == null || rowCategory.getId() == null) {
+                UtilityHelper.addWarnMessage("الرجاء اختيار سجل صحيح");
+                return;
+            }
+
+            // نعيد جلب الكيان من DB للحصول على managed instance
+            EquipmentCategory ec = equipmentCategoryService.findById(rowCategory.getId());
+            if (ec == null) {
+                UtilityHelper.addWarnMessage("السجل غير موجود");
+                return;
+            }
+
+            ec.setDisabled(ec.getDisabled() == null ? Boolean.TRUE : !ec.getDisabled());
+            equipmentCategoryService.saveOrUpdate(ec);
+
+            // نعيد تحميل القائمة لعرض الحالة الجديدة
+            equipmentCategoryList = equipmentCategoryService.findAll();
+
+            PrimeFaces.current().ajax().update("form:messages", "form:dataTable-equipmentCategory");
+            UtilityHelper.addInfoMessage("disabled successfully");
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage("حدث خطأ أثناء الحفظ");
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    public EquipmentCategory getEquipmentCategory() {
+        return equipmentCategory;
+    }
+
+    public void setEquipmentCategory(EquipmentCategory equipmentCategory) {
+        this.equipmentCategory = equipmentCategory;
+    }
+
+    public List<EquipmentCategory> getEquipmentCategoryList() {
+        return equipmentCategoryList;
+    }
+
+    public void setEquipmentCategoryList(List<EquipmentCategory> equipmentCategoryList) {
+        this.equipmentCategoryList = equipmentCategoryList;
+    }
+
+    public List<EquipmentCategory> getSelectedEquipmentCategoryList() {
+        return selectedEquipmentCategoryList;
+    }
+
+    public void setSelectedEquipmentCategoryList(List<EquipmentCategory> selectedEquipmentCategoryList) {
+        this.selectedEquipmentCategoryList = selectedEquipmentCategoryList;
+    }
 
 }

@@ -1029,8 +1029,37 @@
 		.template-scroll-container::-webkit-scrollbar-thumb:hover {
 		    background: linear-gradient(90deg, var(--gold-500), var(--gold-700));
 		}
+        /* إجبار العرض المطلوب، متوافق مع PrimeFaces */
+        .smat-select-short.ui-selectonemenu {
+            width: 140px !important;      /* غيّر 140px حسب حاجتك (مثلاً 160px أو 200px) */
+            min-width: 140px !important;
+            max-width: none !important;
+            display: inline-block;
+            box-sizing: border-box;
+            vertical-align: middle;
+        }
 
-		</style>
+        /* تأكد أن الليبل يستخدم كامل المساحة ولا يقطعها محدد آخر */
+        .smat-select-short .ui-selectonemenu-label,
+        .smat-select-short .ui-selectonemenu-label .ui-selectonemenu-value {
+            display: inline-block;
+            width: calc(100% - 1.5rem);   /* يحجز مكان للسهم */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* responsive: على الموبايل يرجع يعرض كامل العمود */
+        @media (max-width: 768px) {
+            .smat-select-short.ui-selectonemenu {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+        }
+
+
+
+        </style>
     </ui:define>
 <ui:define name="section-content">
         <h:form id="form">
@@ -1245,7 +1274,8 @@
                                                 <p:selectOneMenu
                                                     rendered="#{columnContent.generalEquipmentItem.itemType.code eq '04'}"
                                                     style="margin-left:2px;margin-right:2px;" dynamic="true"
-                                                    immediate="true" value="#{columnContent.contentValue}">
+                                                    immediate="true" value="#{columnContent.contentValue}"
+                                                    styleClass="smat-select-short">
 
                                                     <f:selectItems
                                                         itemLabel="#{checklistDetailDataSource.itemValue} "

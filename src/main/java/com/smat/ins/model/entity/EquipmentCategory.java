@@ -14,136 +14,148 @@ import com.smat.ins.util.UtilityHelper;
 @Audited
 public class EquipmentCategory implements java.io.Serializable {
 
-	// Fields
+    // Fields
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7260699182068020409L;
-	private Short id;
-	private String arabicName;
-	private String englishName;
-	private String arabicDescription;
-	private String englishDescription;
-	private String code;
-	private Set tasks = new HashSet(0);
-	private Set equipmentInspectionForms = new HashSet(0);
-	private Set formTemplates = new HashSet(0);
+    /**
+     *
+     */
+    private static final long serialVersionUID = -7260699182068020409L;
+    private Short id;
+    private String arabicName;
+    private String englishName;
+    private String arabicDescription;
+    private String englishDescription;
+    private String code;
+    private Set tasks = new HashSet(0);
+    private Set equipmentInspectionForms = new HashSet(0);
+    private Set formTemplates = new HashSet(0);
 
-	// Constructors
+    // NEW FIELD
+    private Boolean disabled = false;
 
-	/** default constructor */
-	public EquipmentCategory() {
-	}
+    // Constructors
 
-	/** full constructor */
-	public EquipmentCategory(String arabicName, String englishName, String arabicDescription, String englishDescription,
-			String code, Set tasks, Set equipmentInspectionForms, Set formTemplates) {
-		this.arabicName = arabicName;
-		this.englishName = englishName;
-		this.arabicDescription = arabicDescription;
-		this.englishDescription = englishDescription;
-		this.code = code;
-		this.tasks = tasks;
-		this.equipmentInspectionForms = equipmentInspectionForms;
-		this.formTemplates = formTemplates;
-	}
+    /** default constructor */
+    public EquipmentCategory() {
+    }
 
-	// Property accessors
+    /** full constructor */
+    public EquipmentCategory(String arabicName, String englishName, String arabicDescription, String englishDescription,
+                             String code, Set tasks, Set equipmentInspectionForms, Set formTemplates) {
+        this.arabicName = arabicName;
+        this.englishName = englishName;
+        this.arabicDescription = arabicDescription;
+        this.englishDescription = englishDescription;
+        this.code = code;
+        this.tasks = tasks;
+        this.equipmentInspectionForms = equipmentInspectionForms;
+        this.formTemplates = formTemplates;
+    }
 
-	public Short getId() {
-		return this.id;
-	}
+    // Property accessors
 
-	public void setId(Short id) {
-		this.id = id;
-	}
+    public Short getId() {
+        return this.id;
+    }
 
-	public String getArabicName() {
-		return this.arabicName;
-	}
+    public void setId(Short id) {
+        this.id = id;
+    }
 
-	public void setArabicName(String arabicName) {
-		this.arabicName = arabicName;
-	}
+    public String getArabicName() {
+        return this.arabicName;
+    }
 
-	public String getEnglishName() {
-		return this.englishName;
-	}
+    public void setArabicName(String arabicName) {
+        this.arabicName = arabicName;
+    }
 
-	public void setEnglishName(String englishName) {
-		this.englishName = englishName;
-	}
+    public String getEnglishName() {
+        return this.englishName;
+    }
 
-	public String getArabicDescription() {
-		return this.arabicDescription;
-	}
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
+    }
 
-	public void setArabicDescription(String arabicDescription) {
-		this.arabicDescription = arabicDescription;
-	}
+    public String getArabicDescription() {
+        return this.arabicDescription;
+    }
 
-	public String getEnglishDescription() {
-		return this.englishDescription;
-	}
+    public void setArabicDescription(String arabicDescription) {
+        this.arabicDescription = arabicDescription;
+    }
 
-	public void setEnglishDescription(String englishDescription) {
-		this.englishDescription = englishDescription;
-	}
+    public String getEnglishDescription() {
+        return this.englishDescription;
+    }
 
-	public String getCode() {
-		return this.code;
-	}
+    public void setEnglishDescription(String englishDescription) {
+        this.englishDescription = englishDescription;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return this.code;
+    }
 
-	public Set getTasks() {
-		return this.tasks;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setTasks(Set tasks) {
-		this.tasks = tasks;
-	}
+    public Set getTasks() {
+        return this.tasks;
+    }
 
-	public Set getEquipmentInspectionForms() {
-		return this.equipmentInspectionForms;
-	}
+    public void setTasks(Set tasks) {
+        this.tasks = tasks;
+    }
 
-	public void setEquipmentInspectionForms(Set equipmentInspectionForms) {
-		this.equipmentInspectionForms = equipmentInspectionForms;
-	}
+    public Set getEquipmentInspectionForms() {
+        return this.equipmentInspectionForms;
+    }
 
-	public Set getFormTemplates() {
-		return this.formTemplates;
-	}
+    public void setEquipmentInspectionForms(Set equipmentInspectionForms) {
+        this.equipmentInspectionForms = equipmentInspectionForms;
+    }
 
-	public void setFormTemplates(Set formTemplates) {
-		this.formTemplates = formTemplates;
-	}
+    public Set getFormTemplates() {
+        return this.formTemplates;
+    }
 
-	@Override
-	public boolean equals(Object other) {
+    public void setFormTemplates(Set formTemplates) {
+        this.formTemplates = formTemplates;
+    }
 
-		return (other instanceof EquipmentCategory) && (id != null) ? id.equals(((EquipmentCategory) other).id)
-				: (other == this);
-	}
+    // NEW getter/setter for disabled
+    public Boolean getDisabled() {
+        return this.disabled;
+    }
 
-	@Override
-	public int hashCode() {
-		return (id != null) ? (this.getClass().hashCode() + id.hashCode()) : super.hashCode();
-	}
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+    @Override
+    public boolean equals(Object other) {
 
-	public String getName() {
-		if (UtilityHelper.getLocale().getLanguage().contains("en"))
-			return getEnglishName();
-		else
-			return getArabicName();
-	}
+        return (other instanceof EquipmentCategory) && (id != null) ? id.equals(((EquipmentCategory) other).id)
+                : (other == this);
+    }
+
+    @Override
+    public int hashCode() {
+        return (id != null) ? (this.getClass().hashCode() + id.hashCode()) : super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    public String getName() {
+        if (UtilityHelper.getLocale().getLanguage().contains("en"))
+            return getEnglishName();
+        else
+            return getArabicName();
+    }
 }

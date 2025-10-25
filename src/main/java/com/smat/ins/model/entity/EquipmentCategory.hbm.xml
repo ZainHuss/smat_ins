@@ -25,6 +25,9 @@
         <property name="code" type="java.lang.String">
             <column name="code" length="50" />
         </property>
+        <property name="disabled" type="java.lang.Boolean">
+            <column name="disabled" not-null="true" sql-type="TINYINT(1)" />
+        </property>
         <set name="tasks" inverse="true">
             <key>
                 <column name="equipment_category" />

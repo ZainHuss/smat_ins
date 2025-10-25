@@ -1080,7 +1080,14 @@ public class InspectionFormBean implements Serializable {
 
             byte[] signtureReviewedByPlaceholderByte = equipmentInspectionForm != null && equipmentInspectionForm.getSysUserByReviewedBy() != null
                     ? equipmentInspectionForm.getSysUserByReviewedBy().getSignturePhoto() : null;
-
+            Bookmark bookmarkInspectImg = document.getRange().getBookmarks().get("inspectedImg");
+            if (bookmarkInspectImg != null && signatureInspecByPlaceholderByte != null) {
+                Shape shape = new Shape(document, ShapeType.IMAGE);
+                shape.getImageData().setImageBytes(signatureInspecByPlaceholderByte);
+                shape.setWidth(160);
+                shape.setHeight(40);
+                bookmarkInspectImg.getBookmarkStart().getParentNode().appendChild(shape);
+            }
             Bookmark bookmarkInspectByImg = document.getRange().getBookmarks().get("inspectedByImg");
             if (bookmarkInspectByImg != null && signatureInspecByPlaceholderByte != null) {
                 Shape shape = new Shape(document, ShapeType.IMAGE);

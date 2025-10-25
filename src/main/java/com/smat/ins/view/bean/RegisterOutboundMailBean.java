@@ -350,11 +350,20 @@ public class RegisterOutboundMailBean implements Serializable {
 		this.companies = companies;
 	}
 
-	public List<EquipmentCategory> getEquipmentCategories() {
-		return equipmentCategories;
-	}
+    public List<EquipmentCategory> getEquipmentCategories() {
+        if (this.equipmentCategories == null) {
+            try {
+                this.equipmentCategories = equipmentCategoryService.findAllEnabled();
+            } catch (Exception e) {
+                this.equipmentCategories = new ArrayList<>();
+                e.printStackTrace();
+            }
+        }
+        return this.equipmentCategories;
+    }
 
-	public void setEquipmentCategories(List<EquipmentCategory> equipmentCategories) {
+
+    public void setEquipmentCategories(List<EquipmentCategory> equipmentCategories) {
 		this.equipmentCategories = equipmentCategories;
 	}
 
@@ -579,8 +588,10 @@ public class RegisterOutboundMailBean implements Serializable {
 		priorityTypeList = priorityTypeService.findAll();
 		serviceTypes = serviceTypeService.findAll();
 		companies = companyService.findAll();
-		equipmentCategories = equipmentCategoryService.getCatWithTemplateCreated();
-		correspondenceTypeList = correspondenceTypeService.findAll();
+        // load only enabled equipment categories (not disabled ones)
+        equipmentCategories = equipmentCategoryService.findAllEnabled();
+
+        correspondenceTypeList = correspondenceTypeService.findAll();
 		setPurposeTypeList(purposeTypeService.findAll());
 
 		purposeType = purposeTypeService.findByUniqueField("code", "03");
@@ -834,30 +845,38 @@ public class RegisterOutboundMailBean implements Serializable {
 		return "";
 	}
 
-	public void registerNewCorrespondence() throws Exception {
-		if (!FacesContext.getCurrentInstance().isPostback()) {
+    public void registerNewCorrespondence() throws Exception {
+        if (!FacesContext.getCurrentInstance().isPostback()) {
 
-			if (divanListByUser != null && !divanListByUser.isEmpty())
-				divan = divanListByUser.get(0);
-			boxType = boxTypeService.findByUniqueField("enCode", "OUT");
-			seq = correspondenceService.getLastSeq(boxType.getEnCode(), divan.getId());
+            if (divanListByUser != null && !divanListByUser.isEmpty())
+                divan = divanListByUser.get(0);
+            boxType = boxTypeService.findByUniqueField("enCode", "OUT");
+            seq = correspondenceService.getLastSeq(boxType.getEnCode(), divan.getId());
 
-			correspondence.setSeq(seq);
-			correspondence.setCorrespondenceState(correspondenceState);
-			correspondence.setBoxType(boxType);
-			correspondence.setCreatedDate(Calendar.getInstance().getTime());
-			correspondence.setCorrespondenceDate(Calendar.getInstance().getTime());
-			correspondence.setYear(Calendar.getInstance().get(Calendar.YEAR));
+            correspondence.setSeq(seq);
+            correspondence.setCorrespondenceState(correspondenceState);
+            correspondence.setBoxType(boxType);
+            correspondence.setCreatedDate(Calendar.getInstance().getTime());
+            correspondence.setCorrespondenceDate(Calendar.getInstance().getTime());
+            correspondence.setYear(Calendar.getInstance().get(Calendar.YEAR));
 
-			correspondence.setOrganizationByDivan(divan);
-			correspondence.setOrganizationByOrganization(null);
-			correspondence.setOrganizationByRootOrganization(null);
-			correspondence.setUserAlias(null);
-			correspondence.setSysUserByCreatorSysUser(sysUserLogin);
+            correspondence.setOrganizationByDivan(divan);
+            correspondence.setOrganizationByOrganization(null);
+            correspondence.setOrganizationByRootOrganization(null);
+            correspondence.setUserAlias(null);
+            correspondence.setSysUserByCreatorSysUser(sysUserLogin);
 
-		}
+            // NEW: ensure we load only enabled equipment categories for the task register view
+            try {
+                this.equipmentCategories = equipmentCategoryService.findAllEnabled();
+            } catch (Exception e) {
+                this.equipmentCategories = new ArrayList<>();
+                e.printStackTrace();
+            }
+        }
 
-	}
+    }
+
 
 	public void newCorrespondence() throws Exception {
 		correspondence = new Correspondence();

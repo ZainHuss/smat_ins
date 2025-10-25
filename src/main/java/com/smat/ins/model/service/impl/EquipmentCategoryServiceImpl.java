@@ -11,17 +11,22 @@ import com.smat.ins.model.service.EquipmentCategoryService;
 import com.smat.ins.model.entity.EquipmentCategory;
 
 public class EquipmentCategoryServiceImpl extends
-		GenericServiceImpl<EquipmentCategory, EquipmentCategoryDao, Short> implements   EquipmentCategoryService {
+        GenericServiceImpl<EquipmentCategory, EquipmentCategoryDao, Short> implements   EquipmentCategoryService {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2182663931097235633L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -2182663931097235633L;
 
-	@Override
-	public List<EquipmentCategory> getCatWithTemplateCreated() {
-		// TODO Auto-generated method stub
-		return dao.getCatWithTemplateCreated();
-	}
+    @Override
+    public List<EquipmentCategory> getCatWithTemplateCreated() {
+        // TODO Auto-generated method stub
+        return dao.getCatWithTemplateCreated();
+    }
+
+    @Override
+    public List<EquipmentCategory> findAllEnabled() {
+        return dao.findAllEnabled();
+    }
 
 }

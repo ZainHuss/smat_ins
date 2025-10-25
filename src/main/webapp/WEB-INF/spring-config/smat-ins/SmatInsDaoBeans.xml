@@ -59,6 +59,8 @@
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
 
+
+
 	<bean name="cabinetFolderDao" class="com.smat.ins.model.dao.impl.CabinetFolderDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
@@ -357,5 +359,9 @@
 	<bean name="workingGroupDao" class="com.smat.ins.model.dao.impl.WorkingGroupDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
+
+
+
+
 
 </beans>

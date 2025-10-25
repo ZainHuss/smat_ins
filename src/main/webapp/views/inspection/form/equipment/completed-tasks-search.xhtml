@@ -1,724 +1,1251 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:pe="http://primefaces.org/ui/extensions"
-    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
-    xmlns:fn="http://java.sun.com/jsp/jstl/functions" 
-    template="/WEB-INF/template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                template="/WEB-INF/template.xhtml">
 
-<ui:define name="head">
-    <h:outputStylesheet library="#{appSetting.resourceLib}" name="css/rtl-support.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Exo+2:wght@400;700&amp;family=Rajdhani:wght@400;700&amp;display=swap" rel="stylesheet" />    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <style>
-:root {
-    --lux-blue-dark: #183153;
-    --lux-blue-main: #2463a7;
-    --lux-blue-light: #f4f8fb;
-    --lux-blue-muted: #e2eaf3;
-    --lux-border: #e0e7ef;
-    --lux-card-bg: #fff;
-    --lux-shadow: 0 2px 12px 0 rgba(24,49,83,0.06);
-    --lux-shadow-hover: 0 4px 24px 0 rgba(24,49,83,0.10);
-    --lux-radius: 14px;
-    --lux-font-primary: 'Cairo', 'Montserrat', 'Exo 2', sans-serif;
-    --lux-font-secondary: 'Montserrat', sans-serif;
-    --lux-text-main: #1a2233;
-    --lux-text-muted: #7b8ca7;
-    --lux-btn-bg: #2463a7;
-    --lux-btn-bg-hover: #183153;
-    --lux-btn-bg-secondary: #e2eaf3;
-    --lux-btn-bg-success: #e0f2fe;
-    --lux-btn-text: #fff;
-    --lux-btn-text-secondary: #2463a7;
-    --lux-btn-text-success: #2463a7;
-    --lux-transition: all 0.28s cubic-bezier(.4,0,.2,1);
-}
+    <ui:define name="head">
+        <h:outputStylesheet library="#{appSetting.resourceLib}" name="css/rtl-support.css" />
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Exo+2:wght@400;700&amp;family=Rajdhani:wght@400;700&amp;display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+        <style>
+            :root {
+                --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                --card-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+                --light-bg: #f8f9fa;
+                --card-bg: rgba(255, 255, 255, 0.9);
+                --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+                --border-radius: 16px;
+                --font-primary: 'Cairo', 'Montserrat', 'Exo 2', sans-serif;
+                --font-secondary: 'Montserrat', sans-serif;
+                --text-dark: #2d3748;
+                --text-muted: #718096;
+                --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
 
-.lux-badge {
-    padding: 0.3rem 0.8rem;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-align: center;
-    min-width: 70px;
-    justify-content: center;
-    font-family: var(--lux-font-secondary);
-    letter-spacing: 0.5px;
-    background: var(--lux-blue-light);
-    color: var(--lux-blue-main);
-    border: 1px solid var(--lux-blue-main);
-    box-shadow: none;
-}
-.lux-badge-silver {
-    background: var(--lux-blue-muted);
-    color: var(--lux-blue-dark);
-    border: 1px solid var(--lux-blue-main);
-}
+            .lux-badge {
+                padding: 0.3rem 0.8rem;
+                border-radius: 50px;
+                font-size: 0.85rem;
+                font-weight: 800;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                text-align: center;
+                min-width: 70px;
+                justify-content: center;
+                font-family: var(--font-secondary);
+                letter-spacing: 0.5px;
+                background: var(--primary-gradient);
+                color: white;
+                border: none;
+                box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+                transition: var(--transition);
+            }
+            .lux-badge:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+            }
 
-body {
-    font-family: var(--lux-font-primary);
-    background: var(--lux-blue-light);
-    color: var(--lux-text-main);
-    min-height: 100vh;
-    background-image: none;
-    position: relative;
-    overflow-x: hidden;
-}
+            body {
+                font-family: var(--font-primary);
+                background: var(--light-bg);
+                color: var(--text-dark);
+                min-height: 100vh;
+                background-image: none;
+                position: relative;
+                overflow-x: hidden;
+            }
 
-body::before {
-    display: none;
-}
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                z-index: -1;
+            }
 
-.lux-glitter {
-    display: none;
-}
+            .lux-glitter {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: -1;
+                opacity: 0.6;
+            }
 
-.lux-search-container {
-    max-width: 1400px; /* Increased to accommodate more columns */
-    margin: 2rem auto 1rem auto;
-    padding: 1.5rem 1rem;
-    position: relative;
-    z-index: 1;
-}
+            .lux-search-container {
+                max-width: 1400px;
+                margin: 2rem auto 1rem auto;
+                padding: 1.5rem 1rem;
+                position: relative;
+                z-index: 1;
+            }
 
-.lux-search-card {
-    border-radius: var(--lux-radius);
-    box-shadow: var(--lux-shadow);
-    padding: 1.5rem 1.5rem 1.2rem 1.5rem;
-    background: var(--lux-card-bg);
-    border: 1.5px solid var(--lux-border);
-    position: relative;
-    overflow: hidden;
-    transition: var(--lux-transition);
-    margin-bottom: 1.2rem;
-}
-.lux-search-card:hover {
-    box-shadow: var(--lux-shadow-hover);
-    border-color: var(--lux-blue-main);
-}
+            .lux-search-card {
+                border-radius: var(--border-radius);
+                box-shadow: var(--card-shadow);
+                padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+                background: var(--card-bg);
+                backdrop-filter: blur(10px);
+                border: none;
+                position: relative;
+                overflow: hidden;
+                transition: var(--transition);
+                margin-bottom: 1.2rem;
+                background-image: var(--card-gradient);
+            }
+            .lux-search-card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-5px);
+            }
 
-.lux-search-header {
-    font-size: 1.25rem;
-    font-weight: 900;
-    font-family: var(--lux-font-secondary);
-    color: var(--lux-blue-dark);
-    letter-spacing: 1.2px;
-    margin-bottom: 1.1rem;
-    display: flex; align-items: center; gap: 0.7rem;
-}
-.lux-search-header i {
-    font-size: 1.2rem;
-    color: var(--lux-blue-main);
-    margin-right: 0.2rem;
-}
+            .lux-search-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                background: var(--primary-gradient);
+            }
 
-.lux-fields-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* ثلاثة حقول لكل صف */
-    gap: 1.1rem;
-    margin-top: 1rem;
-    align-items: end;
-    width: 100%;
-}
+            .lux-search-header {
+                font-size: 1.5rem;
+                font-weight: 900;
+                font-family: var(--font-secondary);
+                color: var(--text-dark);
+                letter-spacing: 1.2px;
+                margin-bottom: 1.1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.7rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .lux-search-header i {
+                font-size: 1.5rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-right: 0.2rem;
+            }
 
-.lux-field-group {
-    display: flex; flex-direction: column; gap: 0.35rem; position: relative;
-}
-.lux-field-label {
-    font-size: 0.97rem;
-    font-weight: 700;
-    color: var(--lux-blue-main);
-    font-family: var(--lux-font-secondary);
-    letter-spacing: 0.5px;
-    margin-bottom: 0.2rem;
-    padding-left: 0.5rem;
-    border-left: 2.5px solid var(--lux-blue-main);
-}
+            .lux-fields-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.1rem;
+                margin-top: 1rem;
+                align-items: end;
+                width: 100%;
+            }
 
-.ui-selectonemenu, .ui-inputtext, .ui-calendar input {
-    height: 40px !important;
-    border-radius: var(--lux-radius) !important;
-    border: 1.2px solid var(--lux-border) !important;
-    background: var(--lux-blue-light) !important;
-    color: var(--lux-text-main) !important;
-    font-size: 1.01rem !important;
-    font-family: var(--lux-font-primary) !important;
-    box-shadow: none;
-    transition: var(--lux-transition) !important;
-    padding: 0.5rem 0.9rem !important;
-}
-.ui-selectonemenu:focus, .ui-inputtext:focus, .ui-calendar input:focus {
-    border-color: var(--lux-blue-main) !important;
-    box-shadow: 0 0 8px #2463a71a !important;
-    outline: none !important;
-    background: #fff !important;
-}
+            .lux-field-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.35rem;
+                position: relative;
+            }
+            .lux-field-label {
+                font-size: 0.97rem;
+                font-weight: 700;
+                color: var(--text-dark);
+                font-family: var(--font-secondary);
+                letter-spacing: 0.5px;
+                margin-bottom: 0.2rem;
+                padding-left: 0.5rem;
+                border-left: 3px solid;
+                border-image: var(--primary-gradient);
+                border-image-slice: 1;
+            }
 
-.lux-btn-group {
-    display: flex; justify-content: flex-end; gap: 0.7rem;
-    margin-top: 1.5rem; padding-top: 1rem;
-    border-top: 1px solid var(--lux-border);
-}
-.ui-button {
-    border-radius: var(--lux-radius) !important;
-    font-family: var(--lux-font-secondary) !important;
-    font-weight: 700 !important;
-    font-size: 0.98rem !important;
-    min-height: 38px; padding: 0.5rem 1.2rem !important;
-    letter-spacing: 0.5px;
-    box-shadow: none !important;
-    border: none !important;
-    transition: var(--lux-transition) !important;
-    position: relative; overflow: hidden; z-index: 1;
-}
-.ui-button:before {
-    display: none;
-}
-.ui-button-primary {
-    background: var(--lux-btn-bg) !important;
-    color: var(--lux-btn-text) !important;
-}
-.ui-button-primary:hover {
-    background: var(--lux-btn-bg-hover) !important;
-    color: #fff !important;
-}
-.ui-button-secondary {
-    background: var(--lux-btn-bg-secondary) !important;
-    color: var(--lux-btn-text-secondary) !important;
-    border: 1.2px solid var(--lux-blue-main) !important;
-}
-.ui-button-secondary:hover {
-    background: #fff !important;
-    color: var(--lux-blue-main) !important;
-}
-.ui-button-success {
-    background: var(--lux-btn-bg-success) !important;
-    color: var(--lux-btn-text-success) !important;
-}
-.ui-button-success:hover {
-    background: var(--lux-blue-main) !important;
-    color: #fff !important;
-}
+            .ui-selectonemenu, .ui-inputtext, .ui-calendar input {
+                height: 45px !important;
+                border-radius: 12px !important;
+                border: 1.5px solid transparent !important;
+                background: rgba(255, 255, 255, 0.8) !important;
+                color: var(--text-dark) !important;
+                font-size: 1.01rem !important;
+                font-family: var(--font-primary) !important;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                transition: var(--transition) !important;
+                padding: 0.5rem 0.9rem !important;
+            }
+            .ui-selectonemenu:focus, .ui-inputtext:focus, .ui-calendar input:focus {
+                border-color: transparent !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), 0 6px 15px rgba(0, 0, 0, 0.1) !important;
+                outline: none !important;
+                transform: translateY(-2px);
+            }
 
-.lux-stats-card {
-    background: var(--lux-card-bg);
-    border-radius: var(--lux-radius);
-    padding: 1.2rem 1rem;
-    margin-bottom: 1.2rem;
-    box-shadow: var(--lux-shadow);
-    border: 1.5px solid var(--lux-border);
-    position: relative; overflow: hidden;
-}
-.lux-stats-card::after {
-    display: none;
-}
-.lux-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.1rem;
-}
-.lux-stat-item {
-    text-align: center;
-    padding: 0.9rem 0.5rem;
-    background: var(--lux-blue-light);
-    border-radius: var(--lux-radius);
-    border: 1px solid var(--lux-border);
-    box-shadow: none;
-    position: relative;
-    overflow: hidden;
-    transition: var(--lux-transition);
-}
-.lux-stat-item:hover {
-    border-color: var(--lux-blue-main);
-    box-shadow: 0 0 12px #2463a71a;
-}
-.lux-stat-number {
-    font-size: 1.5rem;
-    font-weight: 900;
-    color: var(--lux-blue-main);
-    font-family: var(--lux-font-secondary);
-    margin-bottom: 0.3rem;
-}
-.lux-stat-label {
-    font-size: 0.98rem;
-    color: var(--lux-blue-dark);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-}
+            .lux-btn-group {
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.7rem;
+                margin-top: 1.5rem;
+                padding-top: 1rem;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            .ui-button {
+                border-radius: 12px !important;
+                font-family: var(--font-secondary) !important;
+                font-weight: 700 !important;
+                font-size: 0.98rem !important;
+                min-height: 42px;
+                padding: 0.5rem 1.5rem !important;
+                letter-spacing: 0.5px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+                border: none !important;
+                transition: var(--transition) !important;
+                position: relative;
+                overflow: hidden;
+                z-index: 1;
+            }
+            .ui-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: all 0.6s;
+                z-index: -1;
+            }
+            .ui-button:hover::before {
+                left: 100%;
+            }
+            .ui-button-primary {
+                background: var(--primary-gradient) !important;
+                color: white !important;
+            }
+            .ui-button-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
+            }
+            .ui-button-secondary {
+                background: var(--secondary-gradient) !important;
+                color: white !important;
+            }
+            .ui-button-secondary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4) !important;
+            }
+            .ui-button-success {
+                background: var(--success-gradient) !important;
+                color: white !important;
+            }
+            .ui-button-success:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4) !important;
+            }
 
-.lux-results-table {
-    border-radius: var(--lux-radius);
-    overflow: auto; /* Changed from hidden to auto for horizontal scrolling */
-    box-shadow: var(--lux-shadow);
-    background: var(--lux-card-bg);
-    border: 1.5px solid var(--lux-border);
-    margin-top: 1.1rem;
-    position: relative;
-}
-.lux-results-table::after {
-    display: none;
-}
+            .lux-stats-card {
+                background: var(--card-bg);
+                border-radius: var(--border-radius);
+                padding: 1.2rem 1rem;
+                margin-bottom: 1.2rem;
+                box-shadow: var(--card-shadow);
+                border: none;
+                position: relative;
+                overflow: hidden;
+                background-image: var(--card-gradient);
+                transition: var(--transition);
+            }
+            .lux-stats-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--card-shadow-hover);
+            }
+            .lux-stats-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                background: var(--warning-gradient);
+            }
+            .lux-stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1.1rem;
+            }
+            .lux-stat-item {
+                text-align: center;
+                padding: 1.2rem 0.5rem;
+                background: rgba(255, 255, 255, 0.7);
+                border-radius: 12px;
+                border: none;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                position: relative;
+                overflow: hidden;
+                transition: var(--transition);
+            }
+            .lux-stat-item:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                background: rgba(255, 255, 255, 0.9);
+            }
+            .lux-stat-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                background: var(--primary-gradient);
+            }
+            .lux-stat-number {
+                font-size: 1.8rem;
+                font-weight: 900;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-family: var(--font-secondary);
+                margin-bottom: 0.3rem;
+            }
+            .lux-stat-label {
+                font-size: 0.98rem;
+                color: var(--text-dark);
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.7px;
+            }
 
-.ui-datatable {
-    background: transparent !important;
-    border: none !important;
-    width: 100% !important;
-    font-size: 0.97rem !important;
-    min-width: 1400px; /* Increased minimum width to accommodate all columns including Organization */
-}
-.ui-datatable .ui-datatable-header {
-    background: var(--lux-blue-light) !important;
-    color: var(--lux-blue-dark) !important;
-    font-weight: 900;
-    font-size: 1rem;
-    font-family: var(--lux-font-secondary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border: none !important;
-    padding: 0.8rem !important;
-    text-shadow: none;
-}
-.ui-datatable .ui-paginator {
-    background: var(--lux-blue-light) !important;
-    border: none !important;
-    padding: 0.7rem !important;
-    border-top: 1px solid var(--lux-border) !important;
-    color: var(--lux-blue-main) !important;
-}
-.ui-datatable .ui-datatable-data tr {
-    background: var(--lux-blue-light) !important;
-    transition: var(--lux-transition);
-}
-.ui-datatable .ui-datatable-data tr.ui-state-hover {
-    background: var(--lux-blue-muted) !important;
-    box-shadow: none;
-}
-.ui-datatable .ui-datatable-data>tr>td {
-    padding: 0.7rem 0.8rem !important;
-    border: none !important;
-    border-bottom: 1px solid var(--lux-border) !important;
-    font-size: 0.97rem;
-    font-weight: 500;
-    color: var(--lux-text-main);
-    font-family: var(--lux-font-primary);
-    vertical-align: middle;
-    word-wrap: break-word;
-    max-width: 180px; /* Reduced to accommodate more columns */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-/* Special styling for Organization column to ensure it's visible */
-.ui-datatable .ui-datatable-data>tr>td.lux-org-column {
-    max-width: 200px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-}
-.ui-datatable .ui-datatable-thead>tr>th {
-    background: var(--lux-blue-light) !important;
-    color: var(--lux-blue-main) !important;
-    border: none !important;
-    padding: 0.7rem 0.8rem !important;
-    font-weight: 900;
-    font-size: 0.97rem;
-    font-family: var(--lux-font-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    border-bottom: 2px solid var(--lux-blue-main) !important;
-    text-shadow: none;
-}
-.lux-table-icon {
-    font-size: 1rem;
-    width: 24px; height: 24px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 50%;
-    background: var(--lux-blue-muted);
-    color: var(--lux-blue-main);
-    margin-left: 0.2rem;
-}
-.lux-action-buttons {
-    display: flex; gap: 0.4rem; justify-content: center;
-}
-.lux-action-btn {
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--lux-blue-muted);
-    color: var(--lux-blue-main);
-    border: 1px solid var(--lux-blue-main);
-    transition: var(--lux-transition);
-    font-size: 1rem;
-}
-.lux-action-btn:hover {
-    background: var(--lux-blue-main);
-    color: #fff;
-    border-color: var(--lux-blue-dark);
-    transform: scale(1.11);
-}
-.lux-no-results, .lux-initial-msg {
-    text-align: center;
-    padding: 2.2rem 1rem;
-    color: var(--lux-blue-main);
-    font-style: italic;
-    background: var(--lux-card-bg);
-    border-radius: var(--lux-radius);
-    border: 1.5px solid var(--lux-border);
-    margin-top: 1rem;
-    box-shadow: var(--lux-shadow);
-}
-.lux-no-results i, .lux-initial-msg i {
-    font-size: 2.1rem;
-    color: var(--lux-blue-main);
-    margin-bottom: 0.7rem;
-    text-shadow: none;
-}
+            .lux-results-table {
+                border-radius: var(--border-radius);
+                overflow: auto;
+                box-shadow: var(--card-shadow);
+                background: var(--card-bg);
+                border: none;
+                margin-top: 1.1rem;
+                position: relative;
+                background-image: var(--card-gradient);
+                transition: var(--transition);
+            }
+            .lux-results-table:hover {
+                box-shadow: var(--card-shadow-hover);
+            }
 
-/* وصف كامل مع التفاف */
-.lux-description-full {
-    white-space: pre-line !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    max-width: 100% !important;
-    display: block !important;
-    font-size: 0.97rem;
-    font-family: var(--lux-font-primary);
-    color: var(--lux-text-main);
-    padding: 0.2rem 0;
-}
-.ui-datatable .ui-datatable-data>tr>td.lux-description-full {
-    max-width: none !important;
-    white-space: pre-line !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-}
+            .ui-datatable {
+                background: transparent !important;
+                border: none !important;
+                width: 100% !important;
+                font-size: 0.97rem !important;
+                min-width: 1400px;
+            }
+            .ui-datatable .ui-datatable-header {
+                background: var(--primary-gradient) !important;
+                color: white !important;
+                font-weight: 900;
+                font-size: 1.1rem;
+                font-family: var(--font-secondary);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                border: none !important;
+                padding: 1rem !important;
+                text-shadow: none;
+                border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            }
+            .ui-datatable .ui-paginator {
+                background: rgba(255, 255, 255, 0.8) !important;
+                border: none !important;
+                padding: 0.7rem !important;
+                border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+                color: var(--text-dark) !important;
+                border-radius: 0 0 var(--border-radius) var(--border-radius) !important;
+            }
+            .ui-datatable .ui-datatable-data tr {
+                background: rgba(255, 255, 255, 0.7) !important;
+                transition: var(--transition);
+            }
+            .ui-datatable .ui-datatable-data tr.ui-state-hover {
+                background: rgba(255, 255, 255, 0.9) !important;
+                transform: scale(1.01);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            }
+            .ui-datatable .ui-datatable-data>tr>td {
+                padding: 0.7rem 0.8rem !important;
+                border: none !important;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+                font-size: 0.97rem;
+                font-weight: 500;
+                color: var(--text-dark);
+                font-family: var(--font-primary);
+                vertical-align: middle;
+                word-wrap: break-word;
+                max-width: 180px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                transition: var(--transition);
+            }
+            .ui-datatable .ui-datatable-data>tr>td:hover {
+                background: rgba(255, 255, 255, 0.5);
+            }
+            .ui-datatable .ui-datatable-data>tr>td.lux-org-column {
+                max-width: 200px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            .ui-datatable .ui-datatable-thead>tr>th {
+                background: rgba(255, 255, 255, 0.9) !important;
+                color: var(--text-dark) !important;
+                border: none !important;
+                padding: 0.8rem 0.8rem !important;
+                font-weight: 900;
+                font-size: 0.97rem;
+                font-family: var(--font-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                border-bottom: 2px solid !important;
+                border-image: var(--primary-gradient);
+                border-image-slice: 1;
+                text-shadow: none;
+                transition: var(--transition);
+            }
+            .ui-datatable .ui-datatable-thead>tr>th:hover {
+                background: rgba(255, 255, 255, 1) !important;
+            }
+            .lux-table-icon {
+                font-size: 1rem;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: var(--primary-gradient);
+                color: white;
+                margin-left: 0.2rem;
+            }
+            .lux-action-buttons {
+                display: flex;
+                gap: 0.4rem;
+                justify-content: center;
+            }
+            .lux-action-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--primary-gradient);
+                color: white;
+                border: none;
+                transition: var(--transition);
+                font-size: 1rem;
+                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+            }
+            .lux-action-btn:hover {
+                background: var(--secondary-gradient);
+                transform: scale(1.15) rotate(5deg);
+                box-shadow: 0 6px 12px rgba(245, 87, 108, 0.4);
+            }
+            .lux-no-results, .lux-initial-msg {
+                text-align: center;
+                padding: 3rem 1rem;
+                color: var(--text-dark);
+                font-style: italic;
+                background: var(--card-bg);
+                border-radius: var(--border-radius);
+                border: none;
+                margin-top: 1rem;
+                box-shadow: var(--card-shadow);
+                background-image: var(--card-gradient);
+                transition: var(--transition);
+            }
+            .lux-no-results:hover, .lux-initial-msg:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--card-shadow-hover);
+            }
+            .lux-no-results i, .lux-initial-msg i {
+                font-size: 3rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 0.7rem;
+                text-shadow: none;
+            }
 
-@media (max-width: 1400px) {
-    .lux-search-container {
-        max-width: 1200px;
-    }
-    .lux-fields-grid { 
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-@media (max-width: 1200px) {
-    .lux-search-container {
-        max-width: 100%;
-        padding: 0.8rem;
-    }
-    .lux-fields-grid { 
-        grid-template-columns: 1fr;
-    }
-    .ui-datatable .ui-datatable-data>tr>td { 
-        max-width: 140px;
-    }
-}
-@media (max-width: 800px) {
-    .lux-stats-grid { 
-        grid-template-columns: 1fr;
-    }
-    .lux-search-card { 
-        padding: 0.7rem;
-    }
-    .lux-search-header { 
-        font-size: 1.05rem;
-    }
-    .ui-datatable {
-        min-width: 1200px; /* Increased minimum width for smaller screens */
-    }
-}
-    </style>
-</ui:define>
+            /* وصف كامل مع التفاف */
+            .lux-description-full {
+                white-space: pre-line !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                max-width: 100% !important;
+                display: block !important;
+                font-size: 0.97rem;
+                font-family: var(--font-primary);
+                color: var(--text-dark);
+                padding: 0.2rem 0;
+            }
+            .ui-datatable .ui-datatable-data>tr>td.lux-description-full {
+                max-width: none !important;
+                white-space: pre-line !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+            }
 
-<ui:define name="section-content">
-    <div class="lux-search-container">
-        <!-- Search Form -->
-        <div class="lux-search-card animate__animated animate__fadeIn">
-            <div class="lux-search-header">
-                <i class="fas fa-search"></i>
-                Completed Tasks Search 
+            /* تأثيرات الأنميشن */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+                }
+            }
+
+            .animate-pulse {
+                animation: pulse 2s infinite;
+            }
+
+            .animate-fadeInUp {
+                animation: fadeInUp 0.6s ease-out;
+            }
+
+            .animate-bounceIn {
+                animation: bounceIn 0.8s;
+            }
+
+            @keyframes bounceIn {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.3);
+                }
+                50% {
+                    opacity: 1;
+                    transform: scale(1.05);
+                }
+                70% {
+                    transform: scale(0.9);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            /* تأثيرات التحميل */
+            .lux-loading {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .lux-loading::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                animation: loading 1.5s infinite;
+            }
+
+            @keyframes loading {
+                0% {
+                    left: -100%;
+                }
+                100% {
+                    left: 100%;
+                }
+            }
+
+            /* تصميم جديد لمؤشر التحميل */
+            .lux-loading-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                backdrop-filter: blur(5px);
+            }
+
+            .lux-loader-container {
+                background: var(--card-bg);
+                border-radius: 20px;
+                padding: 2.5rem;
+                text-align: center;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                max-width: 400px;
+                width: 90%;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .lux-loader-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--primary-gradient);
+            }
+
+            .lux-loader-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                font-family: var(--font-secondary);
+            }
+
+            /* تصميم دائرة التحميل المتقدمة */
+            .lux-loader {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 1.5rem;
+                position: relative;
+            }
+
+            .lux-loader-circle {
+                width: 100%;
+                height: 100%;
+                border: 3px solid transparent;
+                border-top: 3px solid #667eea;
+                border-right: 3px solid #764ba2;
+                border-radius: 50%;
+                animation: luxSpin 1.5s linear infinite;
+                position: relative;
+            }
+
+            .lux-loader-circle::before {
+                content: '';
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                bottom: 5px;
+                border: 3px solid transparent;
+                border-top: 3px solid #f093fb;
+                border-right: 3px solid #f5576c;
+                border-radius: 50%;
+                animation: luxSpin 2s linear infinite reverse;
+            }
+
+            .lux-loader-circle::after {
+                content: '';
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                right: 15px;
+                bottom: 15px;
+                border: 3px solid transparent;
+                border-top: 3px solid #4facfe;
+                border-right: 3px solid #00f2fe;
+                border-radius: 50%;
+                animation: luxSpin 1s linear infinite;
+            }
+
+            @keyframes luxSpin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* تأثيرات النقاط المتحركة */
+            .lux-dots-container {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                margin-bottom: 1.5rem;
+            }
+
+            .lux-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: var(--primary-gradient);
+                animation: luxDotPulse 1.5s ease-in-out infinite;
+            }
+
+            .lux-dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .lux-dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+            @keyframes luxDotPulse {
+                0%, 60%, 100% {
+                    transform: scale(1);
+                    opacity: 0.7;
+                }
+                30% {
+                    transform: scale(1.5);
+                    opacity: 1;
+                }
+            }
+
+            /* شريط التقدم المتحرك */
+            .lux-progress-container {
+                width: 100%;
+                height: 6px;
+                background: rgba(102, 126, 234, 0.2);
+                border-radius: 3px;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+
+            .lux-progress-bar {
+                height: 100%;
+                width: 30%;
+                background: var(--primary-gradient);
+                border-radius: 3px;
+                animation: luxProgress 2s ease-in-out infinite;
+            }
+
+            @keyframes luxProgress {
+                0% {
+                    transform: translateX(-100%);
+                }
+                50% {
+                    transform: translateX(200%);
+                }
+                100% {
+                    transform: translateX(400%);
+                }
+            }
+
+            .lux-loading-text {
+                font-size: 1rem;
+                color: var(--text-dark);
+                font-weight: 500;
+                margin-top: 1rem;
+            }
+
+            .lux-loading-subtext {
+                font-size: 0.85rem;
+                color: var(--text-muted);
+                margin-top: 0.5rem;
+                font-style: italic;
+            }
+
+            /* تأثيرات دخول وخروج مؤشر التحميل */
+            @keyframes luxFadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.9);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            @keyframes luxFadeOut {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(1.1);
+                }
+            }
+
+            .lux-loader-enter {
+                animation: luxFadeIn 0.5s ease-out forwards;
+            }
+
+            .lux-loader-exit {
+                animation: luxFadeOut 0.4s ease-in forwards;
+            }
+
+            @media (max-width: 1400px) {
+                .lux-search-container {
+                    max-width: 1200px;
+                }
+                .lux-fields-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 1200px) {
+                .lux-search-container {
+                    max-width: 100%;
+                    padding: 0.8rem;
+                }
+                .lux-fields-grid {
+                    grid-template-columns: 1fr;
+                }
+                .ui-datatable .ui-datatable-data>tr>td {
+                    max-width: 140px;
+                }
+            }
+            @media (max-width: 800px) {
+                .lux-stats-grid {
+                    grid-template-columns: 1fr;
+                }
+                .lux-search-card {
+                    padding: 0.7rem;
+                }
+                .lux-search-header {
+                    font-size: 1.05rem;
+                }
+                .ui-datatable {
+                    min-width: 1200px;
+                }
+                .lux-loader-container {
+                    padding: 1.5rem;
+                    margin: 1rem;
+                }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="section-content">
+        <div class="lux-glitter"></div>
+        <div class="lux-search-container">
+            <!-- Search Form -->
+            <div class="lux-search-card animate-fadeInUp">
+                <div class="lux-search-header">
+                    <i class="fas fa-search"></i>
+                    Completed Tasks Search
+                </div>
+                <h:form id="searchForm">
+                    <div class="lux-fields-grid">
+                        <!-- Task Type -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">Task Type</label>
+                            <p:selectOneMenu value="#{completedTaskSearchBean.taskType}" styleClass="ui-selectonemenu">
+                                <f:selectItem itemLabel="All Types" itemValue="" />
+                                <f:selectItem itemLabel="Equipment Inspection" itemValue="equipment" />
+                                <f:selectItem itemLabel="Employee Certification" itemValue="employee" />
+                                <p:ajax update="@([id$=equipmentCategoryGroup])" />
+                            </p:selectOneMenu>
+                        </div>
+                        <!-- Company -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">Company</label>
+                            <p:selectOneMenu value="#{completedTaskSearchBean.company}"
+                                             converter="omnifaces.SelectItemsConverter"
+                                             styleClass="ui-selectonemenu">
+                                <f:selectItem itemLabel="All Companies" itemValue="#{null}" />
+                                <f:selectItems value="#{completedTaskSearchBean.companyList}"
+                                               var="company"
+                                               itemLabel="#{company.name}"
+                                               itemValue="#{company}" />
+                            </p:selectOneMenu>
+                        </div>
+                        <!-- Equipment Category (conditional) -->
+                        <h:panelGroup id="equipmentCategoryGroup" layout="block" styleClass="lux-field-group">
+                            <label class="lux-field-label">Equipment Category</label>
+                            <p:selectOneMenu value="#{completedTaskSearchBean.equipmentCategory}"
+                                             converter="omnifaces.SelectItemsConverter"
+                                             styleClass="ui-selectonemenu"
+                                             rendered="#{completedTaskSearchBean.equipmentCategoryFilterVisible}">
+                                <f:selectItem itemLabel="All Categories" itemValue="#{null}" />
+                                <f:selectItems value="#{completedTaskSearchBean.equipmentCategoryList}"
+                                               var="category"
+                                               itemLabel="#{category.arabicName}"
+                                               itemValue="#{category}" />
+                            </p:selectOneMenu>
+                            <h:outputText value=" " rendered="#{not completedTaskSearchBean.equipmentCategoryFilterVisible}" />
+                        </h:panelGroup>
+                        <!-- From Date -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">From Date</label>
+                            <p:calendar value="#{completedTaskSearchBean.fromDate}"
+                                        pattern="dd/MM/yyyy"
+                                        navigator="true"
+                                        yearRange="c-10:c+10" />
+                        </div>
+                        <!-- To Date -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">To Date</label>
+                            <p:calendar value="#{completedTaskSearchBean.toDate}"
+                                        pattern="dd/MM/yyyy"
+                                        navigator="true"
+                                        yearRange="c-10:c+10" />
+                        </div>
+
+                        <!-- Cert Number (search field) -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">Cert Num</label>
+                            <p:inputText value="#{completedTaskSearchBean.certNumberSearch}"
+                                         styleClass="ui-inputtext"
+                                         placeholder="Enter Cert Number" />
+                        </div>
+
+                        <!-- Organization (use id as itemValue to avoid converter/instance issues) -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">Branch</label>
+                            <p:selectOneMenu value="#{completedTaskSearchBean.organizationId}" styleClass="ui-selectonemenu">
+                                <f:selectItem itemLabel="All Branches" itemValue="#{null}" />
+                                <f:selectItems value="#{completedTaskSearchBean.organizationList}" var="org" itemLabel="#{org.name}" itemValue="#{org.id}" />
+                            </p:selectOneMenu>
+
+                        </div>
+
+                    </div>
+                    <div class="lux-btn-group">
+                        <p:commandButton value="Search"
+                                         icon="fas fa-search"
+                                         styleClass="ui-button-primary animate-pulse"
+                                         action="#{completedTaskSearchBean.searchCompletedTasks}"
+                                         process="@form"
+                                         update="@([id$=resultsPanel] @([id$=statisticsPanel]) @([id$=messages]))"
+                                         onstart="showLuxLoader()"
+                                         oncomplete="hideLuxLoader()" />
+
+                        <p:commandButton value="Clear"
+                                         icon="fas fa-eraser"
+                                         styleClass="ui-button-secondary"
+                                         action="#{completedTaskSearchBean.clearSearch}"
+                                         process="@this"
+                                         update="@form :messages :statisticsPanel :resultsPanel"
+                                         resetInput="true"
+                                         immediate="true" />
+
+                        <p:commandButton value="Export"
+                                         icon="fas fa-download"
+                                         styleClass="ui-button-success"
+                                         action="#{completedTaskSearchBean.exportToExcel}"
+                                         ajax="false"
+                                         disabled="#{not completedTaskSearchBean.searchPerformed or empty completedTaskSearchBean.searchResults}" />
+
+                    </div>
+                </h:form>
             </div>
-            <h:form id="searchForm">
-                <div class="lux-fields-grid">
-                    <!-- Task Type -->
-                    <div class="lux-field-group">
-                        <label class="lux-field-label">Task Type</label>
-                        <p:selectOneMenu value="#{completedTaskSearchBean.taskType}" styleClass="ui-selectonemenu">
-                            <f:selectItem itemLabel="All Types" itemValue="" />
-                            <f:selectItem itemLabel="Equipment Inspection" itemValue="equipment" />
-                            <f:selectItem itemLabel="Employee Certification" itemValue="employee" />
-                            <p:ajax update="@([id$=equipmentCategoryGroup])" />
-                        </p:selectOneMenu>
-                    </div>
-                    <!-- Company -->
-                    <div class="lux-field-group">
-                        <label class="lux-field-label">Company</label>
-                        <p:selectOneMenu value="#{completedTaskSearchBean.company}" 
-                                         converter="omnifaces.SelectItemsConverter"
-                                         styleClass="ui-selectonemenu">
-                            <f:selectItem itemLabel="All Companies" itemValue="#{null}" />
-                            <f:selectItems value="#{completedTaskSearchBean.companyList}" 
-                                           var="company" 
-                                           itemLabel="#{company.name}" 
-                                           itemValue="#{company}" />
-                        </p:selectOneMenu>
-                    </div>
-                    <!-- Equipment Category (conditional) -->
-                    <h:panelGroup id="equipmentCategoryGroup" layout="block" styleClass="lux-field-group">
-                        <label class="lux-field-label">Equipment Category</label>
-                        <p:selectOneMenu value="#{completedTaskSearchBean.equipmentCategory}" 
-                                         converter="omnifaces.SelectItemsConverter"
-                                         styleClass="ui-selectonemenu"
-                                         rendered="#{completedTaskSearchBean.equipmentCategoryFilterVisible}">
-                            <f:selectItem itemLabel="All Categories" itemValue="#{null}" />
-                            <f:selectItems value="#{completedTaskSearchBean.equipmentCategoryList}" 
-                                           var="category" 
-                                           itemLabel="#{category.arabicName}" 
-                                           itemValue="#{category}" />
-                        </p:selectOneMenu>
-                        <h:outputText value=" " rendered="#{not completedTaskSearchBean.equipmentCategoryFilterVisible}" />
-                    </h:panelGroup>
-                    <!-- From Date -->
-                    <div class="lux-field-group">
-                        <label class="lux-field-label">From Date</label>
-                        <p:calendar value="#{completedTaskSearchBean.fromDate}" 
-                                    pattern="dd/MM/yyyy" 
-                                    navigator="true" 
-                                    yearRange="c-10:c+10" />
-                    </div>
-                    <!-- To Date -->
-                    <div class="lux-field-group">
-                        <label class="lux-field-label">To Date</label>
-                        <p:calendar value="#{completedTaskSearchBean.toDate}" 
-                                    pattern="dd/MM/yyyy" 
-                                    navigator="true" 
-                                    yearRange="c-10:c+10" />
-                    </div>
-                    
-                    <!-- Cert Number (search field) -->
-                    <div class="lux-field-group">
-                        <label class="lux-field-label">Cert Num</label>
-                        <p:inputText value="#{completedTaskSearchBean.certNumberSearch}"
-                                     styleClass="ui-inputtext"
-                                     placeholder="Enter Cert Number" />
-                    </div>
-                    
-					<!-- Organization (use id as itemValue to avoid converter/instance issues) -->
-					<div class="lux-field-group">
-					    <label class="lux-field-label">Branch</label>
-						<p:selectOneMenu value="#{completedTaskSearchBean.organizationId}" styleClass="ui-selectonemenu">
-						    <f:selectItem itemLabel="All Branches" itemValue="#{null}" />
-						    <f:selectItems value="#{completedTaskSearchBean.organizationList}" var="org" itemLabel="#{org.name}" itemValue="#{org.id}" />
-						</p:selectOneMenu>
 
-					</div>
-
-                    
-                    
-                    
-
-                </div>
-                <div class="lux-btn-group">
-					<p:commandButton value="Search"
-					    icon="fas fa-search"
-					    styleClass="ui-button-primary"
-					    action="#{completedTaskSearchBean.searchCompletedTasks}"
-					    process="@form"
-					    update="@([id$=resultsPanel] @([id$=statisticsPanel]) @([id$=messages]))" />
-
-                    <p:commandButton value="Clear"
-                                     icon="fas fa-eraser"
-                                     styleClass="ui-button-secondary"
-                                     action="#{completedTaskSearchBean.clearSearch}"
-                                     process="@this"
-                                     update="@form :messages :statisticsPanel :resultsPanel"
-                                     resetInput="true"
-                                     immediate="true" />
-
-                    <p:commandButton value="Export"
-                                     icon="fas fa-download"
-                                     styleClass="ui-button-success"
-                                     action="#{completedTaskSearchBean.exportToExcel}"
-                                     ajax="false"
-                                     disabled="#{not completedTaskSearchBean.searchPerformed or empty completedTaskSearchBean.searchResults}" />
-
-                </div>
-            </h:form>
-        </div>
-        <!-- Statistics Panel -->
-        <h:panelGroup id="statisticsPanel" rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.statistics}">
-            <div class="lux-stats-card animate__animated animate__fadeInUp">
-                <div class="lux-stats-grid">
-                    <div class="lux-stat-item">
-                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['totalTasksCount']}</div>
-                        <div class="lux-stat-label">Total Completed Tasks</div>
-                    </div>
-                    <div class="lux-stat-item">
-                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['equipmentTasksCount']}</div>
-                        <div class="lux-stat-label">Equipment Tasks</div>
-                    </div>
-                    <div class="lux-stat-item">
-                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['employeeTasksCount']}</div>
-                        <div class="lux-stat-label">Employee Tasks</div>
-                    </div>
-                    <div class="lux-stat-item">
-                        <div class="lux-stat-number">#{completedTaskSearchBean.statistics['equipmentTasksPercentage']}%</div>
-                        <div class="lux-stat-label">Equipment Percentage</div>
+            <!-- Statistics Panel -->
+            <h:panelGroup id="statisticsPanel" rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.statistics}">
+                <div class="lux-stats-card animate-fadeInUp" style="animation-delay: 0.2s">
+                    <div class="lux-stats-grid">
+                        <div class="lux-stat-item">
+                            <div class="lux-stat-number">#{completedTaskSearchBean.statistics['totalTasksCount']}</div>
+                            <div class="lux-stat-label">Total Completed Tasks</div>
+                        </div>
+                        <div class="lux-stat-item">
+                            <div class="lux-stat-number">#{completedTaskSearchBean.statistics['equipmentTasksCount']}</div>
+                            <div class="lux-stat-label">Equipment Tasks</div>
+                        </div>
+                        <div class="lux-stat-item">
+                            <div class="lux-stat-number">#{completedTaskSearchBean.statistics['employeeTasksCount']}</div>
+                            <div class="lux-stat-label">Employee Tasks</div>
+                        </div>
+                        <div class="lux-stat-item">
+                            <div class="lux-stat-number">#{completedTaskSearchBean.statistics['equipmentTasksPercentage']}%</div>
+                            <div class="lux-stat-label">Equipment Percentage</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </h:panelGroup>
-        <!-- Results Panel -->
-        <h:panelGroup id="resultsPanel">
-            <h:panelGroup layout="block" styleClass="lux-results-table animate__animated animate__fadeInUp" 
-                          rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.searchResults}">
-                <p:dataTable value="#{completedTaskSearchBean.searchResults}" 
-                             var="task" 
-                             paginator="true" 
-                             rows="20"
-                             paginatorPosition="bottom"
-                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                             rowsPerPageTemplate="10,20,50,100"
-                             emptyMessage="No completed tasks found"
-                             styleClass="compact-table">
-                    <f:facet name="header">
-                        Completed Tasks (#{completedTaskSearchBean.searchResults.size()} results)
-                    </f:facet>
-                    <!-- Task ID -->
-                    <p:column headerText="Task ID" sortBy="#{task['taskId']}" style="width: 80px;">
-                        <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
-                        <h:outputText value="#{task['taskId']}" />
-                    </p:column>
-                    
-                    <!-- Type -->
-                    <p:column headerText="Type" sortBy="#{task['taskType']}" style="width: 120px;">
+            </h:panelGroup>
+
+            <!-- Results Panel -->
+            <h:panelGroup id="resultsPanel">
+                <h:panelGroup layout="block" styleClass="lux-results-table animate-fadeInUp" style="animation-delay: 0.4s"
+                              rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.searchResults}">
+                    <p:dataTable value="#{completedTaskSearchBean.searchResults}"
+                                 var="task"
+                                 paginator="true"
+                                 rows="20"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50,100"
+                                 emptyMessage="No completed tasks found"
+                                 styleClass="compact-table">
+                        <f:facet name="header">
+                            Completed Tasks (#{completedTaskSearchBean.searchResults.size()} results)
+                        </f:facet>
+                        <!-- Task ID -->
+                        <p:column headerText="Task ID" sortBy="#{task['taskId']}" style="width: 80px;">
+                            <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
+                            <h:outputText value="#{task['taskId']}" />
+                        </p:column>
+
+                        <!-- Type -->
+                        <p:column headerText="Type" sortBy="#{task['taskType']}" style="width: 120px;">
                         <span class="lux-badge"
-                              style="#{fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'equipment') 
-                                           ? 'background: linear-gradient(135deg, #2980f2, #f1c40f); color:#fff; border:1px solid #2980f2;' 
-                                           : (fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'employee') 
-                                              ? 'background: linear-gradient(135deg, #f1c40f, #e67e22); color:#fff; border:1px solid #e67e22;' 
-                                              : 'background:#bdc3c7;color:#21343b;border:1px solid #aab7c4;')}">
+                              style="#{fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'equipment')
+                                           ? 'background: linear-gradient(135deg, #667eea, #764ba2); color:#fff; border:none;'
+                                           : (fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'employee')
+                                              ? 'background: linear-gradient(135deg, #f093fb, #f5576c); color:#fff; border:none;'
+                                              : 'background: linear-gradient(135deg, #a8edea, #fed6e3);color:#21343b;border:none;')}">
                             #{completedTaskSearchBean.getTaskTypeDisplayText(task['taskType'])}
                         </span>
-                    </p:column>
+                        </p:column>
 
-                    <!-- Description -->
-                    <p:column headerText="Description" sortBy="#{task['taskDescription']}" style="width: 180px;">
-                        <h:outputText value="#{task['taskDescription']}" styleClass="lux-description-full" />
-                    </p:column>
-                    <p:column headerText="Job no"  style="width: 180px;">
-                        <h:outputText value="#{task['jobNo']}" styleClass="lux-description-full" />
-                    </p:column>
-                    <p:column headerText="Time sheet no"  style="width: 180px;">
-                        <h:outputText value="#{task['timeSheetNo']}" styleClass="lux-description-full" />
-                    </p:column>
-                    <!-- Reference -->
-                    <p:column headerText="Cert Num" style="width: 100px;">
-                        <span class="lux-table-icon"><i class="fas fa-file-alt"></i></span>
-                        <h:outputText value="#{task['reportNo']}" rendered="#{not empty task['reportNo']}" styleClass="lux-description-full" />
-                        <h:outputText value="#{task['certNumber']}" rendered="#{not empty task['certNumber']}" styleClass="lux-description-full"/>
-                        <h:outputText value="-" rendered="#{empty task['reportNo'] and empty task['certNumber']}" styleClass="lux-description-full"/>
-                    </p:column>
-          
-                    
-                    <!-- Company -->
-                    <p:column headerText="Company" sortBy="#{task['companyName']}" style="width: 140px;">
-                        <span class="lux-table-icon"><i class="fas fa-building"></i></span>
-                        <h:outputText value="#{task['companyName']}" styleClass="lux-description-full" />
-                    </p:column>
-                    <!-- Sticker Number -->
-                    <p:column headerText="Sticker Number" sortBy="#{task['stickerNo']}" filterBy="#{task['stickerNo']}" style="width: 120px;">
-                        <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
-                        <h:outputText value="#{task['stickerNo']}" />
-                    </p:column>
-                    
-                    <!-- Created Date -->
-                    <p:column headerText="Created Date" sortBy="#{task['createdDate']}" style="width: 100px;">
-                        <span class="lux-table-icon"><i class="fas fa-calendar-plus"></i></span>
-                        <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
-                    </p:column>
-                    <!-- Completed Date -->
-                    <p:column headerText="Completed Date" sortBy="#{task['completedDate']}" style="width: 100px;">
-                        <span class="lux-table-icon"><i class="fas fa-calendar-check"></i></span>
-                        <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}" />
-                    </p:column>
-                    <!-- Assigner -->
-                    <p:column headerText="Assigner" sortBy="#{task['assignerUserDisplayName']}" style="width:110px;">
-                        <span class="lux-table-icon"><i class="fas fa-user"></i></span>
-                        <h:outputText value="#{task['assignerUserDisplayName']}" />
-                    </p:column>
-                    <!-- Inspector -->
-                    <p:column headerText="Inspector" style="width: 110px;">
-                        <span class="lux-table-icon"><i class="fas fa-user-check"></i></span>
-                        <h:outputText value="#{task['inspectorName']}" />
-                    </p:column>
-                    <!-- Reviewer -->
-                    <p:column headerText="Reviewer" style="width: 110px;">
-                        <span class="lux-table-icon"><i class="fas fa-user-edit"></i></span>
-                        <h:outputText value="#{task['reviewerName']}" />
-                    </p:column>
-                    <!-- Organization Column - Modified to ensure visibility -->
-					<p:column headerText="Branch" style="width: 180px;"
-					          sortBy="#{task['organizationName']}"
-					          filterBy="#{task['organizationName']}"
-					          filterMatchMode="contains">
-					    <span class="lux-table-icon"><i class="fas fa-sitemap"></i></span>
-					    <h:outputText value="#{not empty task['organizationName'] ? task['organizationName'] : '-'}"
-					                  styleClass="lux-org-column" />
-					</p:column>
+                        <!-- Description -->
+                        <p:column headerText="Description" sortBy="#{task['taskDescription']}" style="width: 180px;">
+                            <h:outputText value="#{task['taskDescription']}" styleClass="lux-description-full" />
+                        </p:column>
+                        <p:column headerText="Job no"  style="width: 180px;">
+                            <h:outputText value="#{task['jobNo']}" styleClass="lux-description-full" />
+                        </p:column>
+                        <p:column headerText="Time sheet no"  style="width: 180px;">
+                            <h:outputText value="#{task['timeSheetNo']}" styleClass="lux-description-full" />
+                        </p:column>
+                        <!-- Reference -->
+                        <p:column headerText="Cert Num" style="width: 100px;">
+                            <span class="lux-table-icon"><i class="fas fa-file-alt"></i></span>
+                            <h:outputText value="#{task['reportNo']}" rendered="#{not empty task['reportNo']}" styleClass="lux-description-full" />
+                            <h:outputText value="#{task['certNumber']}" rendered="#{not empty task['certNumber']}" styleClass="lux-description-full"/>
+                            <h:outputText value="-" rendered="#{empty task['reportNo'] and empty task['certNumber']}" styleClass="lux-description-full"/>
+                        </p:column>
 
-                    <!-- Actions -->
-                    <p:column headerText="Actions" style="width: 90px; text-align: center;">
-                        <h:form prependId="false">
-                            <div class="lux-action-buttons">
-        
-                                <!-- Download PDF: Equipment Inspection -->
-                                <p:commandLink styleClass="lux-action-btn" title="Download PDF"
-                                               rendered="#{task['taskType'] eq 'Equipment Inspection'}"
-                                               action="#{inspectionFormBean.downloadCert(task['taskId'])}"
-                                               process="@this" ajax="false">
-                                    <i class="fas fa-eye"></i>
-                                </p:commandLink>
-                        
-                                <!-- Download PDF: Other -->
-                                <p:commandLink styleClass="lux-action-btn" title="Download PDF"
-                                               rendered="#{task['taskType'] ne 'Equipment Inspection'}"
-                                               action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}"
-                                               process="@this" ajax="false">
-                                    <i class="fas fa-eye"></i>
-                                </p:commandLink>
-                        
-                            </div>
-                            
-                        </h:form>
-                    </p:column>
 
-                </p:dataTable>
+                        <!-- Company -->
+                        <p:column headerText="Company" sortBy="#{task['companyName']}" style="width: 140px;">
+                            <span class="lux-table-icon"><i class="fas fa-building"></i></span>
+                            <h:outputText value="#{task['companyName']}" styleClass="lux-description-full" />
+                        </p:column>
+                        <!-- Sticker Number -->
+                        <p:column headerText="Sticker Number" sortBy="#{task['stickerNo']}" filterBy="#{task['stickerNo']}" style="width: 120px;">
+                            <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
+                            <h:outputText value="#{task['stickerNo']}" />
+                        </p:column>
+
+                        <!-- Created Date -->
+                        <p:column headerText="Created Date" sortBy="#{task['createdDate']}" style="width: 100px;">
+                            <span class="lux-table-icon"><i class="fas fa-calendar-plus"></i></span>
+                            <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
+                        </p:column>
+                        <!-- Completed Date -->
+                        <p:column headerText="Completed Date" sortBy="#{task['completedDate']}" style="width: 100px;">
+                            <span class="lux-table-icon"><i class="fas fa-calendar-check"></i></span>
+                            <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}" />
+                        </p:column>
+                        <!-- Assigner -->
+                        <p:column headerText="Assigner" sortBy="#{task['assignerUserDisplayName']}" style="width:110px;">
+                            <span class="lux-table-icon"><i class="fas fa-user"></i></span>
+                            <h:outputText value="#{task['assignerUserDisplayName']}" />
+                        </p:column>
+                        <!-- Inspector -->
+                        <p:column headerText="Inspector" style="width: 110px;">
+                            <span class="lux-table-icon"><i class="fas fa-user-check"></i></span>
+                            <h:outputText value="#{task['inspectorName']}" />
+                        </p:column>
+                        <!-- Reviewer -->
+                        <p:column headerText="Reviewer" style="width: 110px;">
+                            <span class="lux-table-icon"><i class="fas fa-user-edit"></i></span>
+                            <h:outputText value="#{task['reviewerName']}" />
+                        </p:column>
+                        <!-- Organization Column - Modified to ensure visibility -->
+                        <p:column headerText="Branch" style="width: 180px;"
+                                  sortBy="#{task['organizationName']}"
+                                  filterBy="#{task['organizationName']}"
+                                  filterMatchMode="contains">
+                            <span class="lux-table-icon"><i class="fas fa-sitemap"></i></span>
+                            <h:outputText value="#{not empty task['organizationName'] ? task['organizationName'] : '-'}"
+                                          styleClass="lux-org-column" />
+                        </p:column>
+
+                        <!-- Actions -->
+                        <p:column headerText="Actions" style="width: 90px; text-align: center;">
+                            <h:form prependId="false">
+                                <div class="lux-action-buttons">
+
+                                    <!-- Download PDF: Equipment Inspection -->
+                                    <p:commandLink styleClass="lux-action-btn" title="Download PDF"
+                                                   rendered="#{task['taskType'] eq 'Equipment Inspection'}"
+                                                   action="#{inspectionFormBean.downloadCert(task['taskId'])}"
+                                                   process="@this" ajax="false">
+                                        <i class="fas fa-eye"></i>
+                                    </p:commandLink>
+
+                                    <!-- Download PDF: Other -->
+                                    <p:commandLink styleClass="lux-action-btn" title="Download PDF"
+                                                   rendered="#{task['taskType'] ne 'Equipment Inspection'}"
+                                                   action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}"
+                                                   process="@this" ajax="false">
+                                        <i class="fas fa-eye"></i>
+                                    </p:commandLink>
+
+                                </div>
+
+                            </h:form>
+                        </p:column>
+
+                    </p:dataTable>
+                </h:panelGroup>
+                <!-- No Results Message -->
+                <h:panelGroup layout="block" styleClass="lux-no-results animate-fadeInUp" style="animation-delay: 0.2s"
+                              rendered="#{completedTaskSearchBean.searchPerformed and empty completedTaskSearchBean.searchResults}">
+                    <i class="fas fa-search"></i>
+                    <h3>No completed tasks found</h3>
+                    <p>Try adjusting your search criteria to find more results.</p>
+                </h:panelGroup>
+                <!-- Initial State Message -->
+                <h:panelGroup layout="block" styleClass="lux-initial-msg animate-fadeInUp"
+                              rendered="#{not completedTaskSearchBean.searchPerformed}">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Welcome to Luxury Completed Tasks Search</h3>
+                    <p>Use the search form above to find completed equipment inspection and employee certification tasks.</p>
+                </h:panelGroup>
             </h:panelGroup>
-            <!-- No Results Message -->
-            <h:panelGroup layout="block" styleClass="lux-no-results animate__animated animate__fadeIn"
-                          rendered="#{completedTaskSearchBean.searchPerformed and empty completedTaskSearchBean.searchResults}">
-                <i class="fas fa-search"></i>
-                <h3>No completed tasks found</h3>
-                <p>Try adjusting your search criteria to find more results.</p>
-            </h:panelGroup>
-            <!-- Initial State Message -->
-            <h:panelGroup layout="block" styleClass="lux-initial-msg animate__animated animate__fadeIn"
-                          rendered="#{not completedTaskSearchBean.searchPerformed}">
-                <i class="fas fa-info-circle"></i>
-                <h3>Welcome to Luxury Completed Tasks Search</h3>
-                <p>Use the search form above to find completed equipment inspection and employee certification tasks.</p>
-            </h:panelGroup>
-        </h:panelGroup>
-    </div>
-    <p:messages id="messages" showDetail="true" closable="true" />
-</ui:define>
+        </div>
+
+        <!-- Loading Overlay - تصميم جديد متقدم -->
+        <div id="luxLoadingOverlay" class="lux-loading-overlay" style="display: none;">
+            <div class="lux-loader-container lux-loader-enter">
+                <h3 class="lux-loader-title">Searching Tasks</h3>
+
+                <!-- دائرة التحميل المتعددة -->
+                <div class="lux-loader">
+                    <div class="lux-loader-circle"></div>
+                </div>
+
+                <!-- النقاط المتحركة -->
+                <div class="lux-dots-container">
+                    <div class="lux-dot"></div>
+                    <div class="lux-dot"></div>
+                    <div class="lux-dot"></div>
+                </div>
+
+                <!-- شريط التقدم المتحرك -->
+                <div class="lux-progress-container">
+                    <div class="lux-progress-bar"></div>
+                </div>
+
+                <p class="lux-loading-text">Please wait while we search for completed tasks</p>
+                <p class="lux-loading-subtext">This may take a few moments...</p>
+            </div>
+        </div>
+
+        <p:messages id="messages" showDetail="true" closable="true" />
+
+        <script>
+            //<![CDATA[
+            // إضافة تأثيرات الجسيمات المتحركة في الخلفية
+            document.addEventListener('DOMContentLoaded', function() {
+                const glitter = document.querySelector('.lux-glitter');
+                if (glitter) {
+                    for (let i = 0; i < 30; i++) {
+                        const particle = document.createElement('div');
+                        particle.style.position = 'absolute';
+                        particle.style.width = Math.random() * 5 + 2 + 'px';
+                        particle.style.height = particle.style.width;
+                        particle.style.background = `hsl(${Math.random() * 360}, 70%, 70%)`;
+                        particle.style.borderRadius = '50%';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.top = Math.random() * 100 + '%';
+                        particle.style.opacity = Math.random() * 0.5 + 0.1;
+                        particle.style.animation = `float ${Math.random() * 10 + 10}s infinite linear`;
+                        glitter.appendChild(particle);
+                    }
+                }
+
+                // إضافة تأثيرات CSS للجسيمات
+                const style = document.createElement('style');
+                style.textContent = `
+            @keyframes float {
+                0% { transform: translateY(0) rotate(0deg); }
+                100% { transform: translateY(-100vh) rotate(360deg); }
+            }
+        `;
+                document.head.appendChild(style);
+            });
+
+            // وظائف إظهار وإخفاء مؤشر التحميل المتقدم
+            function showLuxLoader() {
+                const overlay = document.getElementById('luxLoadingOverlay');
+                const container = overlay.querySelector('.lux-loader-container');
+
+                // إعادة تعيين الأنيميشن
+                container.classList.remove('lux-loader-enter', 'lux-loader-exit');
+                void container.offsetWidth; // إعادة التدفق
+
+                // إظهار المؤشر مع أنيميشن الدخول
+                overlay.style.display = 'flex';
+                container.classList.add('lux-loader-enter');
+
+                // تغيير النص بشكل دوري لمحاكاة التقدم
+                let progressTexts = [
+                    "Searching database...",
+                    "Filtering results...",
+                    "Preparing data...",
+                    "Almost done..."
+                ];
+                let currentText = 0;
+
+                window.loadingInterval = setInterval(() => {
+                    const textElement = document.querySelector('.lux-loading-text');
+                    if (textElement && currentText < progressTexts.length) {
+                        textElement.textContent = progressTexts[currentText];
+                        currentText++;
+                    }
+                }, 1500);
+            }
+
+            function hideLuxLoader() {
+                const overlay = document.getElementById('luxLoadingOverlay');
+                const container = overlay.querySelector('.lux-loader-container');
+
+                // إيقاف تغيير النص
+                if (window.loadingInterval) {
+                    clearInterval(window.loadingInterval);
+                }
+
+                // تطبيق أنيميشن الخروج
+                container.classList.remove('lux-loader-enter');
+                container.classList.add('lux-loader-exit');
+
+                // إخفاء المؤشر بعد انتهاء الأنيميشن
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    container.classList.remove('lux-loader-exit');
+
+                    // إعادة تعيين النص الأصلي
+                    const textElement = document.querySelector('.lux-loading-text');
+                    if (textElement) {
+                        textElement.textContent = "Please wait while we search for completed tasks";
+                    }
+                }, 400);
+            }
+            //]]>
+        </script>
+    </ui:define>
 </ui:composition>

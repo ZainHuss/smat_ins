@@ -17,40 +17,65 @@ import com.smat.ins.model.entity.EquipmentCategory;
 
 
 public class EquipmentCategoryDaoImpl extends
-		GenericDaoImpl<EquipmentCategory, Short> implements   EquipmentCategoryDao {
+        GenericDaoImpl<EquipmentCategory, Short> implements   EquipmentCategoryDao {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4855965011652892504L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -4855965011652892504L;
 
-	@Override
-	public List<EquipmentCategory> getCatWithTemplateCreated() {
-		// TODO Auto-generated method stub
-		Session session = null;
-		List<EquipmentCategory> equipmentCategories=null;
-		try {
-			session = sessionFactory.getCurrentSession();
-			CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-			CriteriaQuery<EquipmentCategory> criteriaQuery = criteriaBuilder
-					.createQuery(EquipmentCategory.class);
-			Root<EquipmentCategory> root = criteriaQuery.from(EquipmentCategory.class);
-			
-			root.join("formTemplates",
-					JoinType.INNER);
+    @Override
+    public List<EquipmentCategory> getCatWithTemplateCreated() {
+        // TODO Auto-generated method stub
+        Session session = null;
+        List<EquipmentCategory> equipmentCategories=null;
+        try {
+            session = sessionFactory.getCurrentSession();
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<EquipmentCategory> criteriaQuery = criteriaBuilder
+                    .createQuery(EquipmentCategory.class);
+            Root<EquipmentCategory> root = criteriaQuery.from(EquipmentCategory.class);
 
-			criteriaQuery.select(root);
-			
+            root.join("formTemplates",
+                    JoinType.INNER);
 
-			TypedQuery<EquipmentCategory> typedQuery = session.createQuery(criteriaQuery);
-			equipmentCategories = typedQuery.getResultList();
-			return equipmentCategories;
+            criteriaQuery.select(root);
 
-		} catch (Exception e) {
-			log.error(persistentClass + " can't be fetched from DB because of the following Exception ");
-			e.printStackTrace();
-			return equipmentCategories;
-		}
-	}
+
+            TypedQuery<EquipmentCategory> typedQuery = session.createQuery(criteriaQuery);
+            equipmentCategories = typedQuery.getResultList();
+            return equipmentCategories;
+
+        } catch (Exception e) {
+            log.error(persistentClass + " can't be fetched from DB because of the following Exception ");
+            e.printStackTrace();
+            return equipmentCategories;
+        }
+    }
+
+    @Override
+    public List<EquipmentCategory> findAllEnabled() {
+        Session session = null;
+        List<EquipmentCategory> equipmentCategories = null;
+        try {
+            session = sessionFactory.getCurrentSession();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<EquipmentCategory> cq = cb.createQuery(EquipmentCategory.class);
+            Root<EquipmentCategory> root = cq.from(EquipmentCategory.class);
+
+            // where disabled = false (i.e. enabled)
+            cq.select(root).where(cb.equal(root.get("disabled"), false));
+            // optional ordering
+            cq.orderBy(cb.asc(root.get("englishName")));
+
+            TypedQuery<EquipmentCategory> tq = session.createQuery(cq);
+            equipmentCategories = tq.getResultList();
+            return equipmentCategories;
+        } catch (Exception e) {
+            log.error(persistentClass + " can't be fetched (findAllEnabled) because of the following Exception ");
+            e.printStackTrace();
+            return equipmentCategories;
+        }
+    }
 
 }

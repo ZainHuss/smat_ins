@@ -463,4 +463,6 @@
 		<property name="dao" ref="workingGroupDao"></property>
 	</bean>
 
+
+
 </beans>
