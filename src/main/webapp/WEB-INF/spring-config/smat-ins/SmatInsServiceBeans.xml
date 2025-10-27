@@ -462,6 +462,12 @@
 		class="com.smat.ins.model.service.impl.WorkingGroupServiceImpl">
 		<property name="dao" ref="workingGroupDao"></property>
 	</bean>
+    <!-- TaskDraft Service -->
+    <bean name="taskDraftService"
+          class="com.smat.ins.model.service.impl.TaskDraftServiceImpl">
+        <property name="dao" ref="taskDraftDao" />
+    </bean>
+
 
 
 

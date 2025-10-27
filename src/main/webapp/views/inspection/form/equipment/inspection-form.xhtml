@@ -1059,11 +1059,25 @@
 
 
 
-        </style>
-    </ui:define>
+		</style>
+	</ui:define>
 <ui:define name="section-content">
-        <h:form id="form">
+		<h:form id="form">
+			<!-- remoteCommand to set savingDraft flag on the server BEFORE the real submit -->
+			<p:remoteCommand name="markSavingDraft" actionListener="#{inspectionFormBean.prepareSaveDraft}" process="@this" oncomplete="document.getElementById('form:saveDraftInvoker').click();" />
+			<!-- hidden real submit invoked after markSavingDraft completes -->
+			<p:commandButton id="saveDraftInvoker" style="display:none" action="#{inspectionFormBean.saveDraft()}" process="@form" update="@([id$=messages])" />
             <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" life="5000" />
+			<p:commandButton value="Save Draft" icon="pi pi-save" type="button"
+							 onclick="markSavingDraft();" styleClass="btn-golden-primary btn-sm"
+							 rendered="#{inspectionFormBean.inspectorVisible}" />
+			<p:commandButton value="Load Draft" icon="pi pi-upload"
+							 action="#{inspectionFormBean.loadDraft()}"
+							 update="@form" process="@this" styleClass="btn-golden-blue btn-sm"
+							 rendered="#{inspectionFormBean.inspectorVisible}" />
+
+
+
 
             <!-- Main Form Card -->
             <div class="card">
@@ -1336,8 +1350,8 @@
 			                    filterMatchMode="contains"
 			                    widgetVar="widgetVar_SelectOneMenu"
 			                    converter="omnifaces.SelectItemsIndexConverter"
-			                    value="#{inspectionFormBean.selectedUserAliasRecipient}"
-			                    required="true"
+								value="#{inspectionFormBean.selectedUserAliasRecipient}"
+								required="#{!inspectionFormBean.savingDraft}"
 			                    requiredMessage="Reviewer engineer is required">
 			                    <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="#{null}" noSelectionOption="true" />
 			                    <f:selectItems
@@ -1354,10 +1368,10 @@
 			        <div class="col-lg-12 col-xl-12 col-xxl-12">
 			            <div class="field field-required">
 			                <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label" />
-			                <p:inputTextarea id="comment" value="#{inspectionFormBean.comment}" rows="3"
-			                    styleClass="block" required="true"
-			                    requiredMessage="Comment is required"
-			                    placeholder="Enter your approval comments here..." />
+							<p:inputTextarea id="comment" value="#{inspectionFormBean.comment}" rows="3"
+								styleClass="block" required="#{!inspectionFormBean.savingDraft}"
+								requiredMessage="Comment is required"
+								placeholder="Enter your approval comments here..." />
 			                <p:message for="comment" display="icon" />
 			            </div>
 			        </div>

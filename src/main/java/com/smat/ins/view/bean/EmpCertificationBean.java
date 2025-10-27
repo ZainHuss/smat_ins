@@ -33,11 +33,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
+import com.google.gson.Gson;
+// imports required
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.faces.event.ActionEvent;
+import com.smat.ins.model.entity.TaskDraft;
+import com.smat.ins.model.service.TaskDraftService;
+
+
 
 @Named
 @ViewScoped
 public class EmpCertificationBean implements Serializable {
     private static final long serialVersionUID = 1L;
+    private TaskDraftService taskDraftService;
+    private Gson gson = new Gson();
+    private ObjectMapper objectMapper = new ObjectMapper();
+
 
     // Workflow properties
     private String step = "01";
@@ -97,6 +109,9 @@ public class EmpCertificationBean implements Serializable {
             taskService = (TaskService) BeanUtility.getBean("taskService");
             userAliasService = (UserAliasService) BeanUtility.getBean("userAliasService");
             sysUserService = (SysUserService) BeanUtility.getBean("sysUserService");
+            taskDraftService = (TaskDraftService) BeanUtility.getBean("taskDraftService");
+
+
             String mode = UtilityHelper.getRequestParameter("mode");
             if ("view".equals(mode)) {
                 viewOnly = true; // يجعل كل الحقول للعرض فقط
@@ -781,6 +796,116 @@ public class EmpCertificationBean implements Serializable {
             photoStreamedContent = null;
         }
     }
+    public void saveDraft() {
+        try {
+            TaskDraft draft = new TaskDraft();
+            if (task != null) draft.setTaskId(task.getId());
+            SysUser user = loginBean.getUser();
+            if (user != null) {
+                draft.setDraftOwnerId(user.getId().intValue());
+                draft.setDraftOwnerName(user.getDisplayName());
+            }
+            // scope this draft to employee certification form
+            draft.setTaskType("emp_training");
+            // وضع بيانات النموذج في JSON — أفضل من Java serialization
+            Map<String, Object> payload = new HashMap<>();
+            // convert to safe shallow structures to avoid serializing full entity graphs
+            payload.put("empCertification", com.smat.ins.util.DraftUtils.toSafeStructure(this.empCertification));
+            payload.put("employee", com.smat.ins.util.DraftUtils.toSafeStructure(this.employee));
+            payload.put("selectedUserAliasRecipient", com.smat.ins.util.DraftUtils.toSafeStructure(this.selectedUserAliasRecipient));
+            payload.put("persistentMode", this.persistentMode);
+            // include some UI state
+            payload.put("stepComment", this.stepComment);
+            payload.put("disabled", this.disabled);
+            // تحويل إلى bytes
+            byte[] bytes = objectMapper.writeValueAsBytes(payload);
+            draft.setDraftData(bytes);
+            draft.setCreatedDate(new Date());
+            TaskDraft saved = taskDraftService.saveOrUpdate(draft);
+            if (saved != null && saved.getId() != null) {
+                UtilityHelper.addInfoMessage("Draft saved successfully (v=" + saved.getVersion() + ")");
+            } else {
+                UtilityHelper.addErrorMessage("Failed to save draft");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error saving draft: " + e.getMessage());
+        }
+    }
+
+    // ActionListener wrapper referenced by xhtml (some templates call saveDraftEmpCertification)
+    public void saveDraftEmpCertification(ActionEvent event) {
+        saveDraft();
+    }
+    public void loadDraft() {
+        try {
+            // حاول جلب مسودة مرتبطة بالمهمة أولاً (إن وُجدت)
+            TaskDraft draft = null;
+            if (task != null && task.getId() != null) {
+                draft = taskDraftService.findByTaskId(task.getId());
+            }
+            // إن لم توجد مسودة مرتبطة بالمهمة، جلب أحدث مسودة للمالك الحالي
+            if (draft == null) {
+                SysUser current = loginBean.getUser();
+                if (current != null) {
+                    Integer ownerId = current.getId().intValue();
+                    // try owner+type first so we load the right form
+                    draft = taskDraftService.findLatestByOwnerAndType(ownerId, "emp_training");
+                    if (draft == null) {
+                        draft = taskDraftService.findLatestByOwner(ownerId);
+                    }
+                }
+            }
+
+            if (draft == null) {
+                UtilityHelper.addInfoMessage("No draft found.");
+                return;
+            }
+
+            byte[] data = draft.getDraftData();
+            if (data == null || data.length == 0) {
+                UtilityHelper.addInfoMessage("Draft is empty.");
+                return;
+            }
+
+            // فك الـ JSON إلى خريطة وملأ الحقول الأساسية
+            Map<String, Object> payload = objectMapper.readValue(data, Map.class);
+
+            // EmpCertification
+            if (payload.containsKey("empCertification")) {
+                // تحويل الكائن إلى JSON ثم إلى الكلاس لضمان النوع
+                EmpCertification e = objectMapper.convertValue(payload.get("empCertification"), EmpCertification.class);
+                this.empCertification = e;
+            }
+
+            // Employee
+            if (payload.containsKey("employee")) {
+                Employee emp = objectMapper.convertValue(payload.get("employee"), Employee.class);
+                this.employee = emp;
+                if (this.empCertification != null) this.empCertification.setEmployee(emp);
+            }
+
+            // selected reviewer user alias (قد تحتاج تحويل/بحث حسب id)
+            if (payload.containsKey("selectedUserAliasRecipient")) {
+                UserAlias ua = objectMapper.convertValue(payload.get("selectedUserAliasRecipient"), UserAlias.class);
+                this.selectedUserAliasRecipient = ua;
+            }
+
+            // persistentMode إذا خُزّن
+            if (payload.containsKey("persistentMode")) {
+                Object pm = payload.get("persistentMode");
+                if (pm != null) this.persistentMode = pm.toString();
+            }
+
+            UtilityHelper.addInfoMessage("Draft loaded successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error loading draft: " + e.getMessage());
+        }
+    }
+
+
+
 
     public void removePhoto() {
         try {

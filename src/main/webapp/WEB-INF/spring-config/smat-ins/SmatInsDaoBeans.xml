@@ -359,6 +359,11 @@
 	<bean name="workingGroupDao" class="com.smat.ins.model.dao.impl.WorkingGroupDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
+    <!-- TaskDraft DAO -->
+    <bean name="taskDraftDao" class="com.smat.ins.model.dao.impl.TaskDraftDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
 
 
 

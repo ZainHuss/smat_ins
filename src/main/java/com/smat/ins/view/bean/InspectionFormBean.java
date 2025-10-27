@@ -78,6 +78,9 @@ import com.smat.ins.util.LocalizationService;
 import com.smat.ins.util.QRCodeGenerator;
 import com.smat.ins.util.UtilityHelper;
 import com.aspose.words.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smat.ins.model.entity.TaskDraft;
+import com.smat.ins.model.service.TaskDraftService;
 
 @Named
 @ViewScoped
@@ -89,10 +92,13 @@ public class InspectionFormBean implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3900928087796493653L;
+    private ObjectMapper objectMapper = new ObjectMapper();
 	private String equipmentCatStr;
 	private String equipmentCatCode;
+    private TaskDraftService taskDraftService; // inject via BeanUtility or setter
 
-	private String taskIdStr;
+
+    private String taskIdStr;
 	private Integer taskId;
 
 	private String permission;
@@ -106,6 +112,7 @@ public class InspectionFormBean implements Serializable {
 	private String stepComment;
 	private boolean viewOnly;
 	private boolean disableSticker;
+	private boolean savingDraft = false;
 
 	public String getStepComment() {
 		return stepComment;
@@ -157,6 +164,33 @@ public class InspectionFormBean implements Serializable {
 
 	public void setDisableSticker(boolean disableSticker) {
 		this.disableSticker = disableSticker;
+	}
+
+	public boolean isSavingDraft() {
+		return savingDraft;
+	}
+
+	public void setSavingDraft(boolean savingDraft) {
+		this.savingDraft = savingDraft;
+	}
+
+	// prepareSaveDraft will be invoked by an ajax remoteCommand to set the flag before full submit
+	public void prepareSaveDraft() {
+		this.savingDraft = true;
+	}
+
+	/**
+	 * Return true when the current view is the inspector stage (i.e. not the final reviewer/print step).
+	 * The print button is shown when step == '03', so drafts should be available when step != '03'.
+	 */
+	public boolean isInspectorVisible() {
+		// Inspector stage is step "01". Also allow null (new/insert mode) to show draft.
+		try {
+			if (this.step == null) return true;
+			return "01".equals(this.step);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public String getPermission() {
@@ -539,7 +573,10 @@ public class InspectionFormBean implements Serializable {
 			formColumnService = (FormColumnService) BeanUtility.getBean("formColumnService");
 			columnContentService = (ColumnContentService) BeanUtility.getBean("columnContentService");
 			taskService = (TaskService) BeanUtility.getBean("taskService");
-			inspectionFormWorkflowService = (InspectionFormWorkflowService) BeanUtility
+            taskDraftService = (TaskDraftService) BeanUtility.getBean("taskDraftService");
+
+
+            inspectionFormWorkflowService = (InspectionFormWorkflowService) BeanUtility
 					.getBean("inspectionFormWorkflowService");
 			equipmentInspectionCertificateService = (EquipmentInspectionCertificateService) BeanUtility
 					.getBean("equipmentInspectionCertificateService");
@@ -1236,8 +1273,299 @@ public class InspectionFormBean implements Serializable {
         return out.toByteArray();
     }
 
+    // Save current form as draft
+    public void saveDraft() {
+		try {
+            TaskDraft draft = new TaskDraft();
+            if (task != null) draft.setTaskId(task.getId());
+            if (loginBean != null && loginBean.getUser() != null) {
+                draft.setDraftOwnerId(loginBean.getUser().getId().intValue());
+                draft.setDraftOwnerName(loginBean.getUser().getDisplayName());
+            }
+			// set a clear task type so we can scope drafts per form
+			draft.setTaskType("inspection_equipment");
+			Map<String,Object> payload = new HashMap<>();
+			// convert to safe shallow structures to avoid serializing full JPA graphs
+			payload.put("equipmentInspectionForm", com.smat.ins.util.DraftUtils.toSafeStructure(this.equipmentInspectionForm));
+			payload.put("columnContents", com.smat.ins.util.DraftUtils.toSafeStructure(this.columnContents));
+			payload.put("examinationType", com.smat.ins.util.DraftUtils.toSafeStructure(this.examinationType));
+			payload.put("equipmentType", com.smat.ins.util.DraftUtils.toSafeStructure(this.equipmentType));
+			// add a few extra UI-related fields so we can fully restore the form
+			payload.put("stepComment", this.stepComment);
+			payload.put("persistentMode", this.persistentMode);
+			payload.put("disabled", this.disabled);
+			byte[] bytes = objectMapper.writeValueAsBytes(payload);
+            draft.setDraftData(bytes);
+            draft.setCreatedDate(new Date());
+			TaskDraft saved = taskDraftService.saveOrUpdate(draft);
+			if (saved != null) UtilityHelper.addInfoMessage("Draft saved successfully (v=" + saved.getVersion() + ")");
+			else UtilityHelper.addErrorMessage("Failed to save draft");
+		} catch (Exception e) {
+			e.printStackTrace();
+			UtilityHelper.addErrorMessage("Error saving draft: " + e.getMessage());
+		} finally {
+			// reset the savingDraft flag so normal validations resume
+			try { this.savingDraft = false; } catch (Exception ex) {}
+		}
+    }
+    public void loadDraft() {
+        try {
+            TaskDraft draft = null;
+            if (task != null && task.getId() != null) {
+                draft = taskDraftService.findByTaskId(task.getId());
+            }
+			if (draft == null) {
+				SysUser current = loginBean.getUser();
+				if (current != null) {
+					// try to get a draft scoped to this form type first
+					draft = taskDraftService.findLatestByOwnerAndType(current.getId().intValue(), "inspection_equipment");
+					if (draft == null) {
+						// fallback to any latest draft of the owner
+						draft = taskDraftService.findLatestByOwner(current.getId().intValue());
+					}
+				}
+			}
 
-	public void downloadCert(Integer taskId) {
+            if (draft == null) {
+                UtilityHelper.addInfoMessage("No draft found.");
+                return;
+            }
+
+            byte[] data = draft.getDraftData();
+            if (data == null || data.length == 0) {
+                UtilityHelper.addInfoMessage("Draft is empty.");
+                return;
+            }
+
+			Map<String, Object> payload = objectMapper.readValue(data, Map.class);
+
+			// Try best-effort restoring from the shallow structures we stored
+			if (payload.containsKey("equipmentInspectionForm")) {
+				try {
+					Object raw = payload.get("equipmentInspectionForm");
+					if (raw instanceof Map) {
+						Map<String, Object> m = (Map<String, Object>) raw;
+						EquipmentInspectionForm eif = new EquipmentInspectionForm();
+						// primitive/string fields
+						if (m.containsKey("reportNo")) eif.setReportNo((String) m.get("reportNo"));
+						if (m.containsKey("timeSheetNo")) eif.setTimeSheetNo((String) m.get("timeSheetNo"));
+						if (m.containsKey("jobNo")) eif.setJobNo((String) m.get("jobNo"));
+						if (m.containsKey("stickerNo")) eif.setStickerNo((String) m.get("stickerNo"));
+						if (m.containsKey("nameAndAddressOfEmployer")) eif.setNameAndAddressOfEmployer((String) m.get("nameAndAddressOfEmployer"));
+						// dates may be serialized as timestamps/strings
+						try { if (m.containsKey("dateOfThoroughExamination")) eif.setDateOfThoroughExamination(objectMapper.convertValue(m.get("dateOfThoroughExamination"), java.util.Date.class)); } catch (Exception ex) {}
+						try { if (m.containsKey("nextExaminationDate")) eif.setNextExaminationDate(objectMapper.convertValue(m.get("nextExaminationDate"), java.util.Date.class)); } catch (Exception ex) {}
+						try { if (m.containsKey("previousExaminationDate")) eif.setPreviousExaminationDate(objectMapper.convertValue(m.get("previousExaminationDate"), java.util.Date.class)); } catch (Exception ex) {}
+
+						// relations by id (DraftUtils stores related entity id under fieldName + "_id")
+						try {
+							Object companyIdObj = m.get("company_id") != null ? m.get("company_id") : (m.get("company") instanceof Map ? ((Map) m.get("company")).get("id") : null);
+							if (companyIdObj != null) {
+								Integer cid = objectMapper.convertValue(companyIdObj, Integer.class);
+								try { eif.setCompany(companyService.findById(cid)); } catch (Exception ex) {}
+							}
+						} catch (Throwable t) {}
+
+						try {
+							Object etIdObj = m.get("equipmentType_id") != null ? m.get("equipmentType_id") : (m.get("equipmentType") instanceof Map ? ((Map) m.get("equipmentType")).get("id") : null);
+							if (etIdObj != null) {
+								Number n = objectMapper.convertValue(etIdObj, Number.class);
+								if (n != null) {
+									Short etid = n.shortValue();
+									try { this.equipmentType = equipmentTypeService.findById(etid); eif.setEquipmentType(this.equipmentType); } catch (Exception ex) {}
+								}
+							}
+						} catch (Throwable t) {}
+
+						try {
+							Object exTypeIdObj = m.get("examinationType_id") != null ? m.get("examinationType_id") : (m.get("examinationType") instanceof Map ? ((Map) m.get("examinationType")).get("id") : null);
+							if (exTypeIdObj != null) {
+								Number n2 = objectMapper.convertValue(exTypeIdObj, Number.class);
+								if (n2 != null) {
+									Short exid = n2.shortValue();
+									try { this.examinationType = examinationTypeService.findById(exid); eif.setExaminationType(this.examinationType); } catch (Exception ex) {}
+								}
+							}
+						} catch (Throwable t) {}
+
+						// if stickerNo present, try to resolve the Sticker entity so the selectOneMenu can bind to it
+						try {
+							if (eif.getStickerNo() != null && !eif.getStickerNo().isEmpty()) {
+								Sticker st = null;
+								try {
+									st = stickerService.findByUniqueField("stickerNo", eif.getStickerNo());
+								} catch (Exception ex) {
+									// ignore
+								}
+								if (st == null) {
+									// create a lightweight placeholder so UI shows the value
+									st = new Sticker();
+									st.setStickerNo(eif.getStickerNo());
+								}
+								eif.setSticker(st);
+								// ensure stickers list contains it so selectItems include the current sticker
+								if (this.stickers == null) this.stickers = new java.util.ArrayList<>();
+								boolean contains = false;
+								for (Sticker s : this.stickers) { if (s != null && s.getStickerNo() != null && s.getStickerNo().equals(st.getStickerNo())) { contains = true; break; } }
+								if (!contains) this.stickers.add(0, st);
+							}
+						} catch (Throwable t) {}
+						this.equipmentInspectionForm = eif;
+					} else {
+						EquipmentInspectionForm eif = objectMapper.convertValue(raw, EquipmentInspectionForm.class);
+						this.equipmentInspectionForm = eif;
+					}
+				} catch (Exception ex) {
+					// ignore and keep current
+				}
+			}
+
+			if (payload.containsKey("columnContents")) {
+				try {
+					List<?> rawContents = (List<?>) payload.get("columnContents");
+					List<ColumnContent> loaded = new ArrayList<>();
+
+					// map to keep resolved form columns
+					Map<Integer, FormColumn> formColumnById = new java.util.HashMap<>();
+					if (this.formColumns != null) {
+						for (FormColumn fc : this.formColumns) {
+							if (fc != null && fc.getId() != null) formColumnById.put(fc.getId(), fc);
+						}
+					} else {
+						this.formColumns = new ArrayList<>();
+					}
+
+					// Resolve general equipment item service lazily
+					com.smat.ins.model.service.GeneralEquipmentItemService geService = null;
+
+					for (Object rc : rawContents) {
+						if (rc == null) continue;
+						ColumnContent cc = new ColumnContent();
+						if (rc instanceof Map) {
+							Map m = (Map) rc;
+							// id
+							if (m.get("id") != null) {
+								try { cc.setId(objectMapper.convertValue(m.get("id"), Integer.class)); } catch (Exception ex) {}
+							}
+							// aliasName
+							if (m.get("aliasName") != null) cc.setAliasName(String.valueOf(m.get("aliasName")));
+							// contentValue
+							if (m.get("contentValue") != null) cc.setContentValue(String.valueOf(m.get("contentValue")));
+							// contentOrder
+							if (m.get("contentOrder") != null) {
+								try {
+									Number nc = objectMapper.convertValue(m.get("contentOrder"), Number.class);
+									if (nc != null) cc.setContentOrder(Short.valueOf(nc.shortValue()));
+								} catch (Exception ex) {}
+							}
+
+							// formColumn_id (may be present as number)
+							Object fcIdObj = m.get("formColumn_id") != null ? m.get("formColumn_id") : (m.get("formColumn") instanceof Map ? ((Map) m.get("formColumn")).get("id") : null);
+							if (fcIdObj != null) {
+								try {
+									Integer nInt = objectMapper.convertValue(fcIdObj, Integer.class);
+									if (nInt != null) {
+										Integer fcId = nInt.intValue();
+										FormColumn real = formColumnById.get(fcId);
+										if (real == null) {
+											try {
+												real = formColumnService.findById(fcId);
+												if (real != null) {
+													formColumnById.put(real.getId(), real);
+													this.formColumns.add(real);
+												}
+											} catch (Exception ex) {
+												// ignore missing column
+											}
+										}
+										if (real != null) cc.setFormColumn(real);
+									}
+								} catch (Exception ex) {}
+							}
+
+							// generalEquipmentItem_id
+							Object geIdObj = m.get("generalEquipmentItem_id") != null ? m.get("generalEquipmentItem_id") : (m.get("generalEquipmentItem") instanceof Map ? ((Map) m.get("generalEquipmentItem")).get("id") : null);
+							if (geIdObj != null) {
+								try {
+									Integer ngInt = objectMapper.convertValue(geIdObj, Integer.class);
+									if (ngInt != null) {
+										Integer gid = ngInt.intValue();
+										try {
+											if (geService == null) geService = (com.smat.ins.model.service.GeneralEquipmentItemService) BeanUtility.getBean("generalEquipmentItemService");
+											if (geService != null) {
+												GeneralEquipmentItem ge = geService.findById(gid);
+												if (ge != null) cc.setGeneralEquipmentItem(ge);
+											}
+										} catch (Exception ex) {
+											// ignore
+										}
+									}
+								} catch (Exception ex) {}
+							}
+
+						} else {
+							// fallback: try to convert the whole object
+							try {
+								ColumnContent conv = objectMapper.convertValue(rc, ColumnContent.class);
+								if (conv != null) cc = conv;
+							} catch (Exception ex) {
+								// ignore
+							}
+						}
+						loaded.add(cc);
+					}
+
+					// Ensure formRows contains rows referenced by the loaded columns
+					if ((this.formRows == null || this.formRows.isEmpty()) && !formColumnById.isEmpty()) {
+						java.util.Set<FormRow> rows = new java.util.LinkedHashSet<>();
+						for (FormColumn fc : formColumnById.values()) {
+							if (fc != null && fc.getFormRow() != null) rows.add(fc.getFormRow());
+						}
+						this.formRows = new ArrayList<>(rows);
+					}
+
+					this.columnContents = loaded;
+					// refresh the dynamic content and sticker select on UI so restored values appear
+					try {
+						PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
+						PrimeFaces.current().ajax().update("form:selectoneMenu_sticker");
+					} catch (Exception ex) {
+						// ignore if PrimeFaces not available in this context
+					}
+				} catch (Exception ex) {
+					// ignore
+				}
+			}
+
+			if (payload.containsKey("equipmentType")) {
+				try { this.equipmentType = objectMapper.convertValue(payload.get("equipmentType"), EquipmentType.class); } catch (Exception ex) {}
+			}
+			if (payload.containsKey("examinationType")) {
+				try { this.examinationType = objectMapper.convertValue(payload.get("examinationType"), ExaminationType.class); } catch (Exception ex) {}
+			}
+
+			if (payload.containsKey("stepComment")) {
+				this.stepComment = payload.get("stepComment") != null ? payload.get("stepComment").toString() : null;
+			}
+			if (payload.containsKey("persistentMode")) {
+				this.persistentMode = payload.get("persistentMode") != null ? payload.get("persistentMode").toString() : null;
+			}
+
+            UtilityHelper.addInfoMessage("Draft loaded successfully.");
+            PrimeFaces.current().ajax().update("@form"); // تحدّث الواجهة
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error loading draft: " + e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
+    public void downloadCert(Integer taskId) {
 	    FacesContext fc = FacesContext.getCurrentInstance();
 	    try {
 	        EquipmentInspectionForm eForm = equipmentInspectionFormService.getBy(taskId);

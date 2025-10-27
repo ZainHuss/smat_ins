@@ -258,307 +258,316 @@ public class CompletedTaskSearchBean implements Serializable {
     /**
      * Search for completed tasks based on the current criteria
      */
-	public void searchCompletedTasks() {
-	    try {
-	        // Determine task type filter
-	        String taskTypeFilter = null;
-	        if (taskType != null && !taskType.isEmpty()) {
-	            taskTypeFilter = taskType;
-	        }
-	
-	        // Get company ID
-	        Integer companyId = (company != null) ? company.getId() : null;
-	
-	        // Get equipment category ID (only relevant for equipment tasks)
-	        Short equipmentCategoryId = null;
-	        if (equipmentCategory != null && ("equipment".equals(taskTypeFilter) || taskTypeFilter == null)) {
-	            equipmentCategoryId = equipmentCategory.getId();
-	        }
+    public void searchCompletedTasks() {
+        try {
+            // Determine task type filter
+            String taskTypeFilter = null;
+            if (taskType != null && !taskType.isEmpty()) {
+                taskTypeFilter = taskType;
+            }
 
-	        // Get organization ID
-	        Long organizationId = this.organizationId; // new field populated by the xhtml selectOneMenu
-	        
+            // Get company ID
+            Integer companyId = (company != null) ? company.getId() : null;
 
-	
-	        // Perform search (original)
-	        List<Map<String, Object>> rawResults = completedTaskService.getCompletedTasks(
-	                taskTypeFilter, fromDate, toDate, companyId, equipmentCategoryId);
-	
-	
-	        // ---- Robust local filtering by Cert Number (if user provided certNumberSearch) ----
-	        if (certNumberSearch != null && !certNumberSearch.trim().isEmpty() && rawResults != null) {
-	            String q = certNumberSearch.trim().toLowerCase();
-	            List<Map<String, Object>> filtered = new ArrayList<>();
-	
-	            for (Map<String, Object> r : rawResults) {
-	                if (r == null) continue;
-	                boolean match = false;
-	
-	                // 1) Direct exact key "Cert Num" (case-sensitive as map keys may be exact)
-	                Object v = r.get("Cert Num");
-	                if (!match && v != null && String.valueOf(v).toLowerCase().contains(q)) {
-	                    match = true;
-	                }
-	
-	                // 2) Try common alternate keys (lower-cased comparison)
-	                if (!match) {
-	                    String[] altKeys = {"certNumber", "certNo", "cert_num", "certnum", "cert", "reportNo", "report_no", "reportno", "reference", "stickerNo", "stickerno", "sticker"};
-	                    for (String k : altKeys) {
-	                        v = r.get(k);
-	                        if (v != null && String.valueOf(v).toLowerCase().contains(q)) {
-	                            match = true;
-	                            break;
-	                        }
-	                    }
-	                }
-	
-	                // 3) Fallback: try to find any key whose name contains "cert" / "report" / "reference" / "sticker"
-	                if (!match) {
-	                    for (Map.Entry<String, Object> e : r.entrySet()) {
-	                        String keyName = e.getKey() == null ? "" : String.valueOf(e.getKey()).toLowerCase();
-	                        if (keyName.contains("cert") || keyName.contains("report") || keyName.contains("reference") || keyName.contains("sticker")) {
-	                            Object val = e.getValue();
-	                            if (val != null && String.valueOf(val).toLowerCase().contains(q)) {
-	                                match = true;
-	                                break;
-	                            }
-	                        }
-	                    }
-	                }
-	
-	                if (match) filtered.add(r);
-	            }
-	            rawResults = filtered;
-	        }
-	        // ---- end certNumber filtering ----
-	        
+            // Get equipment category ID (only relevant for equipment tasks)
+            Short equipmentCategoryId = null;
+            if (equipmentCategory != null && ("equipment".equals(taskTypeFilter) || taskTypeFilter == null)) {
+                equipmentCategoryId = equipmentCategory.getId();
+            }
+
+            // Get organization ID
+            Long organizationId = this.organizationId; // new field populated by the xhtml selectOneMenu
+
+            // ----- BACKFILL: ensure tasks that reached step '03' have completed_date set -----
+            try {
+                // This will update tasks (equipment & employee) whose workflow is at '03' and completed_date is NULL
+                completedTaskService.backfillMissingCompletedDates(fromDate, toDate, companyId, equipmentCategoryId);
+            } catch (Exception bfEx) {
+                // Log and continue — do not block the search due to backfill error
+                bfEx.printStackTrace();
+                addWarningMessage("Warning: failed to backfill completed dates. Search will proceed but some items may show empty completed date.");
+            }
+            // ---------------------------------------------------------------------------------
+
+            // Perform search (original)
+            List<Map<String, Object>> rawResults = completedTaskService.getCompletedTasks(
+                    taskTypeFilter, fromDate, toDate, companyId, equipmentCategoryId);
 
 
-	        // ---- end organization filtering ----
-	
-	        // Prepare the final modifiable list
-	        searchResults = new ArrayList<>();
-	        if (rawResults != null) {
-	            int idx = 0;
-	            for (Map<String, Object> originalRow : rawResults) {
-	                Map<String, Object> row = new HashMap<>();
-	                if (originalRow != null) {
-	                    row.putAll(originalRow);
-	                }
-	
-	                try {
-	                	// ---- BEGIN: populate organizationName fallback logic ----
-	                	String organizationName = null;
+            // ---- Robust local filtering by Cert Number (if user provided certNumberSearch) ----
+            if (certNumberSearch != null && !certNumberSearch.trim().isEmpty() && rawResults != null) {
+                String q = certNumberSearch.trim().toLowerCase();
+                List<Map<String, Object>> filtered = new ArrayList<>();
 
-	                	// 1) إذا الخريطة تحتوي بالفعل organizationName فاستعملها
-	                	try {
-	                	    Object orgVal = row.get("organizationName");
-	                	    if (orgVal != null && !String.valueOf(orgVal).trim().isEmpty()) {
-	                	        organizationName = String.valueOf(orgVal).trim();
-	                	    }
-	                	} catch (Exception ignore) {}
+                for (Map<String, Object> r : rawResults) {
+                    if (r == null) continue;
+                    boolean match = false;
 
-	                	// 2) إذا الخريطة تحتوي على SysUser كائن تحت مفتاح متوقع
-	                	if ((organizationName == null || organizationName.isEmpty())) {
-	                	    try {
-	                	        Object suObj = row.get("sysUser");
-	                	        if (suObj instanceof SysUser) {
-	                	            SysUser su = (SysUser) suObj;
-	                	            if (su.getOrganizationByOrganization() != null
-	                	                    && su.getOrganizationByOrganization().getName() != null) {
-	                	                organizationName = su.getOrganizationByOrganization().getName().trim();
-	                	            }
-	                	        }
-	                	    } catch (Exception ignore) {}
-	                	}
+                    // 1) Direct exact key "Cert Num" (case-sensitive as map keys may be exact)
+                    Object v = r.get("Cert Num");
+                    if (!match && v != null && String.valueOf(v).toLowerCase().contains(q)) {
+                        match = true;
+                    }
 
-	                	// 3) محاولات لاحقة: إن لم ينجح، نستخدم taskId للحصول على النموذج/الشهادة ثم نأخذ org من الـ SysUser المرتبط
-	                	if ((organizationName == null || organizationName.isEmpty())) {
-	                	    try {
-	                	        Object idObj = row.get("taskId");
-	                	        Integer localTid = null;
-	                	        if (idObj instanceof Number) {
-	                	            localTid = ((Number) idObj).intValue();
-	                	        } else if (idObj != null) {
-	                	            try { localTid = Integer.valueOf(String.valueOf(idObj)); } catch (NumberFormatException nfe) { localTid = null; }
-	                	        }
+                    // 2) Try common alternate keys (lower-cased comparison)
+                    if (!match) {
+                        String[] altKeys = {"certNumber", "certNo", "cert_num", "certnum", "cert", "reportNo", "report_no", "reportno", "reference", "stickerNo", "stickerno", "sticker"};
+                        for (String k : altKeys) {
+                            v = r.get(k);
+                            if (v != null && String.valueOf(v).toLowerCase().contains(q)) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
 
-	                	        if (localTid != null) {
-	                	            // Equipment inspection -> try form's inspectionBy or reviewedBy
-	                	            try {
-	                	                EquipmentInspectionForm form = equipmentInspectionFormService.getBy(localTid);
-	                	                if (form != null) {
-	                	                    SysUser su = form.getSysUserByInspectionBy() != null ? form.getSysUserByInspectionBy()
-	                	                            : form.getSysUserByReviewedBy();
-	                	                    if (su != null && su.getOrganizationByOrganization() != null
-	                	                            && su.getOrganizationByOrganization().getName() != null) {
-	                	                        organizationName = su.getOrganizationByOrganization().getName().trim();
-	                	                    }
-	                	                }
-	                	            } catch (Exception ignore) {}
+                    // 3) Fallback: try to find any key whose name contains "cert" / "report" / "reference" / "sticker"
+                    if (!match) {
+                        for (Map.Entry<String, Object> e : r.entrySet()) {
+                            String keyName = e.getKey() == null ? "" : String.valueOf(e.getKey()).toLowerCase();
+                            if (keyName.contains("cert") || keyName.contains("report") || keyName.contains("reference") || keyName.contains("sticker")) {
+                                Object val = e.getValue();
+                                if (val != null && String.valueOf(val).toLowerCase().contains(q)) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
-	                	            // Employee certification -> try cert's inspectedBy or reviewedBy
-	                	            if (organizationName == null || organizationName.isEmpty()) {
-	                	                try {
-	                	                    EmpCertification cert = empCertificationService.getBy(localTid);
-	                	                    if (cert != null) {
-	                	                        SysUser su = cert.getSysUserByInspectedBy() != null ? cert.getSysUserByInspectedBy()
-	                	                                : cert.getSysUserByReviewedBy();
-	                	                        if (su != null && su.getOrganizationByOrganization() != null
-	                	                                && su.getOrganizationByOrganization().getName() != null) {
-	                	                            organizationName = su.getOrganizationByOrganization().getName().trim();
-	                	                        }
-	                	                    }
-	                	                } catch (Exception ignore) {}
-	                	            }
-	                	        }
-	                	    } catch (Exception ignore) {}
-	                	}
-
-	                	// 4) أخيراً: استخدم companyName كبديل إن لم نجد organization
-	                	if (organizationName == null || organizationName.isEmpty()) {
-	                	    try {
-	                	        Object comp = row.get("companyName");
-	                	        if (comp != null && !String.valueOf(comp).trim().isEmpty()) {
-	                	            organizationName = String.valueOf(comp).trim();
-	                	        }
-	                	    } catch (Exception ignore) {}
-	                	}
-
-	                	// 5) وضع القيمة النهائية (أو '-' إذا لا شيء)
-	                	row.put("organizationName", (organizationName != null && !organizationName.trim().isEmpty()) ? organizationName : "-");
-	                	// ---- END: populate organizationName fallback logic ----
-
-	                    // Normalize taskId to Integer if possible
-	                    Object idObj = row.get("taskId");
-	                    Integer tid = null;
-	                    if (idObj instanceof Number) {
-	                        tid = ((Number) idObj).intValue();
-	                    } else if (idObj != null) {
-	                        try {
-	                            tid = Integer.valueOf(String.valueOf(idObj));
-	                        } catch (NumberFormatException nfe) {
-	                            tid = null;
-	                        }
-	                    }
-
-	                    // ------------------- استدعاء المطابقة/الملء هنا -------------------
-	                    populateJobAndTimesheet(row, tid);
-	                    // --------------------------------------------------------------
-
-	
-	                    String inspector = "Not assigned";
-	                    String reviewer = "Not assigned";
-	
-	                    if (tid != null) {
-	                        try {
-	                            inspector = getInspectorTask(tid);
-	                            if (inspector == null || inspector.trim().isEmpty()) inspector = "Not assigned";
-	                        } catch (Exception ex) {
-	                            ex.printStackTrace();
-	                            inspector = "Not assigned";
-	                        }
-	                        try {
-	                            reviewer = getReviewerTask(tid);
-	                            if (reviewer == null || reviewer.trim().isEmpty()) reviewer = "Not assigned";
-	                        } catch (Exception ex) {
-	                            ex.printStackTrace();
-	                            reviewer = "Not assigned";
-	                        }
-	                    } else {
-	                        Object iobj = row.get("inspector");
-	                        if (iobj == null) iobj = row.get("inspectorName");
-	                        if (iobj != null && !String.valueOf(iobj).trim().isEmpty()) inspector = String.valueOf(iobj);
-	
-	                        Object robj = row.get("reviewer");
-	                        if (robj == null) robj = row.get("reviewerName");
-	                        if (robj != null && !String.valueOf(robj).trim().isEmpty()) reviewer = String.valueOf(robj);
-	                    }
-	
-	                    row.put("inspectorName", inspector);
-	                    row.put("reviewerName", reviewer);
-	
-	                } catch (Exception e) {
-	                    try {
-	                        row.put("inspectorName", row.getOrDefault("inspectorName", "Not assigned"));
-	                        row.put("reviewerName", row.getOrDefault("reviewerName", "Not assigned"));
-	                    } catch (Exception ignore) { }
-	                    e.printStackTrace();
-	                }
-	                
-	
-	                searchResults.add(row);
-	                idx++;
-	            }
-	        }
-	
-	        // Get statistics
-	     // ---------- Post-process organization filter (apply AFTER we populated organizationName etc) ----------
-	        if (organizationId != null && searchResults != null && !searchResults.isEmpty()) {
-	            String targetOrgName = null;
-	            if (organizationList != null) {
-	                for (Organization o : organizationList) {
-	                    if (o != null && o.getId() != null && o.getId().longValue() == organizationId.longValue()) {
-	                        targetOrgName = o.getName();
-	                        break;
-	                    }
-	                }
-	            }
-
-	            List<Map<String, Object>> filteredResults = new ArrayList<>();
-	            for (Map<String, Object> row : searchResults) {
-	                if (row == null) continue;
-	                boolean keep = false;
-
-	                // try id from row (if exists)
-	                Long rowOrgId = extractOrganizationIdFromRow(row);
-	                if (rowOrgId != null && rowOrgId.longValue() == organizationId.longValue()) {
-	                    keep = true;
-	                }
-
-	                // try organizationName (populated earlier while building rows)
-	                if (!keep && targetOrgName != null) {
-	                    Object orgNameObj = row.get("organizationName");
-	                    String orgName = orgNameObj == null ? null : String.valueOf(orgNameObj).trim();
-	                    if (orgName != null && !orgName.isEmpty() && orgName.equalsIgnoreCase(targetOrgName)) {
-	                        keep = true;
-	                    }
-	                }
-
-	                // final fallback: compare companyName to targetOrgName
-	                if (!keep && targetOrgName != null) {
-	                    Object comp = row.get("companyName");
-	                    if (comp != null && String.valueOf(comp).trim().equalsIgnoreCase(targetOrgName)) {
-	                        keep = true;
-	                    }
-	                }
-
-	                if (keep) filteredResults.add(row);
-	            }
-
-	            searchResults = filteredResults;
-	        }
-	        // ---------- end org post-filter ----------
-	        statistics = completedTaskService.getTaskCompletionStatistics(fromDate, toDate, companyId);
+                    if (match) filtered.add(r);
+                }
+                rawResults = filtered;
+            }
+            // ---- end certNumber filtering ----
 
 
-	
-	        searchPerformed = true;
-	
-	        // If after filtering there are zero results, give a helpful warning
-	        if ((searchResults == null || searchResults.isEmpty())) {
-	            addWarningMessage("No completed tasks found for the given search criteria.");
-	        } else {
-	            addInfoMessage("Found " + (searchResults != null ? searchResults.size() : 0) + " completed tasks");
-	        }
-	
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        addErrorMessage("Error searching completed tasks: " + e.getMessage());
-	        if (searchResults != null) searchResults.clear();
-	        statistics = null;
-	    }
-	}
+
+            // ---- end organization filtering ----
+
+            // Prepare the final modifiable list
+            searchResults = new ArrayList<>();
+            if (rawResults != null) {
+                int idx = 0;
+                for (Map<String, Object> originalRow : rawResults) {
+                    Map<String, Object> row = new HashMap<>();
+                    if (originalRow != null) {
+                        row.putAll(originalRow);
+                    }
+
+                    try {
+                        // ---- BEGIN: populate organizationName fallback logic ----
+                        String organizationName = null;
+
+                        // 1) إذا الخريطة تحتوي بالفعل organizationName فاستعملها
+                        try {
+                            Object orgVal = row.get("organizationName");
+                            if (orgVal != null && !String.valueOf(orgVal).trim().isEmpty()) {
+                                organizationName = String.valueOf(orgVal).trim();
+                            }
+                        } catch (Exception ignore) {}
+
+                        // 2) إذا الخريطة تحتوي على SysUser كائن تحت مفتاح متوقع
+                        if ((organizationName == null || organizationName.isEmpty())) {
+                            try {
+                                Object suObj = row.get("sysUser");
+                                if (suObj instanceof SysUser) {
+                                    SysUser su = (SysUser) suObj;
+                                    if (su.getOrganizationByOrganization() != null
+                                            && su.getOrganizationByOrganization().getName() != null) {
+                                        organizationName = su.getOrganizationByOrganization().getName().trim();
+                                    }
+                                }
+                            } catch (Exception ignore) {}
+                        }
+
+                        // 3) محاولات لاحقة: إن لم ينجح، نستخدم taskId للحصول على النموذج/الشهادة ثم نأخذ org من الـ SysUser المرتبط
+                        if ((organizationName == null || organizationName.isEmpty())) {
+                            try {
+                                Object idObj = row.get("taskId");
+                                Integer localTid = null;
+                                if (idObj instanceof Number) {
+                                    localTid = ((Number) idObj).intValue();
+                                } else if (idObj != null) {
+                                    try { localTid = Integer.valueOf(String.valueOf(idObj)); } catch (NumberFormatException nfe) { localTid = null; }
+                                }
+
+                                if (localTid != null) {
+                                    // Equipment inspection -> try form's inspectionBy or reviewedBy
+                                    try {
+                                        EquipmentInspectionForm form = equipmentInspectionFormService.getBy(localTid);
+                                        if (form != null) {
+                                            SysUser su = form.getSysUserByInspectionBy() != null ? form.getSysUserByInspectionBy()
+                                                    : form.getSysUserByReviewedBy();
+                                            if (su != null && su.getOrganizationByOrganization() != null
+                                                    && su.getOrganizationByOrganization().getName() != null) {
+                                                organizationName = su.getOrganizationByOrganization().getName().trim();
+                                            }
+                                        }
+                                    } catch (Exception ignore) {}
+
+                                    // Employee certification -> try cert's inspectedBy or reviewedBy
+                                    if (organizationName == null || organizationName.isEmpty()) {
+                                        try {
+                                            EmpCertification cert = empCertificationService.getBy(localTid);
+                                            if (cert != null) {
+                                                SysUser su = cert.getSysUserByInspectedBy() != null ? cert.getSysUserByInspectedBy()
+                                                        : cert.getSysUserByReviewedBy();
+                                                if (su != null && su.getOrganizationByOrganization() != null
+                                                        && su.getOrganizationByOrganization().getName() != null) {
+                                                    organizationName = su.getOrganizationByOrganization().getName().trim();
+                                                }
+                                            }
+                                        } catch (Exception ignore) {}
+                                    }
+                                }
+                            } catch (Exception ignore) {}
+                        }
+
+                        // 4) أخيراً: استخدم companyName كبديل إن لم نجد organization
+                        if (organizationName == null || organizationName.isEmpty()) {
+                            try {
+                                Object comp = row.get("companyName");
+                                if (comp != null && !String.valueOf(comp).trim().isEmpty()) {
+                                    organizationName = String.valueOf(comp).trim();
+                                }
+                            } catch (Exception ignore) {}
+                        }
+
+                        // 5) وضع القيمة النهائية (أو '-' إذا لا شيء)
+                        row.put("organizationName", (organizationName != null && !organizationName.trim().isEmpty()) ? organizationName : "-");
+                        // ---- END: populate organizationName fallback logic ----
+
+                        // Normalize taskId to Integer if possible
+                        Object idObj = row.get("taskId");
+                        Integer tid = null;
+                        if (idObj instanceof Number) {
+                            tid = ((Number) idObj).intValue();
+                        } else if (idObj != null) {
+                            try {
+                                tid = Integer.valueOf(String.valueOf(idObj));
+                            } catch (NumberFormatException nfe) {
+                                tid = null;
+                            }
+                        }
+
+                        // ------------------- استدعاء المطابقة/الملء هنا -------------------
+                        populateJobAndTimesheet(row, tid);
+                        // --------------------------------------------------------------
+
+                        String inspector = "Not assigned";
+                        String reviewer = "Not assigned";
+
+                        if (tid != null) {
+                            try {
+                                inspector = getInspectorTask(tid);
+                                if (inspector == null || inspector.trim().isEmpty()) inspector = "Not assigned";
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                inspector = "Not assigned";
+                            }
+                            try {
+                                reviewer = getReviewerTask(tid);
+                                if (reviewer == null || reviewer.trim().isEmpty()) reviewer = "Not assigned";
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                reviewer = "Not assigned";
+                            }
+                        } else {
+                            Object iobj = row.get("inspector");
+                            if (iobj == null) iobj = row.get("inspectorName");
+                            if (iobj != null && !String.valueOf(iobj).trim().isEmpty()) inspector = String.valueOf(iobj);
+
+                            Object robj = row.get("reviewer");
+                            if (robj == null) robj = row.get("reviewerName");
+                            if (robj != null && !String.valueOf(robj).trim().isEmpty()) reviewer = String.valueOf(robj);
+                        }
+
+                        row.put("inspectorName", inspector);
+                        row.put("reviewerName", reviewer);
+
+                    } catch (Exception e) {
+                        try {
+                            row.put("inspectorName", row.getOrDefault("inspectorName", "Not assigned"));
+                            row.put("reviewerName", row.getOrDefault("reviewerName", "Not assigned"));
+                        } catch (Exception ignore) { }
+                        e.printStackTrace();
+                    }
+
+
+                    searchResults.add(row);
+                    idx++;
+                }
+            }
+
+            // Get statistics
+            // ---------- Post-process organization filter (apply AFTER we populated organizationName etc) ----------
+            if (organizationId != null && searchResults != null && !searchResults.isEmpty()) {
+                String targetOrgName = null;
+                if (organizationList != null) {
+                    for (Organization o : organizationList) {
+                        if (o != null && o.getId() != null && o.getId().longValue() == organizationId.longValue()) {
+                            targetOrgName = o.getName();
+                            break;
+                        }
+                    }
+                }
+
+                List<Map<String, Object>> filteredResults = new ArrayList<>();
+                for (Map<String, Object> row : searchResults) {
+                    if (row == null) continue;
+                    boolean keep = false;
+
+                    // try id from row (if exists)
+                    Long rowOrgId = extractOrganizationIdFromRow(row);
+                    if (rowOrgId != null && rowOrgId.longValue() == organizationId.longValue()) {
+                        keep = true;
+                    }
+
+                    // try organizationName (populated earlier while building rows)
+                    if (!keep && targetOrgName != null) {
+                        Object orgNameObj = row.get("organizationName");
+                        String orgName = orgNameObj == null ? null : String.valueOf(orgNameObj).trim();
+                        if (orgName != null && !orgName.isEmpty() && orgName.equalsIgnoreCase(targetOrgName)) {
+                            keep = true;
+                        }
+                    }
+
+                    // final fallback: compare companyName to targetOrgName
+                    if (!keep && targetOrgName != null) {
+                        Object comp = row.get("companyName");
+                        if (comp != null && String.valueOf(comp).trim().equalsIgnoreCase(targetOrgName)) {
+                            keep = true;
+                        }
+                    }
+
+                    if (keep) filteredResults.add(row);
+                }
+
+                searchResults = filteredResults;
+            }
+            // ---------- end org post-filter ----------
+            statistics = completedTaskService.getTaskCompletionStatistics(fromDate, toDate, companyId);
+
+
+
+            searchPerformed = true;
+
+            // If after filtering there are zero results, give a helpful warning
+            if ((searchResults == null || searchResults.isEmpty())) {
+                addWarningMessage("No completed tasks found for the given search criteria.");
+            } else {
+                addInfoMessage("Found " + (searchResults != null ? searchResults.size() : 0) + " completed tasks");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            addErrorMessage("Error searching completed tasks: " + e.getMessage());
+            if (searchResults != null) searchResults.clear();
+            statistics = null;
+        }
+    }
+
 	
 	/**
 	 * Try to extract organization id from a result row map.
