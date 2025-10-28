@@ -1310,6 +1310,7 @@ public class InspectionFormBean implements Serializable {
     }
     public void loadDraft() {
         try {
+
             TaskDraft draft = null;
             if (task != null && task.getId() != null) {
                 draft = taskDraftService.findByTaskId(task.getId());

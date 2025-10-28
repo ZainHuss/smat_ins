@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.smat.ins.model.entity.TaskDraft" table="task_draft" catalog="smat_ins_db">
+
+        <!-- المفتاح الأساسي -->
+        <id name="id" type="java.lang.Integer">
+            <column name="id"/>
+            <generator class="native"/>
+        </id>
+
+        <!-- حقل task_id -->
+        <property name="taskId" type="java.lang.Integer">
+            <column name="task_id"/>
+        </property>
+
+        <!-- نوع المهمة (task_type) -->
+        <property name="taskType" type="java.lang.String">
+            <column name="task_type" length="50" not-null="true"/>
+        </property>
+
+        <!-- المستخدم (user_id) -->
+        <property name="draftOwnerId" type="java.lang.Integer">
+            <column name="user_id" not-null="true"/>
+        </property>
+
+        <!-- اسم المستخدم (اختياري) -->
+        <property name="draftOwnerName" type="java.lang.String">
+            <column name="draft_owner_name" length="255"/>
+        </property>
+
+        <!-- محتوى المسودة (JSON مخزّن في LONGTEXT) -->
+        <property name="draftData" type="binary">
+            <column name="draft_json" sql-type="LONGTEXT" not-null="true"/>
+        </property>
+
+        <!-- رقم الإصدار -->
+        <property name="version" type="java.lang.Integer">
+            <column name="version" not-null="true" default="1"/>
+        </property>
+
+        <!-- تاريخ الإنشاء -->
+        <property name="createdDate" type="java.util.Date">
+            <column name="created_at" not-null="true"/>
+        </property>
+
+        <!-- تاريخ التحديث -->
+        <property name="updatedDate" type="java.util.Date">
+            <column name="updated_at"/>
+        </property>
+
+        <!-- الحالة (مفعّل / غير مفعّل) -->
+        <property name="isActive" type="java.lang.Boolean">
+            <column name="is_active"/>
+        </property>
+
+    </class>
+</hibernate-mapping>
