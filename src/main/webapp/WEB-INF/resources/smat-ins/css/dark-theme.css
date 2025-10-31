@@ -1,0 +1,88 @@
+/* Dark theme overrides for SMAT INS - minimal, non-destructive */
+:root {
+    --smat-bg: #0f1113;
+    --smat-surface: #131415;
+    --smat-muted: #bfc7cf;
+    --smat-primary: #f3c04a; /* gold accent */
+}
+
+body.dark-theme, body.dark-theme .nk-app-root {
+    background-color: var(--smat-bg) !important;
+    color: #e6e6e6 !important;
+}
+
+/* header */
+body.dark-theme .nk-header-main {
+    background: #0b0c0d !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.03) !important;
+}
+
+body.dark-theme .nk-menu-link {
+    color: #e6e6e6 !important;
+}
+
+body.dark-theme .nk-menu-link:hover {
+    background: rgba(255,255,255,0.03) !important;
+    color: var(--smat-primary) !important;
+}
+
+body.dark-theme .nk-menu-dropdown {
+    background: #0f1113 !important;
+    border: 1px solid rgba(255,255,255,0.03) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.7) !important;
+}
+
+/* cards and panels */
+body.dark-theme .card,
+body.dark-theme .ui-panelgrid .custom-panel-grid,
+body.dark-theme .ui-panelgrid .custom-panel-grid tr td {
+    background: #111215 !important;
+    color: #e6e6e6 !important;
+    border-color: rgba(255,255,255,0.03) !important;
+}
+
+/* inputs */
+body.dark-theme .ui-inputtext,
+body.dark-theme .ui-selectonemenu,
+body.dark-theme .ui-inputtextarea,
+body.dark-theme .ui-calendar {
+    background: #0e1112 !important;
+    color: #e6e6e6 !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    box-shadow: none !important;
+}
+
+/* buttons */
+body.dark-theme .ui-button,
+body.dark-theme .primary-btn {
+    background: linear-gradient(135deg, #2f2f2f, #1f1f1f) !important;
+    color: #f6e7b3 !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6) !important;
+}
+
+/* navbar icons and avatars */
+body.dark-theme .menu-icon,
+body.dark-theme .user-avatar {
+    color: var(--smat-primary) !important;
+}
+
+/* make links slightly muted */
+body.dark-theme a, body.dark-theme .nk-menu-text {
+    color: #d1d7db !important;
+}
+
+/* other tweaks to ensure contrast */
+body.dark-theme .nk-hero, body.dark-theme .nk-hero-content {
+    background: transparent !important;
+}
+
+/* Ensure the dark-mode-toggle shows correct icon */
+.dark-mode-toggle .on { display: none; }
+.dark-mode-toggle.active .on { display: inline-block; }
+.dark-mode-toggle.active .off { display: none; }
+
+/* Small fallback for link-disabled support */
+
+
+/* End of dark-theme.css */

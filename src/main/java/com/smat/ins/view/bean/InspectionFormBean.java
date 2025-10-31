@@ -1331,9 +1331,147 @@ public class InspectionFormBean implements Serializable {
                 bookmarkReviewedByImg.getBookmarkStart().getParentNode().appendChild(shape);
             }
 
-            // Save the filled document to PDF bytes
-            ByteArrayOutputStream pdfDocOutputStream = new ByteArrayOutputStream();
-            document.save(pdfDocOutputStream, SaveFormat.PDF);
+			// Save the filled document to PDF bytes
+			ByteArrayOutputStream pdfDocOutputStream = new ByteArrayOutputStream();
+			document.save(pdfDocOutputStream, SaveFormat.PDF);
+
+			// --- Persist a copy of the generated PDF into the inspection attachments folder ---
+			try {
+				byte[] pdfBytes = pdfDocOutputStream.toByteArray();
+
+				// services used for storing attachments (reuse same pattern as handleAttachmentUpload)
+				com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+				com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+				com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+				com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+				com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+
+				// locate/ensure inspection cabinet
+				String targetCabinetCode = "INS-DEFAULT";
+				com.smat.ins.model.entity.Cabinet targetCabinet = null;
+				for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+					if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+				}
+				if (targetCabinet == null) {
+					com.smat.ins.util.CabinetDefaultsCreator.ensureDefaultCabinets(loginBean.getUser());
+					for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+						if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+					}
+				}
+				if (targetCabinet != null) {
+					// pick drawer/definition code "01"
+					com.smat.ins.model.entity.CabinetDefinition def = null;
+					if (targetCabinet.getCabinetDefinitions() != null) {
+						for (Object od : targetCabinet.getCabinetDefinitions()) {
+							com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+							if ("01".equals(cd.getCode())) { def = cd; break; }
+						}
+					}
+					if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+						def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+
+					if (def != null) {
+						// determine folder name (reportNo preferred)
+						String folderName = null;
+						if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+							folderName = equipmentInspectionForm.getReportNo().trim();
+						} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+							folderName = "form_" + equipmentInspectionForm.getId().toString();
+						} else {
+							folderName = "form_" + String.valueOf(System.currentTimeMillis());
+						}
+
+						com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+						try {
+							java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+							if (existing != null) {
+								for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+									String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+									String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+									String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+									if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+								}
+							}
+						} catch (Exception ignore) {}
+
+						if (cabinetFolder == null) {
+							cabinetFolder = new com.smat.ins.model.entity.CabinetFolder();
+							cabinetFolder.setCabinetDefinition(def);
+							cabinetFolder.setSysUser(loginBean.getUser());
+							cabinetFolder.setArabicName(folderName);
+							cabinetFolder.setEnglishName(folderName);
+							int nextCode = 1;
+							try { java.util.List<com.smat.ins.model.entity.CabinetFolder> existing2 = cabinetFolderService.getByCabinetDefinition(def); nextCode = existing2 != null ? existing2.size() + 1 : 1; } catch (Exception ignore) {}
+							cabinetFolder.setCode(String.format("%03d", nextCode));
+							cabinetFolder.setCreatedDate(new java.util.Date());
+							cabinetFolderService.saveOrUpdate(cabinetFolder);
+						}
+
+						// create physical folder
+						String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+						java.nio.file.Path folderPath = Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+						Files.createDirectories(folderPath);
+
+						// create ArchiveDocument and ArchiveDocumentFile for the pdf
+						String original = "EquipmentCertificate_" + folderName + ".pdf";
+						String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+						com.smat.ins.model.entity.ArchiveDocument archiveDocument = new com.smat.ins.model.entity.ArchiveDocument();
+						try {
+							com.smat.ins.model.service.ArchiveDocumentTypeService archiveDocumentTypeService = (com.smat.ins.model.service.ArchiveDocumentTypeService) BeanUtility.getBean("archiveDocumentTypeService");
+							java.util.List<com.smat.ins.model.entity.ArchiveDocumentType> types = archiveDocumentTypeService.findAll();
+							if (types != null && !types.isEmpty()) archiveDocument.setArchiveDocumentType(types.get(0));
+						} catch (Exception ignore) {}
+						archiveDocument.setArabicName(original); archiveDocument.setEnglishName(original); archiveDocument.setIsDirectory(false);
+						archiveDocument.setCreatedDate(new java.util.Date()); archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
+						archiveDocumentService.saveOrUpdate(archiveDocument);
+
+						com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
+						docFile.setArchiveDocument(archiveDocument);
+						docFile.setName(original);
+						String ext = "pdf";
+						docFile.setExtension(ext);
+						docFile.setMimeType("application/pdf");
+						docFile.setUuid(java.util.UUID.randomUUID().toString());
+						docFile.setFileSize((long) pdfBytes.length);
+						docFile.setCreatedDate(new java.util.Date());
+
+						try {
+							Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
+							int codeLength = 9;
+							String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
+							docFile.setCode(fileCode);
+
+							// Save with fixed friendly name 'inspection_report.pdf' (avoid numeric prefix)
+							String storedName = "inspection_report." + ext;
+							java.nio.file.Path target = folderPath.resolve(storedName);
+							// If file already exists, Files.write with CREATE_NEW will throw; let fallback handle unique naming
+							Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
+
+							String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+							docFile.setLogicalPath(logical);
+							docFile.setServerPath(target.toString());
+
+						} catch (Exception ex) {
+							// fallback: use timestamp to produce a unique friendly name
+							String storedName = "inspection_report_" + System.currentTimeMillis() + "." + ext;
+							java.nio.file.Path target = folderPath.resolve(storedName);
+							Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
+							String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+							docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
+						}
+
+						archiveDocumentFileService.saveOrUpdate(docFile);
+
+						com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
+						cfd.setCabinetFolder(cabinetFolder); cfd.setSysUser(loginBean.getUser()); cfd.setArchiveDocument(archiveDocument);
+						cfd.setCreatedDate(new java.util.Date()); cabinetFolderDocumentService.saveOrUpdate(cfd);
+					}
+				}
+			} catch (Exception writeEx) {
+				// don't break printing if storing attachment fails; just log
+				writeEx.printStackTrace();
+			}
 
             // Persist or update EquipmentInspectionCertificate (same logic as الأصلي)
             EquipmentInspectionCertificate equipmentInspectionCertificate = equipmentInspectionCertificateService
