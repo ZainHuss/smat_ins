@@ -3,6 +3,7 @@
   <component name="WebContextManager">
     <option name="state">
       <map>
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/views/archive/my-cabinet/document/view.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/archive/my-cabinet/document" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/employee/emp-training-form.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/employee" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment/completed-tasks-search.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment/inspection-form.xhtml" value="file://$PROJECT_DIR$/src/main/webapp/views/inspection/form/equipment" />

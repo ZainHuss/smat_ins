@@ -17,9 +17,9 @@
     <h:outputScript name="locales/locale-#{app.locale.language}.js"
                     library="primefaces" />
 
-    <link rel="shortcut icon" type="image/x-icon" href="#{resource['smat-ins:images/smtlogo.ico']}"/>
+    <link rel="shortcut icon" type="image/x-icon" href="#{resource['smat-ins:images/smt_logo_ln.png']}"/>
 
-    <!-- Enhanced Black Background with Ultra Realistic Blue Cracks -->
+    <!-- Enhanced Background with Cosmic Nebula and Particles -->
     <style>
         /* Global Styles */
         * {
@@ -39,109 +39,406 @@
             position: relative;
         }
 
-        /* Enhanced Epic Loading Screen */
+        /* Cosmic Nebula Background */
+        .cosmic-nebula {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background:
+                    radial-gradient(circle at 20% 30%, rgba(10, 15, 50, 0.8) 0%, transparent 40%),
+                    radial-gradient(circle at 80% 70%, rgba(30, 10, 60, 0.6) 0%, transparent 40%),
+                    radial-gradient(circle at 40% 80%, rgba(20, 30, 80, 0.7) 0%, transparent 40%),
+                    radial-gradient(circle at 70% 20%, rgba(40, 20, 70, 0.5) 0%, transparent 40%);
+            animation: nebulaFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes nebulaFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(-1%, 1%) scale(1.02);
+            }
+            50% {
+                transform: translate(1%, -1%) scale(1.01);
+            }
+            75% {
+                transform: translate(-1%, -1%) scale(1.02);
+            }
+        }
+
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 136, 255, 0.6);
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+            animation: particleFloat 15s infinite linear;
+        }
+
+        .particle:nth-child(odd) {
+            background: rgba(0, 204, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.7);
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Stars Background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ENHANCED EPIC LOADING SCREEN - QUANTUM EDITION */
         .epic-loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, #0a0a1a 0%, #000000 100%);
+            background: radial-gradient(ellipse at center, #0a0a2a 0%, #000010 100%);
             z-index: 10000;
             display: flex;
             justify-content: center;
             align-items: center;
-            animation: loaderFadeOut 2s ease-out 3s forwards;
+            animation: loaderFadeOut 1s ease-out 4.5s forwards;
+            overflow: hidden;
         }
 
         .epic-loader-content {
             text-align: center;
             position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
-        .epic-loader-logo-enhanced {
-            width: 200px;
-            height: 200px;
+        /* Quantum Logo Assembly Effect */
+        .quantum-logo-container {
+            width: 300px;
+            height: 300px;
             position: relative;
-            animation: logoAssembleEnhanced 2.5s ease-in-out forwards;
+            margin: 0 auto 40px;
+            transform-style: preserve-3d;
         }
 
-        .logo-piece-enhanced {
+        .quantum-particle {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #0088ff, #00ccff);
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.8);
+            animation: quantumFloat 3s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        .logo-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
             background: url("#{resource['smat-ins:images/smt_logo_ln.png']}") no-repeat center center;
             background-size: contain;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            box-shadow:
+                    0 0 80px rgba(0, 136, 255, 0.8),
+                    0 0 150px rgba(0, 204, 255, 0.6),
+                    0 0 200px rgba(0, 136, 255, 0.4);
+            animation: coreExpand 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1.5s forwards;
             opacity: 0;
-            transform: scale(0) rotate(0deg);
         }
 
-        .logo-piece-enhanced:nth-child(1) {
-            animation: pieceAssembleEnhanced 0.8s ease-out 0.2s forwards;
-            clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
+        .energy-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ringExpand 2s ease-out forwards;
         }
 
-        .logo-piece-enhanced:nth-child(2) {
-            animation: pieceAssembleEnhanced 0.8s ease-out 0.4s forwards;
-            clip-path: polygon(50% 0, 100% 0, 100% 50%, 50% 50%);
+        .ring-1 {
+            width: 0;
+            height: 0;
+            border-top-color: #0088ff;
+            animation-delay: 0.5s;
         }
 
-        .logo-piece-enhanced:nth-child(3) {
-            animation: pieceAssembleEnhanced 0.8s ease-out 0.6s forwards;
-            clip-path: polygon(0 50%, 50% 50%, 50% 100%, 0 100%);
+        .ring-2 {
+            width: 0;
+            height: 0;
+            border-right-color: #00aaff;
+            animation-delay: 0.7s;
         }
 
-        .logo-piece-enhanced:nth-child(4) {
-            animation: pieceAssembleEnhanced 0.8s ease-out 0.8s forwards;
-            clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);
+        .ring-3 {
+            width: 0;
+            height: 0;
+            border-bottom-color: #00ccff;
+            animation-delay: 0.9s;
         }
 
-        @keyframes pieceAssembleEnhanced {
-            0% {
+        .ring-4 {
+            width: 0;
+            height: 0;
+            border-left-color: #00eeff;
+            animation-delay: 1.1s;
+        }
+
+        @keyframes quantumFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
                 opacity: 0;
-                transform: scale(0) rotate(0deg) translate(var(--tx, 0px), var(--ty, 0px));
             }
             50% {
                 opacity: 1;
-                transform: scale(1.1) rotate(var(--rotation, 0deg)) translate(0, 0);
+            }
+        }
+
+        @keyframes coreExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
             }
             100% {
+                width: 200px;
+                height: 200px;
                 opacity: 1;
-                transform: scale(1) rotate(0deg) translate(0, 0);
+                transform: translate(-50%, -50%) scale(1) rotate(360deg);
             }
         }
 
-        @keyframes logoAssembleEnhanced {
+        @keyframes ringExpand {
             0% {
-                transform: scale(0) rotate(0deg);
+                width: 0;
+                height: 0;
                 opacity: 0;
             }
             50% {
-                transform: scale(1.1) rotate(180deg);
                 opacity: 0.8;
             }
             100% {
-                transform: scale(1) rotate(360deg);
-                opacity: 1;
+                width: 280px;
+                height: 280px;
+                opacity: 0.3;
             }
         }
 
-        .epic-loader-text {
-            margin-top: 30px;
-            font-size: 24px;
-            font-weight: bold;
+        /* Holographic Text Effect */
+        .holographic-text {
+            font-size: 42px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            position: relative;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: textReveal 1.5s ease-out 2.5s forwards;
+            transform-style: preserve-3d;
+        }
+
+        .holographic-text .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .text-front {
             background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0;
-            animation: textAppear 1s ease-out 1.5s forwards;
-            text-shadow: 0 0 20px rgba(0, 136, 255, 0.5);
+            z-index: 3;
+            text-shadow: 0 0 30px rgba(0, 136, 255, 0.5);
         }
 
-        @keyframes textAppear {
+        .text-glow {
+            color: transparent;
+            text-shadow:
+                    0 0 20px rgba(0, 136, 255, 0.8),
+                    0 0 40px rgba(0, 204, 255, 0.6),
+                    0 0 60px rgba(0, 136, 255, 0.4);
+            z-index: 2;
+            filter: blur(2px);
+        }
+
+        .text-back {
+            color: transparent;
+            text-shadow:
+                    0 0 10px rgba(0, 136, 255, 0.4),
+                    0 0 20px rgba(0, 204, 255, 0.3);
+            z-index: 1;
+            filter: blur(4px);
+            transform: translateZ(-10px);
+        }
+
+        @keyframes textReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotateX(45deg);
+                letter-spacing: 20px;
+            }
+            60% {
+                letter-spacing: 6px;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+                letter-spacing: 8px;
+            }
+        }
+
+        /* Quantum Progress Bar */
+        .quantum-progress {
+            width: 400px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 30px auto;
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            animation: progressAppear 0.8s ease-out 3s forwards;
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.3);
+        }
+
+        .quantum-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg,
+            #0088ff 0%,
+            #00aaff 25%,
+            #00ccff 50%,
+            #00eeff 75%,
+            #0088ff 100%);
+            border-radius: 4px;
+            position: relative;
+            animation: quantumProgress 2.5s ease-in-out 3.2s forwards;
+            box-shadow:
+                    0 0 20px rgba(0, 136, 255, 0.6),
+                    0 0 40px rgba(0, 204, 255, 0.4);
+        }
+
+        .quantum-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.6),
+            transparent);
+            animation: progressShine 1.5s ease-in-out 3.2s infinite;
+        }
+
+        @keyframes quantumProgress {
+            0% {
+                width: 0%;
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                width: 100%;
+                opacity: 1;
+            }
+        }
+
+        @keyframes progressShine {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes progressAppear {
+            0% {
+                opacity: 0;
+                transform: scaleX(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scaleX(1);
+            }
+        }
+
+        /* Loading Status Text */
+        .loading-status {
+            color: #00ccff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 20px;
+            opacity: 0;
+            animation: statusAppear 0.8s ease-out 3.5s forwards;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+
+        @keyframes statusAppear {
             0% {
                 opacity: 0;
                 transform: translateY(20px);
@@ -152,31 +449,37 @@
             }
         }
 
-        .epic-loader-progress {
-            width: 300px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            margin-top: 20px;
-            overflow: hidden;
-            opacity: 0;
-            animation: textAppear 1s ease-out 1.5s forwards;
+        /* Final Portal Effect */
+        .portal-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+            rgba(0, 136, 255, 0.8) 0%,
+            rgba(0, 204, 255, 0.6) 30%,
+            transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: portalExpand 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 4s forwards;
+            z-index: -1;
+            filter: blur(20px);
         }
 
-        .epic-loader-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
-            border-radius: 2px;
-            animation: progressFill 2s ease-out 1.5s forwards;
-            box-shadow: 0 0 10px rgba(0, 136, 255, 0.5);
-        }
-
-        @keyframes progressFill {
+        @keyframes portalExpand {
             0% {
-                width: 0%;
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
             }
             100% {
-                width: 100%;
+                width: 150vh;
+                height: 150vh;
+                opacity: 0;
             }
         }
 
@@ -193,426 +496,7 @@
             }
         }
 
-        /* Enhanced Epic Wave Effect */
-        .epic-wave {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 136, 255, 0.4) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            animation: epicWaveExpand 2s ease-out 3.5s forwards;
-            z-index: 9999;
-            pointer-events: none;
-        }
-
-        @keyframes epicWaveExpand {
-            0% {
-                width: 0;
-                height: 0;
-                opacity: 1;
-            }
-            100% {
-                width: 200vw;
-                height: 200vw;
-                opacity: 0;
-            }
-        }
-
-        /* Enhanced Black Background with Ultra Realistic Blue Cracks */
-        .pure-black-bg-enhanced {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: #000000;
-            overflow: hidden;
-        }
-
-        .pure-black-bg-enhanced::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 30%, rgba(10, 10, 20, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 70% 70%, rgba(10, 10, 30, 0.2) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        /* Ultra Realistic Blue Cracks - Completely Redesigned */
-        .realistic-crack {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.9), transparent);
-            filter: blur(1px);
-            opacity: 0;
-            animation: crackAppear 4s ease-out forwards;
-            box-shadow: 0 0 20px rgba(0, 136, 255, 0.8);
-            transform-origin: center;
-            z-index: -1;
-        }
-
-        @keyframes crackAppear {
-            0% {
-                opacity: 0;
-                transform: scale(0) rotate(0deg);
-            }
-            20% {
-                opacity: 0.9;
-                transform: scale(1.1) rotate(var(--rotation, 0deg));
-            }
-            100% {
-                opacity: 0.8;
-                transform: scale(1) rotate(var(--rotation, 0deg));
-            }
-        }
-
-        /* Enhanced crack glow effect with more realistic appearance */
-        .realistic-crack::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.5), transparent);
-            filter: blur(5px);
-            border-radius: 50%;
-        }
-
-        .realistic-crack::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
-            filter: blur(3px);
-            border-radius: 50%;
-        }
-
-        /* Main cracks with enhanced realistic appearance */
-        .realistic-crack-1 {
-            top: 15%;
-            left: 20%;
-            width: 350px;
-            height: 2px;
-            --rotation: 25deg;
-            animation-delay: 0.5s;
-        }
-
-        .realistic-crack-2 {
-            top: 35%;
-            left: 60%;
-            width: 250px;
-            height: 3px;
-            --rotation: -15deg;
-            animation-delay: 1s;
-        }
-
-        .realistic-crack-3 {
-            top: 55%;
-            left: 10%;
-            width: 450px;
-            height: 2px;
-            --rotation: 10deg;
-            animation-delay: 1.5s;
-        }
-
-        .realistic-crack-4 {
-            top: 75%;
-            left: 40%;
-            width: 300px;
-            height: 2px;
-            --rotation: -20deg;
-            animation-delay: 2s;
-        }
-
-        .realistic-crack-5 {
-            top: 25%;
-            left: 80%;
-            width: 200px;
-            height: 2px;
-            --rotation: 30deg;
-            animation-delay: 2.5s;
-        }
-
-        .realistic-crack-6 {
-            top: 65%;
-            left: 70%;
-            width: 400px;
-            height: 3px;
-            --rotation: -10deg;
-            animation-delay: 3s;
-        }
-
-        .realistic-crack-7 {
-            top: 85%;
-            left: 20%;
-            width: 250px;
-            height: 2px;
-            --rotation: 15deg;
-            animation-delay: 3.5s;
-        }
-
-        .realistic-crack-8 {
-            top: 45%;
-            left: 30%;
-            width: 350px;
-            height: 2px;
-            --rotation: -25deg;
-            animation-delay: 4s;
-        }
-
-        /* New: Ultra Realistic Branch cracks with more details */
-        .branch-crack {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.7), transparent);
-            filter: blur(0.5px);
-            opacity: 0;
-            animation: crackAppear 3s ease-out forwards;
-            box-shadow: 0 0 15px rgba(0, 136, 255, 0.6);
-            z-index: -1;
-        }
-
-        .branch-crack-1 {
-            top: 18%;
-            left: 35%;
-            width: 100px;
-            height: 1px;
-            --rotation: 45deg;
-            animation-delay: 0.7s;
-        }
-
-        .branch-crack-2 {
-            top: 38%;
-            left: 45%;
-            width: 80px;
-            height: 1px;
-            --rotation: -35deg;
-            animation-delay: 1.2s;
-        }
-
-        .branch-crack-3 {
-            top: 58%;
-            left: 25%;
-            width: 120px;
-            height: 1px;
-            --rotation: 20deg;
-            animation-delay: 1.7s;
-        }
-
-        .branch-crack-4 {
-            top: 78%;
-            left: 55%;
-            width: 90px;
-            height: 1px;
-            --rotation: -30deg;
-            animation-delay: 2.2s;
-        }
-
-        .branch-crack-5 {
-            top: 28%;
-            left: 65%;
-            width: 70px;
-            height: 1px;
-            --rotation: 40deg;
-            animation-delay: 2.7s;
-        }
-
-        .branch-crack-6 {
-            top: 68%;
-            left: 35%;
-            width: 110px;
-            height: 1px;
-            --rotation: -25deg;
-            animation-delay: 3.2s;
-        }
-
-        .branch-crack-7 {
-            top: 48%;
-            left: 75%;
-            width: 85px;
-            height: 1px;
-            --rotation: 15deg;
-            animation-delay: 3.7s;
-        }
-
-        .branch-crack-8 {
-            top: 88%;
-            left: 45%;
-            width: 95px;
-            height: 1px;
-            --rotation: -40deg;
-            animation-delay: 4.2s;
-        }
-
-        /* New: Micro cracks for ultimate realism */
-        .micro-crack {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.5), transparent);
-            filter: blur(0.3px);
-            opacity: 0;
-            animation: crackAppear 2.5s ease-out forwards;
-            box-shadow: 0 0 10px rgba(0, 136, 255, 0.4);
-            z-index: -1;
-        }
-
-        .micro-crack-1 {
-            top: 22%;
-            left: 40%;
-            width: 50px;
-            height: 0.5px;
-            --rotation: 15deg;
-            animation-delay: 0.9s;
-        }
-
-        .micro-crack-2 {
-            top: 42%;
-            left: 50%;
-            width: 40px;
-            height: 0.5px;
-            --rotation: -25deg;
-            animation-delay: 1.4s;
-        }
-
-        .micro-crack-3 {
-            top: 62%;
-            left: 30%;
-            width: 60px;
-            height: 0.5px;
-            --rotation: 10deg;
-            animation-delay: 1.9s;
-        }
-
-        .micro-crack-4 {
-            top: 82%;
-            left: 60%;
-            width: 45px;
-            height: 0.5px;
-            --rotation: -20deg;
-            animation-delay: 2.4s;
-        }
-
-        .micro-crack-5 {
-            top: 32%;
-            left: 70%;
-            width: 35px;
-            height: 0.5px;
-            --rotation: 35deg;
-            animation-delay: 2.9s;
-        }
-
-        .micro-crack-6 {
-            top: 72%;
-            left: 40%;
-            width: 55px;
-            height: 0.5px;
-            --rotation: -15deg;
-            animation-delay: 3.4s;
-        }
-
-        .micro-crack-7 {
-            top: 52%;
-            left: 80%;
-            width: 42px;
-            height: 0.5px;
-            --rotation: 12deg;
-            animation-delay: 3.9s;
-        }
-
-        .micro-crack-8 {
-            top: 92%;
-            left: 50%;
-            width: 47px;
-            height: 0.5px;
-            --rotation: -22deg;
-            animation-delay: 4.4s;
-        }
-
-        /* New: Crack Nodes for more realistic appearance */
-        .crack-node {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(0, 136, 255, 0.9);
-            box-shadow: 0 0 10px rgba(0, 136, 255, 0.8);
-            opacity: 0;
-            animation: crackNodeAppear 2s ease-out forwards;
-            z-index: -1;
-        }
-
-        @keyframes crackNodeAppear {
-            0% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.2);
-            }
-            100% {
-                opacity: 0.8;
-                transform: scale(1);
-            }
-        }
-
-        .crack-node-1 {
-            top: 15%;
-            left: 20%;
-            animation-delay: 0.5s;
-        }
-
-        .crack-node-2 {
-            top: 35%;
-            left: 60%;
-            animation-delay: 1s;
-        }
-
-        .crack-node-3 {
-            top: 55%;
-            left: 10%;
-            animation-delay: 1.5s;
-        }
-
-        .crack-node-4 {
-            top: 75%;
-            left: 40%;
-            animation-delay: 2s;
-        }
-
-        .crack-node-5 {
-            top: 25%;
-            left: 80%;
-            animation-delay: 2.5s;
-        }
-
-        .crack-node-6 {
-            top: 65%;
-            left: 70%;
-            animation-delay: 3s;
-        }
-
-        .crack-node-7 {
-            top: 85%;
-            left: 20%;
-            animation-delay: 3.5s;
-        }
-
-        .crack-node-8 {
-            top: 45%;
-            left: 28%;
-            animation-delay: 4s;
-        }
-
-        /* Main Container with Enhanced Entrance */
+        /* Main Container Entrance */
         .main-container {
             min-height: 100vh;
             position: relative;
@@ -621,21 +505,23 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            animation: epicContainerEntrance 2s ease-out 4s forwards;
+            animation: epicContainerEntrance 1.5s ease-out 4.8s forwards;
         }
 
         @keyframes epicContainerEntrance {
             0% {
                 opacity: 0;
-                transform: scale(0.5) rotateY(90deg);
+                transform: scale(0.8) translateY(100px);
+                filter: blur(20px);
             }
             50% {
                 opacity: 0.5;
-                transform: scale(1.1) rotateY(45deg);
+                filter: blur(10px);
             }
             100% {
                 opacity: 1;
-                transform: scale(1) rotateY(0);
+                transform: scale(1) translateY(0);
+                filter: blur(0);
             }
         }
 
@@ -700,16 +586,15 @@
             }
         }
 
-        /* Card Design */
+        /* Card Design - Glassmorphism Effect */
         .card-smat {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(0, 136, 255, 0.3);
-            border-radius: 10px;
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            border-radius: 20px;
             box-shadow:
                     0 30px 60px rgba(0, 0, 0, 0.5),
-                    0 20px 40px rgba(0, 0, 0, 0.3),
                     0 0 30px rgba(0, 136, 255, 0.2),
                     inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
@@ -786,7 +671,7 @@
             width: 100%;
             padding: 20px 28px;
             border: 2px solid rgba(0, 136, 255, 0.3);
-            border-radius: 5px;
+            border-radius: 12px;
             background: rgba(30, 30, 30, 0.8);
             font-size: 16px;
             font-weight: 500;
@@ -863,7 +748,7 @@
         .btn-smat {
             background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
             padding: 20px 50px;
             font-weight: 600;
             font-size: 16px;
@@ -969,7 +854,7 @@
         /* Footer Design */
         .card-footer {
             background: linear-gradient(135deg, rgba(60, 60, 60, 0.3) 0%, rgba(80, 80, 80, 0.3) 100%);
-            border-radius: 0 0 10px 10px;
+            border-radius: 0 0 20px 20px;
             position: relative;
             animation: footerSlide 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.2s both;
             overflow: hidden;
@@ -994,24 +879,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        /* Validation States */
-        .form-control.is-invalid {
-            border-color: #cc3333;
-            animation: fieldShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-            box-shadow: 0 0 10px rgba(204, 51, 51, 0.3);
-        }
-
-        .form-control.is-valid {
-            border-color: #33cc33;
-            box-shadow: 0 0 10px rgba(51, 204, 51, 0.3);
-        }
-
-        @keyframes fieldShake {
-            0%, 100% { transform: translateX(0); }
-            15%, 45%, 75% { transform: translateX(-10px); }
-            30%, 60%, 90% { transform: translateX(10px); }
         }
 
         /* Branding Text */
@@ -1157,14 +1024,13 @@
         }
 
         .recovery-modal-content {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(0, 136, 255, 0.3);
-            border-radius: 10px;
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            border-radius: 20px;
             box-shadow:
                     0 30px 60px rgba(0, 0, 0, 0.5),
-                    0 20px 40px rgba(0, 0, 0, 0.3),
                     0 0 30px rgba(0, 136, 255, 0.2),
                     inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
@@ -1183,7 +1049,7 @@
         .recovery-modal-header {
             background: linear-gradient(135deg, rgba(60, 60, 60, 0.3) 0%, rgba(80, 80, 80, 0.3) 100%);
             padding: 25px 30px;
-            border-radius: 10px 10px 0 0;
+            border-radius: 20px 20px 0 0;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -1303,41 +1169,10 @@
             font-size: 22px;
         }
 
-        .recovery-form-field {
-            position: relative;
-            margin-bottom: 25px;
-        }
-
-        .recovery-textarea {
-            width: 100%;
-            min-height: 120px;
-            padding: 20px;
-            border: 2px solid rgba(0, 136, 255, 0.3);
-            border-radius: 5px;
-            background: rgba(30, 30, 30, 0.8);
-            font-size: 16px;
-            font-weight: 500;
-            color: #ddd;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            resize: vertical;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .recovery-textarea:focus {
-            outline: none;
-            border-color: rgba(0, 204, 255, 0.8);
-            background: rgba(40, 40, 40, 0.9);
-            box-shadow:
-                    0 0 0 4px rgba(0, 204, 255, 0.2),
-                    0 10px 30px rgba(0, 204, 255, 0.3),
-                    0 0 20px rgba(0, 204, 255, 0.2);
-            transform: translateY(-5px);
-        }
-
         .recovery-modal-footer {
             background: linear-gradient(135deg, rgba(50, 50, 50, 0.3) 0%, rgba(70, 70, 70, 0.3) 100%);
             padding: 20px 30px;
-            border-radius: 0 0 10px 10px;
+            border-radius: 0 0 20px 20px;
             display: flex;
             justify-content: space-between;
             position: relative;
@@ -1357,7 +1192,7 @@
         .recovery-btn {
             padding: 12px 30px;
             border: none;
-            border-radius: 5px;
+            border-radius: 12px;
             font-weight: 600;
             font-size: 14px;
             letter-spacing: 1px;
@@ -1414,7 +1249,7 @@
         @media (max-width: 768px) {
             .card-smat {
                 margin: 20px;
-                border-radius: 10px;
+                border-radius: 20px;
             }
 
             .btn-smat {
@@ -1460,6 +1295,20 @@
             .recovery-phone-number {
                 font-size: 18px;
             }
+
+            .holographic-text {
+                font-size: 32px;
+                letter-spacing: 6px;
+            }
+
+            .quantum-logo-container {
+                width: 250px;
+                height: 250px;
+            }
+
+            .quantum-progress {
+                width: 300px;
+            }
         }
 
         /* Growl Messages */
@@ -1471,10 +1320,10 @@
         }
 
         .ui-growl .ui-growl-item {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.97) 0%, rgba(30, 30, 30, 0.97) 100%);
-            backdrop-filter: blur(25px);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 136, 255, 0.3);
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 136, 255, 0.2);
             box-shadow:
                     0 20px 50px rgba(0, 0, 0, 0.4),
                     0 0 20px rgba(0, 136, 255, 0.2);
@@ -1503,7 +1352,7 @@
             }
         }
 
-        /* Advanced Mouse Following Hover Effect */
+        /* Mouse Following Effects */
         .mouse-glow {
             position: fixed;
             width: 300px;
@@ -1538,559 +1387,132 @@
             opacity: 1;
         }
 
-        /* Enhanced Hover Effects */
-        .hover-glow {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hover-glow::before {
-            content: '';
+        /* Holographic Effect */
+        .holographic-effect {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 204, 255, 0.3) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .hover-glow:hover::before {
-            opacity: 1;
-        }
-
-        /* Enhanced Card Hover Effect */
-        .card-smat {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-smat::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 204, 255, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .card-smat:hover::after {
-            opacity: 1;
-        }
-
-        /* Enhanced Button Hover Effect */
-        .btn-smat {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-smat::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .btn-smat:hover::after {
-            opacity: 1;
-        }
-
-        /* Enhanced Form Field Hover Effect */
-        .form-field {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .form-field::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 204, 255, 0.1) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .form-field:hover::after {
-            opacity: 1;
-        }
-
-        /* Enhanced Input Field Focus Effect */
-        .form-control:focus {
-            box-shadow:
-                    0 0 0 4px rgba(0, 204, 255, 0.2),
-                    0 10px 30px rgba(0, 204, 255, 0.3),
-                    0 0 20px rgba(0, 204, 255, 0.2),
-                    0 0 30px rgba(0, 204, 255, 0.1);
-        }
-
-        /* Enhanced Button Click Effect */
-        .btn-smat:active {
-            box-shadow:
-                    0 10px 30px rgba(0, 136, 255, 0.4),
-                    0 5px 20px rgba(0, 204, 255, 0.3),
-                    0 0 15px rgba(0, 136, 255, 0.2),
-                    0 0 30px rgba(0, 204, 255, 0.2);
-        }
-
-        /* Enhanced Recovery Button Hover Effect */
-        .recovery-button {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .recovery-button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .recovery-button:hover::after {
-            opacity: 1;
-        }
-
-        /* Enhanced Recovery Modal Button Hover Effect */
-        .recovery-btn {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .recovery-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .recovery-btn:hover::after {
-            opacity: 1;
-        }
-
-        /* Enhanced Close Button Hover Effect */
-        .recovery-close-btn {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .recovery-close-btn::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .recovery-close-btn:hover::after {
-            opacity: 1;
-        }
-
-        /* Login Crack Effect - Enhanced */
-        .login-crack-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
+            background: linear-gradient(125deg,
+            rgba(0, 136, 255, 0.1) 0%,
+            rgba(0, 204, 255, 0.1) 25%,
+            rgba(0, 136, 255, 0.1) 50%,
+            rgba(0, 204, 255, 0.1) 75%,
+            rgba(0, 136, 255, 0.1) 100%);
             opacity: 0;
             transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        .login-crack-effect.active {
+        .card-smat:hover .holographic-effect {
             opacity: 1;
         }
 
-        .login-crack {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.9), transparent);
-            filter: blur(0.5px);
-            opacity: 0;
-            transform: scale(0);
-            box-shadow: 0 0 20px rgba(0, 136, 255, 0.8);
-            transform-origin: center;
-        }
+        /* ENHANCED SUCCESS ANIMATIONS */
 
-        .login-crack.active {
-            animation: loginCrackAppear 1.5s ease-out forwards;
-        }
-
-        @keyframes loginCrackAppear {
-            0% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0.8;
-            }
-        }
-
-        /* Page Transition Effect */
-        .page-transition {
+        /* Quantum Portal Success Effect */
+        .quantum-portal-success {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000000;
             z-index: 10000;
-            opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-
-        .page-transition.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        /* Enhanced Crack Breaking Effect */
-        .crack-breaking-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
 
-        .crack-breaking-effect.active {
+        .quantum-portal-success.active {
             opacity: 1;
         }
 
-        .crack-breaking {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.9), transparent);
-            filter: blur(0.5px);
-            opacity: 0;
-            transform: scale(0);
-            box-shadow: 0 0 20px rgba(0, 136, 255, 0.8);
-            transform-origin: center;
-        }
-
-        .crack-breaking.active {
-            animation: crackBreakingAppear 2s ease-out forwards;
-        }
-
-        @keyframes crackBreakingAppear {
-            0% {
-                opacity: 0;
-                transform: scale(0) translateX(0) translateY(0);
-            }
-            20% {
-                opacity: 1;
-                transform: scale(1) translateX(var(--tx, 0)) translateY(var(--ty, 0));
-            }
-            100% {
-                opacity: 0;
-                transform: scale(2) translateX(var(--tx, 0)) translateY(var(--ty, 0));
-            }
-        }
-
-        /* New: Enhanced Background with Deeper Black */
-        .pure-black-bg-enhanced {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: #000000;
-            overflow: hidden;
-        }
-
-        .pure-black-bg-enhanced::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 30%, rgba(10, 10, 20, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 70% 70%, rgba(10, 10, 30, 0.2) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        /* New: Enhanced Realistic Crack Textures */
-        .crack-texture {
-            position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.7), transparent);
-            filter: blur(0.3px);
-            opacity: 0;
-            animation: crackTextureAppear 3s ease-out forwards;
-            z-index: -1;
-        }
-
-        @keyframes crackTextureAppear {
-            0% {
-                opacity: 0;
-                transform: scale(0) rotate(0deg);
-            }
-            50% {
-                opacity: 0.6;
-                transform: scale(1) rotate(var(--rotation, 0deg));
-            }
-            100% {
-                opacity: 0.4;
-                transform: scale(1) rotate(var(--rotation, 0deg));
-            }
-        }
-
-        .crack-texture-1 {
-            top: 12%;
-            left: 18%;
-            width: 120px;
-            height: 0.3px;
-            --rotation: 15deg;
-            animation-delay: 0.8s;
-        }
-
-        .crack-texture-2 {
-            top: 32%;
-            left: 58%;
-            width: 80px;
-            height: 0.3px;
-            --rotation: -10deg;
-            animation-delay: 1.3s;
-        }
-
-        .crack-texture-3 {
-            top: 52%;
-            left: 8%;
-            width: 150px;
-            height: 0.3px;
-            --rotation: 5deg;
-            animation-delay: 1.8s;
-        }
-
-        .crack-texture-4 {
-            top: 72%;
-            left: 38%;
-            width: 100px;
-            height: 0.3px;
-            --rotation: -12deg;
-            animation-delay: 2.3s;
-        }
-
-        .crack-texture-5 {
-            top: 22%;
-            left: 78%;
-            width: 70px;
-            height: 0.3px;
-            --rotation: 8deg;
-            animation-delay: 2.8s;
-        }
-
-        .crack-texture-6 {
-            top: 62%;
-            left: 68%;
-            width: 130px;
-            height: 0.3px;
-            --rotation: -7deg;
-            animation-delay: 3.3s;
-        }
-
-        .crack-texture-7 {
-            top: 82%;
-            left: 18%;
-            width: 90px;
-            height: 0.3px;
-            --rotation: 10deg;
-            animation-delay: 3.8s;
-        }
-
-        .crack-texture-8 {
-            top: 42%;
-            left: 28%;
-            width: 110px;
-            height: 0.3px;
-            --rotation: -5deg;
-            animation-delay: 4.3s;
-        }
-
-        /* New: Enhanced Loading Animation */
-        .epic-loader-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, #0a0a1a 0%, #000000 100%);
-            z-index: -1;
-        }
-
-        .epic-loader-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .loader-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(0, 136, 255, 0.8);
-            border-radius: 50%;
-            animation: particleFloat 5s infinite ease-in-out;
-            box-shadow: 0 0 10px rgba(0, 136, 255, 0.5);
-        }
-
-        @keyframes particleFloat {
-            0%, 100% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            50% {
-                transform: translateY(-20px) translateX(10px);
-            }
-        }
-
-        /* New: Enhanced Logo Glow */
-        .logo-glow {
+        .portal-center {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, rgba(0, 136, 255, 0.3) 0%, transparent 70%);
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+            rgba(0, 136, 255, 0.9) 0%,
+            rgba(0, 204, 255, 0.7) 30%,
+            transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: portalCenterExpand 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            filter: blur(15px);
+        }
+
+        .portal-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 2px solid transparent;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            animation: logoGlowPulse 3s infinite alternate;
-            z-index: -1;
-            filter: blur(30px);
+            animation: portalRingExpand 1.5s ease-out forwards;
         }
 
-        @keyframes logoGlowPulse {
-            0% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.4;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 0.7;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.4;
-            }
+        .portal-ring-1 {
+            border-top-color: #0088ff;
+            animation-delay: 0.2s;
         }
 
-        /* NEW: Login Success Blue Split Effect */
-        .login-split-effect {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .portal-ring-2 {
+            border-right-color: #00aaff;
+            animation-delay: 0.4s;
+        }
+
+        .portal-ring-3 {
+            border-bottom-color: #00ccff;
+            animation-delay: 0.6s;
+        }
+
+        .portal-ring-4 {
+            border-left-color: #00eeff;
+            animation-delay: 0.8s;
+        }
+
+        .success-particles {
+            position: absolute;
+            top: 50%;
+            left: 50%;
             width: 100%;
             height: 100%;
-            z-index: 10000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            transform: translate(-50%, -50%);
         }
 
-        .login-split-effect.active {
-            opacity: 1;
-        }
-
-        .blue-split {
+        .success-particle {
             position: absolute;
-            top: 0;
-            left: 50%;
-            width: 8px;
-            height: 0;
-            background: linear-gradient(to bottom,
-            rgba(0, 136, 255, 0) 0%,
-            rgba(0, 136, 255, 1) 20%,
-            rgba(0, 204, 255, 1) 50%,
-            rgba(0, 136, 255, 1) 80%,
-            rgba(0, 136, 255, 0) 100%);
-            transform: translateX(-50%);
-            box-shadow:
-                    0 0 30px rgba(0, 136, 255, 0.8),
-                    0 0 60px rgba(0, 204, 255, 0.6),
-                    0 0 100px rgba(0, 136, 255, 0.4);
-            filter: blur(1px);
-            animation: splitExpand 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            width: 6px;
+            height: 6px;
+            background: rgba(0, 204, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+            animation: successParticleFloat 2s ease-out forwards;
         }
 
-        @keyframes splitExpand {
+        @keyframes portalCenterExpand {
             0% {
+                width: 0;
                 height: 0;
                 opacity: 0;
             }
-            20% {
-                opacity: 1;
+            50% {
+                opacity: 0.9;
             }
             100% {
-                height: 100%;
-                opacity: 1;
+                width: 100vh;
+                height: 100vh;
+                opacity: 0;
             }
         }
 
-        .split-glow {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 300px;
-            height: 0;
-            background: radial-gradient(ellipse at center,
-            rgba(0, 136, 255, 0.4) 0%,
-            rgba(0, 204, 255, 0.2) 30%,
-            transparent 70%);
-            transform: translateX(-50%);
-            animation: splitGlowExpand 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
-        }
-
-        @keyframes splitGlowExpand {
+        @keyframes portalRingExpand {
             0% {
+                width: 0;
                 height: 0;
                 opacity: 0;
             }
@@ -2098,199 +1520,146 @@
                 opacity: 0.8;
             }
             100% {
-                height: 100%;
-                opacity: 0.5;
-            }
-        }
-
-        .split-particles {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            transform: translateX(-50%);
-        }
-
-        .split-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(0, 204, 255, 0.9);
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
-            animation: splitParticleFloat 2s ease-out forwards;
-        }
-
-        @keyframes splitParticleFloat {
-            0% {
-                transform: translateX(0) translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateX(var(--tx, 0)) translateY(var(--ty, 0));
+                width: 120vh;
+                height: 120vh;
                 opacity: 0;
             }
         }
 
-        .screen-split {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            pointer-events: none;
+        @keyframes successParticleFloat {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx, 0), var(--ty, 0));
+                opacity: 0;
+            }
+        }
+
+        /* Dashboard Entrance Animation */
+        .dashboard-entrance {
             opacity: 0;
-            transition: opacity 0.5s ease;
+            animation: dashboardEntrance 2s ease-out forwards;
         }
 
-        .screen-split.active {
-            opacity: 1;
+        @keyframes dashboardEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(100px);
+                filter: blur(20px);
+            }
+            60% {
+                opacity: 1;
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
         }
 
-        .screen-half {
-            position: absolute;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            background: #000;
-            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        .dashboard-card {
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 136, 255, 0.2);
+            animation: cardSlideIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+            transform-style: preserve-3d;
         }
 
-        .screen-left {
-            left: 0;
-            transform: translateX(0);
+        @keyframes cardSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotateX(15deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
         }
 
-        .screen-right {
-            right: 0;
-            transform: translateX(0);
+        /* Welcome Text Animation */
+        .welcome-text {
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: welcomeTextReveal 1.5s ease-out 0.8s both;
+            transform-style: preserve-3d;
         }
 
-        .screen-split.active .screen-left {
-            transform: translateX(-100%);
-        }
-
-        .screen-split.active .screen-right {
-            transform: translateX(100%);
+        @keyframes welcomeTextReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+                letter-spacing: 10px;
+            }
+            60% {
+                letter-spacing: 3px;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                letter-spacing: 2px;
+            }
         }
     </style>
 </h:head>
 <h:body>
     <f:view locale="#{app.locale.language}">
-        <!-- Enhanced Epic Loading Screen -->
+        <!-- Cosmic Nebula Background -->
+        <div class="cosmic-nebula"></div>
+
+        <!-- Floating Particles -->
+        <div class="particles-container" id="particlesContainer"></div>
+
+        <!-- Stars Background -->
+        <div class="stars" id="stars"></div>
+
+        <!-- ENHANCED EPIC LOADING SCREEN -->
         <div class="epic-loader" id="epicLoader">
-            <div class="epic-loader-background"></div>
-            <div class="epic-loader-particles" id="loaderParticles"></div>
-            <div class="logo-glow"></div>
             <div class="epic-loader-content">
-                <div class="epic-loader-logo-enhanced">
-                    <div class="logo-piece-enhanced" style="--tx: -100px; --ty: -100px; --rotation: -90deg;"></div>
-                    <div class="logo-piece-enhanced" style="--tx: 100px; --ty: -100px; --rotation: 90deg;"></div>
-                    <div class="logo-piece-enhanced" style="--tx: -100px; --ty: 100px; --rotation: -90deg;"></div>
-                    <div class="logo-piece-enhanced" style="--tx: 100px; --ty: 100px; --rotation: 90deg;"></div>
+                <!-- Quantum Logo Assembly -->
+                <div class="quantum-logo-container" id="quantumLogo">
+                    <!-- Energy rings will be created by JavaScript -->
+                    <!-- Logo core -->
+                    <div class="logo-core"></div>
                 </div>
-                <div class="epic-loader-text">SMAT INDUSTRIAL</div>
-                <div class="epic-loader-progress">
-                    <div class="epic-loader-progress-bar"></div>
+
+                <!-- Holographic Text -->
+                <div class="holographic-text">
+                    <div class="text-layer text-front">SMAT INDUSTRIAL</div>
+                    <div class="text-layer text-glow">SMAT INDUSTRIAL</div>
+                    <div class="text-layer text-back">SMAT INDUSTRIAL</div>
                 </div>
+
+                <!-- Quantum Progress Bar -->
+                <div class="quantum-progress">
+                    <div class="quantum-progress-bar"></div>
+                </div>
+
+                <!-- Loading Status -->
+                <div class="loading-status" id="loadingStatus">Initializing System...</div>
+
+                <!-- Portal Effect -->
+                <div class="portal-effect"></div>
             </div>
         </div>
 
-        <!-- Epic Wave Effect -->
-        <div class="epic-wave" id="epicWave"></div>
-
-        <!-- Enhanced Black Background with Ultra Realistic Blue Cracks -->
-        <div class="pure-black-bg-enhanced">
-            <!-- Main Cracks -->
-            <div class="realistic-crack realistic-crack-1"></div>
-            <div class="realistic-crack realistic-crack-2"></div>
-            <div class="realistic-crack realistic-crack-3"></div>
-            <div class="realistic-crack realistic-crack-4"></div>
-            <div class="realistic-crack realistic-crack-5"></div>
-            <div class="realistic-crack realistic-crack-6"></div>
-            <div class="realistic-crack realistic-crack-7"></div>
-            <div class="realistic-crack realistic-crack-8"></div>
-
-            <!-- Branch Cracks -->
-            <div class="branch-crack branch-crack-1"></div>
-            <div class="branch-crack branch-crack-2"></div>
-            <div class="branch-crack branch-crack-3"></div>
-            <div class="branch-crack branch-crack-4"></div>
-            <div class="branch-crack branch-crack-5"></div>
-            <div class="branch-crack branch-crack-6"></div>
-            <div class="branch-crack branch-crack-7"></div>
-            <div class="branch-crack branch-crack-8"></div>
-
-            <!-- Micro Cracks -->
-            <div class="micro-crack micro-crack-1"></div>
-            <div class="micro-crack micro-crack-2"></div>
-            <div class="micro-crack micro-crack-3"></div>
-            <div class="micro-crack micro-crack-4"></div>
-            <div class="micro-crack micro-crack-5"></div>
-            <div class="micro-crack micro-crack-6"></div>
-            <div class="micro-crack micro-crack-7"></div>
-            <div class="micro-crack micro-crack-8"></div>
-
-            <!-- Crack Nodes -->
-            <div class="crack-node crack-node-1"></div>
-            <div class="crack-node crack-node-2"></div>
-            <div class="crack-node crack-node-3"></div>
-            <div class="crack-node crack-node-4"></div>
-            <div class="crack-node crack-node-5"></div>
-            <div class="crack-node crack-node-6"></div>
-            <div class="crack-node crack-node-7"></div>
-            <div class="crack-node crack-node-8"></div>
-
-            <!-- Crack Textures -->
-            <div class="crack-texture crack-texture-1"></div>
-            <div class="crack-texture crack-texture-2"></div>
-            <div class="crack-texture crack-texture-3"></div>
-            <div class="crack-texture crack-texture-4"></div>
-            <div class="crack-texture crack-texture-5"></div>
-            <div class="crack-texture crack-texture-6"></div>
-            <div class="crack-texture crack-texture-7"></div>
-            <div class="crack-texture crack-texture-8"></div>
+        <!-- Quantum Portal Success Effect -->
+        <div class="quantum-portal-success" id="quantumPortalSuccess">
+            <div class="portal-center"></div>
+            <div class="portal-ring portal-ring-1"></div>
+            <div class="portal-ring portal-ring-2"></div>
+            <div class="portal-ring portal-ring-3"></div>
+            <div class="portal-ring portal-ring-4"></div>
+            <div class="success-particles" id="successParticles"></div>
         </div>
 
-        <!-- Login Crack Effect -->
-        <div class="login-crack-effect" id="loginCrackEffect">
-            <div class="login-crack" style="top: 20%; left: 30%; width: 400px; height: 5px; transform: rotate(15deg);"></div>
-            <div class="login-crack" style="top: 40%; left: 20%; width: 300px; height: 4px; transform: rotate(-20deg);"></div>
-            <div class="login-crack" style="top: 60%; left: 40%; width: 350px; height: 6px; transform: rotate(10deg);"></div>
-            <div class="login-crack" style="top: 30%; left: 60%; width: 250px; height: 4px; transform: rotate(-15deg);"></div>
-            <div class="login-crack" style="top: 70%; left: 25%; width: 300px; height: 5px; transform: rotate(25deg);"></div>
-            <div class="login-crack" style="top: 50%; left: 70%; width: 200px; height: 3px; transform: rotate(-10deg);"></div>
-        </div>
-
-        <!-- Enhanced Crack Breaking Effect -->
-        <div class="crack-breaking-effect" id="crackBreakingEffect">
-            <div class="crack-breaking" style="top: 20%; left: 30%; width: 400px; height: 5px; transform: rotate(15deg); --tx: 50px; --ty: -30px;"></div>
-            <div class="crack-breaking" style="top: 40%; left: 20%; width: 300px; height: 4px; transform: rotate(-20deg); --tx: -40px; --ty: 25px;"></div>
-            <div class="crack-breaking" style="top: 60%; left: 40%; width: 350px; height: 6px; transform: rotate(10deg); --tx: 35px; --ty: 40px;"></div>
-            <div class="crack-breaking" style="top: 30%; left: 60%; width: 250px; height: 4px; transform: rotate(-15deg); --tx: -25px; --ty: -20px;"></div>
-            <div class="crack-breaking" style="top: 70%; left: 25%; width: 300px; height: 5px; transform: rotate(25deg); --tx: 45px; --ty: 30px;"></div>
-            <div class="crack-breaking" style="top: 50%; left: 70%; width: 200px; height: 3px; transform: rotate(-10deg); --tx: -15px; --ty: -15px;"></div>
-        </div>
-
-        <!-- NEW: Login Success Blue Split Effect -->
-        <div class="login-split-effect" id="loginSplitEffect">
-            <div class="blue-split"></div>
-            <div class="split-glow"></div>
-            <div class="split-particles" id="splitParticles"></div>
-        </div>
-
-        <!-- NEW: Screen Split Effect -->
-        <div class="screen-split" id="screenSplit">
-            <div class="screen-half screen-left"></div>
-            <div class="screen-half screen-right"></div>
-        </div>
-
-        <!-- Page Transition Effect -->
-        <div class="page-transition" id="pageTransition"></div>
-
-        <!-- Mouse Following Glow Effect -->
+        <!-- Mouse Following Effects -->
         <div class="mouse-glow" id="mouseGlow"></div>
         <div class="mouse-trail" id="mouseTrail"></div>
 
@@ -2335,6 +1704,7 @@
             </div>
         </div>
 
+        <!-- Main Login Container -->
         <div class="main-container">
             <section class="h-100 w-100">
                 <div class="container h-100">
@@ -2349,14 +1719,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card card-smat shadow-lg hover-glow">
+                            <div class="card card-smat shadow-lg">
+                                <div class="holographic-effect"></div>
                                 <div class="card-body p-5">
                                     <h1 class="card-title">#{interfaceLabel.loginToSystem}</h1>
                                     <h:form id="form_login" class="needs-validation" novalidate=""
                                             autocomplete="off">
                                         <p:growl id="growl" showDetail="true" showSummary="true"></p:growl>
 
-                                        <div class="form-field hover-glow">
+                                        <div class="form-field">
                                             <h:inputText id="email" type="email" class="form-control"
                                                          name="email" value="#{loginBean.userName}"
                                                          required="required" autofocus="autofocus"
@@ -2366,7 +1737,7 @@
                                             <div class="invalid-feedback">#{interfaceLabel.requiredUserName}</div>
                                         </div>
 
-                                        <div class="form-field hover-glow">
+                                        <div class="form-field">
                                             <h:inputSecret id="password" type="password" value="#{loginBean.password}"
                                                            class="form-control"
                                                            name="password" required="required"
@@ -2376,10 +1747,9 @@
                                             <div class="invalid-feedback">#{interfaceLabel.requiredPassword}</div>
                                         </div>
 
-
                                         <div class="d-flex align-items-center justify-content-end mt-4">
                                             <h:commandButton value="#{interfaceLabel.login}" action="#{loginBean.login()}"
-                                                             class="btn btn-smat hover-glow" id="loginBtn"
+                                                             class="btn btn-smat" id="loginBtn"
                                                              onclick="handleLoginClick(this)">
                                                 <f:ajax execute="@form" render="form_login:growl"
                                                         onstart="handleLoginStart()"
@@ -2404,73 +1774,210 @@
         <h:outputStylesheet library="#{appSetting.resourceLib}"
                             name="css/custom-#{app.locale.rtl ? 'rtl':'ltr'}.css"></h:outputStylesheet>
 
-        <!-- Enhanced JavaScript for Ultra Realistic Blue Cracks -->
+        <!-- Enhanced JavaScript with Quantum Loading Effects -->
         <script type="text/javascript">
             //<![CDATA[
 
-            // Enhanced Login Page Manager with Ultra Realistic Blue Cracks
+            // Quantum Loading Animation Manager
+            var QuantumLoader = {
+                particles: [],
+                statusText: null,
+                currentStatus: 0,
+                statusMessages: [
+                    "Initializing System...",
+                    "Loading Quantum Interface...",
+                    "Calibrating Security...",
+                    "Establishing Connection...",
+                    "System Ready!"
+                ],
+
+                init: function() {
+                    this.createQuantumParticles();
+                    this.createEnergyRings();
+                    this.startStatusAnimation();
+
+                    // Initialize the main page after loading completes
+                    setTimeout(function() {
+                        LoginPageManager.init();
+                    }, 4800);
+                },
+
+                createQuantumParticles: function() {
+                    var container = document.getElementById('quantumLogo');
+                    if (!container) return;
+
+                    var particleCount = 80;
+                    for (var i = 0; i < particleCount; i++) {
+                        var particle = document.createElement('div');
+                        particle.className = 'quantum-particle';
+
+                        // Random starting position around the center
+                        var angle = Math.random() * Math.PI * 2;
+                        var distance = Math.random() * 150 + 50;
+                        var startX = Math.cos(angle) * distance;
+                        var startY = Math.sin(angle) * distance;
+
+                        particle.style.left = '50%';
+                        particle.style.top = '50%';
+                        particle.style.transform = 'translate(-50%, -50%)';
+
+                        // Random size and animation
+                        var size = Math.random() * 6 + 2;
+                        var duration = Math.random() * 2 + 1;
+                        var delay = Math.random() * 2;
+
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        particle.style.animationDuration = duration + 's';
+                        particle.style.animationDelay = delay + 's';
+
+                        // Store initial position for animation
+                        particle.dataset.startX = startX;
+                        particle.dataset.startY = startY;
+
+                        container.appendChild(particle);
+                        this.particles.push(particle);
+                    }
+
+                    // Animate particles moving to form logo
+                    this.animateParticlesToLogo();
+                },
+
+                animateParticlesToLogo: function() {
+                    setTimeout(function() {
+                        QuantumLoader.particles.forEach(function(particle, index) {
+                            var delay = index * 0.02;
+
+                            setTimeout(function() {
+                                particle.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                                particle.style.transform = 'translate(-50%, -50%) translate(' +
+                                    particle.dataset.startX + 'px, ' +
+                                    particle.dataset.startY + 'px)';
+                                particle.style.opacity = '1';
+                            }, delay * 1000);
+                        });
+                    }, 500);
+                },
+
+                createEnergyRings: function() {
+                    var container = document.getElementById('quantumLogo');
+
+                    for (var i = 1; i <= 4; i++) {
+                        var ring = document.createElement('div');
+                        ring.className = 'energy-ring ring-' + i;
+                        container.appendChild(ring);
+                    }
+                },
+
+                startStatusAnimation: function() {
+                    this.statusText = document.getElementById('loadingStatus');
+                    if (!this.statusText) return;
+
+                    this.updateStatus();
+                },
+
+                updateStatus: function() {
+                    if (this.currentStatus < this.statusMessages.length) {
+                        this.statusText.textContent = this.statusMessages[this.currentStatus];
+
+                        // Add typing effect
+                        this.statusText.style.animation = 'none';
+                        setTimeout(function() {
+                            QuantumLoader.statusText.style.animation = 'statusAppear 0.8s ease-out forwards';
+                        }, 10);
+
+                        this.currentStatus++;
+
+                        // Schedule next status update based on progress
+                        var delay = this.currentStatus === this.statusMessages.length ? 1200 : 800;
+                        setTimeout(this.updateStatus.bind(this), delay);
+                    }
+                }
+            };
+
+            // Enhanced Login Page Manager
             var LoginPageManager = {
                 initialized: false,
-                animationFrame: null,
                 mouseGlow: null,
                 mouseTrail: null,
                 mouseX: 0,
                 mouseY: 0,
 
-                // Initialize the Enhanced login page effects
                 init: function() {
                     if (this.initialized) return;
 
-                    // Create loader particles
-                    this.createLoaderParticles();
+                    this.createParticles();
+                    this.createStars();
+                    this.setupFormValidation();
+                    this.setupInputHandlers();
+                    this.setupAccessibility();
+                    this.setupHoverEffects();
+                    this.setupMouseFollowingEffect();
+                    this.initialized = true;
 
-                    // Wait for epic loader to finish
-                    setTimeout(function() {
-                        LoginPageManager.setupFormValidation();
-                        LoginPageManager.setupInputHandlers();
-                        LoginPageManager.setupAccessibility();
-                        LoginPageManager.setupHoverEffects();
-                        LoginPageManager.setupMouseFollowingEffect();
-                        LoginPageManager.setupCrackInteractions();
-                        LoginPageManager.initialized = true;
-
-                        console.log('%cEnhanced Ultra Realistic Blue Cracks Login Page Initialized', 'color: #0088ff; font-size: 14px; font-weight: bold;');
-                    }, 4000);
+                    console.log('%cEnhanced Cosmic Login Page Initialized', 'color: #0088ff; font-size: 14px; font-weight: bold;');
                 },
 
-                // Create loader particles
-                createLoaderParticles: function() {
-                    var particlesContainer = document.getElementById('loaderParticles');
+                createParticles: function() {
+                    var particlesContainer = document.getElementById('particlesContainer');
                     if (!particlesContainer) return;
 
-                    var particleCount = 50;
+                    var particleCount = 30;
                     for (var i = 0; i < particleCount; i++) {
                         var particle = document.createElement('div');
-                        particle.className = 'loader-particle';
+                        particle.className = 'particle';
 
-                        // Random position
+                        var size = Math.random() * 5 + 2;
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+
                         var left = Math.random() * 100;
-                        var top = Math.random() * 100;
+                        particle.style.left = left + '%';
 
-                        // Random animation delay
+                        var duration = Math.random() * 15 + 10;
                         var delay = Math.random() * 5;
 
-                        particle.style.left = left + '%';
-                        particle.style.top = top + '%';
+                        particle.style.animationDuration = duration + 's';
                         particle.style.animationDelay = delay + 's';
 
                         particlesContainer.appendChild(particle);
                     }
                 },
 
-                // Setup form validation
+                createStars: function() {
+                    var starsContainer = document.getElementById('stars');
+                    if (!starsContainer) return;
+
+                    var starCount = 150;
+                    for (var i = 0; i < starCount; i++) {
+                        var star = document.createElement('div');
+                        star.className = 'star';
+
+                        var size = Math.random() * 3;
+                        star.style.width = size + 'px';
+                        star.style.height = size + 'px';
+
+                        var left = Math.random() * 100;
+                        var top = Math.random() * 100;
+                        star.style.left = left + '%';
+                        star.style.top = top + '%';
+
+                        var duration = Math.random() * 5 + 3;
+                        var delay = Math.random() * 5;
+
+                        star.style.animationDuration = duration + 's';
+                        star.style.animationDelay = delay + 's';
+
+                        starsContainer.appendChild(star);
+                    }
+                },
+
                 setupFormValidation: function() {
                     var form = document.getElementById('form_login');
                     if (!form) return;
 
                     var inputs = form.querySelectorAll('.form-control');
 
-                    // Add validation event listeners
                     for (var i = 0; i < inputs.length; i++) {
                         inputs[i].addEventListener('blur', function() {
                             LoginPageManager.validateField(this);
@@ -2484,23 +1991,19 @@
                     }
                 },
 
-                // Validate individual field with effects
                 validateField: function(field) {
                     var value = field.value.trim();
                     var isValid = value.length > 0;
 
-                    // Email specific validation
                     if (field.type === 'email' && value.length > 0) {
                         var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                         isValid = emailRegex.test(value);
                     }
 
-                    // Password specific validation
                     if (field.type === 'password' && value.length > 0) {
-                        isValid = value.length >= 3; // Minimum length
+                        isValid = value.length >= 3;
                     }
 
-                    // Update field state with animations
                     if (isValid) {
                         field.classList.remove('is-invalid');
                         field.classList.add('is-valid');
@@ -2516,7 +2019,6 @@
                     return isValid;
                 },
 
-                // Setup input handlers
                 setupInputHandlers: function() {
                     var inputs = document.querySelectorAll('.form-control');
 
@@ -2533,7 +2035,6 @@
                     }
                 },
 
-                // Setup hover effects
                 setupHoverEffects: function() {
                     var card = document.querySelector('.card-smat');
                     if (card) {
@@ -2541,19 +2042,11 @@
                             var rect = this.getBoundingClientRect();
                             var x = e.clientX - rect.left;
                             var y = e.clientY - rect.top;
-                            var centerX = rect.width / 2;
-                            var centerY = rect.height / 2;
-                            var angleY = (x - centerX) / 15;
-                            var angleX = (centerY - y) / 15;
 
-                            this.style.transform = 'translateY(-15px) rotateX(' + angleX + 'deg) rotateY(' + angleY + 'deg)';
-
-                            // Update CSS variables for mouse position
                             this.style.setProperty('--mouse-x', (x / rect.width * 100) + '%');
                             this.style.setProperty('--mouse-y', (y / rect.height * 100) + '%');
 
-                            // Add glow effect based on mouse position
-                            var hue = (x / rect.width) * 30 + 200; // Blue range
+                            var hue = (x / rect.width) * 30 + 200;
                             this.style.boxShadow = `
                                 0 40px 80px rgba(0, 0, 0, 0.6),
                                 0 30px 60px rgba(0, 0, 0, 0.4),
@@ -2562,7 +2055,6 @@
                         });
 
                         card.addEventListener('mouseleave', function() {
-                            this.style.transform = 'translateY(-15px) rotateX(0) rotateY(0)';
                             this.style.boxShadow = `
                                 0 40px 80px rgba(0, 0, 0, 0.6),
                                 0 30px 60px rgba(0, 0, 0, 0.4),
@@ -2572,7 +2064,6 @@
                     }
                 },
 
-                // Setup mouse following effect
                 setupMouseFollowingEffect: function() {
                     this.mouseGlow = document.getElementById('mouseGlow');
                     this.mouseTrail = document.getElementById('mouseTrail');
@@ -2583,60 +2074,23 @@
                         LoginPageManager.mouseX = e.clientX;
                         LoginPageManager.mouseY = e.clientY;
 
-                        // Update mouse glow position
                         LoginPageManager.mouseGlow.style.left = (e.clientX - 150) + 'px';
                         LoginPageManager.mouseGlow.style.top = (e.clientY - 150) + 'px';
 
-                        // Update mouse trail position
                         LoginPageManager.mouseTrail.style.left = (e.clientX - 5) + 'px';
                         LoginPageManager.mouseTrail.style.top = (e.clientY - 5) + 'px';
 
-                        // Activate mouse glow and trail
                         LoginPageManager.mouseGlow.classList.add('active');
                         LoginPageManager.mouseTrail.classList.add('active');
                     });
 
                     document.addEventListener('mouseleave', function() {
-                        // Deactivate mouse glow and trail
                         LoginPageManager.mouseGlow.classList.remove('active');
                         LoginPageManager.mouseTrail.classList.remove('active');
                     });
-
-                    // Update hover effects based on mouse position
-                    var hoverElements = document.querySelectorAll('.hover-glow');
-                    for (var i = 0; i < hoverElements.length; i++) {
-                        hoverElements[i].addEventListener('mousemove', function(e) {
-                            var rect = this.getBoundingClientRect();
-                            var x = e.clientX - rect.left;
-                            var y = e.clientY - rect.top;
-
-                            // Update CSS variables for mouse position
-                            this.style.setProperty('--mouse-x', (x / rect.width * 100) + '%');
-                            this.style.setProperty('--mouse-y', (y / rect.height * 100) + '%');
-                        });
-                    }
                 },
 
-                // Setup crack interactions
-                setupCrackInteractions: function() {
-                    // Make cracks interactive on hover
-                    var cracks = document.querySelectorAll('.realistic-crack, .branch-crack, .micro-crack');
-                    cracks.forEach(function(crack) {
-                        crack.addEventListener('mouseenter', function() {
-                            this.style.filter = 'blur(2px) brightness(1.5)';
-                            this.style.boxShadow = '0 0 30px rgba(0, 136, 255, 1)';
-                        });
-
-                        crack.addEventListener('mouseleave', function() {
-                            this.style.filter = 'blur(1px) brightness(1)';
-                            this.style.boxShadow = '0 0 20px rgba(0, 136, 255, 0.8)';
-                        });
-                    });
-                },
-
-                // Setup accessibility features
                 setupAccessibility: function() {
-                    // Add ARIA labels
                     var emailField = document.getElementById('email');
                     var passwordField = document.getElementById('password');
                     var loginBtn = document.getElementById('loginBtn');
@@ -2655,7 +2109,6 @@
                     }
                 },
 
-                // Validate entire form with effects
                 validateForm: function() {
                     var form = document.getElementById('form_login');
                     if (!form) return false;
@@ -2667,7 +2120,6 @@
                         var isFieldValid = this.validateField(inputs[i]);
                         if (!isFieldValid) {
                             isFormValid = false;
-                            // Add shake animation to invalid fields
                             inputs[i].parentElement.style.animation = 'fieldShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
                             setTimeout(function(element) {
                                 return function() {
@@ -2680,154 +2132,91 @@
                     return isFormValid;
                 },
 
-                // Show login crack effect
-                showLoginCrackEffect: function() {
-                    var crackEffect = document.getElementById('loginCrackEffect');
-                    if (!crackEffect) return;
+                showQuantumSuccessPortal: function() {
+                    var portal = document.getElementById('quantumPortalSuccess');
+                    if (!portal) return;
 
-                    crackEffect.classList.add('active');
+                    portal.classList.add('active');
 
-                    // Activate all cracks with delay
-                    var cracks = crackEffect.querySelectorAll('.login-crack');
-                    for (var i = 0; i < cracks.length; i++) {
-                        setTimeout(function(index) {
-                            return function() {
-                                cracks[index].classList.add('active');
-                                // Add branch cracks to main cracks
-                                if (index < 3) {
-                                    var branchCrack = document.createElement('div');
-                                    branchCrack.className = 'login-crack';
+                    // Create particles for the success effect
+                    this.createSuccessParticles();
 
-                                    // Set random properties for branch crack
-                                    var top = parseInt(cracks[index].style.top) + (Math.random() * 10 - 5) + '%';
-                                    var left = parseInt(cracks[index].style.left) + (Math.random() * 20 - 10) + '%';
-                                    var width = Math.random() * 100 + 50;
-                                    var height = Math.random() * 2 + 1;
-                                    var rotation = parseInt(cracks[index].style.transform.match(/rotate\(([^)]+)\)/)[1]) + (Math.random() * 30 - 15);
-
-                                    branchCrack.style.top = top;
-                                    branchCrack.style.left = left;
-                                    branchCrack.style.width = width + 'px';
-                                    branchCrack.style.height = height + 'px';
-                                    branchCrack.style.transform = 'rotate(' + rotation + 'deg)';
-
-                                    crackEffect.appendChild(branchCrack);
-
-                                    setTimeout(function() {
-                                        branchCrack.classList.add('active');
-                                    }, 100);
-                                }
-                            };
-                        }(i), i * 200);
-                    }
-
-                    // Hide crack effect after animation
+                    // After portal animation, redirect to dashboard
                     setTimeout(function() {
-                        crackEffect.classList.remove('active');
-                        for (var i = 0; i < cracks.length; i++) {
-                            cracks[i].classList.remove('active');
-                        }
-
-                        // Remove branch cracks
-                        var branchCracks = crackEffect.querySelectorAll('.login-crack:not([style*="top: 20%"], [style*="top: 40%"], [style*="top: 60%"], [style*="top: 30%"], [style*="top: 70%"], [style*="top: 50%"])');
-                        for (var i = 0; i < branchCracks.length; i++) {
-                            crackEffect.removeChild(branchCracks[i]);
-                        }
-                    }, 3000);
-                },
-
-                // Show crack breaking effect
-                showCrackBreakingEffect: function() {
-                    var crackBreakingEffect = document.getElementById('crackBreakingEffect');
-                    if (!crackBreakingEffect) return;
-
-                    crackBreakingEffect.classList.add('active');
-
-                    // Activate all breaking cracks with delay
-                    var cracks = crackBreakingEffect.querySelectorAll('.crack-breaking');
-                    for (var i = 0; i < cracks.length; i++) {
-                        setTimeout(function(index) {
-                            return function() {
-                                cracks[index].classList.add('active');
-                            };
-                        }(i), i * 100);
-                    }
-
-                    // Hide crack breaking effect after animation
-                    setTimeout(function() {
-                        crackBreakingEffect.classList.remove('active');
-                        for (var i = 0; i < cracks.length; i++) {
-                            cracks[i].classList.remove('active');
-                        }
+                        window.location.href = "dashboard.xhtml";
                     }, 2000);
                 },
 
-                // Show page transition effect
-                showPageTransition: function() {
-                    var pageTransition = document.getElementById('pageTransition');
-                    if (!pageTransition) return;
+                createSuccessParticles: function() {
+                    var container = document.getElementById('successParticles');
+                    if (!container) return;
 
-                    pageTransition.classList.add('active');
-
-                    // Hide transition after animation
-                    setTimeout(function() {
-                        pageTransition.classList.remove('active');
-                    }, 1000);
-                },
-
-                // NEW: Show login success blue split effect
-                showLoginSplitEffect: function() {
-                    var splitEffect = document.getElementById('loginSplitEffect');
-                    if (!splitEffect) return;
-
-                    splitEffect.classList.add('active');
-
-                    // Create particles for the split effect
-                    this.createSplitParticles();
-
-                    // After split animation, show screen split
-                    setTimeout(function() {
-                        var screenSplit = document.getElementById('screenSplit');
-                        if (screenSplit) {
-                            screenSplit.classList.add('active');
-                        }
-                    }, 800);
-
-                    // After screen split, redirect to dashboard
-                    setTimeout(function() {
-                        // Here you would redirect to the actual dashboard page
-                        // For demonstration, we'll just show an alert
-                        window.location.href = "dashboard.xhtml"; // Change this to your actual dashboard URL
-                    }, 1800);
-                },
-
-                // NEW: Create particles for the split effect
-                createSplitParticles: function() {
-                    var particlesContainer = document.getElementById('splitParticles');
-                    if (!particlesContainer) return;
-
-                    var particleCount = 30;
+                    var particleCount = 60;
                     for (var i = 0; i < particleCount; i++) {
                         var particle = document.createElement('div');
-                        particle.className = 'split-particle';
+                        particle.className = 'success-particle';
 
-                        // Random position along the split line
-                        var top = Math.random() * 100;
+                        // Random direction and distance
+                        var angle = Math.random() * Math.PI * 2;
+                        var distance = Math.random() * 400 + 200;
+                        var tx = Math.cos(angle) * distance;
+                        var ty = Math.sin(angle) * distance;
 
-                        // Random horizontal movement
-                        var tx = (Math.random() - 0.5) * 200;
-                        var ty = (Math.random() - 0.5) * 100;
-
-                        particle.style.top = top + '%';
                         particle.style.setProperty('--tx', tx + 'px');
                         particle.style.setProperty('--ty', ty + 'px');
 
                         // Random delay
-                        var delay = Math.random() * 0.5;
+                        var delay = Math.random() * 1;
                         particle.style.animationDelay = delay + 's';
 
-                        particlesContainer.appendChild(particle);
+                        container.appendChild(particle);
                     }
+                }
+            };
+
+            // Dashboard Animation Manager
+            var DashboardManager = {
+                init: function() {
+                    this.applyEntranceAnimations();
+                    this.setupDashboardEffects();
+                },
+
+                applyEntranceAnimations: function() {
+                    // Add entrance animation to main container
+                    var mainContainer = document.querySelector('.main-container');
+                    if (mainContainer) {
+                        mainContainer.classList.add('dashboard-entrance');
+                    }
+
+                    // Add staggered animations to cards
+                    var cards = document.querySelectorAll('.dashboard-card');
+                    cards.forEach(function(card, index) {
+                        card.style.animationDelay = (0.3 + index * 0.2) + 's';
+                    });
+
+                    // Add animation to welcome text
+                    var welcomeText = document.querySelector('.welcome-text');
+                    if (welcomeText) {
+                        welcomeText.classList.add('welcome-text');
+                    }
+                },
+
+                setupDashboardEffects: function() {
+                    // Add hover effects to dashboard cards
+                    var cards = document.querySelectorAll('.dashboard-card');
+                    cards.forEach(function(card) {
+                        card.addEventListener('mouseenter', function() {
+                            this.style.transform = 'translateY(-10px) rotateY(5deg)';
+                            this.style.boxShadow =
+                                '0 40px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 136, 255, 0.3)';
+                        });
+
+                        card.addEventListener('mouseleave', function() {
+                            this.style.transform = 'translateY(0) rotateY(0)';
+                            this.style.boxShadow =
+                                '0 30px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 136, 255, 0.2)';
+                        });
+                    });
                 }
             };
 
@@ -2845,20 +2234,6 @@
                 if (!isValid) {
                     return false;
                 }
-
-                // Show login crack effect
-                LoginPageManager.showLoginCrackEffect();
-
-                // Show crack breaking effect after crack effect
-                setTimeout(function() {
-                    LoginPageManager.showCrackBreakingEffect();
-                }, 1500);
-
-                // Show page transition effect after breaking effect
-                setTimeout(function() {
-                    LoginPageManager.showPageTransition();
-                }, 3000);
-
                 return true;
             }
 
@@ -2879,10 +2254,8 @@
                     button.textContent = '#{interfaceLabel.login}';
                 }
 
-                // NEW: Show the blue split effect on successful login
-                // In a real application, you would check if login was successful first
-                // For this demo, we'll assume it's always successful
-                LoginPageManager.showLoginSplitEffect();
+                // Show the quantum success portal effect
+                LoginPageManager.showQuantumSuccessPortal();
             }
 
             // Password Recovery Modal Functions
@@ -2890,7 +2263,7 @@
                 var modal = document.getElementById('recoveryModal');
                 if (modal) {
                     modal.classList.add('active');
-                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                    document.body.style.overflow = 'hidden';
                 }
             }
 
@@ -2898,12 +2271,11 @@
                 var modal = document.getElementById('recoveryModal');
                 if (modal) {
                     modal.classList.remove('active');
-                    document.body.style.overflow = ''; // Restore scrolling
+                    document.body.style.overflow = '';
                 }
             }
 
             function openWhatsApp() {
-                // Open WhatsApp with the specified number
                 var phoneNumber = '+963938637158';
                 var message = 'Hello, I need help with my password recovery.';
                 var url = 'https://wa.me/' + phoneNumber.replace(/\s/g, '') + '?text=' + encodeURIComponent(message);
@@ -2920,7 +2292,12 @@
 
             // Initialize when DOM is ready
             document.addEventListener('DOMContentLoaded', function() {
-                LoginPageManager.init();
+                // Check if we're on the dashboard page
+                if (window.location.pathname.includes('dashboard.xhtml')) {
+                    DashboardManager.init();
+                } else {
+                    QuantumLoader.init();
+                }
 
                 // Add ripple effect to buttons
                 var buttons = document.querySelectorAll('.btn-smat, .recovery-button, .recovery-btn, .recovery-close-btn');
@@ -2944,7 +2321,7 @@
                 });
             });
 
-            // Reinitialize after AJAX updates (JSF compatibility)
+            // Reinitialize after AJAX updates
             if (typeof jsf !== 'undefined') {
                 jsf.ajax.addOnEvent(function(data) {
                     if (data.status === 'success') {

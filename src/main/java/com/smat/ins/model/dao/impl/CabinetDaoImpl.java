@@ -35,9 +35,20 @@ public class CabinetDaoImpl extends GenericDaoImpl<Cabinet, Long> implements Cab
 
 		try {
 			session = sessionFactory.getCurrentSession();
-			return Integer.parseInt((String) session
+			Object result = session
 					.createNativeQuery("SELECT COALESCE(MAX(SUBSTR(code,-6)),0) as Max_Cabinet_Code from CABINET CAB ".toLowerCase())
-					.uniqueResult());
+					.uniqueResult();
+			if (result == null) return 0;
+			String s = result.toString();
+			// strip non-digits to avoid NumberFormatException when codes contain letters
+			String digits = s.replaceAll("\\D+", "");
+			if (digits == null || digits.isEmpty()) return 0;
+			try {
+				return Integer.parseInt(digits);
+			} catch (NumberFormatException nfe) {
+				// fallback
+				return 0;
+			}
 		} catch (HibernateException e) {
 			e.printStackTrace();
 			return maxCabinetCode;
