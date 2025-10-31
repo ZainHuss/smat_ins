@@ -654,10 +654,17 @@ div.flipbook-main-wrapper{
 												</p:panelGrid>
 
 												<div style="position: relative; height: 20px;"></div>
+												<!-- Download All attachments shown in this view -->
+												<div style="text-align: center; margin-bottom: 10px;">
+													<p:commandButton value="Download All" icon="pi pi-download" type="button"
+															onclick="(function(){ var container=document.getElementById('scrollPanel_files'); if(!container) return; var ids=[]; container.querySelectorAll('[data-file-id]').forEach(function(el){ ids.push(el.getAttribute('data-file-id')); }); if(ids.length==0){ alert('No attachments to download'); return; } window.open('#{request.contextPath}/attachments/zipByIds?ids=' + encodeURIComponent(ids.join(',')), '_blank'); })();"
+														styleClass="ui-button-secondary" />
+												</div>
 												<div class="ui-fluid formgrid grid">
 													<c:forEach var="archiveDocumentFileVar"
 														items="#{myCabinetBean.archiveDocumentFilesResult}">
 														<div class="field col-12 md:col-2"
+															data-file-id="#{archiveDocumentFileVar.id}"
 															style="text-align: center;">
 															<p:graphicImage id="graphicImage_result_#{archiveDocumentFileVar.id}" library="smat-ins"
 																title="#{archiveDocumentFileVar.name}"
@@ -685,6 +692,14 @@ div.flipbook-main-wrapper{
 																	style="font-size: 20px; color: #FFC757;"><span>
 																</span> </i>
 															</p:commandLink>
+															<p:spacer width="10px"></p:spacer>
+															<!-- Direct original download (raw servlet) -->
+															<h:outputLink value="#{request.contextPath}/attachments/raw?archDocFileId=#{archiveDocumentFileVar.id}"
+															             title="#{interfaceLabel.downloadOriginal}"
+															             styleClass="ui-button-link"
+															             target="_blank">
+															    <i class="pi pi-file" style="font-size: 20px; color: #333;"></i>
+															</h:outputLink>
 															<p:spacer width="10px"></p:spacer>
 															<p:commandLink title="#{interfaceLabel.delete}"
 																actionListener="#{myCabinetBean.deleteArchiveDocumentFile(archiveDocumentFileVar)}"

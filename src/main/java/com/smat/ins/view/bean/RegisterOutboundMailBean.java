@@ -2012,8 +2012,9 @@ public class RegisterOutboundMailBean implements Serializable {
 		UtilityHelper.putSessionAttr("cabinetId", cabinet.getId());
 		UtilityHelper.putSessionAttr("cabinetDefinitionId", cabinetDefinition.getId());
 
-		String[] photoExtension = { "gif", "jpeg", "jpg", "png", "tif" };
-		Boolean photoExt = Arrays.stream(photoExtension).anyMatch(archiveDocumentFile.getExtension()::equals);
+	String[] photoExtension = { "gif", "jpeg", "jpg", "png", "tif" };
+	String fileExt = archiveDocumentFile.getExtension();
+	Boolean photoExt = fileExt != null && Arrays.stream(photoExtension).anyMatch(e -> e.equalsIgnoreCase(fileExt));
 		if (archiveDocumentFile.getExtension().equalsIgnoreCase("pdf")) {
 			PrimeFaces.current().ajax().update("form:manage-viewer-content");
 			PrimeFaces.current().executeScript("PF('viewerWidgetVar').show();");
@@ -2033,8 +2034,9 @@ public class RegisterOutboundMailBean implements Serializable {
 
 	public Boolean extensionIn(ArchiveDocumentFile archiveDocumentFile) {
 		String[] docExtension = { "pdf", "doc", "docx", "gif", "jpeg", "jpg", "png", "tif" };
-		Boolean docExt = Arrays.stream(docExtension).anyMatch(archiveDocumentFile.getExtension()::equals);
-		return docExt;
+	String fileExt = archiveDocumentFile.getExtension();
+	Boolean docExt = fileExt != null && Arrays.stream(docExtension).anyMatch(e -> e.equalsIgnoreCase(fileExt));
+	return docExt;
 	}
 
 	// #endregion

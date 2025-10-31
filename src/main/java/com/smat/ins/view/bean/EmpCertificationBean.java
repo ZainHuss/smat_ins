@@ -31,6 +31,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.io.Serializable;
 import java.util.*;
 import com.google.gson.Gson;
@@ -379,12 +383,12 @@ public class EmpCertificationBean implements Serializable {
 
 
     public String returnToIssuer() {
-    	// normalize before save to ensure DB gets noon-time
-    	empCertification.setIssueDate(toNoon(empCertification.getIssueDate()));
-    	empCertification.setExpiryDate(toNoon(empCertification.getExpiryDate()));
-    	if (empCertification.getEmployee() != null) {
-    	    empCertification.getEmployee().setDateOfBirth(toNoon(empCertification.getEmployee().getDateOfBirth()));
-    	}
+        // normalize before save to ensure DB gets noon-time
+        empCertification.setIssueDate(toNoon(empCertification.getIssueDate()));
+        empCertification.setExpiryDate(toNoon(empCertification.getExpiryDate()));
+        if (empCertification.getEmployee() != null) {
+            empCertification.getEmployee().setDateOfBirth(toNoon(empCertification.getEmployee().getDateOfBirth()));
+        }
 
         if (!doValidate()) {
             return "";
@@ -441,8 +445,8 @@ public class EmpCertificationBean implements Serializable {
             } else {
                 parameters.put("EmployeePhoto", null);
             }
-            
-        
+
+
             parameters.put("logoLeftPath", getServletContextPath("views/jasper/images/logo-left.png"));
             parameters.put("logoRightPath", getServletContextPath("views/jasper/images/logo-right.png"));
 
@@ -483,12 +487,81 @@ public class EmpCertificationBean implements Serializable {
             e.printStackTrace();
         }
     }
+    /**
+     * Prepare session attributes for ZipDocumentDownloadBean to create/download attachments zip
+     */
+    public void prepareAttachmentsZipDownload() throws Exception {
+        try {
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+            com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+
+            String targetCabinetCode = "EMP-DEFAULT";
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) return;
+
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if ("01".equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+                def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+            if (def == null) return;
+
+            String folderName = null;
+            try {
+                if (empCertification != null && empCertification.getCertNumber() != null && !empCertification.getCertNumber().trim().isEmpty()) {
+                    folderName = empCertification.getCertNumber().trim();
+                }
+            } catch (Exception ignore) {}
+            if (folderName == null) {
+                folderName = "emp_" + (employee != null && employee.getId() != null ? employee.getId() : "unknown");
+            }
+
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            try {
+                java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+                if (existing != null) {
+                    for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                        String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                        String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                        String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                        if (fn.equals(fa) || fn.equals(fe)) {
+                            cabinetFolder = f;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
+
+            if (cabinetFolder == null) return;
+
+            java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+            if (items == null || items.isEmpty()) return;
+            com.smat.ins.model.entity.ArchiveDocument firstDoc = items.get(0).getArchiveDocument();
+            if (firstDoc == null) return;
+
+            UtilityHelper.putSessionAttr("archDocId", firstDoc.getId());
+            UtilityHelper.putSessionAttr("cabinetFolderId", cabinetFolder.getId());
+            UtilityHelper.putSessionAttr("cabinetId", targetCabinet.getId());
+            UtilityHelper.putSessionAttr("cabinetDefinitionId", def.getId());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // helper
     private String safeString(Object o) {
         return o == null ? "" : String.valueOf(o);
     }
- // helper to set date time to noon to avoid timezone day-shift issues
+    // helper to set date time to noon to avoid timezone day-shift issues
     private Date toNoon(Date d) {
         if (d == null) return null;
         Calendar cal = Calendar.getInstance();
@@ -498,6 +571,51 @@ public class EmpCertificationBean implements Serializable {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
+    }
+
+    // Check whether a cabinet drawer folder contains regular files
+    private boolean hasFilesInCabinetFolder(String cabinetCode, String drawerCode, String folderName) {
+        try {
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (cabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) return false;
+
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if (drawerCode.equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null) return false;
+
+            java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            if (existing != null) {
+                for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                    String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                    String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                    String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                    if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+                }
+            }
+            if (cabinetFolder == null) return false;
+
+            String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+            java.nio.file.Path folderPath = java.nio.file.Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+            if (!java.nio.file.Files.exists(folderPath) || !java.nio.file.Files.isDirectory(folderPath)) return false;
+            try (java.util.stream.Stream<java.nio.file.Path> s = java.nio.file.Files.list(folderPath)) {
+                return s.anyMatch(p -> java.nio.file.Files.isRegularFile(p));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // normalize all relevant dates from empCertification and employee after load
@@ -510,11 +628,11 @@ public class EmpCertificationBean implements Serializable {
         }
     }
 
-    
-   
 
 
-   
+
+
+
 
     private void exportReport(JasperPrint jasperPrint, String reportName) throws IOException, JRException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -749,7 +867,7 @@ public class EmpCertificationBean implements Serializable {
 
     public void handlePhotoUpload(org.primefaces.event.FileUploadEvent event) {
         try {
-           
+
             if (event.getFile() != null && event.getFile().getContent() != null) {
                 if (event.getFile().getSize() > 2097152) {
                     UtilityHelper.addErrorMessage("File size exceeds 2MB limit");
@@ -769,6 +887,186 @@ public class EmpCertificationBean implements Serializable {
             }
         } catch (Exception e) {
             UtilityHelper.addErrorMessage("Error uploading photo: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Handle generic attachment upload for employee training form.
+     * Stores files on disk under an application-managed attachments folder.
+     */
+    public void handleAttachmentUpload(org.primefaces.event.FileUploadEvent event) {
+        try {
+            if (event.getFile() == null || event.getFile().getContent() == null) return;
+            if (event.getFile().getSize() > 20L * 1024L * 1024L) {
+                UtilityHelper.addErrorMessage("File size exceeds 20MB limit");
+                return;
+            }
+
+            // services
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+            com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+            com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+            com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+
+            // find employee cabinet
+            String targetCabinetCode = "EMP-DEFAULT";
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) {
+                // create defaults and reload
+                com.smat.ins.util.CabinetDefaultsCreator.ensureDefaultCabinets(loginBean.getUser());
+                for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                    if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+                }
+            }
+
+            if (targetCabinet == null) {
+                UtilityHelper.addErrorMessage("Employee cabinet not available");
+                return;
+            }
+
+            // choose cabinetDefinition (drawer) code "01"
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if ("01".equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null) {
+                // fallback to first
+                if (targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+                    def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+            }
+            if (def == null) {
+                UtilityHelper.addErrorMessage("No cabinet definition found for target cabinet");
+                return;
+            }
+
+            // find or create folder for this employee/training task
+            // Prefer certificate number as folder name; fallback to employee id
+            String folderName = null;
+            try {
+                if (empCertification != null && empCertification.getCertNumber() != null && !empCertification.getCertNumber().trim().isEmpty()) {
+                    folderName = empCertification.getCertNumber().trim();
+                }
+            } catch (Exception ignore) {}
+            if (folderName == null) {
+                folderName = "emp_" + (employee != null && employee.getId() != null ? employee.getId() : "unknown");
+            }
+
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            try {
+                java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+                if (existing != null) {
+                    for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                        String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                        String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                        String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                        if (fn.equals(fa) || fn.equals(fe)) {
+                            cabinetFolder = f;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
+
+            if (cabinetFolder == null) {
+                cabinetFolder = new com.smat.ins.model.entity.CabinetFolder();
+                cabinetFolder.setCabinetDefinition(def);
+                cabinetFolder.setSysUser(loginBean.getUser());
+                cabinetFolder.setArabicName(folderName);
+                cabinetFolder.setEnglishName(folderName);
+                // generate simple code
+                int nextCode = 1;
+                try {
+                    java.util.List<com.smat.ins.model.entity.CabinetFolder> existing2 = cabinetFolderService.getByCabinetDefinition(def);
+                    nextCode = existing2 != null ? existing2.size() + 1 : 1;
+                } catch (Exception ignore) {}
+                cabinetFolder.setCode(String.format("%03d", nextCode));
+                cabinetFolder.setCreatedDate(new java.util.Date());
+                cabinetFolderService.saveOrUpdate(cabinetFolder);
+            }
+
+            // create disk folder
+            String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+            java.nio.file.Path folderPath = Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+            Files.createDirectories(folderPath);
+
+            // prepare file metadata
+            String original = event.getFile().getFileName();
+            String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+            // Create ArchiveDocument and ArchiveDocumentFile
+            com.smat.ins.model.entity.ArchiveDocument archiveDocument = new com.smat.ins.model.entity.ArchiveDocument();
+            // set required archive document type (many parts of the app expect a non-null type)
+            try {
+                com.smat.ins.model.service.ArchiveDocumentTypeService archiveDocumentTypeService = (com.smat.ins.model.service.ArchiveDocumentTypeService) BeanUtility.getBean("archiveDocumentTypeService");
+                java.util.List<com.smat.ins.model.entity.ArchiveDocumentType> types = archiveDocumentTypeService.findAll();
+                if (types != null && !types.isEmpty()) {
+                    archiveDocument.setArchiveDocumentType(types.get(0));
+                }
+            } catch (Exception ignore) {}
+            archiveDocument.setArabicName(original);
+            archiveDocument.setEnglishName(original);
+            archiveDocument.setIsDirectory(false);
+            archiveDocument.setCreatedDate(new java.util.Date());
+            archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
+            archiveDocumentService.saveOrUpdate(archiveDocument);
+
+            com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
+            docFile.setArchiveDocument(archiveDocument);
+            docFile.setName(original);
+            String ext = org.apache.commons.io.FilenameUtils.getExtension(original);
+            docFile.setExtension(ext);
+            docFile.setMimeType(event.getFile().getContentType());
+            docFile.setUuid(java.util.UUID.randomUUID().toString());
+            docFile.setFileSize(event.getFile().getSize());
+            docFile.setCreatedDate(new java.util.Date());
+
+            // try to allocate a sequential zero-padded code and use it as filename
+            try {
+                Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
+                int codeLength = 9; // keep consistent with service defaults
+                String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
+                docFile.setCode(fileCode);
+
+                String storedName = fileCode + "." + ext;
+                java.nio.file.Path target = folderPath.resolve(storedName);
+                Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
+
+                String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+                docFile.setLogicalPath(logical);
+                docFile.setServerPath(target.toString());
+            } catch (Exception ex) {
+                // fallback to older naming if code allocation fails
+                int seq = 1; try { seq += (int) java.nio.file.Files.list(folderPath).count(); } catch (Exception ignore) {}
+                String storedName = String.format("%03d_%s", seq, safe);
+                java.nio.file.Path target = folderPath.resolve(storedName);
+                Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
+                String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+                docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
+            }
+
+            // do not set content to avoid DB bloat
+            archiveDocumentFileService.saveOrUpdate(docFile);
+
+            // link via CabinetFolderDocument
+            com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
+            cfd.setCabinetFolder(cabinetFolder);
+            cfd.setSysUser(loginBean.getUser());
+            cfd.setArchiveDocument(archiveDocument);
+            cfd.setCreatedDate(new java.util.Date());
+            cabinetFolderDocumentService.saveOrUpdate(cfd);
+
+            UtilityHelper.addInfoMessage("Attachment uploaded to cabinet: " + original);
+
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage("Error uploading attachment: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -903,6 +1201,40 @@ public class EmpCertificationBean implements Serializable {
             UtilityHelper.addErrorMessage("Error loading draft: " + e.getMessage());
         }
     }
+    public void downloadAttach() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        try {
+            // prepare attachments zip session attributes (so user can download attachments separately)
+            try { prepareAttachmentsZipDownload(); } catch (Exception ignore) {}
+
+            // determine folder name: prefer certificate number, fallback to employee id
+            String folderName = null;
+            try {
+                if (empCertification != null && empCertification.getCertNumber() != null
+                        && !empCertification.getCertNumber().trim().isEmpty()) {
+                    folderName = empCertification.getCertNumber().trim();
+                }
+            } catch (Exception ignore) {}
+
+            if (folderName == null && employee != null && employee.getId() != null) {
+                folderName = "emp_" + employee.getId();
+            }
+
+            // if there are files in the cabinet folder, open zip download in a new tab
+            if (folderName != null && hasFilesInCabinetFolder("EMP-DEFAULT", "01", folderName)) {
+                String ctx = facesContext.getExternalContext().getRequestContextPath();
+                String url = ctx + "/attachments/zip?type=emp&certNo=" + java.net.URLEncoder.encode(folderName, "UTF-8");
+                PrimeFaces.current().executeScript("window.open('" + url + "', '_blank');");
+            } else {
+                UtilityHelper.addErrorMessage("No attachments found to download.");
+            }
+
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage("Failed to prepare attachments download: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
 
 

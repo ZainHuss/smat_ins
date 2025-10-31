@@ -13,6 +13,9 @@
 			title="#{interfaceLabel.add} #{interfaceLabel.cabinet}">
 			<i class="pi pi-plus-circle" style="font-size: 2rem"></i>
 		</p:commandLink>
+				<p:commandButton value="Create default containers" icon="pi pi-layer-group"
+								 action="#{cabinetBean.createDefaultCabinets}"
+								 process="@this" update=":form:messages" styleClass="rounded-button mr-2" />
 		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
 			title="#{interfaceLabel.close}">
 			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>

@@ -43,6 +43,27 @@ public class CertificateViewerBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
+            // First, check if a PDF was placed in session (e.g., by EmpCertificationBean.doPrint())
+            try {
+                Object sessPdf = com.smat.ins.util.UtilityHelper.getSessionAttr("certPdfBytes");
+                if (sessPdf != null) {
+                    byte[] pdfBytes = null;
+                    if (sessPdf instanceof byte[]) {
+                        pdfBytes = (byte[]) sessPdf;
+                    }
+                    if (pdfBytes != null && pdfBytes.length > 0) {
+                        final java.io.InputStream is = new java.io.ByteArrayInputStream(pdfBytes);
+                        file = DefaultStreamedContent.builder().name("certificate.pdf").contentType("application/pdf")
+                                .stream(() -> is).build();
+                        // clear session attribute after consuming
+                        com.smat.ins.util.UtilityHelper.putSessionAttr("certPdfBytes", null);
+                        return; // we've loaded the PDF from session, skip normal init
+                    }
+                }
+            } catch (Exception e) {
+                // non-fatal; proceed with normal initialization
+                log.debug("CertificateViewerBean.init - no session pdf or failed to read it: {}", e.getMessage());
+            }
             // 1) Try get from session
             Object sessVal = UtilityHelper.getSessionAttr("equipCertId");
             if (sessVal != null) {

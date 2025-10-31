@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +102,19 @@ public class PdfViewerBean implements Serializable {
 					+ FileSystems.getDefault().getSeparator() + cabinetFolder.getCode()
 					+ FileSystems.getDefault().getSeparator() + rootPath + FileSystems.getDefault().getSeparator()
 					+ archiveDocumentFile.getCode() + "." + archiveDocumentFile.getExtension();
-			InputStream inputStream = Files.newInputStream(Paths.get(docPath));
+			Path path = Paths.get(docPath);
+			if (!Files.exists(path)) {
+				throw new Exception("File not found: " + docPath);
+			}
+			long size = Files.size(path);
+			int sampleLen = (int)Math.min(16, size);
+			byte[] header = new byte[sampleLen];
+			try (InputStream sample = Files.newInputStream(path)) {
+				sample.read(header, 0, sampleLen);
+			}
+			System.out.println("PdfViewerBean: serving file=" + docPath + " size=" + size
+					+ " header=" + bytesToHex(header) + " asText='" + new String(header, 0, header.length) + "'");
+			InputStream inputStream = Files.newInputStream(path);
 			file = DefaultStreamedContent.builder().name(archiveDocumentFile.getName())
 					.contentType(archiveDocumentFile.getMimeType()).stream(() -> inputStream).build();
 		} catch (Exception e) {
@@ -114,6 +127,15 @@ public class PdfViewerBean implements Serializable {
 
 	public StreamedContent getFile() {
 		return file;
+	}
+
+	private static String bytesToHex(byte[] bytes) {
+		if (bytes == null || bytes.length == 0) return "";
+		StringBuilder sb = new StringBuilder();
+		for (byte b : bytes) {
+			sb.append(String.format("%02X", b));
+		}
+		return sb.toString();
 	}
 
 	private String getRootPath(ArchiveDocument archiveDocument, Long cabinetFolderId) throws Exception {

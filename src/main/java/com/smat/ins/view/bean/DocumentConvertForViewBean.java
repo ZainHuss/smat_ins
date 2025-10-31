@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,21 +113,74 @@ public class DocumentConvertForViewBean implements Serializable  {
 					+ FileSystems.getDefault().getSeparator() + cabinetFolder.getCode()
 					+ FileSystems.getDefault().getSeparator() + rootPath + FileSystems.getDefault().getSeparator()
 					+ archiveDocumentFile.getCode()+"_converted.pdf" ;
-			if (!Files.exists(Paths.get(docPathPdf))) {
-				Document document = new Document(docPath);
-				document.save(docPathPdf);
-
-				InputStream inputStream = Files.newInputStream(Paths.get(docPathPdf));
-
-				file = DefaultStreamedContent.builder().name(archiveDocumentFile.getName())
-						.contentType("application/pdf").stream(() -> inputStream).build();
-			} else {
-
-				InputStream inputStream = Files.newInputStream(Paths.get(docPathPdf));
-
-				file = DefaultStreamedContent.builder().name(archiveDocumentFile.getName())
-						.contentType("application/pdf").stream(() -> inputStream).build();
+			Path originalPath = Paths.get(docPath);
+			Path convertedPath = Paths.get(docPathPdf);
+			if (!Files.exists(originalPath)) {
+				throw new Exception("Original file not found: " + docPath);
 			}
+			long origSize = Files.size(originalPath);
+			int origSample = (int) Math.min(16, origSize);
+			byte[] origHeader = new byte[origSample];
+			try (InputStream s = Files.newInputStream(originalPath)) {
+				s.read(origHeader, 0, origSample);
+			}
+			System.out.println("DocumentConvertForViewBean: original=" + docPath + " size=" + origSize
+					+ " header=" + bytesToHex(origHeader) + " asText='" + new String(origHeader, 0, origHeader.length) + "'");
+			// If original is already PDF, stream it directly (avoid Aspose conversion)
+			String ext = archiveDocumentFile.getExtension();
+			if (ext != null && ext.equalsIgnoreCase("pdf")) {
+				InputStream inputStream = Files.newInputStream(originalPath);
+				file = DefaultStreamedContent.builder().name(archiveDocumentFile.getName())
+					.contentType("application/pdf").stream(() -> inputStream).build();
+				return;
+			}
+			// Ensure converted PDF exists
+			if (!Files.exists(convertedPath)) {
+				try {
+					Document document = new Document(docPath);
+					// explicitly save as PDF to avoid format inference issues
+					document.save(docPathPdf, SaveFormat.PDF);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					System.out.println("DocumentConvertForViewBean: Aspose conversion failed for=" + docPath + " error=" + ex.getMessage());
+					// If conversion failed, ensure any partially-created file is removed
+					try {
+						if (Files.exists(convertedPath)) {
+							Files.delete(convertedPath);
+						}
+					} catch (Exception delEx) {
+						// ignore deletion errors but log
+						delEx.printStackTrace();
+					}
+					// inform user and stop processing
+					UtilityHelper.addErrorMessage(localizationService.getInterfaceLabel().getString("fileCouldNotPreview"));
+					return;
+				}
+			}
+			long convSize = Files.size(convertedPath);
+			int convSample = (int) Math.min(16, convSize);
+			byte[] convHeader = new byte[convSample];
+			try (InputStream s = Files.newInputStream(convertedPath)) {
+				s.read(convHeader, 0, convSample);
+			}
+			System.out.println("DocumentConvertForViewBean: converted=" + docPathPdf + " size=" + convSize
+					+ " header=" + bytesToHex(convHeader) + " asText='" + new String(convHeader, 0, convHeader.length) + "'");
+			// validate converted file looks like a PDF (starts with %PDF)
+			String convHeaderText = new String(convHeader, 0, convHeader.length);
+			if (!convHeaderText.startsWith("%PDF")) {
+				System.out.println("DocumentConvertForViewBean: converted file does not have PDF header - treating as conversion failure for=" + docPathPdf);
+				// cleanup invalid converted file
+				try {
+					Files.deleteIfExists(convertedPath);
+				} catch (Exception delEx) {
+					delEx.printStackTrace();
+				}
+				UtilityHelper.addErrorMessage(localizationService.getInterfaceLabel().getString("fileCouldNotPreview"));
+				return;
+			}
+			InputStream inputStream = Files.newInputStream(convertedPath);
+			file = DefaultStreamedContent.builder().name(archiveDocumentFile.getName())
+					.contentType("application/pdf").stream(() -> inputStream).build();
 	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -141,6 +195,15 @@ public class DocumentConvertForViewBean implements Serializable  {
     public StreamedContent getFile() {
         return file;
     }
+    
+	private static String bytesToHex(byte[] bytes) {
+		if (bytes == null || bytes.length == 0) return "";
+		StringBuilder sb = new StringBuilder();
+		for (byte b : bytes) {
+			sb.append(String.format("%02X", b));
+		}
+		return sb.toString();
+	}
     
     
     

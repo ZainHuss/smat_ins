@@ -32,6 +32,7 @@ import com.smat.ins.model.service.UserAliasService;
 import com.smat.ins.util.BeanUtility;
 import com.smat.ins.util.LocalizationService;
 import com.smat.ins.util.UtilityHelper;
+import com.smat.ins.util.CabinetDefaultsCreator;
 
 import net.bytebuddy.asm.Advice.This;
 
@@ -304,6 +305,20 @@ public class CabinetBean implements Serializable {
 	public void assignCabinet(Cabinet cabinet) throws Exception {
 		cabinetID = cabinet.getId();
 		cabinetStr = UtilityHelper.cipher(cabinetID.toString());
+	}
+
+	/**
+	 * UI action to create default cabinets (inspection + employee training) if missing.
+	 */
+	public void createDefaultCabinets() {
+		try {
+			CabinetDefaultsCreator.ensureDefaultCabinets(this.sysUserLogin);
+			UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+			PrimeFaces.current().ajax().update("form:messages");
+		} catch (Exception e) {
+			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+			e.printStackTrace();
+		}
 	}
 
 	public void deleteCabinet() {

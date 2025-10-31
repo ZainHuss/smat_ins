@@ -334,6 +334,15 @@ PF('statusDialog').hide();
 						</span>
 
 					</p:badge>
+					<!-- Download All Attachments for displayed items -->
+					<p:commandButton value="Download All" icon="pi pi-download" type="button"
+							onclick="(function(){
+							var container=document.getElementById('correspondence_attachement');
+							if(!container) return; var ids=[]; container.querySelectorAll('[data-file-id]').forEach(function(el){ ids.push(el.getAttribute('data-file-id')); });
+							if(ids.length==0){ alert('No attachments to download'); return; }
+							window.open('#{request.contextPath}/attachments/zipByIds?ids=' + encodeURIComponent(ids.join(',')),'_blank');
+						})();"
+						styleClass="ui-button-secondary ui-button-flat" />
 				</div>
 				<div id="correspondence_attachement"
 					style="display: flex; width: 90%; margin-left: 5%;; margin-right: 5%; height: 180px; border-radius: 7px;">
@@ -346,7 +355,7 @@ PF('statusDialog').hide();
 								style="align-self: first baseline;flex: initial;width: auto;border-radius: 10px;display: inline-flex;"></p:commandButton>
 						</c:if>
 						<c:if test="#{loop.count lt 5}">
-							<div class="ui-attachement-element">
+							<div class="ui-attachement-element" data-file-id="#{archiveDocumentFile.id}">
 								<div
 									style="height: 78%; width: 100%; background-color: #F8F9FA; box-shadow: 0 5px 10px rgba(10, 2, 35, 0); display: flex;">
 									<p:graphicImage library="#{appSetting.resourceLib}"
@@ -363,6 +372,13 @@ PF('statusDialog').hide();
 										onstart="PF('statusDialog').show();"
 										oncomplete="PF('statusDialog').hide();"
 										styleClass="ui-button-raised rounded-button ui-button-warning ui-button-outlined btnAttachPreview"></p:commandButton>
+									<!-- Direct original download (raw servlet) -->
+									<h:outputLink value="#{request.contextPath}/attachments/raw?archDocFileId=#{archiveDocumentFile.id}"
+									             title="#{interfaceLabel.downloadOriginal}"
+									             styleClass="ui-button-raised rounded-button ui-button-secondary ui-button-outlined btnAttachOriginal"
+									             target="_blank">
+									    <i class="pi pi-file" style="font-size: 1rem; color: #444;"></i>
+									</h:outputLink>
 
 								</div>
 								<div

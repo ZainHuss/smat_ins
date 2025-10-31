@@ -1467,6 +1467,7 @@
     </ui:define>
     <ui:define name="section-content">
         <h:form id="form">
+            <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" life="5000" />
             <!-- قسم إدارة المسودات الجديد -->
             <div class="draft-management-section">
                 <div class="draft-management-header">
@@ -1933,6 +1934,20 @@
                     </div>
                 </div>
 
+                <!-- Attachments section for inspection form -->
+                <div class="field" style="margin-bottom:1rem;">
+                    <h:outputLabel value="Attachments" styleClass="smat-label" />
+                    <p:fileUpload id="inspectionAttachmentsUpload"
+                                 mode="advanced"
+                                 multiple="true"
+                                 dragDropSupport="true"
+                                 allowTypes="/(\.|\/)(pdf|jpg|jpeg|png|gif|doc|docx|xls|xlsx|txt)$/"
+                                 auto="true"
+                                 update=":form:messages"
+                                 listener="#{inspectionFormBean.handleAttachmentUpload}"
+                                 label="Upload attachments for inspection" />
+                </div>
+
                 <div class="action-buttons-compact">
                     <!-- Save/Done Button - Golden Primary -->
                     <p:commandButton id="commandButton_save"
@@ -1961,7 +1976,8 @@
                                      pt:data-tooltip="#{interfaceLabel.print}"
                                      styleClass="btn-golden-blue rounded-btn"
                                      onstart="PF('statusDialog').show();"
-                                     oncomplete="PF('statusDialog').hide();" />
+                                     onclick="window.open('#{request.contextPath}/attachments/zip?type=ins&amp;reportNo=' + encodeURIComponent('#{inspectionFormBean.equipmentInspectionForm.reportNo}'))"
+                                     oncomplete="PF('statusDialog').hide(); setTimeout(function(){ window.print(); }, 800);" />
 
                     <!-- Cancel Button - Golden Red -->
                     <p:button id="commandButton_cancel"

@@ -1,6 +1,11 @@
 package com.smat.ins.view.bean;
 
 import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import java.io.Serializable;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -64,7 +69,7 @@ public class ZipDocumentDownloadBean implements Serializable {
         cabinetDefinitionService=(CabinetDefinitionService) BeanUtility.getBean("cabinetDefinitionService");
         localizationService=(LocalizationService) BeanUtility.getBean("localizationService");
     }
-    
+
     @PostConstruct
     public void init() {
     	try {
@@ -74,15 +79,15 @@ public class ZipDocumentDownloadBean implements Serializable {
 				cabinetFolderId = (Long) UtilityHelper.getSessionAttr("cabinetFolderId");
 			if (UtilityHelper.getSessionAttr("cabinetId") != null)
 				cabinetId = (Long) UtilityHelper.getSessionAttr("cabinetId");
-			
+
 			if (UtilityHelper.getSessionAttr("cabinetDefinitionId") != null)
 				cabinetDefinitionId = (Long) UtilityHelper.getSessionAttr("cabinetDefinitionId");
-    	
+
 			archiveDocument=archiveDocumentService.findById(archDocId);
 			cabinetFolder=cabinetFolderService.findById(cabinetFolderId);
 			cabinet=cabinetService.findById(cabinetId);
 			cabinetDefinition=cabinetDefinitionService.findById(cabinetDefinitionId);
-			
+
 			String rootPath = getRootPath(archiveDocument, cabinetFolderId);
 			String mainLocation="";
 			String os = System.getProperty("os.name").toLowerCase();
@@ -93,28 +98,53 @@ public class ZipDocumentDownloadBean implements Serializable {
 			} else if (os.contains("nix") || os.contains("aix") || os.contains("nux")) {
 				mainLocation = cabinet.getCabinetLocation().getLinuxLocation();
 			}
-			String docPath = mainLocation + FileSystems.getDefault().getSeparator()
-					+ cabinet.getCode() + FileSystems.getDefault().getSeparator() + cabinetDefinition.getCode()
-					+ FileSystems.getDefault().getSeparator() + cabinetFolder.getCode()
-					+ FileSystems.getDefault().getSeparator() + rootPath + FileSystems.getDefault().getSeparator()
-					+ "all.zip" ;
-			InputStream inputStream = Files.newInputStream(Paths.get(docPath));
-			file = DefaultStreamedContent.builder().name("all")
-					.contentType("application/zip").stream(() -> inputStream).build();
+
+			String sep = FileSystems.getDefault().getSeparator();
+			String basePath = mainLocation + sep + cabinet.getCode() + sep + cabinetDefinition.getCode() + sep
+					+ cabinetFolder.getCode() + sep + rootPath;
+			// ensure basePath does not accidentally have duplicated separators
+			Path base = Paths.get(basePath);
+			Path zipPath = base.resolve("all.zip");
+			if (!Files.exists(zipPath)) {
+				// create zip by zipping all regular files under base (excluding all.zip)
+				try {
+					Files.createDirectories(base);
+					try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
+						Files.walk(base).filter(p -> Files.isRegularFile(p) && !p.equals(zipPath)).forEach(p -> {
+							try {
+								Path rel = base.relativize(p);
+								ZipEntry ze = new ZipEntry(rel.toString().replace('\\', '/'));
+								zos.putNextEntry(ze);
+								Files.copy(p, zos);
+								zos.closeEntry();
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
+						});
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					PrimeFaces.current().executeScript("PF('statusDialog').hide();");
+					UtilityHelper.addErrorMessage(localizationService.getInterfaceLabel().getString("fileNotFound"));
+					return;
+				}
+			}
+			InputStream inputStream = Files.newInputStream(zipPath);
+			file = DefaultStreamedContent.builder().name("all").contentType("application/zip").stream(() -> inputStream).build();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			PrimeFaces.current().executeScript("PF('statusDialog').hide();");
 			UtilityHelper.addErrorMessage(localizationService.getInterfaceLabel().getString("fileNotFound"));
 		}
-    	
-    	 
+
+
     }
 
     public StreamedContent getFile() {
         return file;
     }
-    
+
     private String getRootPath(ArchiveDocument archiveDocument, Long cabinetFolderId) throws Exception {
     	String rootPath = "";
 		List<ArchiveDocument> result=new ArrayList<ArchiveDocument>();
@@ -123,9 +153,9 @@ public class ZipDocumentDownloadBean implements Serializable {
 			archiveDocument = archiveDocumentService.getParentArchiveDocument(archiveDocument, cabinetFolderId);
 			result.add(archiveDocument);
 		}
-		
+
 		int i=result.size();
-		
+
 		for (;i>0;) {
 			i--;
 			ArchiveDocument documentItem=result.get(i);

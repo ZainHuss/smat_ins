@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" xmlns:jsf="http://xmlns.jcp.org/jsf"
-    lang="#{p:language()}" xml:lang="#{p:language()}"
-    dir="#{app.locale.rtl ? 'rtl':'ltr'}">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:jsf="http://xmlns.jcp.org/jsf"
+      lang="#{p:language()}" xml:lang="#{p:language()}"
+      dir="#{app.locale.rtl ? 'rtl':'ltr'}">
 <h:head>
     <meta charset="utf-8" />
     <meta name="author" content="Muhamad Nauval Azhar" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="description"
-        content="This is a login page template based on Bootstrap 5" />
+          content="This is a login page template based on Bootstrap 5" />
     <h:outputStylesheet name="bootstrap-5.2.3/css/bootstrap.min.css" library="#{appSetting.resourceLib}" ></h:outputStylesheet>
     <title>#{interfaceLabel.applicationTitle}</title>
     <h:outputScript name="locales/locale-#{app.locale.language}.js"
-        library="primefaces" />
-    
+                    library="primefaces" />
+
     <link rel="shortcut icon" type="image/x-icon" href="#{resource['smat-ins:images/smtlogo.ico']}"/>
-    
-    <!-- Enhanced Styles with Grayish-White Color Scheme -->
+
+    <!-- Enhanced Black Background with Ultra Realistic Blue Cracks -->
     <style>
         /* Global Styles */
         * {
@@ -27,201 +27,592 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         html, body {
             height: 100%;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            background: #000000;
             position: relative;
         }
-        
-        /* Grayish-White Animated Gradient Background */
-        .geometric-bg {
+
+        /* Enhanced Epic Loading Screen */
+        .epic-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0a0a1a 0%, #000000 100%);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: loaderFadeOut 2s ease-out 3s forwards;
+        }
+
+        .epic-loader-content {
+            text-align: center;
+            position: relative;
+        }
+
+        .epic-loader-logo-enhanced {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            animation: logoAssembleEnhanced 2.5s ease-in-out forwards;
+        }
+
+        .logo-piece-enhanced {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url("#{resource['smat-ins:images/smt_logo_ln.png']}") no-repeat center center;
+            background-size: contain;
+            opacity: 0;
+            transform: scale(0) rotate(0deg);
+        }
+
+        .logo-piece-enhanced:nth-child(1) {
+            animation: pieceAssembleEnhanced 0.8s ease-out 0.2s forwards;
+            clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
+        }
+
+        .logo-piece-enhanced:nth-child(2) {
+            animation: pieceAssembleEnhanced 0.8s ease-out 0.4s forwards;
+            clip-path: polygon(50% 0, 100% 0, 100% 50%, 50% 50%);
+        }
+
+        .logo-piece-enhanced:nth-child(3) {
+            animation: pieceAssembleEnhanced 0.8s ease-out 0.6s forwards;
+            clip-path: polygon(0 50%, 50% 50%, 50% 100%, 0 100%);
+        }
+
+        .logo-piece-enhanced:nth-child(4) {
+            animation: pieceAssembleEnhanced 0.8s ease-out 0.8s forwards;
+            clip-path: polygon(50% 50%, 100% 50%, 100% 100%, 50% 100%);
+        }
+
+        @keyframes pieceAssembleEnhanced {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg) translate(var(--tx, 0px), var(--ty, 0px));
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) rotate(var(--rotation, 0deg)) translate(0, 0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg) translate(0, 0);
+            }
+        }
+
+        @keyframes logoAssembleEnhanced {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(180deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .epic-loader-text {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: textAppear 1s ease-out 1.5s forwards;
+            text-shadow: 0 0 20px rgba(0, 136, 255, 0.5);
+        }
+
+        @keyframes textAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .epic-loader-progress {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+            opacity: 0;
+            animation: textAppear 1s ease-out 1.5s forwards;
+        }
+
+        .epic-loader-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
+            border-radius: 2px;
+            animation: progressFill 2s ease-out 1.5s forwards;
+            box-shadow: 0 0 10px rgba(0, 136, 255, 0.5);
+        }
+
+        @keyframes progressFill {
+            0% {
+                width: 0%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes loaderFadeOut {
+            0% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        /* Enhanced Epic Wave Effect */
+        .epic-wave {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 136, 255, 0.4) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: epicWaveExpand 2s ease-out 3.5s forwards;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        @keyframes epicWaveExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 200vw;
+                height: 200vw;
+                opacity: 0;
+            }
+        }
+
+        /* Enhanced Black Background with Ultra Realistic Blue Cracks */
+        .pure-black-bg-enhanced {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -2;
-            background: 
-                linear-gradient(135deg, rgba(245, 245, 245, 0.9) 0%, rgba(224, 224, 224, 0.9) 100%),
-                radial-gradient(circle at 10% 20%, rgba(220, 220, 220, 0.8) 0%, transparent 25%),
-                radial-gradient(circle at 90% 80%, rgba(240, 240, 240, 0.8) 0%, transparent 25%),
-                radial-gradient(circle at 30% 60%, rgba(210, 210, 210, 0.7) 0%, transparent 20%),
-                radial-gradient(circle at 70% 30%, rgba(230, 230, 230, 0.7) 0%, transparent 20%);
-            animation: gradientFlow 15s ease infinite alternate;
-        }
-        
-        @keyframes gradientFlow {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 100%; }
-        }
-        
-        /* Grayish-White Floating Shapes */
-        .floating-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
+            background: #000000;
             overflow: hidden;
         }
-        
-        .shape {
+
+        .pure-black-bg-enhanced::before {
+            content: '';
             position: absolute;
-            opacity: 0.8;
-            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
-            animation: floatShape 12s ease-in-out infinite;
-            transition: all 0.5s ease;
-        }
-        
-        .shape:hover {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-        
-        .shape-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #b0b0b0, #d0d0d0);
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        
-        .shape-triangle {
-            width: 0;
-            height: 0;
-            border-left: 40px solid transparent;
-            border-right: 40px solid transparent;
-            border-bottom: 70px solid rgba(200, 200, 200, 0.9);
-        }
-        
-        .shape-square {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, #c0c0c0, #e0e0e0);
-            transform: rotate(45deg);
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
-        }
-        
-        .shape-hexagon {
-            width: 65px;
-            height: 37.5px;
-            background: linear-gradient(45deg, #d0d0d0, #e8e8e8);
-            position: relative;
-        }
-        
-        .shape-hexagon:before, .shape-hexagon:after {
-            content: "";
-            position: absolute;
-            width: 0;
-            border-left: 32.5px solid transparent;
-            border-right: 32.5px solid transparent;
-        }
-        
-        .shape-hexagon:before {
-            bottom: 100%;
-            border-bottom: 18.75px solid rgba(208, 208, 208, 0.9);
-        }
-        
-        .shape-hexagon:after {
-            top: 100%;
-            border-top: 18.75px solid rgba(208, 208, 208, 0.9);
-        }
-        
-        @keyframes floatShape {
-            0%, 100% { 
-                transform: translate(0, 0) rotate(0deg);
-            }
-            25% { 
-                transform: translate(-30px, -40px) rotate(10deg);
-            }
-            50% { 
-                transform: translate(30px, 20px) rotate(-10deg);
-            }
-            75% { 
-                transform: translate(-20px, 30px) rotate(5deg);
-            }
-        }
-        
-        /* Grayish-White Particles */
-        .particles-container {
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            background: radial-gradient(circle at 30% 30%, rgba(10, 10, 20, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 70% 70%, rgba(10, 10, 30, 0.2) 0%, transparent 50%);
             z-index: -1;
         }
-        
-        .particle {
+
+        /* Ultra Realistic Blue Cracks - Completely Redesigned */
+        .realistic-crack {
             position: absolute;
-            border-radius: 50%;
-            animation: particleMove 12s infinite linear;
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.9), transparent);
+            filter: blur(1px);
+            opacity: 0;
+            animation: crackAppear 4s ease-out forwards;
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.8);
+            transform-origin: center;
+            z-index: -1;
         }
-        
-        .particle-orange {
-            background: linear-gradient(135deg, #a0a0a0, #c0c0c0);
-        }
-        
-        .particle-yellow {
-            background: linear-gradient(135deg, #d0d0d0, #e0e0e0);
-        }
-        
-        .particle-blue {
-            background: linear-gradient(135deg, #b0b0b0, #d0d0d0);
-        }
-        
-        .particle-purple {
-            background: linear-gradient(135deg, #c0c0c0, #e0e0e0);
-        }
-        
-        .particle-pink {
-            background: linear-gradient(135deg, #d0d0d0, #f0f0f0);
-        }
-        
-        .particle-small {
-            width: 6px;
-            height: 6px;
-        }
-        
-        .particle-medium {
-            width: 10px;
-            height: 10px;
-        }
-        
-        .particle-large {
-            width: 14px;
-            height: 14px;
-        }
-        
-        @keyframes particleMove {
+
+        @keyframes crackAppear {
             0% {
-                transform: translateY(100vh) translateX(0) rotate(0deg);
                 opacity: 0;
+                transform: scale(0) rotate(0deg);
             }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
+            20% {
+                opacity: 0.9;
+                transform: scale(1.1) rotate(var(--rotation, 0deg));
             }
             100% {
-                transform: translateY(-100vh) translateX(100px) rotate(360deg);
-                opacity: 0;
+                opacity: 0.8;
+                transform: scale(1) rotate(var(--rotation, 0deg));
             }
         }
-        
-        /* Main Container */
+
+        /* Enhanced crack glow effect with more realistic appearance */
+        .realistic-crack::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.5), transparent);
+            filter: blur(5px);
+            border-radius: 50%;
+        }
+
+        .realistic-crack::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
+            filter: blur(3px);
+            border-radius: 50%;
+        }
+
+        /* Main cracks with enhanced realistic appearance */
+        .realistic-crack-1 {
+            top: 15%;
+            left: 20%;
+            width: 350px;
+            height: 2px;
+            --rotation: 25deg;
+            animation-delay: 0.5s;
+        }
+
+        .realistic-crack-2 {
+            top: 35%;
+            left: 60%;
+            width: 250px;
+            height: 3px;
+            --rotation: -15deg;
+            animation-delay: 1s;
+        }
+
+        .realistic-crack-3 {
+            top: 55%;
+            left: 10%;
+            width: 450px;
+            height: 2px;
+            --rotation: 10deg;
+            animation-delay: 1.5s;
+        }
+
+        .realistic-crack-4 {
+            top: 75%;
+            left: 40%;
+            width: 300px;
+            height: 2px;
+            --rotation: -20deg;
+            animation-delay: 2s;
+        }
+
+        .realistic-crack-5 {
+            top: 25%;
+            left: 80%;
+            width: 200px;
+            height: 2px;
+            --rotation: 30deg;
+            animation-delay: 2.5s;
+        }
+
+        .realistic-crack-6 {
+            top: 65%;
+            left: 70%;
+            width: 400px;
+            height: 3px;
+            --rotation: -10deg;
+            animation-delay: 3s;
+        }
+
+        .realistic-crack-7 {
+            top: 85%;
+            left: 20%;
+            width: 250px;
+            height: 2px;
+            --rotation: 15deg;
+            animation-delay: 3.5s;
+        }
+
+        .realistic-crack-8 {
+            top: 45%;
+            left: 30%;
+            width: 350px;
+            height: 2px;
+            --rotation: -25deg;
+            animation-delay: 4s;
+        }
+
+        /* New: Ultra Realistic Branch cracks with more details */
+        .branch-crack {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.7), transparent);
+            filter: blur(0.5px);
+            opacity: 0;
+            animation: crackAppear 3s ease-out forwards;
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.6);
+            z-index: -1;
+        }
+
+        .branch-crack-1 {
+            top: 18%;
+            left: 35%;
+            width: 100px;
+            height: 1px;
+            --rotation: 45deg;
+            animation-delay: 0.7s;
+        }
+
+        .branch-crack-2 {
+            top: 38%;
+            left: 45%;
+            width: 80px;
+            height: 1px;
+            --rotation: -35deg;
+            animation-delay: 1.2s;
+        }
+
+        .branch-crack-3 {
+            top: 58%;
+            left: 25%;
+            width: 120px;
+            height: 1px;
+            --rotation: 20deg;
+            animation-delay: 1.7s;
+        }
+
+        .branch-crack-4 {
+            top: 78%;
+            left: 55%;
+            width: 90px;
+            height: 1px;
+            --rotation: -30deg;
+            animation-delay: 2.2s;
+        }
+
+        .branch-crack-5 {
+            top: 28%;
+            left: 65%;
+            width: 70px;
+            height: 1px;
+            --rotation: 40deg;
+            animation-delay: 2.7s;
+        }
+
+        .branch-crack-6 {
+            top: 68%;
+            left: 35%;
+            width: 110px;
+            height: 1px;
+            --rotation: -25deg;
+            animation-delay: 3.2s;
+        }
+
+        .branch-crack-7 {
+            top: 48%;
+            left: 75%;
+            width: 85px;
+            height: 1px;
+            --rotation: 15deg;
+            animation-delay: 3.7s;
+        }
+
+        .branch-crack-8 {
+            top: 88%;
+            left: 45%;
+            width: 95px;
+            height: 1px;
+            --rotation: -40deg;
+            animation-delay: 4.2s;
+        }
+
+        /* New: Micro cracks for ultimate realism */
+        .micro-crack {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.5), transparent);
+            filter: blur(0.3px);
+            opacity: 0;
+            animation: crackAppear 2.5s ease-out forwards;
+            box-shadow: 0 0 10px rgba(0, 136, 255, 0.4);
+            z-index: -1;
+        }
+
+        .micro-crack-1 {
+            top: 22%;
+            left: 40%;
+            width: 50px;
+            height: 0.5px;
+            --rotation: 15deg;
+            animation-delay: 0.9s;
+        }
+
+        .micro-crack-2 {
+            top: 42%;
+            left: 50%;
+            width: 40px;
+            height: 0.5px;
+            --rotation: -25deg;
+            animation-delay: 1.4s;
+        }
+
+        .micro-crack-3 {
+            top: 62%;
+            left: 30%;
+            width: 60px;
+            height: 0.5px;
+            --rotation: 10deg;
+            animation-delay: 1.9s;
+        }
+
+        .micro-crack-4 {
+            top: 82%;
+            left: 60%;
+            width: 45px;
+            height: 0.5px;
+            --rotation: -20deg;
+            animation-delay: 2.4s;
+        }
+
+        .micro-crack-5 {
+            top: 32%;
+            left: 70%;
+            width: 35px;
+            height: 0.5px;
+            --rotation: 35deg;
+            animation-delay: 2.9s;
+        }
+
+        .micro-crack-6 {
+            top: 72%;
+            left: 40%;
+            width: 55px;
+            height: 0.5px;
+            --rotation: -15deg;
+            animation-delay: 3.4s;
+        }
+
+        .micro-crack-7 {
+            top: 52%;
+            left: 80%;
+            width: 42px;
+            height: 0.5px;
+            --rotation: 12deg;
+            animation-delay: 3.9s;
+        }
+
+        .micro-crack-8 {
+            top: 92%;
+            left: 50%;
+            width: 47px;
+            height: 0.5px;
+            --rotation: -22deg;
+            animation-delay: 4.4s;
+        }
+
+        /* New: Crack Nodes for more realistic appearance */
+        .crack-node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(0, 136, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 136, 255, 0.8);
+            opacity: 0;
+            animation: crackNodeAppear 2s ease-out forwards;
+            z-index: -1;
+        }
+
+        @keyframes crackNodeAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+        }
+
+        .crack-node-1 {
+            top: 15%;
+            left: 20%;
+            animation-delay: 0.5s;
+        }
+
+        .crack-node-2 {
+            top: 35%;
+            left: 60%;
+            animation-delay: 1s;
+        }
+
+        .crack-node-3 {
+            top: 55%;
+            left: 10%;
+            animation-delay: 1.5s;
+        }
+
+        .crack-node-4 {
+            top: 75%;
+            left: 40%;
+            animation-delay: 2s;
+        }
+
+        .crack-node-5 {
+            top: 25%;
+            left: 80%;
+            animation-delay: 2.5s;
+        }
+
+        .crack-node-6 {
+            top: 65%;
+            left: 70%;
+            animation-delay: 3s;
+        }
+
+        .crack-node-7 {
+            top: 85%;
+            left: 20%;
+            animation-delay: 3.5s;
+        }
+
+        .crack-node-8 {
+            top: 45%;
+            left: 28%;
+            animation-delay: 4s;
+        }
+
+        /* Main Container with Enhanced Entrance */
         .main-container {
             min-height: 100vh;
             position: relative;
@@ -229,14 +620,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            opacity: 0;
+            animation: epicContainerEntrance 2s ease-out 4s forwards;
         }
-        
+
+        @keyframes epicContainerEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotateY(90deg);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1) rotateY(45deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0);
+            }
+        }
+
         /* Container Animations */
         .container {
             animation: containerFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1);
             perspective: 1000px;
         }
-        
+
         @keyframes containerFadeIn {
             0% {
                 opacity: 0;
@@ -247,14 +655,14 @@
                 transform: translateY(0) rotateX(0);
             }
         }
-        
-        /* Grayish-White Logo Animation */
+
+        /* Logo Animation */
         .logo-container {
             position: relative;
             animation: logoEntrance 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
             transform-style: preserve-3d;
         }
-        
+
         .logo-container::before {
             content: '';
             position: absolute;
@@ -262,14 +670,14 @@
             left: 50%;
             width: 320px;
             height: 320px;
-            background: radial-gradient(circle, rgba(220, 220, 220, 0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0, 136, 255, 0.4) 0%, transparent 70%);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             animation: logoGlow 3s ease-in-out infinite alternate;
             z-index: -1;
             filter: blur(25px);
         }
-        
+
         @keyframes logoEntrance {
             0% {
                 opacity: 0;
@@ -280,36 +688,37 @@
                 transform: translateY(0) scale(1) rotateY(0);
             }
         }
-        
+
         @keyframes logoGlow {
-            0%, 100% { 
+            0%, 100% {
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 0.6;
             }
-            50% { 
+            50% {
                 transform: translate(-50%, -50%) scale(1.3);
                 opacity: 0.9;
             }
         }
-        
-        /* Grayish-White Card Design */
+
+        /* Card Design */
         .card-smat {
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 28px;
-            box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.15),
-                0 20px 40px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 136, 255, 0.3);
+            border-radius: 10px;
+            box-shadow:
+                    0 30px 60px rgba(0, 0, 0, 0.5),
+                    0 20px 40px rgba(0, 0, 0, 0.3),
+                    0 0 30px rgba(0, 136, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
             animation: cardEntrance 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
         }
-        
+
         .card-smat::before {
             content: '';
             position: absolute;
@@ -318,34 +727,34 @@
             width: 200%;
             height: 200%;
             background: linear-gradient(
-                45deg,
-                transparent 0%,
-                rgba(255, 255, 255, 0.4) 50%,
-                transparent 100%
+                    45deg,
+                    transparent 0%,
+                    rgba(0, 136, 255, 0.1) 50%,
+                    transparent 100%
             );
             transform: rotate(45deg);
             transition: all 0.8s ease;
             opacity: 0;
         }
-        
+
         .card-smat:hover::before {
             animation: shine 1.5s;
         }
-        
+
         @keyframes shine {
             0% {
                 left: -50%;
                 opacity: 0;
             }
             50% {
-                opacity: 0.8;
+                opacity: 0.3;
             }
             100% {
                 left: 150%;
                 opacity: 0;
             }
         }
-        
+
         @keyframes cardEntrance {
             0% {
                 opacity: 0;
@@ -356,64 +765,67 @@
                 transform: translateY(0) rotateX(0);
             }
         }
-        
+
         .card-smat:hover {
             transform: translateY(-15px) rotateY(5deg);
-            box-shadow: 
-                0 40px 80px rgba(0, 0, 0, 0.2),
-                0 30px 60px rgba(0, 0, 0, 0.15);
+            box-shadow:
+                    0 40px 80px rgba(0, 0, 0, 0.6),
+                    0 30px 60px rgba(0, 0, 0, 0.4),
+                    0 0 40px rgba(0, 136, 255, 0.3);
+            border-color: rgba(0, 204, 255, 0.5);
         }
-        
-        /* Grayish-White Form Fields */
+
+        /* Form Fields */
         .form-field {
             position: relative;
             margin-bottom: 35px;
             transform-style: preserve-3d;
         }
-        
+
         .form-control {
             width: 100%;
             padding: 20px 28px;
-            border: 2px solid rgba(150, 150, 150, 0.3);
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(0, 136, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(30, 30, 30, 0.8);
             font-size: 16px;
             font-weight: 500;
-            color: #333;
+            color: #ddd;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             z-index: 1;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         .form-control:focus {
             outline: none;
-            border-color: rgba(150, 150, 150, 0.8);
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 
-                0 0 0 4px rgba(150, 150, 150, 0.2),
-                0 10px 30px rgba(150, 150, 150, 0.3);
+            border-color: rgba(0, 204, 255, 0.8);
+            background: rgba(40, 40, 40, 0.9);
+            box-shadow:
+                    0 0 0 4px rgba(0, 204, 255, 0.2),
+                    0 10px 30px rgba(0, 204, 255, 0.3),
+                    0 0 20px rgba(0, 204, 255, 0.2);
             transform: translateY(-5px);
         }
-        
-        /* Grayish-White Floating Labels */
+
+        /* Floating Labels */
         .floating-label {
             position: absolute;
             left: 28px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(150, 150, 150, 0.8);
+            color: rgba(200, 200, 220, 0.8);
             font-size: 16px;
             font-weight: 500;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(30, 30, 30, 0.8);
             padding: 0 10px;
             border-radius: 8px;
             z-index: 2;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
         }
-        
+
         .form-control:focus + .floating-label,
         .form-control:not(:placeholder-shown) + .floating-label,
         .form-control.has-value + .floating-label {
@@ -421,36 +833,37 @@
             left: 24px;
             transform: translateY(-50%);
             font-size: 14px;
-            color: #666;
+            color: #00ccff;
             font-weight: 600;
-            background: linear-gradient(to bottom, #ffffff, #f8faff);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(to bottom, rgba(40, 40, 40, 0.9), rgba(30, 30, 30, 0.9));
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 0 5px rgba(0, 204, 255, 0.5);
         }
-        
-        /* Grayish-White Input Icons */
+
+        /* Input Icons */
         .input-icon {
             position: absolute;
             right: 24px;
             top: 50%;
             transform: translateY(-50%);
-            color: rgba(150, 150, 150, 0.6);
+            color: rgba(200, 200, 220, 0.6);
             font-size: 20px;
             transition: all 0.3s ease;
             z-index: 2;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
         }
-        
+
         .form-control:focus ~ .input-icon {
-            color: #666;
+            color: #00ccff;
             transform: translateY(-50%) scale(1.2);
-            filter: drop-shadow(0 2px 4px rgba(150, 150, 150, 0.3));
+            filter: drop-shadow(0 2px 4px rgba(0, 204, 255, 0.5));
         }
-        
-        /* Grayish-White Button Design */
+
+        /* Button Design */
         .btn-smat {
-            background: linear-gradient(135deg, #808080 0%, #a0a0a0 100%);
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
             border: none;
-            border-radius: 18px;
+            border-radius: 5px;
             padding: 20px 50px;
             font-weight: 600;
             font-size: 16px;
@@ -458,15 +871,16 @@
             position: relative;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 
-                0 15px 40px rgba(128, 128, 128, 0.4),
-                0 8px 25px rgba(160, 160, 160, 0.3);
+            box-shadow:
+                    0 15px 40px rgba(0, 136, 255, 0.4),
+                    0 8px 25px rgba(0, 204, 255, 0.3),
+                    0 0 20px rgba(0, 136, 255, 0.2);
             text-transform: uppercase;
             letter-spacing: 1.5px;
             will-change: transform, box-shadow;
             transform-style: preserve-3d;
         }
-        
+
         .btn-smat::before {
             content: '';
             position: absolute;
@@ -474,35 +888,38 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.8s ease;
         }
-        
+
         .btn-smat:hover::before {
             left: 100%;
         }
-        
+
         .btn-smat:hover {
             transform: translateY(-6px) rotateY(5deg);
-            box-shadow: 
-                0 20px 50px rgba(128, 128, 128, 0.5),
-                0 15px 40px rgba(160, 160, 160, 0.4);
+            box-shadow:
+                    0 20px 50px rgba(0, 136, 255, 0.5),
+                    0 15px 40px rgba(0, 204, 255, 0.4),
+                    0 0 30px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
         }
-        
+
         .btn-smat:active {
             transform: translateY(-2px);
-            box-shadow: 
-                0 10px 30px rgba(128, 128, 128, 0.4),
-                0 5px 20px rgba(160, 160, 160, 0.3);
+            box-shadow:
+                    0 10px 30px rgba(0, 136, 255, 0.4),
+                    0 5px 20px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
         }
-        
+
         /* Loading State */
         .btn-smat.loading {
             pointer-events: none;
             opacity: 0.9;
             transform: translateY(0);
         }
-        
+
         .btn-smat.loading::after {
             content: '';
             position: absolute;
@@ -516,15 +933,15 @@
             animation: buttonSpin 1s linear infinite;
             transform: translateY(-50%);
         }
-        
+
         @keyframes buttonSpin {
             0% { transform: translateY(-50%) rotate(0deg); }
             100% { transform: translateY(-50%) rotate(360deg); }
         }
-        
-        /* Grayish-White Title Design */
+
+        /* Title Design */
         .card-title {
-            background: linear-gradient(135deg, #808080 0%, #a0a0a0 100%);
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -535,9 +952,9 @@
             font-size: 28px;
             letter-spacing: 1px;
             animation: titleSlide 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
-            text-shadow: 0 2px 10px rgba(128, 128, 128, 0.2);
+            text-shadow: 0 0 20px rgba(0, 136, 255, 0.3);
         }
-        
+
         @keyframes titleSlide {
             0% {
                 opacity: 0;
@@ -548,16 +965,16 @@
                 transform: translateX(0) rotateY(0);
             }
         }
-        
-        /* Grayish-White Footer Design */
+
+        /* Footer Design */
         .card-footer {
-            background: linear-gradient(135deg, rgba(150, 150, 150, 0.15) 0%, rgba(200, 200, 200, 0.15) 100%);
-            border-radius: 0 0 28px 28px;
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.3) 0%, rgba(80, 80, 80, 0.3) 100%);
+            border-radius: 0 0 10px 10px;
             position: relative;
             animation: footerSlide 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.2s both;
             overflow: hidden;
         }
-        
+
         .card-footer::before {
             content: '';
             position: absolute;
@@ -565,9 +982,9 @@
             left: 0;
             width: 100%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(150, 150, 150, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
         }
-        
+
         @keyframes footerSlide {
             0% {
                 opacity: 0;
@@ -578,88 +995,88 @@
                 transform: translateY(0);
             }
         }
-        
-        /* Grayish-White Validation States */
+
+        /* Validation States */
         .form-control.is-invalid {
-            border-color: #b0b0b0;
+            border-color: #cc3333;
             animation: fieldShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+            box-shadow: 0 0 10px rgba(204, 51, 51, 0.3);
         }
-        
+
         .form-control.is-valid {
-            border-color: #909090;
+            border-color: #33cc33;
+            box-shadow: 0 0 10px rgba(51, 204, 51, 0.3);
         }
-        
+
         @keyframes fieldShake {
             0%, 100% { transform: translateX(0); }
             15%, 45%, 75% { transform: translateX(-10px); }
             30%, 60%, 90% { transform: translateX(10px); }
         }
-        
-        /* Grayish-White Branding Text */
+
+        /* Branding Text */
         .brand-text {
             font-family: 'Arial', sans-serif;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
-        
-        .brand-primary {
-            color: #808080;
-        }
-        
-        .brand-secondary {
-            color: #a0a0a0;
-        }
-        
-        .brand-accent {
-            color: #666;
-        }
-        
-        /* Grayish-White Pulse Animation */
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(128, 128, 128, 0.4);
-            }
-            70% {
-                transform: scale(1.05);
-                box-shadow: 0 0 0 15px rgba(128, 128, 128, 0);
-            }
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 0 0 rgba(128, 128, 128, 0);
-            }
-        }
-        
 
-        
+        .brand-primary {
+            background: linear-gradient(90deg, #0088ff, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-secondary {
+            color: #00ccff;
+        }
+
+        .brand-accent {
+            color: #0088ff;
+        }
+
         /* Ripple Effect */
         .ripple-effect {
             position: absolute;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.6);
+            background-color: rgba(255, 255, 255, 0.3);
             transform: scale(0);
             animation: ripple 0.8s ease-out;
         }
-        
+
         @keyframes ripple {
             to {
                 transform: scale(4);
                 opacity: 0;
             }
         }
-        
+
         /* Password Recovery Button */
         .recovery-button-container {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1000;
+            opacity: 0;
+            animation: recoveryButtonEntrance 1s ease-out 5s forwards;
         }
-        
+
+        @keyframes recoveryButtonEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .recovery-button {
-            background: linear-gradient(135deg, #a0a0a0 0%, #c0c0c0 100%);
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
             border: none;
             border-radius: 50px;
             padding: 12px 25px;
@@ -669,9 +1086,10 @@
             position: relative;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 
-                0 10px 25px rgba(160, 160, 160, 0.4),
-                0 5px 15px rgba(192, 192, 192, 0.3);
+            box-shadow:
+                    0 10px 25px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
             letter-spacing: 1px;
             will-change: transform, box-shadow;
             transform-style: preserve-3d;
@@ -680,7 +1098,7 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .recovery-button::before {
             content: '';
             position: absolute;
@@ -688,32 +1106,35 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.8s ease;
         }
-        
+
         .recovery-button:hover::before {
             left: 100%;
         }
-        
+
         .recovery-button:hover {
             transform: translateY(-3px) rotateY(3deg);
-            box-shadow: 
-                0 15px 35px rgba(160, 160, 160, 0.5),
-                0 10px 25px rgba(192, 192, 192, 0.4);
+            box-shadow:
+                    0 15px 35px rgba(0, 136, 255, 0.5),
+                    0 10px 25px rgba(0, 204, 255, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
         }
-        
+
         .recovery-button:active {
             transform: translateY(-1px);
-            box-shadow: 
-                0 8px 20px rgba(160, 160, 160, 0.4),
-                0 5px 15px rgba(192, 192, 192, 0.3);
+            box-shadow:
+                    0 8px 20px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 10px rgba(0, 136, 255, 0.2);
         }
-        
+
         .recovery-button-icon {
             font-size: 18px;
         }
-        
+
         /* Password Recovery Modal */
         .recovery-modal {
             display: none;
@@ -722,29 +1143,30 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 2000;
             justify-content: center;
             align-items: center;
             opacity: 0;
             transition: opacity 0.4s ease;
         }
-        
+
         .recovery-modal.active {
             display: flex;
             opacity: 1;
         }
-        
+
         .recovery-modal-content {
-            background: rgba(255, 255, 255, 0.98);
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.98) 0%, rgba(30, 30, 30, 0.98) 100%);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 28px;
-            box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.3),
-                0 20px 40px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 136, 255, 0.3);
+            border-radius: 10px;
+            box-shadow:
+                    0 30px 60px rgba(0, 0, 0, 0.5),
+                    0 20px 40px rgba(0, 0, 0, 0.3),
+                    0 0 30px rgba(0, 136, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
             width: 90%;
@@ -753,22 +1175,22 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
         }
-        
+
         .recovery-modal.active .recovery-modal-content {
             transform: scale(1) translateY(0);
         }
-        
+
         .recovery-modal-header {
-            background: linear-gradient(135deg, rgba(150, 150, 150, 0.1) 0%, rgba(200, 200, 200, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.3) 0%, rgba(80, 80, 80, 0.3) 100%);
             padding: 25px 30px;
-            border-radius: 28px 28px 0 0;
+            border-radius: 10px 10px 0 0;
             position: relative;
             overflow: hidden;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .recovery-modal-header::before {
             content: '';
             position: absolute;
@@ -776,11 +1198,11 @@
             left: 0;
             width: 100%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(150, 150, 150, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
         }
-        
+
         .recovery-modal-title {
-            background: linear-gradient(135deg, #808080 0%, #a0a0a0 100%);
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -794,14 +1216,14 @@
             justify-content: center;
             gap: 10px;
         }
-        
+
         .recovery-modal-title-icon {
             font-size: 28px;
-            color: #808080;
+            color: #0088ff;
         }
-        
+
         .recovery-close-btn {
-            background: linear-gradient(135deg, #ddd 0%, #bbb 100%);
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
             border: none;
             width: 36px;
             height: 36px;
@@ -811,25 +1233,25 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            color: #555;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            color: #ddd;
             font-size: 18px;
             font-weight: bold;
         }
-        
+
         .recovery-close-btn:hover {
-            background: linear-gradient(135deg, #808080 0%, #a0a0a0 100%);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
             color: white;
             transform: rotate(90deg);
-            box-shadow: 0 6px 12px rgba(128, 128, 128, 0.3);
+            box-shadow: 0 6px 12px rgba(0, 136, 255, 0.4);
         }
-        
+
         .recovery-modal-body {
             padding: 30px;
         }
-        
+
         .recovery-modal-description {
-            color: #555;
+            color: #ddd;
             font-size: 16px;
             line-height: 1.6;
             margin-bottom: 25px;
@@ -839,14 +1261,14 @@
             align-items: center;
             gap: 15px;
         }
-        
+
         .recovery-whatsapp-icon {
             font-size: 50px;
             color: #25D366;
             margin-bottom: 10px;
             animation: whatsappPulse 2s infinite;
         }
-        
+
         @keyframes whatsappPulse {
             0% {
                 transform: scale(1);
@@ -861,64 +1283,67 @@
                 filter: drop-shadow(0 0 0 rgba(37, 211, 102, 0.7));
             }
         }
-        
+
         .recovery-phone-number {
             font-size: 20px;
             font-weight: 600;
-            color: #666;
+            color: #00ccff;
             display: flex;
             align-items: center;
             gap: 8px;
             margin-top: 10px;
             padding: 10px 20px;
-            background: rgba(150, 150, 150, 0.1);
+            background: rgba(60, 60, 60, 0.3);
             border-radius: 50px;
+            border: 1px solid rgba(0, 204, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.2);
         }
-        
+
         .recovery-phone-icon {
             font-size: 22px;
         }
-        
+
         .recovery-form-field {
             position: relative;
             margin-bottom: 25px;
         }
-        
+
         .recovery-textarea {
             width: 100%;
             min-height: 120px;
             padding: 20px;
-            border: 2px solid rgba(150, 150, 150, 0.3);
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(0, 136, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(30, 30, 30, 0.8);
             font-size: 16px;
             font-weight: 500;
-            color: #333;
+            color: #ddd;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             resize: vertical;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         .recovery-textarea:focus {
             outline: none;
-            border-color: rgba(150, 150, 150, 0.8);
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 
-                0 0 0 4px rgba(150, 150, 150, 0.2),
-                0 10px 30px rgba(150, 150, 150, 0.3);
+            border-color: rgba(0, 204, 255, 0.8);
+            background: rgba(40, 40, 40, 0.9);
+            box-shadow:
+                    0 0 0 4px rgba(0, 204, 255, 0.2),
+                    0 10px 30px rgba(0, 204, 255, 0.3),
+                    0 0 20px rgba(0, 204, 255, 0.2);
             transform: translateY(-5px);
         }
-        
+
         .recovery-modal-footer {
-            background: linear-gradient(135deg, rgba(150, 150, 150, 0.05) 0%, rgba(200, 200, 200, 0.05) 100%);
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.3) 0%, rgba(70, 70, 70, 0.3) 100%);
             padding: 20px 30px;
-            border-radius: 0 0 28px 28px;
+            border-radius: 0 0 10px 10px;
             display: flex;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
         }
-        
+
         .recovery-modal-footer::before {
             content: '';
             position: absolute;
@@ -926,13 +1351,13 @@
             left: 0;
             width: 100%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(150, 150, 150, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
         }
-        
+
         .recovery-btn {
             padding: 12px 30px;
             border: none;
-            border-radius: 18px;
+            border-radius: 5px;
             font-weight: 600;
             font-size: 14px;
             letter-spacing: 1px;
@@ -944,111 +1369,119 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .recovery-btn-icon {
             font-size: 16px;
         }
-        
+
         .recovery-btn-cancel {
-            background: linear-gradient(135deg, #ddd 0%, #bbb 100%);
-            color: #555;
-            box-shadow: 
-                0 10px 25px rgba(0, 0, 0, 0.1),
-                0 5px 15px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
+            color: white;
+            box-shadow:
+                    0 10px 25px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
         }
-        
+
         .recovery-btn-cancel:hover {
             transform: translateY(-3px) rotateY(3deg);
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.15),
-                0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow:
+                    0 15px 35px rgba(0, 136, 255, 0.5),
+                    0 10px 25px rgba(0, 204, 255, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
         }
-        
+
         .recovery-btn-submit {
-            background: linear-gradient(135deg, #808080 0%, #a0a0a0 100%);
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
             color: white;
-            box-shadow: 
-                0 10px 25px rgba(128, 128, 128, 0.4),
-                0 5px 15px rgba(160, 160, 160, 0.3);
+            box-shadow:
+                    0 10px 25px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
         }
-        
+
         .recovery-btn-submit:hover {
             transform: translateY(-3px) rotateY(3deg);
-            box-shadow: 
-                0 15px 35px rgba(128, 128, 128, 0.5),
-                0 10px 25px rgba(160, 160, 160, 0.4);
+            box-shadow:
+                    0 15px 35px rgba(0, 136, 255, 0.5),
+                    0 10px 25px rgba(0, 204, 255, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
         }
-        
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .card-smat {
                 margin: 20px;
-                border-radius: 24px;
+                border-radius: 10px;
             }
-            
+
             .btn-smat {
                 width: 100%;
                 padding: 20px;
             }
-            
+
             .form-control {
                 padding: 18px 24px;
             }
-            
+
             .floating-label {
                 left: 24px;
             }
-            
+
             .card-title {
                 font-size: 24px;
                 margin-bottom: 30px;
             }
-            
+
             .recovery-button {
                 padding: 10px 20px;
                 font-size: 12px;
             }
-            
+
             .recovery-modal-content {
                 width: 95%;
                 margin: 20px;
             }
-            
+
             .recovery-modal-header, .recovery-modal-body, .recovery-modal-footer {
                 padding: 20px;
             }
-            
+
             .recovery-modal-title {
                 font-size: 20px;
             }
-            
+
             .recovery-whatsapp-icon {
                 font-size: 40px;
             }
-            
+
             .recovery-phone-number {
                 font-size: 18px;
             }
         }
-        
-        /* Grayish-White Growl Messages */
+
+        /* Growl Messages */
         .ui-growl {
             position: fixed;
             top: 30px;
             right: 30px;
             z-index: 2000;
         }
-        
+
         .ui-growl .ui-growl-item {
-            background: rgba(255, 255, 255, 0.97);
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.97) 0%, rgba(30, 30, 30, 0.97) 100%);
             backdrop-filter: blur(25px);
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 136, 255, 0.3);
+            box-shadow:
+                    0 20px 50px rgba(0, 0, 0, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.2);
             animation: growlSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1);
             overflow: hidden;
         }
-        
+
         .ui-growl .ui-growl-item::before {
             content: '';
             position: absolute;
@@ -1056,9 +1489,9 @@
             left: 0;
             width: 5px;
             height: 100%;
-            background: linear-gradient(to bottom, #808080, #a0a0a0);
+            background: linear-gradient(to bottom, #0088ff, #00ccff);
         }
-        
+
         @keyframes growlSlide {
             0% {
                 transform: translateX(100%) rotateY(30deg);
@@ -1069,28 +1502,798 @@
                 opacity: 1;
             }
         }
+
+        /* Advanced Mouse Following Hover Effect */
+        .mouse-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(circle, rgba(0, 136, 255, 0.3) 0%, transparent 70%);
+            filter: blur(20px);
+        }
+
+        .mouse-glow.active {
+            opacity: 1;
+        }
+
+        .mouse-trail {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(circle, rgba(0, 204, 255, 0.8) 0%, transparent 70%);
+            filter: blur(5px);
+        }
+
+        .mouse-trail.active {
+            opacity: 1;
+        }
+
+        /* Enhanced Hover Effects */
+        .hover-glow {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hover-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 204, 255, 0.3) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .hover-glow:hover::before {
+            opacity: 1;
+        }
+
+        /* Enhanced Card Hover Effect */
+        .card-smat {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-smat::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 204, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .card-smat:hover::after {
+            opacity: 1;
+        }
+
+        /* Enhanced Button Hover Effect */
+        .btn-smat {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-smat::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .btn-smat:hover::after {
+            opacity: 1;
+        }
+
+        /* Enhanced Form Field Hover Effect */
+        .form-field {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-field::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 204, 255, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-field:hover::after {
+            opacity: 1;
+        }
+
+        /* Enhanced Input Field Focus Effect */
+        .form-control:focus {
+            box-shadow:
+                    0 0 0 4px rgba(0, 204, 255, 0.2),
+                    0 10px 30px rgba(0, 204, 255, 0.3),
+                    0 0 20px rgba(0, 204, 255, 0.2),
+                    0 0 30px rgba(0, 204, 255, 0.1);
+        }
+
+        /* Enhanced Button Click Effect */
+        .btn-smat:active {
+            box-shadow:
+                    0 10px 30px rgba(0, 136, 255, 0.4),
+                    0 5px 20px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2),
+                    0 0 30px rgba(0, 204, 255, 0.2);
+        }
+
+        /* Enhanced Recovery Button Hover Effect */
+        .recovery-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recovery-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .recovery-button:hover::after {
+            opacity: 1;
+        }
+
+        /* Enhanced Recovery Modal Button Hover Effect */
+        .recovery-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recovery-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .recovery-btn:hover::after {
+            opacity: 1;
+        }
+
+        /* Enhanced Close Button Hover Effect */
+        .recovery-close-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recovery-close-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .recovery-close-btn:hover::after {
+            opacity: 1;
+        }
+
+        /* Login Crack Effect - Enhanced */
+        .login-crack-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .login-crack-effect.active {
+            opacity: 1;
+        }
+
+        .login-crack {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.9), transparent);
+            filter: blur(0.5px);
+            opacity: 0;
+            transform: scale(0);
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.8);
+            transform-origin: center;
+        }
+
+        .login-crack.active {
+            animation: loginCrackAppear 1.5s ease-out forwards;
+        }
+
+        @keyframes loginCrackAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.8;
+            }
+        }
+
+        /* Page Transition Effect */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Enhanced Crack Breaking Effect */
+        .crack-breaking-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .crack-breaking-effect.active {
+            opacity: 1;
+        }
+
+        .crack-breaking {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.9), transparent);
+            filter: blur(0.5px);
+            opacity: 0;
+            transform: scale(0);
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.8);
+            transform-origin: center;
+        }
+
+        .crack-breaking.active {
+            animation: crackBreakingAppear 2s ease-out forwards;
+        }
+
+        @keyframes crackBreakingAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0) translateX(0) translateY(0);
+            }
+            20% {
+                opacity: 1;
+                transform: scale(1) translateX(var(--tx, 0)) translateY(var(--ty, 0));
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2) translateX(var(--tx, 0)) translateY(var(--ty, 0));
+            }
+        }
+
+        /* New: Enhanced Background with Deeper Black */
+        .pure-black-bg-enhanced {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: #000000;
+            overflow: hidden;
+        }
+
+        .pure-black-bg-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(10, 10, 20, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 70% 70%, rgba(10, 10, 30, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* New: Enhanced Realistic Crack Textures */
+        .crack-texture {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.7), transparent);
+            filter: blur(0.3px);
+            opacity: 0;
+            animation: crackTextureAppear 3s ease-out forwards;
+            z-index: -1;
+        }
+
+        @keyframes crackTextureAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.6;
+                transform: scale(1) rotate(var(--rotation, 0deg));
+            }
+            100% {
+                opacity: 0.4;
+                transform: scale(1) rotate(var(--rotation, 0deg));
+            }
+        }
+
+        .crack-texture-1 {
+            top: 12%;
+            left: 18%;
+            width: 120px;
+            height: 0.3px;
+            --rotation: 15deg;
+            animation-delay: 0.8s;
+        }
+
+        .crack-texture-2 {
+            top: 32%;
+            left: 58%;
+            width: 80px;
+            height: 0.3px;
+            --rotation: -10deg;
+            animation-delay: 1.3s;
+        }
+
+        .crack-texture-3 {
+            top: 52%;
+            left: 8%;
+            width: 150px;
+            height: 0.3px;
+            --rotation: 5deg;
+            animation-delay: 1.8s;
+        }
+
+        .crack-texture-4 {
+            top: 72%;
+            left: 38%;
+            width: 100px;
+            height: 0.3px;
+            --rotation: -12deg;
+            animation-delay: 2.3s;
+        }
+
+        .crack-texture-5 {
+            top: 22%;
+            left: 78%;
+            width: 70px;
+            height: 0.3px;
+            --rotation: 8deg;
+            animation-delay: 2.8s;
+        }
+
+        .crack-texture-6 {
+            top: 62%;
+            left: 68%;
+            width: 130px;
+            height: 0.3px;
+            --rotation: -7deg;
+            animation-delay: 3.3s;
+        }
+
+        .crack-texture-7 {
+            top: 82%;
+            left: 18%;
+            width: 90px;
+            height: 0.3px;
+            --rotation: 10deg;
+            animation-delay: 3.8s;
+        }
+
+        .crack-texture-8 {
+            top: 42%;
+            left: 28%;
+            width: 110px;
+            height: 0.3px;
+            --rotation: -5deg;
+            animation-delay: 4.3s;
+        }
+
+        /* New: Enhanced Loading Animation */
+        .epic-loader-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0a0a1a 0%, #000000 100%);
+            z-index: -1;
+        }
+
+        .epic-loader-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .loader-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(0, 136, 255, 0.8);
+            border-radius: 50%;
+            animation: particleFloat 5s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(0, 136, 255, 0.5);
+        }
+
+        @keyframes particleFloat {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px);
+            }
+        }
+
+        /* New: Enhanced Logo Glow */
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(0, 136, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: logoGlowPulse 3s infinite alternate;
+            z-index: -1;
+            filter: blur(30px);
+        }
+
+        @keyframes logoGlowPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.4;
+            }
+        }
+
+        /* NEW: Login Success Blue Split Effect */
+        .login-split-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .login-split-effect.active {
+            opacity: 1;
+        }
+
+        .blue-split {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 8px;
+            height: 0;
+            background: linear-gradient(to bottom,
+            rgba(0, 136, 255, 0) 0%,
+            rgba(0, 136, 255, 1) 20%,
+            rgba(0, 204, 255, 1) 50%,
+            rgba(0, 136, 255, 1) 80%,
+            rgba(0, 136, 255, 0) 100%);
+            transform: translateX(-50%);
+            box-shadow:
+                    0 0 30px rgba(0, 136, 255, 0.8),
+                    0 0 60px rgba(0, 204, 255, 0.6),
+                    0 0 100px rgba(0, 136, 255, 0.4);
+            filter: blur(1px);
+            animation: splitExpand 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes splitExpand {
+            0% {
+                height: 0;
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                height: 100%;
+                opacity: 1;
+            }
+        }
+
+        .split-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 300px;
+            height: 0;
+            background: radial-gradient(ellipse at center,
+            rgba(0, 136, 255, 0.4) 0%,
+            rgba(0, 204, 255, 0.2) 30%,
+            transparent 70%);
+            transform: translateX(-50%);
+            animation: splitGlowExpand 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+        }
+
+        @keyframes splitGlowExpand {
+            0% {
+                height: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                height: 100%;
+                opacity: 0.5;
+            }
+        }
+
+        .split-particles {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translateX(-50%);
+        }
+
+        .split-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(0, 204, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+            animation: splitParticleFloat 2s ease-out forwards;
+        }
+
+        @keyframes splitParticleFloat {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(var(--tx, 0)) translateY(var(--ty, 0));
+                opacity: 0;
+            }
+        }
+
+        .screen-split {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .screen-split.active {
+            opacity: 1;
+        }
+
+        .screen-half {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: #000;
+            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .screen-left {
+            left: 0;
+            transform: translateX(0);
+        }
+
+        .screen-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .screen-split.active .screen-left {
+            transform: translateX(-100%);
+        }
+
+        .screen-split.active .screen-right {
+            transform: translateX(100%);
+        }
     </style>
 </h:head>
 <h:body>
     <f:view locale="#{app.locale.language}">
-        <!-- Grayish-White Geometric Background -->
-        <div class="geometric-bg"></div>
-        
-        <!-- Grayish-White Floating Shapes -->
-        <div class="floating-shapes">
-            <div class="shape shape-circle" style="top: 10%; left: 5%; animation-delay: 0s;"></div>
-            <div class="shape shape-triangle" style="top: 20%; left: 90%; animation-delay: 2s;"></div>
-            <div class="shape shape-square" style="top: 65%; left: 3%; animation-delay: 4s;"></div>
-            <div class="shape shape-circle" style="top: 80%; left: 85%; animation-delay: 6s;"></div>
-            <div class="shape shape-triangle" style="top: 35%; left: 10%; animation-delay: 8s;"></div>
-            <div class="shape shape-square" style="top: 15%; left: 75%; animation-delay: 10s;"></div>
-            <div class="shape shape-hexagon" style="top: 50%; left: 80%; animation-delay: 12s;"></div>
-            <div class="shape shape-hexagon" style="top: 25%; left: 25%; animation-delay: 14s;"></div>
+        <!-- Enhanced Epic Loading Screen -->
+        <div class="epic-loader" id="epicLoader">
+            <div class="epic-loader-background"></div>
+            <div class="epic-loader-particles" id="loaderParticles"></div>
+            <div class="logo-glow"></div>
+            <div class="epic-loader-content">
+                <div class="epic-loader-logo-enhanced">
+                    <div class="logo-piece-enhanced" style="--tx: -100px; --ty: -100px; --rotation: -90deg;"></div>
+                    <div class="logo-piece-enhanced" style="--tx: 100px; --ty: -100px; --rotation: 90deg;"></div>
+                    <div class="logo-piece-enhanced" style="--tx: -100px; --ty: 100px; --rotation: -90deg;"></div>
+                    <div class="logo-piece-enhanced" style="--tx: 100px; --ty: 100px; --rotation: 90deg;"></div>
+                </div>
+                <div class="epic-loader-text">SMAT INDUSTRIAL</div>
+                <div class="epic-loader-progress">
+                    <div class="epic-loader-progress-bar"></div>
+                </div>
+            </div>
         </div>
-        
-        <!-- Grayish-White Particles -->
-        <div class="particles-container" id="particlesContainer"></div>
-        
+
+        <!-- Epic Wave Effect -->
+        <div class="epic-wave" id="epicWave"></div>
+
+        <!-- Enhanced Black Background with Ultra Realistic Blue Cracks -->
+        <div class="pure-black-bg-enhanced">
+            <!-- Main Cracks -->
+            <div class="realistic-crack realistic-crack-1"></div>
+            <div class="realistic-crack realistic-crack-2"></div>
+            <div class="realistic-crack realistic-crack-3"></div>
+            <div class="realistic-crack realistic-crack-4"></div>
+            <div class="realistic-crack realistic-crack-5"></div>
+            <div class="realistic-crack realistic-crack-6"></div>
+            <div class="realistic-crack realistic-crack-7"></div>
+            <div class="realistic-crack realistic-crack-8"></div>
+
+            <!-- Branch Cracks -->
+            <div class="branch-crack branch-crack-1"></div>
+            <div class="branch-crack branch-crack-2"></div>
+            <div class="branch-crack branch-crack-3"></div>
+            <div class="branch-crack branch-crack-4"></div>
+            <div class="branch-crack branch-crack-5"></div>
+            <div class="branch-crack branch-crack-6"></div>
+            <div class="branch-crack branch-crack-7"></div>
+            <div class="branch-crack branch-crack-8"></div>
+
+            <!-- Micro Cracks -->
+            <div class="micro-crack micro-crack-1"></div>
+            <div class="micro-crack micro-crack-2"></div>
+            <div class="micro-crack micro-crack-3"></div>
+            <div class="micro-crack micro-crack-4"></div>
+            <div class="micro-crack micro-crack-5"></div>
+            <div class="micro-crack micro-crack-6"></div>
+            <div class="micro-crack micro-crack-7"></div>
+            <div class="micro-crack micro-crack-8"></div>
+
+            <!-- Crack Nodes -->
+            <div class="crack-node crack-node-1"></div>
+            <div class="crack-node crack-node-2"></div>
+            <div class="crack-node crack-node-3"></div>
+            <div class="crack-node crack-node-4"></div>
+            <div class="crack-node crack-node-5"></div>
+            <div class="crack-node crack-node-6"></div>
+            <div class="crack-node crack-node-7"></div>
+            <div class="crack-node crack-node-8"></div>
+
+            <!-- Crack Textures -->
+            <div class="crack-texture crack-texture-1"></div>
+            <div class="crack-texture crack-texture-2"></div>
+            <div class="crack-texture crack-texture-3"></div>
+            <div class="crack-texture crack-texture-4"></div>
+            <div class="crack-texture crack-texture-5"></div>
+            <div class="crack-texture crack-texture-6"></div>
+            <div class="crack-texture crack-texture-7"></div>
+            <div class="crack-texture crack-texture-8"></div>
+        </div>
+
+        <!-- Login Crack Effect -->
+        <div class="login-crack-effect" id="loginCrackEffect">
+            <div class="login-crack" style="top: 20%; left: 30%; width: 400px; height: 5px; transform: rotate(15deg);"></div>
+            <div class="login-crack" style="top: 40%; left: 20%; width: 300px; height: 4px; transform: rotate(-20deg);"></div>
+            <div class="login-crack" style="top: 60%; left: 40%; width: 350px; height: 6px; transform: rotate(10deg);"></div>
+            <div class="login-crack" style="top: 30%; left: 60%; width: 250px; height: 4px; transform: rotate(-15deg);"></div>
+            <div class="login-crack" style="top: 70%; left: 25%; width: 300px; height: 5px; transform: rotate(25deg);"></div>
+            <div class="login-crack" style="top: 50%; left: 70%; width: 200px; height: 3px; transform: rotate(-10deg);"></div>
+        </div>
+
+        <!-- Enhanced Crack Breaking Effect -->
+        <div class="crack-breaking-effect" id="crackBreakingEffect">
+            <div class="crack-breaking" style="top: 20%; left: 30%; width: 400px; height: 5px; transform: rotate(15deg); --tx: 50px; --ty: -30px;"></div>
+            <div class="crack-breaking" style="top: 40%; left: 20%; width: 300px; height: 4px; transform: rotate(-20deg); --tx: -40px; --ty: 25px;"></div>
+            <div class="crack-breaking" style="top: 60%; left: 40%; width: 350px; height: 6px; transform: rotate(10deg); --tx: 35px; --ty: 40px;"></div>
+            <div class="crack-breaking" style="top: 30%; left: 60%; width: 250px; height: 4px; transform: rotate(-15deg); --tx: -25px; --ty: -20px;"></div>
+            <div class="crack-breaking" style="top: 70%; left: 25%; width: 300px; height: 5px; transform: rotate(25deg); --tx: 45px; --ty: 30px;"></div>
+            <div class="crack-breaking" style="top: 50%; left: 70%; width: 200px; height: 3px; transform: rotate(-10deg); --tx: -15px; --ty: -15px;"></div>
+        </div>
+
+        <!-- NEW: Login Success Blue Split Effect -->
+        <div class="login-split-effect" id="loginSplitEffect">
+            <div class="blue-split"></div>
+            <div class="split-glow"></div>
+            <div class="split-particles" id="splitParticles"></div>
+        </div>
+
+        <!-- NEW: Screen Split Effect -->
+        <div class="screen-split" id="screenSplit">
+            <div class="screen-half screen-left"></div>
+            <div class="screen-half screen-right"></div>
+        </div>
+
+        <!-- Page Transition Effect -->
+        <div class="page-transition" id="pageTransition"></div>
+
+        <!-- Mouse Following Glow Effect -->
+        <div class="mouse-glow" id="mouseGlow"></div>
+        <div class="mouse-trail" id="mouseTrail"></div>
+
         <!-- Password Recovery Button -->
         <div class="recovery-button-container">
             <button class="recovery-button" onclick="openRecoveryModal()">
@@ -1098,7 +2301,7 @@
                 <span>Can't get your password?</span>
             </button>
         </div>
-        
+
         <!-- Password Recovery Modal -->
         <div class="recovery-modal" id="recoveryModal">
             <div class="recovery-modal-content">
@@ -1131,7 +2334,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="main-container">
             <section class="h-100 w-100">
                 <div class="container h-100">
@@ -1139,54 +2342,54 @@
                         <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
                             <div class="text-center my-5 logo-container">
                                 <p:graphicImage library="#{appSetting.resourceLib}" name="images/smt_logo_ln.png"
-                                    width="220" height="165" styleClass="logo-pulse"></p:graphicImage>
+                                                width="220" height="165" styleClass="logo-pulse"></p:graphicImage>
                                 <div class="mt-4">
                                     <div class="brand-text">
                                         <span class="brand-primary">SMAT</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card card-smat shadow-lg">
+                            <div class="card card-smat shadow-lg hover-glow">
                                 <div class="card-body p-5">
                                     <h1 class="card-title">#{interfaceLabel.loginToSystem}</h1>
                                     <h:form id="form_login" class="needs-validation" novalidate=""
-                                        autocomplete="off">
+                                            autocomplete="off">
                                         <p:growl id="growl" showDetail="true" showSummary="true"></p:growl>
-                                        
-                                        <div class="form-field">
+
+                                        <div class="form-field hover-glow">
                                             <h:inputText id="email" type="email" class="form-control"
-                                                name="email" value="#{loginBean.userName}"
-                                                required="required" autofocus="autofocus" 
-                                                placeholder=" " onblur="checkInputValue(this)" />
+                                                         name="email" value="#{loginBean.userName}"
+                                                         required="required" autofocus="autofocus"
+                                                         placeholder=" " onblur="checkInputValue(this)" />
                                             <label class="floating-label" for="email">#{interfaceLabel.userName}</label>
                                             <span class="input-icon">👤</span>
                                             <div class="invalid-feedback">#{interfaceLabel.requiredUserName}</div>
                                         </div>
-                                        
-                                        <div class="form-field">
+
+                                        <div class="form-field hover-glow">
                                             <h:inputSecret id="password" type="password" value="#{loginBean.password}"
-                                                class="form-control" 
-                                                name="password" required="required" 
-                                                placeholder=" " onblur="checkInputValue(this)" />
+                                                           class="form-control"
+                                                           name="password" required="required"
+                                                           placeholder=" " onblur="checkInputValue(this)" />
                                             <label class="floating-label" for="password">#{interfaceLabel.password}</label>
                                             <span class="input-icon">🔒</span>
                                             <div class="invalid-feedback">#{interfaceLabel.requiredPassword}</div>
                                         </div>
 
-                                        
+
                                         <div class="d-flex align-items-center justify-content-end mt-4">
                                             <h:commandButton value="#{interfaceLabel.login}" action="#{loginBean.login()}"
-                                                 class="btn btn-smat" id="loginBtn"
-                                                 onclick="handleLoginClick(this)">
-                                                <f:ajax execute="@form" render="form_login:growl" 
-                                                    onstart="handleLoginStart()" 
-                                                    oncomplete="handleLoginComplete()" />
+                                                             class="btn btn-smat hover-glow" id="loginBtn"
+                                                             onclick="handleLoginClick(this)">
+                                                <f:ajax execute="@form" render="form_login:growl"
+                                                        onstart="handleLoginStart()"
+                                                        oncomplete="handleLoginComplete()" />
                                             </h:commandButton>
                                         </div>
                                     </h:form>
                                 </div>
                                 <div class="card-footer py-3 border-0">
-                                    <div class="text-center" style="color: #808080;font-size: medium;font-weight: bold;">
+                                    <div class="text-center" style="color: #00ccff;font-size: medium;font-weight: bold;">
                                         #{interfaceLabel.portalName}
                                     </div>
                                 </div>
@@ -1196,80 +2399,83 @@
                 </div>
             </section>
         </div>
-        
+
         <h:outputScript library="#{appSetting.resourceLib}" name="script/login.js"></h:outputScript>
         <h:outputStylesheet library="#{appSetting.resourceLib}"
-            name="css/custom-#{app.locale.rtl ? 'rtl':'ltr'}.css"></h:outputStylesheet>
-        
-        <!-- Grayish-White JSF-Compatible JavaScript -->
+                            name="css/custom-#{app.locale.rtl ? 'rtl':'ltr'}.css"></h:outputStylesheet>
+
+        <!-- Enhanced JavaScript for Ultra Realistic Blue Cracks -->
         <script type="text/javascript">
-        //<![CDATA[
-            
-            // Grayish-White Login Page Manager
+            //<![CDATA[
+
+            // Enhanced Login Page Manager with Ultra Realistic Blue Cracks
             var LoginPageManager = {
                 initialized: false,
-                particles: [],
                 animationFrame: null,
-                
-                // Initialize the grayish-white login page effects
+                mouseGlow: null,
+                mouseTrail: null,
+                mouseX: 0,
+                mouseY: 0,
+
+                // Initialize the Enhanced login page effects
                 init: function() {
                     if (this.initialized) return;
-                    
-                    this.createParticles();
-                    this.setupFormValidation();
-                    this.setupInputHandlers();
-                    this.setupAccessibility();
-                    this.setupHoverEffects();
-                    this.initialized = true;
-                    
-                    console.log('%cGrayish-White Login Page Initialized', 'color: #808080; font-size: 14px; font-weight: bold;');
+
+                    // Create loader particles
+                    this.createLoaderParticles();
+
+                    // Wait for epic loader to finish
+                    setTimeout(function() {
+                        LoginPageManager.setupFormValidation();
+                        LoginPageManager.setupInputHandlers();
+                        LoginPageManager.setupAccessibility();
+                        LoginPageManager.setupHoverEffects();
+                        LoginPageManager.setupMouseFollowingEffect();
+                        LoginPageManager.setupCrackInteractions();
+                        LoginPageManager.initialized = true;
+
+                        console.log('%cEnhanced Ultra Realistic Blue Cracks Login Page Initialized', 'color: #0088ff; font-size: 14px; font-weight: bold;');
+                    }, 4000);
                 },
-                
-                // Create grayish-white dynamic particles
-                createParticles: function() {
-                    var container = document.getElementById('particlesContainer');
-                    if (!container) return;
-                    
-                    // Clear existing particles
-                    container.innerHTML = '';
-                    
-                    // Create 50 particles of different sizes and colors
-                    for (var i = 0; i < 50; i++) {
+
+                // Create loader particles
+                createLoaderParticles: function() {
+                    var particlesContainer = document.getElementById('loaderParticles');
+                    if (!particlesContainer) return;
+
+                    var particleCount = 50;
+                    for (var i = 0; i < particleCount; i++) {
                         var particle = document.createElement('div');
-                        particle.className = 'particle ' + this.getRandomParticleSize() + ' ' + this.getRandomParticleColor();
-                        particle.style.left = Math.random() * 100 + '%';
-                        particle.style.top = Math.random() * 100 + '%';
-                        particle.style.animationDelay = Math.random() * 12 + 's';
-                        particle.style.animationDuration = (Math.random() * 8 + 8) + 's';
-                        container.appendChild(particle);
+                        particle.className = 'loader-particle';
+
+                        // Random position
+                        var left = Math.random() * 100;
+                        var top = Math.random() * 100;
+
+                        // Random animation delay
+                        var delay = Math.random() * 5;
+
+                        particle.style.left = left + '%';
+                        particle.style.top = top + '%';
+                        particle.style.animationDelay = delay + 's';
+
+                        particlesContainer.appendChild(particle);
                     }
                 },
-                
-                // Get random particle size class
-                getRandomParticleSize: function() {
-                    var sizes = ['particle-small', 'particle-medium', 'particle-large'];
-                    return sizes[Math.floor(Math.random() * sizes.length)];
-                },
-                
-                // Get random particle color class
-                getRandomParticleColor: function() {
-                    var colors = ['particle-orange', 'particle-yellow', 'particle-blue', 'particle-purple', 'particle-pink'];
-                    return colors[Math.floor(Math.random() * colors.length)];
-                },
-                
-                // Setup grayish-white form validation
+
+                // Setup form validation
                 setupFormValidation: function() {
                     var form = document.getElementById('form_login');
                     if (!form) return;
-                    
+
                     var inputs = form.querySelectorAll('.form-control');
-                    
+
                     // Add validation event listeners
                     for (var i = 0; i < inputs.length; i++) {
                         inputs[i].addEventListener('blur', function() {
                             LoginPageManager.validateField(this);
                         });
-                        
+
                         inputs[i].addEventListener('input', function() {
                             if (this.classList.contains('is-invalid')) {
                                 LoginPageManager.validateField(this);
@@ -1277,24 +2483,24 @@
                         });
                     }
                 },
-                
-                // Validate individual field with grayish-white effects
+
+                // Validate individual field with effects
                 validateField: function(field) {
                     var value = field.value.trim();
                     var isValid = value.length > 0;
-                    
+
                     // Email specific validation
                     if (field.type === 'email' && value.length > 0) {
                         var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                         isValid = emailRegex.test(value);
                     }
-                    
+
                     // Password specific validation
                     if (field.type === 'password' && value.length > 0) {
                         isValid = value.length >= 3; // Minimum length
                     }
-                    
-                    // Update field state with grayish-white animations
+
+                    // Update field state with animations
                     if (isValid) {
                         field.classList.remove('is-invalid');
                         field.classList.add('is-valid');
@@ -1306,28 +2512,28 @@
                         field.classList.remove('is-valid');
                         field.classList.add('is-invalid');
                     }
-                    
+
                     return isValid;
                 },
-                
-                // Setup grayish-white input handlers
+
+                // Setup input handlers
                 setupInputHandlers: function() {
                     var inputs = document.querySelectorAll('.form-control');
-                    
+
                     for (var i = 0; i < inputs.length; i++) {
                         inputs[i].addEventListener('focus', function() {
                             this.parentElement.style.transform = 'translateY(-5px)';
                             this.parentElement.style.zIndex = '10';
                         });
-                        
+
                         inputs[i].addEventListener('blur', function() {
                             this.parentElement.style.transform = 'translateY(0)';
                             this.parentElement.style.zIndex = '1';
                         });
                     }
                 },
-                
-                // Setup grayish-white hover effects
+
+                // Setup hover effects
                 setupHoverEffects: function() {
                     var card = document.querySelector('.card-smat');
                     if (card) {
@@ -1339,50 +2545,129 @@
                             var centerY = rect.height / 2;
                             var angleY = (x - centerX) / 15;
                             var angleX = (centerY - y) / 15;
-                            
+
                             this.style.transform = 'translateY(-15px) rotateX(' + angleX + 'deg) rotateY(' + angleY + 'deg)';
+
+                            // Update CSS variables for mouse position
+                            this.style.setProperty('--mouse-x', (x / rect.width * 100) + '%');
+                            this.style.setProperty('--mouse-y', (y / rect.height * 100) + '%');
+
+                            // Add glow effect based on mouse position
+                            var hue = (x / rect.width) * 30 + 200; // Blue range
+                            this.style.boxShadow = `
+                                0 40px 80px rgba(0, 0, 0, 0.6),
+                                0 30px 60px rgba(0, 0, 0, 0.4),
+                                0 0 40px hsla(${hue}, 100%, 50%, 0.3)
+                            `;
                         });
-                        
+
                         card.addEventListener('mouseleave', function() {
                             this.style.transform = 'translateY(-15px) rotateX(0) rotateY(0)';
+                            this.style.boxShadow = `
+                                0 40px 80px rgba(0, 0, 0, 0.6),
+                                0 30px 60px rgba(0, 0, 0, 0.4),
+                                0 0 40px rgba(0, 136, 255, 0.3)
+                            `;
                         });
                     }
                 },
-                
-                // Setup grayish-white accessibility features
+
+                // Setup mouse following effect
+                setupMouseFollowingEffect: function() {
+                    this.mouseGlow = document.getElementById('mouseGlow');
+                    this.mouseTrail = document.getElementById('mouseTrail');
+
+                    if (!this.mouseGlow || !this.mouseTrail) return;
+
+                    document.addEventListener('mousemove', function(e) {
+                        LoginPageManager.mouseX = e.clientX;
+                        LoginPageManager.mouseY = e.clientY;
+
+                        // Update mouse glow position
+                        LoginPageManager.mouseGlow.style.left = (e.clientX - 150) + 'px';
+                        LoginPageManager.mouseGlow.style.top = (e.clientY - 150) + 'px';
+
+                        // Update mouse trail position
+                        LoginPageManager.mouseTrail.style.left = (e.clientX - 5) + 'px';
+                        LoginPageManager.mouseTrail.style.top = (e.clientY - 5) + 'px';
+
+                        // Activate mouse glow and trail
+                        LoginPageManager.mouseGlow.classList.add('active');
+                        LoginPageManager.mouseTrail.classList.add('active');
+                    });
+
+                    document.addEventListener('mouseleave', function() {
+                        // Deactivate mouse glow and trail
+                        LoginPageManager.mouseGlow.classList.remove('active');
+                        LoginPageManager.mouseTrail.classList.remove('active');
+                    });
+
+                    // Update hover effects based on mouse position
+                    var hoverElements = document.querySelectorAll('.hover-glow');
+                    for (var i = 0; i < hoverElements.length; i++) {
+                        hoverElements[i].addEventListener('mousemove', function(e) {
+                            var rect = this.getBoundingClientRect();
+                            var x = e.clientX - rect.left;
+                            var y = e.clientY - rect.top;
+
+                            // Update CSS variables for mouse position
+                            this.style.setProperty('--mouse-x', (x / rect.width * 100) + '%');
+                            this.style.setProperty('--mouse-y', (y / rect.height * 100) + '%');
+                        });
+                    }
+                },
+
+                // Setup crack interactions
+                setupCrackInteractions: function() {
+                    // Make cracks interactive on hover
+                    var cracks = document.querySelectorAll('.realistic-crack, .branch-crack, .micro-crack');
+                    cracks.forEach(function(crack) {
+                        crack.addEventListener('mouseenter', function() {
+                            this.style.filter = 'blur(2px) brightness(1.5)';
+                            this.style.boxShadow = '0 0 30px rgba(0, 136, 255, 1)';
+                        });
+
+                        crack.addEventListener('mouseleave', function() {
+                            this.style.filter = 'blur(1px) brightness(1)';
+                            this.style.boxShadow = '0 0 20px rgba(0, 136, 255, 0.8)';
+                        });
+                    });
+                },
+
+                // Setup accessibility features
                 setupAccessibility: function() {
                     // Add ARIA labels
                     var emailField = document.getElementById('email');
                     var passwordField = document.getElementById('password');
                     var loginBtn = document.getElementById('loginBtn');
-                    
+
                     if (emailField) {
                         emailField.setAttribute('aria-label', 'Enter your email address');
                         emailField.setAttribute('aria-describedby', 'emailHelp');
                     }
-                    
+
                     if (passwordField) {
                         passwordField.setAttribute('aria-label', 'Enter your password');
                     }
-                    
+
                     if (loginBtn) {
                         loginBtn.setAttribute('aria-label', 'Click to login');
                     }
                 },
-                
-                // Validate entire form with grayish-white effects
+
+                // Validate entire form with effects
                 validateForm: function() {
                     var form = document.getElementById('form_login');
                     if (!form) return false;
-                    
+
                     var inputs = form.querySelectorAll('.form-control');
                     var isFormValid = true;
-                    
+
                     for (var i = 0; i < inputs.length; i++) {
                         var isFieldValid = this.validateField(inputs[i]);
                         if (!isFieldValid) {
                             isFormValid = false;
-                            // Add grayish-white shake animation to invalid fields
+                            // Add shake animation to invalid fields
                             inputs[i].parentElement.style.animation = 'fieldShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
                             setTimeout(function(element) {
                                 return function() {
@@ -1391,12 +2676,162 @@
                             }(inputs[i].parentElement), 600);
                         }
                     }
-                    
+
                     return isFormValid;
+                },
+
+                // Show login crack effect
+                showLoginCrackEffect: function() {
+                    var crackEffect = document.getElementById('loginCrackEffect');
+                    if (!crackEffect) return;
+
+                    crackEffect.classList.add('active');
+
+                    // Activate all cracks with delay
+                    var cracks = crackEffect.querySelectorAll('.login-crack');
+                    for (var i = 0; i < cracks.length; i++) {
+                        setTimeout(function(index) {
+                            return function() {
+                                cracks[index].classList.add('active');
+                                // Add branch cracks to main cracks
+                                if (index < 3) {
+                                    var branchCrack = document.createElement('div');
+                                    branchCrack.className = 'login-crack';
+
+                                    // Set random properties for branch crack
+                                    var top = parseInt(cracks[index].style.top) + (Math.random() * 10 - 5) + '%';
+                                    var left = parseInt(cracks[index].style.left) + (Math.random() * 20 - 10) + '%';
+                                    var width = Math.random() * 100 + 50;
+                                    var height = Math.random() * 2 + 1;
+                                    var rotation = parseInt(cracks[index].style.transform.match(/rotate\(([^)]+)\)/)[1]) + (Math.random() * 30 - 15);
+
+                                    branchCrack.style.top = top;
+                                    branchCrack.style.left = left;
+                                    branchCrack.style.width = width + 'px';
+                                    branchCrack.style.height = height + 'px';
+                                    branchCrack.style.transform = 'rotate(' + rotation + 'deg)';
+
+                                    crackEffect.appendChild(branchCrack);
+
+                                    setTimeout(function() {
+                                        branchCrack.classList.add('active');
+                                    }, 100);
+                                }
+                            };
+                        }(i), i * 200);
+                    }
+
+                    // Hide crack effect after animation
+                    setTimeout(function() {
+                        crackEffect.classList.remove('active');
+                        for (var i = 0; i < cracks.length; i++) {
+                            cracks[i].classList.remove('active');
+                        }
+
+                        // Remove branch cracks
+                        var branchCracks = crackEffect.querySelectorAll('.login-crack:not([style*="top: 20%"], [style*="top: 40%"], [style*="top: 60%"], [style*="top: 30%"], [style*="top: 70%"], [style*="top: 50%"])');
+                        for (var i = 0; i < branchCracks.length; i++) {
+                            crackEffect.removeChild(branchCracks[i]);
+                        }
+                    }, 3000);
+                },
+
+                // Show crack breaking effect
+                showCrackBreakingEffect: function() {
+                    var crackBreakingEffect = document.getElementById('crackBreakingEffect');
+                    if (!crackBreakingEffect) return;
+
+                    crackBreakingEffect.classList.add('active');
+
+                    // Activate all breaking cracks with delay
+                    var cracks = crackBreakingEffect.querySelectorAll('.crack-breaking');
+                    for (var i = 0; i < cracks.length; i++) {
+                        setTimeout(function(index) {
+                            return function() {
+                                cracks[index].classList.add('active');
+                            };
+                        }(i), i * 100);
+                    }
+
+                    // Hide crack breaking effect after animation
+                    setTimeout(function() {
+                        crackBreakingEffect.classList.remove('active');
+                        for (var i = 0; i < cracks.length; i++) {
+                            cracks[i].classList.remove('active');
+                        }
+                    }, 2000);
+                },
+
+                // Show page transition effect
+                showPageTransition: function() {
+                    var pageTransition = document.getElementById('pageTransition');
+                    if (!pageTransition) return;
+
+                    pageTransition.classList.add('active');
+
+                    // Hide transition after animation
+                    setTimeout(function() {
+                        pageTransition.classList.remove('active');
+                    }, 1000);
+                },
+
+                // NEW: Show login success blue split effect
+                showLoginSplitEffect: function() {
+                    var splitEffect = document.getElementById('loginSplitEffect');
+                    if (!splitEffect) return;
+
+                    splitEffect.classList.add('active');
+
+                    // Create particles for the split effect
+                    this.createSplitParticles();
+
+                    // After split animation, show screen split
+                    setTimeout(function() {
+                        var screenSplit = document.getElementById('screenSplit');
+                        if (screenSplit) {
+                            screenSplit.classList.add('active');
+                        }
+                    }, 800);
+
+                    // After screen split, redirect to dashboard
+                    setTimeout(function() {
+                        // Here you would redirect to the actual dashboard page
+                        // For demonstration, we'll just show an alert
+                        window.location.href = "dashboard.xhtml"; // Change this to your actual dashboard URL
+                    }, 1800);
+                },
+
+                // NEW: Create particles for the split effect
+                createSplitParticles: function() {
+                    var particlesContainer = document.getElementById('splitParticles');
+                    if (!particlesContainer) return;
+
+                    var particleCount = 30;
+                    for (var i = 0; i < particleCount; i++) {
+                        var particle = document.createElement('div');
+                        particle.className = 'split-particle';
+
+                        // Random position along the split line
+                        var top = Math.random() * 100;
+
+                        // Random horizontal movement
+                        var tx = (Math.random() - 0.5) * 200;
+                        var ty = (Math.random() - 0.5) * 100;
+
+                        particle.style.top = top + '%';
+                        particle.style.setProperty('--tx', tx + 'px');
+                        particle.style.setProperty('--ty', ty + 'px');
+
+                        // Random delay
+                        var delay = Math.random() * 0.5;
+                        particle.style.animationDelay = delay + 's';
+
+                        particlesContainer.appendChild(particle);
+                    }
                 }
             };
-            
-            // Grayish-White event handlers
+
+            // Event handlers
             function checkInputValue(input) {
                 if (input.value.trim().length > 0) {
                     input.classList.add('has-value');
@@ -1404,15 +2839,29 @@
                     input.classList.remove('has-value');
                 }
             }
-            
+
             function handleLoginClick(button) {
                 var isValid = LoginPageManager.validateForm();
                 if (!isValid) {
                     return false;
                 }
+
+                // Show login crack effect
+                LoginPageManager.showLoginCrackEffect();
+
+                // Show crack breaking effect after crack effect
+                setTimeout(function() {
+                    LoginPageManager.showCrackBreakingEffect();
+                }, 1500);
+
+                // Show page transition effect after breaking effect
+                setTimeout(function() {
+                    LoginPageManager.showPageTransition();
+                }, 3000);
+
                 return true;
             }
-            
+
             function handleLoginStart() {
                 var button = document.getElementById('loginBtn');
                 if (button) {
@@ -1421,7 +2870,7 @@
                     button.innerHTML = '<span class="visually-hidden">Processing...</span>';
                 }
             }
-            
+
             function handleLoginComplete() {
                 var button = document.getElementById('loginBtn');
                 if (button) {
@@ -1429,8 +2878,13 @@
                     button.disabled = false;
                     button.textContent = '#{interfaceLabel.login}';
                 }
+
+                // NEW: Show the blue split effect on successful login
+                // In a real application, you would check if login was successful first
+                // For this demo, we'll assume it's always successful
+                LoginPageManager.showLoginSplitEffect();
             }
-            
+
             // Password Recovery Modal Functions
             function openRecoveryModal() {
                 var modal = document.getElementById('recoveryModal');
@@ -1439,7 +2893,7 @@
                     document.body.style.overflow = 'hidden'; // Prevent scrolling
                 }
             }
-            
+
             function closeRecoveryModal() {
                 var modal = document.getElementById('recoveryModal');
                 if (modal) {
@@ -1447,7 +2901,7 @@
                     document.body.style.overflow = ''; // Restore scrolling
                 }
             }
-            
+
             function openWhatsApp() {
                 // Open WhatsApp with the specified number
                 var phoneNumber = '+963938637158';
@@ -1455,7 +2909,7 @@
                 var url = 'https://wa.me/' + phoneNumber.replace(/\s/g, '') + '?text=' + encodeURIComponent(message);
                 window.open(url, '_blank');
             }
-            
+
             // Close modal when clicking outside
             document.addEventListener('click', function(event) {
                 var modal = document.getElementById('recoveryModal');
@@ -1463,11 +2917,11 @@
                     closeRecoveryModal();
                 }
             });
-            
+
             // Initialize when DOM is ready
             document.addEventListener('DOMContentLoaded', function() {
                 LoginPageManager.init();
-                
+
                 // Add ripple effect to buttons
                 var buttons = document.querySelectorAll('.btn-smat, .recovery-button, .recovery-btn, .recovery-close-btn');
                 buttons.forEach(function(button) {
@@ -1476,20 +2930,20 @@
                         var x = e.clientX - rect.left;
                         var y = e.clientY - rect.top;
                         var ripple = document.createElement('span');
-                        
+
                         ripple.className = 'ripple-effect';
                         ripple.style.left = x + 'px';
                         ripple.style.top = y + 'px';
-                        
+
                         button.appendChild(ripple);
-                        
+
                         setTimeout(function() {
                             ripple.remove();
                         }, 1000);
                     });
                 });
             });
-            
+
             // Reinitialize after AJAX updates (JSF compatibility)
             if (typeof jsf !== 'undefined') {
                 jsf.ajax.addOnEvent(function(data) {
@@ -1500,13 +2954,8 @@
                     }
                 });
             }
-            
-            // Window resize handler
-            window.addEventListener('resize', function() {
-                LoginPageManager.createParticles();
-            });
-            
-        //]]>
+
+            //]]>
         </script>
     </f:view>
 </h:body>

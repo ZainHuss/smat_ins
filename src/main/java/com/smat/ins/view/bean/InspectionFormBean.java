@@ -20,6 +20,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.primefaces.PrimeFaces;
@@ -81,6 +82,10 @@ import com.aspose.words.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smat.ins.model.entity.TaskDraft;
 import com.smat.ins.model.service.TaskDraftService;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 @Named
 @ViewScoped
@@ -801,6 +806,167 @@ public class InspectionFormBean implements Serializable {
 		}
 	}
 
+	private String getServletContextPath(String relativePath) {
+		return ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(relativePath);
+	}
+
+	/**
+	 * Handle attachments uploaded from the inspection form.
+	 * Files are stored under ../attachments/cabinet_for_inspection/{reportNo or id}/attachment
+	 */
+	public void handleAttachmentUpload(org.primefaces.event.FileUploadEvent event) {
+		try {
+			if (event.getFile() == null || event.getFile().getContent() == null) return;
+			if (event.getFile().getSize() > 30L * 1024L * 1024L) {
+				UtilityHelper.addErrorMessage("File size exceeds 30MB limit");
+				return;
+			}
+
+			// services
+			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+			com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+			com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+			com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+
+			// find inspection cabinet
+			String targetCabinetCode = "INS-DEFAULT";
+			com.smat.ins.model.entity.Cabinet targetCabinet = null;
+			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+				if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+			}
+			if (targetCabinet == null) {
+				com.smat.ins.util.CabinetDefaultsCreator.ensureDefaultCabinets(loginBean.getUser());
+				for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+					if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+				}
+			}
+			if (targetCabinet == null) {
+				UtilityHelper.addErrorMessage("Inspection cabinet not available");
+				return;
+			}
+
+			// pick drawer
+			com.smat.ins.model.entity.CabinetDefinition def = null;
+			if (targetCabinet.getCabinetDefinitions() != null) {
+				for (Object od : targetCabinet.getCabinetDefinitions()) {
+					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+					if ("01".equals(cd.getCode())) { def = cd; break; }
+				}
+			}
+			if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+				def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+			if (def == null) { UtilityHelper.addErrorMessage("No cabinet definition found"); return; }
+
+			// folder per task/report - reuse folder named by reportNo if exists
+			String folderName = null;
+			if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+				folderName = equipmentInspectionForm.getReportNo().trim();
+			} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+				folderName = "form_" + equipmentInspectionForm.getId().toString();
+			} else {
+				folderName = "form_" + String.valueOf(System.currentTimeMillis());
+			}
+
+			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+			try {
+				java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+				if (existing != null) {
+					for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+						String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+						String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+						String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+						if (fn.equals(fa) || fn.equals(fe)) {
+							cabinetFolder = f;
+							break;
+						}
+					}
+				}
+			} catch (Exception ignore) {}
+
+			if (cabinetFolder == null) {
+				cabinetFolder = new com.smat.ins.model.entity.CabinetFolder();
+				cabinetFolder.setCabinetDefinition(def);
+				cabinetFolder.setSysUser(loginBean.getUser());
+				cabinetFolder.setArabicName(folderName);
+				cabinetFolder.setEnglishName(folderName);
+				int nextCode = 1;
+				try { java.util.List<com.smat.ins.model.entity.CabinetFolder> existing2 = cabinetFolderService.getByCabinetDefinition(def); nextCode = existing2 != null ? existing2.size() + 1 : 1; } catch (Exception ignore) {}
+				cabinetFolder.setCode(String.format("%03d", nextCode));
+				cabinetFolder.setCreatedDate(new java.util.Date());
+				cabinetFolderService.saveOrUpdate(cabinetFolder);
+			}
+
+			// create disk path
+			String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+			java.nio.file.Path folderPath = Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+			Files.createDirectories(folderPath);
+
+			// store file
+			String original = event.getFile().getFileName();
+			String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+			// create ArchiveDocument + file
+			com.smat.ins.model.entity.ArchiveDocument archiveDocument = new com.smat.ins.model.entity.ArchiveDocument();
+			// ensure archiveDocumentType is set (DB column non-null)
+			try {
+				com.smat.ins.model.service.ArchiveDocumentTypeService archiveDocumentTypeService = (com.smat.ins.model.service.ArchiveDocumentTypeService) BeanUtility.getBean("archiveDocumentTypeService");
+				java.util.List<com.smat.ins.model.entity.ArchiveDocumentType> types = archiveDocumentTypeService.findAll();
+				if (types != null && !types.isEmpty()) archiveDocument.setArchiveDocumentType(types.get(0));
+			} catch (Exception ignore) {}
+			archiveDocument.setArabicName(original); archiveDocument.setEnglishName(original); archiveDocument.setIsDirectory(false);
+			archiveDocument.setCreatedDate(new java.util.Date()); archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
+			archiveDocumentService.saveOrUpdate(archiveDocument);
+
+			com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
+			docFile.setArchiveDocument(archiveDocument);
+			docFile.setName(original);
+			String ext = org.apache.commons.io.FilenameUtils.getExtension(original);
+			docFile.setExtension(ext);
+			docFile.setMimeType(event.getFile().getContentType());
+			docFile.setUuid(java.util.UUID.randomUUID().toString());
+			docFile.setFileSize(event.getFile().getSize());
+			docFile.setCreatedDate(new java.util.Date());
+
+			// determine next file code (use ArchiveDocumentFileService helper to get max code)
+			try {
+				Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
+				int codeLength = 9; // default (matches ArchiveDocumentServiceImpl)
+				String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
+				docFile.setCode(fileCode);
+
+				String storedName = fileCode + "." + ext;
+				java.nio.file.Path target = folderPath.resolve(storedName);
+				Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
+
+				String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+				docFile.setLogicalPath(logical);
+				docFile.setServerPath(target.toString());
+
+			} catch (Exception ex) {
+				// fallback to original behaviour if service fails
+				int seq = 1; try { seq += (int) java.nio.file.Files.list(folderPath).count(); } catch (Exception ignore) {}
+				String storedName = String.format("%03d_%s", seq, safe);
+				java.nio.file.Path target = folderPath.resolve(storedName);
+				Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
+				String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+				docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
+			}
+
+			archiveDocumentFileService.saveOrUpdate(docFile);
+
+			com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
+			cfd.setCabinetFolder(cabinetFolder); cfd.setSysUser(loginBean.getUser()); cfd.setArchiveDocument(archiveDocument);
+			cfd.setCreatedDate(new java.util.Date()); cabinetFolderDocumentService.saveOrUpdate(cfd);
+
+			UtilityHelper.addInfoMessage("Attachment uploaded to cabinet: " + original);
+
+		} catch (Exception e) {
+			UtilityHelper.addErrorMessage("Error uploading attachment: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 	public List<ChecklistDetailDataSource> getBy(String dataSourceCode) {
 		return checklistDetailDataSourceService.getByDataSource(dataSourceCode);
 	}
@@ -1023,7 +1189,10 @@ public class InspectionFormBean implements Serializable {
 
     public void doPrint() {
         try {
-            if (formTemplate == null || formTemplate.getPrintedDoc() == null) {
+			// prepare attachments zip session attributes so ZipDocumentDownloadBean can build/download it
+			try { prepareAttachmentsZipDownload(); } catch (Exception ignore) {}
+
+			if (formTemplate == null || formTemplate.getPrintedDoc() == null) {
                 UtilityHelper.addErrorMessage("Template not available for printing.");
                 return;
             }
@@ -1041,8 +1210,27 @@ public class InspectionFormBean implements Serializable {
                 data.put("Dte", formatDate(equipmentInspectionForm.getDateOfThoroughExamination()));
                 data.put("Ned", formatDate(equipmentInspectionForm.getNextExaminationDate()));
                 data.put("Ped", formatDate(equipmentInspectionForm.getPreviousExaminationDate()));
-                data.put("Company", equipmentInspectionForm.getNameAndAddressOfEmployer() != null ? equipmentInspectionForm.getNameAndAddressOfEmployer() : "");
-                data.put("Address", equipmentInspectionForm.getCompany() != null ? equipmentInspectionForm.getCompany().getAddress() : "");
+
+                // ===== Company fallback logic =====
+                String companyName = "";
+                if (equipmentInspectionForm.getNameAndAddressOfEmployer() != null && !equipmentInspectionForm.getNameAndAddressOfEmployer().trim().isEmpty()) {
+                    companyName = equipmentInspectionForm.getNameAndAddressOfEmployer().trim();
+                } else if (equipmentInspectionForm.getCompany() != null
+                        && equipmentInspectionForm.getCompany().getName() != null
+                        && !equipmentInspectionForm.getCompany().getName().trim().isEmpty()) {
+                    companyName = equipmentInspectionForm.getCompany().getName().trim();
+                }
+                // ضع كلا التمثيلين المفتاحيين للقالب (حساسية الحالة)
+                data.put("Company", companyName);
+                data.put("company", companyName);
+
+                // Address (fallback to company.address if present)
+                String companyAddress = "";
+                if (equipmentInspectionForm.getCompany() != null && equipmentInspectionForm.getCompany().getAddress() != null) {
+                    companyAddress = equipmentInspectionForm.getCompany().getAddress();
+                }
+                data.put("Address", companyAddress);
+
                 data.put("ExType", equipmentInspectionForm.getExaminationType() != null ? equipmentInspectionForm.getExaminationType().getEnglishName() : "");
                 data.put("insBy", equipmentInspectionForm.getSysUserByInspectionBy() != null ? equipmentInspectionForm.getSysUserByInspectionBy().getEnDisplayName() : "");
                 data.put("reviewedBy", loginBean.getUser() != null ? loginBean.getUser().getEnDisplayName() : "");
@@ -1181,6 +1369,21 @@ public class InspectionFormBean implements Serializable {
             PrimeFaces.current().ajax().update("form_viewer:manage-viewer-content");
             PrimeFaces.current().executeScript("PF('viewerWidgetVar').show();");
 
+			// If there are attachments for this report folder, open a zip download in a new tab
+			try {
+				String folderName = null;
+				if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+					folderName = equipmentInspectionForm.getReportNo().trim();
+				} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+					folderName = "form_" + equipmentInspectionForm.getId().toString();
+				}
+				if (folderName != null && hasFilesInCabinetFolder("INS-DEFAULT", "01", folderName)) {
+					String ctx = ((javax.faces.context.FacesContext) javax.faces.context.FacesContext.getCurrentInstance()).getExternalContext().getRequestContextPath();
+					String url = ctx + "/attachments/zip?type=ins&reportNo=" + java.net.URLEncoder.encode(folderName, "UTF-8");
+					PrimeFaces.current().executeScript("window.open('" + url + "', '_blank')");
+				}
+			} catch (Exception ignore) {}
+
         } catch (Exception e) {
             e.printStackTrace();
             // keep same error messaging as original (or localization message if you prefer)
@@ -1191,6 +1394,127 @@ public class InspectionFormBean implements Serializable {
             }
         }
     }
+
+	/**
+	 * Locate the cabinet folder used for this inspection (by reportNo or id),
+	 * and populate session attributes expected by ZipDocumentDownloadBean:
+	 * archDocId, cabinetFolderId, cabinetId, cabinetDefinitionId
+	 */
+	public void prepareAttachmentsZipDownload() throws Exception {
+		try {
+			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+			com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+			com.smat.ins.model.service.CabinetDefinitionService cabinetDefinitionService = (com.smat.ins.model.service.CabinetDefinitionService) BeanUtility.getBean("cabinetDefinitionService");
+
+			String targetCabinetCode = "INS-DEFAULT";
+			com.smat.ins.model.entity.Cabinet targetCabinet = null;
+			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+				if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+			}
+			if (targetCabinet == null) return;
+
+			com.smat.ins.model.entity.CabinetDefinition def = null;
+			if (targetCabinet.getCabinetDefinitions() != null) {
+				for (Object od : targetCabinet.getCabinetDefinitions()) {
+					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+					if ("01".equals(cd.getCode())) { def = cd; break; }
+				}
+			}
+			if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+				def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+			if (def == null) return;
+
+			String folderName = null;
+			if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+				folderName = equipmentInspectionForm.getReportNo().trim();
+			} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+				folderName = "form_" + equipmentInspectionForm.getId().toString();
+			} else {
+				return; // nothing to prepare
+			}
+
+			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+			try {
+				java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+				if (existing != null) {
+					for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+						String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+						String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+						String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+						if (fn.equals(fa) || fn.equals(fe)) {
+							cabinetFolder = f;
+							break;
+						}
+					}
+				}
+			} catch (Exception ignore) {}
+
+			if (cabinetFolder == null) return;
+
+			java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+			if (items == null || items.isEmpty()) return;
+			com.smat.ins.model.entity.ArchiveDocument firstDoc = items.get(0).getArchiveDocument();
+			if (firstDoc == null) return;
+
+			UtilityHelper.putSessionAttr("archDocId", firstDoc.getId());
+			UtilityHelper.putSessionAttr("cabinetFolderId", cabinetFolder.getId());
+			UtilityHelper.putSessionAttr("cabinetId", targetCabinet.getId());
+			UtilityHelper.putSessionAttr("cabinetDefinitionId", def.getId());
+
+		} catch (Exception e) {
+			// swallow - caller will continue printing even if zip not prepared
+			e.printStackTrace();
+		}
+	}
+
+	// Check whether the given cabinet (by code) and drawer (code) contains a folder
+	// with given folderName and that the physical folder contains at least one regular file.
+	private boolean hasFilesInCabinetFolder(String cabinetCode, String drawerCode, String folderName) {
+		try {
+			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+			com.smat.ins.model.service.CabinetDefinitionService cabinetDefinitionService = (com.smat.ins.model.service.CabinetDefinitionService) BeanUtility.getBean("cabinetDefinitionService");
+			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+
+			com.smat.ins.model.entity.Cabinet targetCabinet = null;
+			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+				if (cabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+			}
+			if (targetCabinet == null) return false;
+
+			com.smat.ins.model.entity.CabinetDefinition def = null;
+			if (targetCabinet.getCabinetDefinitions() != null) {
+				for (Object od : targetCabinet.getCabinetDefinitions()) {
+					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+					if (drawerCode.equals(cd.getCode())) { def = cd; break; }
+				}
+			}
+			if (def == null) return false;
+
+			java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+			if (existing != null) {
+				for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+					String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+					String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+					String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+					if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+				}
+			}
+			if (cabinetFolder == null) return false;
+
+			String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+			java.nio.file.Path folderPath = java.nio.file.Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+			if (!java.nio.file.Files.exists(folderPath) || !java.nio.file.Files.isDirectory(folderPath)) return false;
+			try (java.util.stream.Stream<java.nio.file.Path> s = java.nio.file.Files.list(folderPath)) {
+				return s.anyMatch(p -> java.nio.file.Files.isRegularFile(p));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 
 
     private byte[] generateEquipmentPdfBytes(EquipmentInspectionForm eForm, FormTemplate tpl) throws Exception {
@@ -1207,7 +1531,17 @@ public class InspectionFormBean implements Serializable {
         data.put("Dte", formatDate(eForm.getDateOfThoroughExamination()));
         data.put("Ned", formatDate(eForm.getNextExaminationDate()));
         data.put("Ped", formatDate(eForm.getPreviousExaminationDate()));
-        data.put("company", eForm.getNameAndAddressOfEmployer() != null ? eForm.getNameAndAddressOfEmployer() : "");
+
+        // ===== Company fallback logic =====
+        String companyName = "";
+        if (eForm.getNameAndAddressOfEmployer() != null && !eForm.getNameAndAddressOfEmployer().trim().isEmpty()) {
+            companyName = eForm.getNameAndAddressOfEmployer().trim();
+        } else if (eForm.getCompany() != null && eForm.getCompany().getName() != null && !eForm.getCompany().getName().trim().isEmpty()) {
+            companyName = eForm.getCompany().getName().trim();
+        }
+        data.put("company", companyName);
+        data.put("Company", companyName); // also add uppercase key for template compatibility
+
         data.put("Address", eForm.getCompany() != null ? eForm.getCompany().getAddress() : "");
         data.put("ExType", eForm.getExaminationType() != null ? eForm.getExaminationType().getEnglishName() : "");
         data.put("insBy", eForm.getSysUserByInspectionBy() != null ? eForm.getSysUserByInspectionBy().getEnDisplayName() : "");
@@ -1272,6 +1606,7 @@ public class InspectionFormBean implements Serializable {
         document.save(out, SaveFormat.PDF);
         return out.toByteArray();
     }
+
 
     // Save current form as draft
     public void saveDraft() {

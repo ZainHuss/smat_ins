@@ -1046,9 +1046,9 @@
                     <div class="field-group required-field">
                         <span class="floating-label required">Company</span>
                         <p:selectOneMenu
-                                         style="width:100%;"
-                                         value="#{empCertificationBean.company}"
-                                         converter="omnifaces.SelectItemsIndexConverter">
+                                style="width:100%;"
+                                value="#{empCertificationBean.company}"
+                                converter="omnifaces.SelectItemsIndexConverter">
                             <f:selectItem itemLabel="Select Company" itemValue="#{null}" />
                             <f:selectItems value="#{empCertificationBean.companies}"
                                            var="comp" itemLabel="#{comp.name}" itemValue="#{comp}" />
@@ -1058,9 +1058,9 @@
                     <div class="field-group required-field">
                         <span class="floating-label required">Certification Type</span>
                         <p:selectOneMenu
-                                         style="width:100%;"
-                                         value="#{empCertificationBean.empCertificationType}"
-                                         converter="omnifaces.SelectItemsIndexConverter">
+                                style="width:100%;"
+                                value="#{empCertificationBean.empCertificationType}"
+                                converter="omnifaces.SelectItemsIndexConverter">
                             <f:selectItems
                                     value="#{empCertificationBean.empCertificationTypes}"
                                     var="type" itemLabel="#{type.certName}" itemValue="#{type}" />
@@ -1075,15 +1075,15 @@
                     <div class="field-group required-field">
                         <span class="floating-label required">Fullname</span>
                         <p:inputText
-                                     value="#{empCertificationBean.employee.fullName}"
-                                     styleClass="block" />
+                                value="#{empCertificationBean.employee.fullName}"
+                                styleClass="block" />
                     </div>
 
                     <div class="field-group required-field">
                         <span class="floating-label required">Id number</span>
                         <p:inputText
-                                     value="#{empCertificationBean.employee.idNumber}"
-                                     styleClass="block" />
+                                value="#{empCertificationBean.employee.idNumber}"
+                                styleClass="block" />
                     </div>
 
 
@@ -1128,6 +1128,20 @@
                                           listener="#{empCertificationBean.handlePhotoUpload}"
                                           update="photoPreview messages"
                                           styleClass="modern-uploader" />
+
+                            <!-- Attachment uploader (documents related to training) -->
+                            <div class="field" style="margin-top:1rem;">
+                                <h:outputLabel value="Attachments" styleClass="smat-label" />
+                                <p:fileUpload id="attachmentsUpload"
+                                              mode="advanced"
+                                              multiple="true"
+                                              dragDropSupport="true"
+                                              allowTypes="/(\.|\/)(pdf|jpg|jpeg|png|gif|doc|docx|xls|xlsx|txt)$/"
+                                              auto="true"
+                                              update=":form:messages"
+                                              listener="#{empCertificationBean.handleAttachmentUpload}"
+                                              label="Upload attachments" />
+                            </div>
 
                         </div>
 
@@ -1292,6 +1306,17 @@
                                 </p:commandButton>
                             </div>
 
+                            <!-- download attachment Button -->
+                            <div style="#{empCertificationBean.step eq '03' ? 'display:block;' : 'display:none;'}">
+                                <p:commandButton id="commandButton_download"
+                                                 action="#{empCertificationBean.downloadAttach()}"
+                                                 value="download attachments"
+                                                 icon="pi pi-print"
+                                                 pt:data-tooltip="Print"
+                                                 onclick="window.open('#{request.contextPath}/attachments/zip?type=emp&amp;certNo=' + encodeURIComponent('#{empCertificationBean.empCertification.certNumber}'))"
+                                                 styleClass="ui-button-help">
+                                </p:commandButton>
+                            </div>
                             <!-- Return Button -->
 
                             <p:button id="commandButton_return_main"
