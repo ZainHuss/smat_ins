@@ -149,7 +149,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            animation: loaderFadeOut 1s ease-out 4.5s forwards;
+            animation: loaderFadeOut 1s ease-out 3s forwards;
             overflow: hidden;
         }
 
@@ -205,7 +205,7 @@
             border: 3px solid transparent;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            animation: ringExpand 2s ease-out forwards;
+            animation: ringExpand 3s ease-out forwards;
         }
 
         .ring-1 {
@@ -357,7 +357,7 @@
             overflow: hidden;
             position: relative;
             opacity: 0;
-            animation: progressAppear 0.8s ease-out 3s forwards;
+            animation: progressAppear 0.8s ease-out 2s forwards;
             box-shadow: 0 0 20px rgba(0, 136, 255, 0.3);
         }
 
@@ -371,7 +371,7 @@
             #0088ff 100%);
             border-radius: 4px;
             position: relative;
-            animation: quantumProgress 2.5s ease-in-out 3.2s forwards;
+            animation: quantumProgress 1s ease-in-out 3s forwards;
             box-shadow:
                     0 0 20px rgba(0, 136, 255, 0.6),
                     0 0 40px rgba(0, 204, 255, 0.4);
@@ -388,7 +388,7 @@
             transparent,
             rgba(255, 255, 255, 0.6),
             transparent);
-            animation: progressShine 1.5s ease-in-out 3.2s infinite;
+            animation: progressShine 1s ease-in-out 3s infinite;
         }
 
         @keyframes quantumProgress {
@@ -434,7 +434,7 @@
             text-transform: uppercase;
             margin-top: 20px;
             opacity: 0;
-            animation: statusAppear 0.8s ease-out 3.5s forwards;
+            animation: statusAppear 0.8s ease-out 2s forwards;
             text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
         }
 
@@ -462,7 +462,7 @@
             rgba(0, 204, 255, 0.6) 30%,
             transparent 70%);
             transform: translate(-50%, -50%);
-            animation: portalExpand 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 4s forwards;
+            animation: portalExpand 1s cubic-bezier(0.34, 1.56, 0.64, 1) 4s forwards;
             z-index: -1;
             filter: blur(20px);
         }
@@ -505,7 +505,7 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            animation: epicContainerEntrance 1.5s ease-out 4.8s forwards;
+            animation: epicContainerEntrance 1.5s ease-out 3s forwards;
         }
 
         @keyframes epicContainerEntrance {
@@ -1712,10 +1712,10 @@
                         <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
                             <div class="text-center my-5 logo-container">
                                 <p:graphicImage library="#{appSetting.resourceLib}" name="images/smt_logo_ln.png"
-                                                width="220" height="165" styleClass="logo-pulse"></p:graphicImage>
+                                                width="200" height="170" styleClass="logo-pulse"></p:graphicImage>
                                 <div class="mt-4">
                                     <div class="brand-text">
-                                        <span class="brand-primary">SMAT</span>
+                                        <span class="brand-primary"></span>
                                     </div>
                                 </div>
                             </div>

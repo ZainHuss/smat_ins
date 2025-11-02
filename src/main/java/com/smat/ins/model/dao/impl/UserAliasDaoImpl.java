@@ -89,9 +89,27 @@ public class UserAliasDaoImpl extends GenericDaoImpl<UserAlias, Long> implements
 		try {
 			session = sessionFactory.getCurrentSession();
 			if (organization != null) {
-				return Integer.parseInt((String) session.createNativeQuery(
+				Object res = session.createNativeQuery(
 						"select COALESCE(MAX(SUBSTR(ua.user_code,-5)),0) as max_user_alias_code from user_alias ua where ua.organization = ?".toLowerCase())
-						.setParameter(1, organization.getId()).addScalar("Max_User_Alias_Code").uniqueResult());
+						.setParameter(1, organization.getId()).uniqueResult();
+				if (res == null)
+					return 0;
+				try {
+					String s = res.toString();
+					java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+)$").matcher(s);
+					String digits = null;
+					if (m.find()) {
+						digits = m.group(1);
+					} else {
+						digits = s.replaceAll("\\D+", "");
+					}
+					if (digits == null || digits.isEmpty())
+						return 0;
+					return Integer.parseInt(digits);
+				} catch (NumberFormatException nfe) {
+					nfe.printStackTrace();
+					return 0;
+				}
 
 			} else
 				return null;

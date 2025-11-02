@@ -91,9 +91,27 @@ public class SysUserDaoImpl extends GenericDaoImpl<SysUser, Long> implements Sys
 		try {
 			session = sessionFactory.getCurrentSession();
 			if (organization != null) {
-				return Integer.parseInt((String) session.createNativeQuery(
+				Object res = session.createNativeQuery(
 						"select COALESCE(MAX(SUBSTR(su.sys_user_code,-6)),0) as max_user_code from sys_user  su where su.organization = ?")
-						.setParameter(1, organization.getId()).addScalar("max_user_code").uniqueResult());
+						.setParameter(1, organization.getId()).uniqueResult();
+				if (res == null)
+					return 0;
+				try {
+					String s = res.toString();
+					java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+)$").matcher(s);
+					String digits = null;
+					if (m.find()) {
+						digits = m.group(1);
+					} else {
+						digits = s.replaceAll("\\D+", "");
+					}
+					if (digits == null || digits.isEmpty())
+						return 0;
+					return Integer.parseInt(digits);
+				} catch (NumberFormatException nfe) {
+					nfe.printStackTrace();
+					return 0;
+				}
 
 			} else
 				return null;
@@ -113,10 +131,28 @@ public class SysUserDaoImpl extends GenericDaoImpl<SysUser, Long> implements Sys
 		try {
 			session = sessionFactory.getCurrentSession();
 			if (rootOrganization != null) {
-				return Integer.parseInt((String) session.createNativeQuery(
+				Object res = session.createNativeQuery(
 						"select COALESCE(MAX(SUBSTR(su.user_name,-6)),0) as max_user_name from sys_user  su where su.root_organization = ?"
 								.toLowerCase())
-						.setParameter(1, rootOrganization.getId()).addScalar("max_user_name").uniqueResult());
+						.setParameter(1, rootOrganization.getId()).uniqueResult();
+				if (res == null)
+					return 0;
+				try {
+					String s = res.toString();
+					java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+)$").matcher(s);
+					String digits = null;
+					if (m.find()) {
+						digits = m.group(1);
+					} else {
+						digits = s.replaceAll("\\D+", "");
+					}
+					if (digits == null || digits.isEmpty())
+						return 0;
+					return Integer.parseInt(digits);
+				} catch (NumberFormatException nfe) {
+					nfe.printStackTrace();
+					return 0;
+				}
 
 			} else
 				return null;
