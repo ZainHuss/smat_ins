@@ -88,7 +88,12 @@ public class ZipDocumentDownloadBean implements Serializable {
 			cabinet=cabinetService.findById(cabinetId);
 			cabinetDefinition=cabinetDefinitionService.findById(cabinetDefinitionId);
 
-			String rootPath = getRootPath(archiveDocument, cabinetFolderId);
+			// We must zip only files that are physically inside the cabinet folder
+			// identified by cabinetFolder (i.e. the folder that corresponds to the
+			// reportNo/certNo). Previously code appended a "rootPath" derived from
+			// ArchiveDocument ancestry which could point inside other subfolders and
+			// lead to including files the user did not upload. Build base path using
+			// the cabinet/cabinetDefinition/cabinetFolder only.
 			String mainLocation="";
 			String os = System.getProperty("os.name").toLowerCase();
 			if (os.contains("win")) {
@@ -99,28 +104,43 @@ public class ZipDocumentDownloadBean implements Serializable {
 				mainLocation = cabinet.getCabinetLocation().getLinuxLocation();
 			}
 
-			String sep = FileSystems.getDefault().getSeparator();
-			String basePath = mainLocation + sep + cabinet.getCode() + sep + cabinetDefinition.getCode() + sep
-					+ cabinetFolder.getCode() + sep + rootPath;
-			// ensure basePath does not accidentally have duplicated separators
-			Path base = Paths.get(basePath);
+	    // base path points to the physical folder that matches the CabinetFolder
+	    // (this corresponds to the folder named by reportNo/certNo)
+	    Path base = Paths.get(mainLocation, cabinet.getCode(), cabinetDefinition.getCode(), cabinetFolder.getCode());
 			Path zipPath = base.resolve("all.zip");
 			if (!Files.exists(zipPath)) {
-				// create zip by zipping all regular files under base (excluding all.zip)
+				// Create zip but include only files registered in DB for this cabinetFolder.
 				try {
 					Files.createDirectories(base);
+					// collect files from DB
+					com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+					com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+
 					try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
-						Files.walk(base).filter(p -> Files.isRegularFile(p) && !p.equals(zipPath)).forEach(p -> {
-							try {
-								Path rel = base.relativize(p);
-								ZipEntry ze = new ZipEntry(rel.toString().replace('\\', '/'));
-								zos.putNextEntry(ze);
-								Files.copy(p, zos);
-								zos.closeEntry();
-							} catch (Exception ex) {
-								ex.printStackTrace();
+						java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+						if (items != null) {
+							for (com.smat.ins.model.entity.CabinetFolderDocument cfd : items) {
+								com.smat.ins.model.entity.ArchiveDocument ad = cfd.getArchiveDocument();
+								if (ad == null) continue;
+								java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> files = archiveDocumentFileService.getBy(ad);
+								if (files == null) continue;
+								for (com.smat.ins.model.entity.ArchiveDocumentFile df : files) {
+									try {
+										if (df == null || df.getServerPath() == null) continue;
+										Path p = Paths.get(df.getServerPath());
+										if (!Files.exists(p) || !Files.isRegularFile(p)) continue;
+										if (!p.toAbsolutePath().startsWith(base.toAbsolutePath())) continue; // safety
+										Path rel = base.relativize(p);
+										ZipEntry ze = new ZipEntry(rel.toString().replace('\\', '/'));
+										zos.putNextEntry(ze);
+										Files.copy(p, zos);
+										zos.closeEntry();
+									} catch (Exception ex) {
+										ex.printStackTrace();
+									}
+								}
 							}
-						});
+						}
 					}
 				} catch (Exception ex) {
 					ex.printStackTrace();

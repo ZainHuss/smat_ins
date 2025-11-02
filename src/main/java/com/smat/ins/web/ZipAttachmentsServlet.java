@@ -105,10 +105,27 @@ public class ZipAttachmentsServlet extends HttpServlet {
             resp.setHeader("Content-Disposition", "attachment; filename=\"" + zipName + "\"");
 
             try (OutputStream out = resp.getOutputStream(); ZipOutputStream zos = new ZipOutputStream(out)) {
-                Files.walk(folderPath)
-                        .filter(p -> Files.isRegularFile(p) && !p.getFileName().toString().equalsIgnoreCase("all.zip"))
-                        .forEach(p -> {
+                // Prefer zipping only files registered in DB (ArchiveDocumentFile linked to this cabinetFolder).
+                com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean(req.getServletContext(), "cabinetFolderDocumentService");
+                com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean(req.getServletContext(), "archiveDocumentFileService");
+
+                java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+                if (items != null) {
+                    for (com.smat.ins.model.entity.CabinetFolderDocument cfd : items) {
+                        com.smat.ins.model.entity.ArchiveDocument ad = cfd.getArchiveDocument();
+                        if (ad == null) continue;
+                        java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> files = archiveDocumentFileService.getBy(ad);
+                        if (files == null) continue;
+                        for (com.smat.ins.model.entity.ArchiveDocumentFile df : files) {
                             try {
+                                if (df == null || df.getServerPath() == null) continue;
+                                Path p = Paths.get(df.getServerPath());
+                                if (!Files.exists(p) || !Files.isRegularFile(p)) continue;
+                                // ensure the file is inside the requested folderPath
+                                if (!p.toAbsolutePath().startsWith(folderPath.toAbsolutePath())) {
+                                    // skip files that are outside the folder (safety)
+                                    continue;
+                                }
                                 Path rel = folderPath.relativize(p);
                                 ZipEntry ze = new ZipEntry(rel.toString().replace('\\', '/'));
                                 zos.putNextEntry(ze);
@@ -117,7 +134,9 @@ public class ZipAttachmentsServlet extends HttpServlet {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                        });
+                        }
+                    }
+                }
                 zos.finish();
                 zos.flush();
             }

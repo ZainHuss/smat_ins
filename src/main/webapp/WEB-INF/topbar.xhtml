@@ -255,11 +255,6 @@
             color: #8e44ad;
         }
 
-        /* Default icon visibility: show sun (off) by default, show moon (on) when active */
-        .dark-mode-toggle .on { display: none; }
-        .dark-mode-toggle.active .on { display: inline-block; }
-        .dark-mode-toggle.active .off { display: none; }
-
         .header-menu-toggle {
             background: linear-gradient(135deg, rgba(52, 152, 219, 0.12), rgba(26, 188, 156, 0.12)) !important;
             border: none !important;
@@ -550,21 +545,6 @@
             justify-content: center;
         }
 
-        /* row containing the toggle and display name */
-        .user-top {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* slightly smaller toggle when shown next to display name */
-        .user-dark-toggle {
-            width: 36px;
-            height: 36px;
-            font-size: 0.9rem;
-            margin-left: -6px; /* shift a bit to the left as requested */
-        }
-
         .user-display-name {
             font-weight: 600;
             font-size: 15px;
@@ -597,19 +577,6 @@
             color: #2980b9;
             transform: translateY(-1px);
             box-shadow: 0 3px 8px rgba(26, 188, 156, 0.2);
-        }
-
-        /* تحسينات لزر تبديل الثيم المنفصل */
-        .theme-toggle-container {
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-        }
-
-        .theme-toggle-item {
-            list-style: none;
-            margin: 0;
-            padding: 0;
         }
     </style>
 
@@ -652,75 +619,6 @@
                 setTimeout(updateRoleDisplay, 100);
             };
         }
-
-        /**
-         * Theme toggle: load/enable a dark theme stylesheet and persist choice in localStorage.
-         * We render the stylesheet link with id 'darkThemeCss' and toggle its disabled property.
-         */
-        function updateToggleIcon(isDark) {
-            try {
-                if (isDark) {
-                    document.body.classList.add('dark-theme');
-                } else {
-                    document.body.classList.remove('dark-theme');
-                }
-                var btns = document.querySelectorAll('.dark-mode-toggle');
-                btns.forEach(function(btn) {
-                    if (isDark) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-            } catch (e) {
-                console.warn('theme toggle error', e);
-            }
-        }
-
-        function initThemeToggle() {
-            var styleLink = document.getElementById('darkThemeCss');
-            var pref = false;
-            try {
-                pref = localStorage.getItem('smat-dark-theme') === 'true';
-            } catch (e) {
-                console.warn('localStorage not available', e);
-            }
-
-            if (styleLink) {
-                // link.disabled == true means stylesheet is not applied
-                styleLink.disabled = !pref;
-            }
-            updateToggleIcon(pref);
-
-            var toggles = document.querySelectorAll('.dark-mode-toggle');
-            toggles.forEach(function(toggle) {
-                toggle.addEventListener('click', function () {
-                    var enabled = true;
-                    if (styleLink) {
-                        // flip disabled flag
-                        styleLink.disabled = !styleLink.disabled;
-                        enabled = !styleLink.disabled;
-                    } else {
-                        // fallback: toggle body class
-                        document.body.classList.toggle('dark-theme');
-                        enabled = document.body.classList.contains('dark-theme');
-                    }
-                    try {
-                        localStorage.setItem('smat-dark-theme', enabled ? 'true' : 'false');
-                    } catch (e) {
-                        console.warn('localStorage set failed', e);
-                    }
-                    updateToggleIcon(enabled);
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // existing init
-            updateRoleDisplay();
-            // init theme toggle (supports multiple toggle buttons)
-            initThemeToggle();
-        });
     </script>
 
     <div class="nk-mask bg-gradient-a"></div>
@@ -744,6 +642,10 @@
                 <!-- .nk-header-logo -->
 
                 <div class="nk-header-toggle">
+                    <button class="dark-mode-toggle">
+                        <em class="off icon ni ni-sun-fill"></em>
+                        <em class="on icon ni ni-moon-fill"></em>
+                    </button>
                     <button class="btn btn-light btn-icon header-menu-toggle">
                         <em class="icon ni ni-menu"></em>
                     </button>
@@ -766,7 +668,13 @@
                                             #{interfaceLabel.myCabinets}
                                         </h:link>
                                     </li>
-
+                                    <li class="nk-menu-item">
+                                        <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('003')}"
+                                                styleClass="nk-menu-link" outcome="pretty:cabinets/view">
+                                            <span class="menu-icon"><i class="fa fa-cubes vibrant-3" aria-hidden="true"></i></span>
+                                            #{interfaceLabel.cabinets}
+                                        </h:link>
+                                    </li>
                                 </ul>
                             </div>
                         </li>
@@ -1010,27 +918,16 @@
                     </ul>
                     <!-- .nk-menu-list -->
 
-                    <ul class="nk-menu-buttons flex-lg-row-reverse user-menu">
-                        <!-- زر تبديل الثيم منفصل -->
-                        <li class="nk-menu-item theme-toggle-item">
-                            <div class="theme-toggle-container">
-                                <button class="dark-mode-toggle" type="button" title="Toggle theme">
-                                    <em class="off icon ni ni-sun-fill"></em>
-                                    <em class="on icon ni ni-moon-fill"></em>
-                                </button>
-                            </div>
-                        </li>
 
-                        <!-- قسم معلومات المستخدم -->
+
+                    <ul class="nk-menu-buttons flex-lg-row-reverse user-menu">
                         <li class="nk-menu-item has-dropdown">
                             <h:link styleClass="nk-menu-link nk-menu-toggle">
                                 <span class="user-avatar">
                                     <i class="fa fa-user" aria-hidden="true"></i>
                                 </span>
                                 <div class="user-info-container">
-                                    <div class="user-top">
-                                        <span class="user-display-name">#{loginBean.user.displayName}</span>
-                                    </div>
+                                    <span class="user-display-name">#{loginBean.user.displayName}</span>
                                     <span class="user-role">#{loginBean.rolesLabel}</span>
                                 </div>
                             </h:link>
@@ -1065,9 +962,6 @@
         <!-- .container -->
     </div>
     <!-- .nk-header-main -->
-
-    <!-- dark theme stylesheet (initially disabled by JS if user hasn't enabled dark mode) -->
-    <h:outputStylesheet name="css/dark-theme.css" library="#{appSetting.resourceLib}" id="darkThemeCss" />
 
     <p:idleMonitor timeout="600000">
         <p:ajax event="idle"

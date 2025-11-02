@@ -916,6 +916,27 @@ public class InspectionFormBean implements Serializable {
 			} catch (Exception ignore) {}
 			archiveDocument.setArabicName(original); archiveDocument.setEnglishName(original); archiveDocument.setIsDirectory(false);
 			archiveDocument.setCreatedDate(new java.util.Date()); archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
+			// set organization and root organization from the user who uploaded the attachment
+			try {
+				com.smat.ins.model.service.OrganizationService organizationService = (com.smat.ins.model.service.OrganizationService) BeanUtility.getBean("organizationService");
+				com.smat.ins.model.entity.Organization userOrg = null;
+				if (loginBean.getUser() != null) userOrg = loginBean.getUser().getOrganizationByOrganization();
+				if (userOrg != null) {
+					archiveDocument.setOrganizationByOrganization(userOrg);
+					// find root organization by walking up parents
+					com.smat.ins.model.entity.Organization rootOrg = userOrg;
+					try {
+						com.smat.ins.model.entity.Organization parentOrg = organizationService.getParentOrganization(rootOrg);
+						while (parentOrg != null && !parentOrg.equals(rootOrg)) {
+							rootOrg = parentOrg;
+							parentOrg = organizationService.getParentOrganization(rootOrg);
+						}
+					} catch (Exception ignore) {
+						// if service fails, ignore and keep userOrg as rootOrg
+					}
+					archiveDocument.setOrganizationByRootOrganization(rootOrg);
+				}
+			} catch (Exception ignore) {}
 			archiveDocumentService.saveOrUpdate(archiveDocument);
 
 			com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
@@ -1606,6 +1627,75 @@ public class InspectionFormBean implements Serializable {
 		}
 	}
 
+	/**
+	 * Return the list of ArchiveDocumentFile objects that are recorded in the
+	 * cabinet folder for this inspection form. Returns empty list on error.
+	 */
+	public java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> getAttachmentFiles() {
+		try {
+			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+			com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+			com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+
+			String targetCabinetCode = "INS-DEFAULT";
+			com.smat.ins.model.entity.Cabinet targetCabinet = null;
+			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+				if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+			}
+			if (targetCabinet == null) return java.util.Collections.emptyList();
+
+			com.smat.ins.model.entity.CabinetDefinition def = null;
+			if (targetCabinet.getCabinetDefinitions() != null) {
+				for (Object od : targetCabinet.getCabinetDefinitions()) {
+					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+					if ("01".equals(cd.getCode())) { def = cd; break; }
+				}
+			}
+			if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+				def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+			if (def == null) return java.util.Collections.emptyList();
+
+			String folderName = null;
+			if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+				folderName = equipmentInspectionForm.getReportNo().trim();
+			} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+				folderName = "form_" + equipmentInspectionForm.getId().toString();
+			} else {
+				return java.util.Collections.emptyList();
+			}
+
+			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+			try {
+				java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+				if (existing != null) {
+					for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+						String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+						String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+						String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+						if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+					}
+				}
+			} catch (Exception ignore) {}
+			if (cabinetFolder == null) return java.util.Collections.emptyList();
+
+			java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+			if (items == null || items.isEmpty()) return java.util.Collections.emptyList();
+
+			java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> result = new java.util.ArrayList<>();
+			for (com.smat.ins.model.entity.CabinetFolderDocument cfd : items) {
+				com.smat.ins.model.entity.ArchiveDocument ad = cfd.getArchiveDocument();
+				if (ad == null) continue;
+				java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> files = archiveDocumentFileService.getBy(ad);
+				if (files != null && !files.isEmpty()) result.addAll(files);
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return java.util.Collections.emptyList();
+		}
+	}
+
 	// Check whether the given cabinet (by code) and drawer (code) contains a folder
 	// with given folderName and that the physical folder contains at least one regular file.
 	private boolean hasFilesInCabinetFolder(String cabinetCode, String drawerCode, String folderName) {
@@ -1744,6 +1834,69 @@ public class InspectionFormBean implements Serializable {
         document.save(out, SaveFormat.PDF);
         return out.toByteArray();
     }
+
+	/**
+	 * Delete an attachment (ArchiveDocumentFile) by id.
+	 * This removes the DB record, deletes the physical file if present,
+	 * and deletes the parent ArchiveDocument when it has no remaining files.
+	 */
+	public void deleteAttachment(java.lang.Long archiveDocumentFileId) {
+		try {
+			if (archiveDocumentFileId == null) {
+				UtilityHelper.addErrorMessage("Invalid attachment id");
+				return;
+			}
+
+			com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+			com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+
+			com.smat.ins.model.entity.ArchiveDocumentFile docFile = archiveDocumentFileService.findById(archiveDocumentFileId);
+			if (docFile == null) {
+				UtilityHelper.addErrorMessage("Attachment not found");
+				return;
+			}
+
+			com.smat.ins.model.entity.ArchiveDocument archiveDocument = docFile.getArchiveDocument();
+			String serverPath = docFile.getServerPath();
+
+			// delete DB record for the file
+			try {
+				archiveDocumentFileService.delete(docFile);
+			} catch (Exception ex) {
+				// attempt fallback: mark error but continue trying to remove file
+				ex.printStackTrace();
+			}
+
+			// remove physical file if present
+			try {
+				if (serverPath != null && !serverPath.trim().isEmpty()) {
+					java.nio.file.Path p = java.nio.file.Paths.get(serverPath);
+					java.nio.file.Files.deleteIfExists(p);
+				}
+			} catch (Exception ex) {
+				// non-fatal
+				ex.printStackTrace();
+			}
+
+			// if no remaining files belong to this archiveDocument, delete the archiveDocument
+			try {
+				if (archiveDocument != null) {
+					java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> remaining = null;
+					try { remaining = archiveDocumentFileService.getBy(archiveDocument); } catch (Exception ign) { }
+					if (remaining == null || remaining.isEmpty()) {
+						try { archiveDocumentService.deleteArchiveDoc(archiveDocument); } catch (Exception ign) { ign.printStackTrace(); }
+					}
+				}
+			} catch (Exception ex) { ex.printStackTrace(); }
+
+			UtilityHelper.addInfoMessage("Attachment deleted");
+		} catch (Exception e) {
+			e.printStackTrace();
+			UtilityHelper.addErrorMessage("Error deleting attachment: " + e.getMessage());
+		} finally {
+			try { PrimeFaces.current().ajax().update(":form:ins_attachments_section"); } catch (Exception ignore) {}
+		}
+	}
 
 
     // Save current form as draft

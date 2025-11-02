@@ -700,6 +700,131 @@ public class EmpCertificationBean implements Serializable {
         }
     }
 
+    /**
+     * Return the list of ArchiveDocumentFile objects that are recorded in the
+     * cabinet folder for this employee certification. This uses the same
+     * cabinet/folder resolution logic as prepareAttachmentsZipDownload but
+     * returns the actual file records (empty list on error).
+     */
+    public java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> getAttachmentFiles() {
+        try {
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+            com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+            com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+
+            String targetCabinetCode = "EMP-DEFAULT";
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) return java.util.Collections.emptyList();
+
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if ("01".equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+                def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+            if (def == null) return java.util.Collections.emptyList();
+
+            String folderName = null;
+            try {
+                if (empCertification != null && empCertification.getCertNumber() != null && !empCertification.getCertNumber().trim().isEmpty()) {
+                    folderName = empCertification.getCertNumber().trim();
+                }
+            } catch (Exception ignore) {}
+            if (folderName == null) {
+                folderName = "emp_" + (employee != null && employee.getId() != null ? employee.getId() : "unknown");
+            }
+
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            try {
+                java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+                if (existing != null) {
+                    for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                        String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                        String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                        String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                        if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+                    }
+                }
+            } catch (Exception ignore) {}
+            if (cabinetFolder == null) return java.util.Collections.emptyList();
+
+            java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+            if (items == null || items.isEmpty()) return java.util.Collections.emptyList();
+
+            java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> result = new java.util.ArrayList<>();
+            for (com.smat.ins.model.entity.CabinetFolderDocument cfd : items) {
+                com.smat.ins.model.entity.ArchiveDocument ad = cfd.getArchiveDocument();
+                if (ad == null) continue;
+                java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> files = archiveDocumentFileService.getBy(ad);
+                if (files != null && !files.isEmpty()) result.addAll(files);
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
+    }
+
+    /**
+     * Delete an attachment by id. Removes DB record, physical file and parent archive doc if empty.
+     */
+    public void deleteAttachment(java.lang.Long archiveDocumentFileId) {
+        try {
+            if (archiveDocumentFileId == null) {
+                UtilityHelper.addErrorMessage("Invalid attachment id");
+                return;
+            }
+
+            com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+            com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+
+            com.smat.ins.model.entity.ArchiveDocumentFile docFile = archiveDocumentFileService.findById(archiveDocumentFileId);
+            if (docFile == null) {
+                UtilityHelper.addErrorMessage("Attachment not found");
+                return;
+            }
+
+            com.smat.ins.model.entity.ArchiveDocument archiveDocument = docFile.getArchiveDocument();
+            String serverPath = docFile.getServerPath();
+
+            // delete DB record
+            try { archiveDocumentFileService.delete(docFile); } catch (Exception ex) { ex.printStackTrace(); }
+
+            // delete physical file
+            try {
+                if (serverPath != null && !serverPath.trim().isEmpty()) {
+                    java.nio.file.Path p = java.nio.file.Paths.get(serverPath);
+                    java.nio.file.Files.deleteIfExists(p);
+                }
+            } catch (Exception ex) { ex.printStackTrace(); }
+
+            // delete parent archiveDocument if no files remain
+            try {
+                if (archiveDocument != null) {
+                    java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> remaining = null;
+                    try { remaining = archiveDocumentFileService.getBy(archiveDocument); } catch (Exception ign) {}
+                    if (remaining == null || remaining.isEmpty()) {
+                        try { archiveDocumentService.deleteArchiveDoc(archiveDocument); } catch (Exception ign) { ign.printStackTrace(); }
+                    }
+                }
+            } catch (Exception ex) { ex.printStackTrace(); }
+
+            UtilityHelper.addInfoMessage("Attachment deleted");
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error deleting attachment: " + e.getMessage());
+        } finally {
+            try { PrimeFaces.current().ajax().update(":form:emp_attachments_section"); } catch (Exception ignore) {}
+        }
+    }
+
     // helper
     private String safeString(Object o) {
         return o == null ? "" : String.valueOf(o);
@@ -1159,6 +1284,24 @@ public class EmpCertificationBean implements Serializable {
             archiveDocument.setIsDirectory(false);
             archiveDocument.setCreatedDate(new java.util.Date());
             archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
+            // set organization and root organization from uploader
+            try {
+                com.smat.ins.model.service.OrganizationService organizationService = (com.smat.ins.model.service.OrganizationService) BeanUtility.getBean("organizationService");
+                com.smat.ins.model.entity.Organization userOrg = null;
+                if (loginBean.getUser() != null) userOrg = loginBean.getUser().getOrganizationByOrganization();
+                if (userOrg != null) {
+                    archiveDocument.setOrganizationByOrganization(userOrg);
+                    com.smat.ins.model.entity.Organization rootOrg = userOrg;
+                    try {
+                        com.smat.ins.model.entity.Organization parentOrg = organizationService.getParentOrganization(rootOrg);
+                        while (parentOrg != null && !parentOrg.equals(rootOrg)) {
+                            rootOrg = parentOrg;
+                            parentOrg = organizationService.getParentOrganization(rootOrg);
+                        }
+                    } catch (Exception ignore) {}
+                    archiveDocument.setOrganizationByRootOrganization(rootOrg);
+                }
+            } catch (Exception ignore) {}
             archiveDocumentService.saveOrUpdate(archiveDocument);
 
             com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();

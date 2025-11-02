@@ -996,6 +996,360 @@
                 font-size: 0.85rem !important;
                 padding: 0.5rem 1rem !important;
             }
+
+            /* ==========================================================================
+               تحسينات جديدة لقسم المرفقات (Attachments) - من القالب الثاني
+               ========================================================================== */
+
+            /* تصميم جديد ومحسّن لقسم المرفقات */
+            .attachments-section {
+                margin-top: 2rem;
+                padding: 1.5rem;
+                background: linear-gradient(135deg, rgba(255, 253, 248, 0.95) 0%, rgba(255, 252, 242, 0.98) 100%);
+                border-radius: var(--border-radius-lg);
+                border: 1px solid rgba(253, 180, 20, 0.3);
+                box-shadow: var(--shadow-md), 0 0 15px rgba(253, 180, 20, 0.1);
+                position: relative;
+                overflow: hidden;
+                transition: var(--transition-base);
+            }
+
+            .attachments-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--gradient-premium);
+                z-index: 1;
+            }
+
+            .attachments-section:hover {
+                box-shadow: var(--shadow-lg), 0 0 20px rgba(253, 180, 20, 0.15);
+                transform: translateY(-2px);
+            }
+
+            .attachments-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid rgba(253, 180, 20, 0.2);
+            }
+
+            .attachments-title {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .attachments-title i {
+                color: var(--gold-500);
+                font-size: 1.5rem;
+                filter: drop-shadow(0 0 3px rgba(253, 180, 20, 0.5));
+            }
+
+            .attachments-title h4 {
+                color: var(--gold-800);
+                margin: 0;
+                font-family: 'Playfair Display', serif;
+                font-weight: 600;
+                background: var(--gradient-premium);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .attachments-count {
+                background: var(--gradient-premium);
+                color: white;
+                border-radius: var(--border-radius-pill);
+                padding: 0.35rem 0.75rem;
+                font-size: 0.8rem;
+                font-weight: 600;
+                box-shadow: var(--shadow-sm);
+            }
+
+            .attachments-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 1.25rem;
+                margin-top: 1rem;
+            }
+
+            .attachment-card {
+                background: var(--surface-0);
+                border-radius: var(--border-radius-lg);
+                border: 1px solid rgba(253, 180, 20, 0.2);
+                box-shadow: var(--shadow-sm);
+                padding: 1.25rem;
+                transition: var(--transition-base);
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .attachment-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: var(--gradient-gold);
+                opacity: 0;
+                transition: var(--transition-base);
+            }
+
+            .attachment-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-lg), 0 5px 15px rgba(253, 180, 20, 0.2);
+                border-color: var(--gold-300);
+            }
+
+            .attachment-card:hover::before {
+                opacity: 1;
+            }
+
+            .attachment-header {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .attachment-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: var(--border-radius-md);
+                background: linear-gradient(135deg, var(--gold-100), var(--gold-200));
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                box-shadow: var(--shadow-sm);
+                border: 1px solid var(--gold-200);
+            }
+
+            .attachment-icon i {
+                font-size: 1.5rem;
+                color: var(--gold-600);
+            }
+
+            .attachment-info {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .attachment-code {
+                font-size: 0.75rem;
+                color: var(--gold-600);
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .attachment-name {
+                font-weight: 600;
+                color: var(--text-primary);
+                margin-bottom: 0.25rem;
+                font-size: 0.9rem;
+                line-height: 1.3;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+
+            .attachment-meta {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            .attachment-actions {
+                display: flex;
+                gap: 0.5rem;
+                margin-top: auto;
+                padding-top: 0.75rem;
+                border-top: 1px solid rgba(253, 180, 20, 0.1);
+            }
+
+            .attachment-action-btn {
+                flex: 1;
+                padding: 0.5rem;
+                border-radius: var(--border-radius-md);
+                background: var(--surface-50);
+                border: 1px solid var(--gold-100);
+                color: var(--gold-700);
+                font-size: 0.8rem;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.4rem;
+                transition: var(--transition-base);
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .attachment-action-btn:hover {
+                background: var(--gold-50);
+                color: var(--gold-800);
+                border-color: var(--gold-300);
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-sm);
+            }
+
+            .attachment-action-btn.download {
+                background: var(--gradient-primary);
+                color: white;
+                border-color: var(--gold-500);
+            }
+
+            .attachment-action-btn.download:hover {
+                background: linear-gradient(135deg, var(--gold-600), var(--gold-700));
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.4);
+            }
+
+            .no-attachments {
+                text-align: center;
+                padding: 3rem 2rem;
+                color: var(--text-secondary);
+            }
+
+            .no-attachments i {
+                font-size: 3rem;
+                color: var(--gold-300);
+                margin-bottom: 1rem;
+                display: block;
+            }
+
+            .no-attachments p {
+                margin: 0;
+                font-size: 1rem;
+                font-family: 'Poppins', sans-serif;
+            }
+
+            /* تحسينات للزر Download All */
+            .download-all-btn {
+                background: var(--gradient-primary) !important;
+                color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.3) !important;
+                border-radius: var(--border-radius-pill) !important;
+                padding: 0.65rem 1.5rem !important;
+                font-weight: 600 !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.5rem !important;
+                transition: var(--transition-base) !important;
+            }
+
+            .download-all-btn:hover {
+                background: linear-gradient(135deg, var(--gold-600), var(--gold-700)) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4) !important;
+            }
+
+            /* تحسينات التجاوب */
+            @media (max-width: 768px) {
+                .attachments-grid {
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
+                }
+
+                .attachments-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+
+                .attachment-card {
+                    padding: 1rem;
+                }
+
+                .attachment-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .attachment-icon {
+                    align-self: flex-start;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .attachments-section {
+                    padding: 1rem;
+                    margin: 1rem 0;
+                }
+
+                .attachment-actions {
+                    flex-direction: column;
+                }
+
+                .attachment-action-btn {
+                    width: 100%;
+                }
+            }
+            .attachment-action-btn.delete {
+                background: linear-gradient(135deg, #d9776e 0%, #b75a52 100%) !important;
+                color: white !important;
+                border-color: var(--gold-500);
+            }
+
+            .attachment-action-btn.delete:hover {
+                background: linear-gradient(135deg, #b75a52 0%, #954a44 100%) !important;
+                border-color: #b75a52 !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(217, 119, 110, 0.4);
+            }
+            /* تحسينات إضافية للأزرار */
+            .attachment-action-btn {
+                border-radius: var(--border-radius-pill) !important;
+                font-weight: 600 !important;
+                font-size: 0.8rem !important;
+                padding: 0.5rem 1rem !important;
+                transition: var(--transition-base) !important;
+                text-decoration: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.4rem !important;
+                min-height: 36px !important;
+                border: 1px solid transparent !important;
+            }
+
+            .attachment-action-btn i {
+                font-size: 0.9rem !important;
+            }
+
+            /* تأثيرات hover إضافية */
+            .attachment-action-btn:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            /* تخصيص زر Download */
+            .attachment-action-btn.download {
+                background: var(--gradient-primary) !important;
+                color: white !important;
+                border: 1px solid var(--gold-500) !important;
+            }
+
+            .attachment-action-btn.download:hover {
+                background: linear-gradient(135deg, var(--gold-600), var(--gold-700)) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.4) !important;
+            }
         </style>
     </ui:define>
     <ui:define name="section-content">
@@ -1129,19 +1483,7 @@
                                           update="photoPreview messages"
                                           styleClass="modern-uploader" />
 
-                            <!-- Attachment uploader (documents related to training) -->
-                            <div class="field" style="margin-top:1rem;">
-                                <h:outputLabel value="Attachments" styleClass="smat-label" />
-                                <p:fileUpload id="attachmentsUpload"
-                                              mode="advanced"
-                                              multiple="true"
-                                              dragDropSupport="true"
-                                              allowTypes="/(\.|\/)(pdf|jpg|jpeg|png|gif|doc|docx|xls|xlsx|txt)$/"
-                                              auto="true"
-                                              update=":form:messages"
-                                              listener="#{empCertificationBean.handleAttachmentUpload}"
-                                              label="Upload attachments" />
-                            </div>
+
 
                         </div>
 
@@ -1155,8 +1497,8 @@
                             <p:outputPanel id="photoPreview" styleClass="photo-preview-container">
                                 <p:graphicImage  stream="false"
                                                  value="#{not empty empCertificationBean.employee.employeePhoto ?
-	                                        empCertificationBean.photoStreamedContent :
-	                                        '/resources/images/default-avatar.png'}"
+                                            empCertificationBean.photoStreamedContent :
+                                            '/resources/images/default-avatar.png'}"
                                                  width="180"
                                                  height="180"
                                                  styleClass="photo-preview-image" />
@@ -1275,6 +1617,97 @@
                                          style="font-weight:600;color:var(--success-color);font-size: 1.1rem;" />
                         </div>
                     </div>
+
+                    <!-- Attachments section - التصميم الجديد من القالب الثاني -->
+                    <h:panelGroup id="emp_attachments_section" layout="block" styleClass="attachments-section">
+                        <div class="attachments-header">
+                            <div class="attachments-title">
+                                <i class="pi pi-paperclip"></i>
+                                <h4>Attachments</h4>
+                                <span class="attachments-count">
+                                    #{not empty empCertificationBean.attachmentFiles ? empCertificationBean.attachmentFiles.size() : 0} Files
+                                </span>
+                            </div>
+                            <p:commandButton value="Download All" icon="pi pi-download" type="button"
+                                             onclick="(function(){
+                                                 var container=document.getElementById('emp_attachments_list');
+                                                 if(!container) return; var ids=[]; container.querySelectorAll('[data-file-id]').forEach(function(el){ ids.push(el.getAttribute('data-file-id')); });
+                                                 if(ids.length==0){ alert('No attachments to download'); return; }
+                                                 window.open('#{request.contextPath}/attachments/zipByIds?ids=' + encodeURIComponent(ids.join(',')),'_blank');
+                                             })();"
+                                             styleClass="download-all-btn"
+                                             rendered="#{not empty empCertificationBean.attachmentFiles}" />
+                        </div>
+
+                        <!-- Upload Section -->
+                        <div class="field">
+                            <p:fileUpload id="attachmentsUpload"
+                                          mode="advanced"
+                                          multiple="true"
+                                          dragDropSupport="true"
+                                          allowTypes="/(\.|\/)(pdf|jpg|jpeg|png|gif|doc|docx|xls|xlsx|txt)$/"
+                                        auto="true"
+                                                      update=":form:messages :form:emp_attachments_section"
+                                          listener="#{empCertificationBean.handleAttachmentUpload}"
+                                          label="Choose Files"
+                                          uploadLabel="Upload"
+                                          cancelLabel="Cancel"
+                                          style="width: 100%;" />
+                        </div>
+
+                        <!-- Attachments Grid - التصميم الجديد -->
+                        <h:panelGroup id="emp_attachments_wrapper" rendered="#{not empty empCertificationBean.attachmentFiles}">
+                            <div class="attachments-grid" id="emp_attachments_list">
+                                <c:forEach items="#{empCertificationBean.attachmentFiles}" var="archiveDocumentFile" varStatus="loop">
+                                    <div class="attachment-card" data-file-id="#{archiveDocumentFile.id}">
+                                        <div class="attachment-header">
+                                            <div class="attachment-icon">
+                                                <i class="pi pi-file"></i>
+                                            </div>
+                                            <div class="attachment-info">
+                                                <div class="attachment-code">[#{archiveDocumentFile.code}]</div>
+                                                <div class="attachment-name" title="#{archiveDocumentFile.name}">
+                                                    #{archiveDocumentFile.name}
+                                                </div>
+                                                <div class="attachment-meta">
+                                                    <i class="pi pi-calendar"></i>
+                                                    <span>Uploaded</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="attachment-actions">
+                                            <h:outputLink value="#{request.contextPath}/attachments/raw?archDocFileId=#{archiveDocumentFile.id}"
+                                                          class="attachment-action-btn download"
+                                                          target="_blank"
+                                                          title="Download #{archiveDocumentFile.name}">
+                                                <i class="pi pi-download"></i>
+                                                Download
+                                            </h:outputLink>
+                                            <p:commandButton styleClass="attachment-action-btn delete"
+                                                             icon="pi pi-trash"
+                                                             value="Delete"
+                                                             title="Delete #{archiveDocumentFile.name}"
+                                                             action="#{empCertificationBean.deleteAttachment(archiveDocumentFile.id)}"
+                                                             process="@this"
+                                                             update=":form:emp_attachments_section :form:messages"
+                                                             onclick="if (!confirm('Are you sure you want to delete this attachment?')) return false;" />
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </h:panelGroup>
+
+                        <!-- Empty State -->
+                        <h:panelGroup id="emp_empty_attachments" rendered="#{empty empCertificationBean.attachmentFiles}">
+                            <div class="no-attachments">
+                                <i class="pi pi-inbox"></i>
+                                <p>No attachments uploaded yet</p>
+                                <p style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-secondary);">
+                                    Upload files using the button above
+                                </p>
+                            </div>
+                        </h:panelGroup>
+                    </h:panelGroup>
 
                     <!-- Action Buttons - Reordered for RTL -->
                     <div class="button-group-actions">
