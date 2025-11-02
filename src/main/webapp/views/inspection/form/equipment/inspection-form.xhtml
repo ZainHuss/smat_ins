@@ -14,62 +14,67 @@
         <!-- إضافة خطوط Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Poppins:wght@400;500;600;700&amp;family=Playfair+Display:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
         <style>
-            /* update on branch review */
+            /* نظام الألوان الجديد */
             :root {
-                --gold-50: #fffbf0;
-                --gold-100: #fef7e0;
-                --gold-200: #fef0c7;
-                --gold-300: #fedf89;
-                --gold-400: #fec84b;
-                --gold-500: #fdb414;
-                --gold-600: #dc9200;
-                --gold-700: #b26d00;
-                --gold-800: #925a00;
-                --gold-900: #783f00;
+                /* الألوان الأساسية */
+                --primary-50: #f0f9ff;
+                --primary-100: #e0f2fe;
+                --primary-200: #bae6fd;
+                --primary-300: #7dd3fc;
+                --primary-400: #38bdf8;
+                --primary-500: #0ea5e9;
+                --primary-600: #0284c7;
+                --primary-700: #0369a1;
+                --primary-800: #075985;
+                --primary-900: #0c4a6e;
 
-                --primary-50: var(--gold-50);
-                --primary-100: var(--gold-100);
-                --primary-200: var(--gold-200);
-                --primary-300: var(--gold-300);
-                --primary-400: var(--gold-400);
-                --primary-500: var(--gold-500);
-                --primary-600: var(--gold-600);
-                --primary-700: var(--gold-700);
-                --primary-800: var(--gold-800);
-                --primary-900: var(--gold-900);
+                /* الأخضر الفاتح */
+                --mint-50: #f0fdfa;
+                --mint-100: #ccfbf1;
+                --mint-200: #99f6e4;
+                --mint-300: #5eead4;
+                --mint-400: #2dd4bf;
+                --mint-500: #14b8a6;
+                --mint-600: #0d9488;
+                --mint-700: #0f766e;
+                --mint-800: #115e59;
+                --mint-900: #134e4a;
 
-                --secondary-50: #fefce8;
-                --secondary-100: #fef9c3;
-                --secondary-200: #fef08a;
-                --secondary-300: #fde047;
-                --secondary-400: #facc15;
-                --secondary-500: #eab308;
-                --secondary-600: #ca8a04;
-                --secondary-700: #a16207;
-                --secondary-800: #854d0e;
-                --secondary-900: #713f12;
+                /* العسلي */
+                --hazel-50: #fefce8;
+                --hazel-100: #fef9c3;
+                --hazel-200: #fef08a;
+                --hazel-300: #fde047;
+                --hazel-400: #facc15;
+                --hazel-500: #eab308;
+                --hazel-600: #ca8a04;
+                --hazel-700: #a16207;
+                --hazel-800: #854d0e;
+                --hazel-900: #713f12;
 
-                --accent-50: #fef3c7;
-                --accent-100: #fde68a;
-                --accent-200: #fcd34d;
-                --accent-300: #fbbf24;
-                --accent-400: #f59e0b;
-                --accent-500: #d97706;
-                --accent-600: #b45309;
-                --accent-700: #92400e;
-                --accent-800: #78350f;
-                --accent-900: #451a03;
+                /* البنفسجي */
+                --purple-50: #faf5ff;
+                --purple-100: #f3e8ff;
+                --purple-200: #e9d5ff;
+                --purple-300: #d8b4fe;
+                --purple-400: #c084fc;
+                --purple-500: #a855f7;
+                --purple-600: #9333ea;
+                --purple-700: #7c3aed;
+                --purple-800: #6b21a8;
+                --purple-900: #581c87;
 
-                --success-50: #ecfdf5;
-                --success-100: #d1fae5;
-                --success-200: #a7f3d0;
-                --success-300: #6ee7b7;
-                --success-400: #34d399;
-                --success-500: #10b981;
-                --success-600: #059669;
-                --success-700: #047857;
-                --success-800: #065f46;
-                --success-900: #064e3b;
+                /* الألوان المساعدة */
+                --success-50: #f0fdf4;
+                --success-100: #dcfce7;
+                --success-200: #bbf7d0;
+                --success-300: #86efac;
+                --success-400: #4ade80;
+                --success-500: #22c55e;
+                --success-600: #16a34a;
+                --success-700: #15803d;
+                --success-800: #166534;
+                --success-900: #14532d;
 
                 --warning-50: #fffbeb;
                 --warning-100: #fef3c7;
@@ -105,28 +110,32 @@
                 --info-900: #0c4a6e;
 
                 --surface-0: #ffffff;
-                --surface-50: #fffdf7;
-                --surface-100: #fffbf0;
-                --surface-200: #fef7e0;
-                --surface-300: #fef0c7;
-                --surface-400: #fedf89;
-                --surface-500: #fdb414;
-                --surface-600: #dc9200;
-                --surface-700: #b26d00;
-                --surface-800: #925a00;
-                --surface-900: #783f00;
-                --surface-950: #451a03;
+                --surface-50: #f8fafc;
+                --surface-100: #f1f5f9;
+                --surface-200: #e2e8f0;
+                --surface-300: #cbd5e1;
+                --surface-400: #94a3b8;
+                --surface-500: #64748b;
+                --surface-600: #475569;
+                --surface-700: #334155;
+                --surface-800: #1e293b;
+                --surface-900: #0f172a;
+                --surface-950: #020617;
 
-                --shadow-sm: 0 1px 3px rgba(120, 63, 0, 0.08);
-                --shadow: 0 1px 3px rgba(120, 63, 0, 0.1), 0 1px 2px rgba(120, 63, 0, 0.06);
-                --shadow-md: 0 4px 12px rgba(120, 63, 0, 0.12);
-                --shadow-lg: 0 10px 25px rgba(120, 63, 0, 0.15);
-                --shadow-xl: 0 20px 40px rgba(120, 63, 0, 0.18);
-                --shadow-2xl: 0 25px 50px -12px rgba(120, 63, 0, 0.25);
-                --shadow-inner: inset 0 2px 4px 0 rgba(120, 63, 0, 0.06);
-                --glass-shadow: 0 8px 32px 0 rgba(120, 63, 0, 0.15);
-                --golden-glow: 0 0 20px rgba(253, 180, 20, 0.4);
+                /* الظلال */
+                --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+                --shadow: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+                --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
+                --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.15);
+                --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.18);
+                --shadow-2xl: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+                --shadow-inner: inset 0 2px 4px 0 rgba(15, 23, 42, 0.06);
+                --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.15);
+                --mint-glow: 0 0 20px rgba(20, 184, 166, 0.4);
+                --purple-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+                --hazel-glow: 0 0 20px rgba(234, 179, 8, 0.4);
 
+                /* الزوايا */
                 --radius-sm: 8px;
                 --radius: 12px;
                 --radius-md: 14px;
@@ -136,28 +145,30 @@
                 --radius-3xl: 32px;
                 --radius-full: 9999px;
 
+                /* الانتقالات */
                 --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
                 --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
-                --gradient-primary: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-700) 100%);
-                --gradient-premium: linear-gradient(135deg, #fdb414 0%, #dc9200 50%, #b26d00 100%);
-                --gradient-gold: linear-gradient(135deg, #fdb414 0%, #b26d00 100%);
-                --gradient-accent: linear-gradient(135deg, var(--accent-500), var(--accent-700));
+                /* التدرجات */
+                --gradient-mint: linear-gradient(135deg, var(--mint-400) 0%, var(--mint-600) 100%);
+                --gradient-purple: linear-gradient(135deg, var(--purple-400) 0%, var(--purple-600) 100%);
+                --gradient-hazel: linear-gradient(135deg, var(--hazel-400) 0%, var(--hazel-600) 100%);
+                --gradient-primary: linear-gradient(135deg, var(--primary-400) 0%, var(--primary-600) 100%);
                 --gradient-danger: linear-gradient(135deg, var(--danger-500), var(--danger-700));
                 --gradient-warning: linear-gradient(135deg, var(--warning-500), var(--warning-700));
                 --gradient-success: linear-gradient(135deg, var(--success-500), var(--success-700));
-                --gradient-card: linear-gradient(135deg, rgba(255, 253, 248, 0.96) 0%, rgba(255, 252, 242, 0.98) 100%);
+                --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.98) 100%);
             }
 
             /* تحسينات الخطوط والمظهر العام */
             body {
-                background-color: #fefaf0 !important;
+                background-color: var(--surface-50) !important;
                 background-image:
-                        radial-gradient(at 40% 20%, rgba(254, 244, 215, 0.7) 0px, transparent 50%),
-                        radial-gradient(at 80% 0%, rgba(254, 247, 224, 0.5) 0px, transparent 50%),
-                        radial-gradient(at 0% 50%, rgba(255, 251, 240, 0.6) 0px, transparent 50%),
-                        radial-gradient(at 80% 50%, rgba(254, 240, 199, 0.4) 0px, transparent 50%);
+                        radial-gradient(at 40% 20%, rgba(241, 245, 249, 0.7) 0px, transparent 50%),
+                        radial-gradient(at 80% 0%, rgba(226, 232, 240, 0.5) 0px, transparent 50%),
+                        radial-gradient(at 0% 50%, rgba(248, 250, 252, 0.6) 0px, transparent 50%),
+                        radial-gradient(at 80% 50%, rgba(203, 213, 225, 0.4) 0px, transparent 50%);
                 color: var(--surface-800);
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 line-height: 1.6;
@@ -174,12 +185,12 @@
                 margin-bottom: 1rem;
             }
 
-            /* Premium Card Styling with Golden Glassmorphism */
+            /* تصميم البطاقات بأنماط مختلفة لكل قسم */
             .card {
                 background: var(--gradient-card);
                 border-radius: var(--radius-xl);
                 box-shadow: var(--shadow-lg), var(--glass-shadow);
-                border: 1px solid rgba(255, 248, 225, 0.3);
+                border: 1px solid rgba(226, 232, 240, 0.3);
                 backdrop-filter: blur(12px);
                 position: relative;
                 overflow: hidden;
@@ -188,7 +199,6 @@
                 animation: cardSlideIn 0.6s ease-out forwards;
                 transition: var(--transition-slow);
                 padding: 2rem;
-                border-top: 4px solid var(--gold-500);
             }
 
             .card::before {
@@ -198,8 +208,44 @@
                 left: 0;
                 right: 0;
                 height: 6px;
-                background: var(--gradient-premium);
+                background: var(--gradient-primary);
                 z-index: 1;
+            }
+
+            /* بطاقة إدارة المسودات - باللون الأخضر الفاتح */
+            .draft-management-card {
+                border-top: 4px solid var(--mint-500);
+            }
+
+            .draft-management-card::before {
+                background: var(--gradient-mint);
+            }
+
+            /* بطاقة المعلومات الأساسية - باللون العسلي */
+            .basic-info-card {
+                border-top: 4px solid var(--hazel-500);
+            }
+
+            .basic-info-card::before {
+                background: var(--gradient-hazel);
+            }
+
+            /* بطاقة المحتوى الديناميكي - باللون البنفسجي */
+            .dynamic-content-card {
+                border-top: 4px solid var(--purple-500);
+            }
+
+            .dynamic-content-card::before {
+                background: var(--gradient-purple);
+            }
+
+            /* بطاقة الموافقة - باللون الأزرق */
+            .approval-card {
+                border-top: 4px solid var(--primary-500);
+            }
+
+            .approval-card::before {
+                background: var(--gradient-primary);
             }
 
             @keyframes cardSlideIn {
@@ -215,13 +261,29 @@
 
             .card:hover {
                 transform: translateY(-8px);
-                box-shadow: var(--shadow-xl), var(--golden-glow), 0 8px 25px rgba(253, 180, 20, 0.25);
+                box-shadow: var(--shadow-xl), 0 8px 25px rgba(15, 23, 42, 0.15);
             }
 
-            /* Typography with Golden Headings */
+            .draft-management-card:hover {
+                box-shadow: var(--shadow-xl), var(--mint-glow);
+            }
+
+            .basic-info-card:hover {
+                box-shadow: var(--shadow-xl), var(--hazel-glow);
+            }
+
+            .dynamic-content-card:hover {
+                box-shadow: var(--shadow-xl), var(--purple-glow);
+            }
+
+            .approval-card:hover {
+                box-shadow: var(--shadow-xl), 0 8px 25px rgba(14, 165, 233, 0.25);
+            }
+
+            /* Typography مع ألوان متنوعة */
             .smat-label {
                 font-weight: 600;
-                color: var(--gold-800);
+                color: var(--surface-700);
                 font-size: 0.875rem;
                 text-transform: uppercase;
                 letter-spacing: 0.05em;
@@ -233,7 +295,7 @@
             h3.smat-label {
                 font-size: 1.85rem;
                 font-weight: 700;
-                background: var(--gradient-premium);
+                background: var(--gradient-primary);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -242,7 +304,7 @@
                 margin-bottom: 1.5rem;
                 line-height: 1.2;
                 padding-bottom: 0.75rem;
-                border-bottom: 2px solid var(--gold-200);
+                border-bottom: 2px solid var(--primary-200);
                 font-family: 'Playfair Display', serif;
                 position: relative;
             }
@@ -254,16 +316,16 @@
                 left: 0;
                 width: 80px;
                 height: 3px;
-                background: var(--gradient-gold);
+                background: var(--gradient-primary);
                 border-radius: 3px;
             }
 
-            /* Premium Form Elements with Golden Focus States */
+            /* Premium Form Elements with Colorful Focus States */
             .ui-inputtext,
             .ui-selectonemenu,
             .ui-inputtextarea,
             .ui-calendar {
-                border: 2px solid rgba(220, 200, 167, 0.4);
+                border: 2px solid rgba(203, 213, 225, 0.4);
                 border-radius: var(--radius-md);
                 padding: 0.85rem 1rem;
                 font-size: 0.9375rem;
@@ -280,9 +342,9 @@
             .ui-inputtextarea:focus,
             .ui-calendar:focus {
                 outline: none;
-                border-color: var(--gold-500);
-                box-shadow: 0 0 0 3px var(--gold-100), var(--shadow-md), var(--golden-glow);
-                background-color: var(--gold-50);
+                border-color: var(--primary-500);
+                box-shadow: 0 0 0 3px var(--primary-100), var(--shadow-md);
+                background-color: var(--primary-50);
                 transform: translateY(-2px);
             }
 
@@ -290,9 +352,9 @@
             .ui-selectonemenu:hover,
             .ui-inputtextarea:hover,
             .ui-calendar:hover {
-                border-color: var(--gold-400);
+                border-color: var(--primary-400);
                 background-color: var(--surface-50);
-                box-shadow: var(--shadow-sm), 0 0 0 1px rgba(253, 180, 20, 0.2);
+                box-shadow: var(--shadow-sm), 0 0 0 1px rgba(14, 165, 233, 0.2);
             }
 
             .input-text-smat-background {
@@ -301,21 +363,21 @@
                 box-shadow: var(--shadow-inner);
             }
 
-            /* Golden SelectOneMenu */
+            /* SelectOneMenu */
             .ui-selectonemenu {
                 appearance: none;
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fdb414'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3e%3c/svg%3e");
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230ea5e9'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3e%3c/svg%3e");
                 background-repeat: no-repeat;
                 background-position: right 0.75rem center;
                 background-size: 1.25rem;
                 padding-right: 2.5rem;
             }
 
-            /* Golden Checkbox Styling */
+            /* Checkbox Styling */
             body .ui-chkbox .ui-chkbox-box {
                 width: 1.25rem;
                 height: 1.25rem;
-                border: 2px solid var(--gold-300);
+                border: 2px solid var(--primary-300);
                 border-radius: var(--radius-sm);
                 background: var(--surface-0);
                 transition: var(--transition);
@@ -323,9 +385,9 @@
             }
 
             body .ui-chkbox .ui-chkbox-box.ui-state-active {
-                background: var(--gradient-gold);
-                border-color: var(--gold-500);
-                box-shadow: 0 0 0 2px var(--gold-100);
+                background: var(--gradient-primary);
+                border-color: var(--primary-500);
+                box-shadow: 0 0 0 2px var(--primary-100);
             }
 
             body .ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
@@ -333,11 +395,11 @@
             }
 
             body .ui-chkbox .ui-chkbox-box.ui-state-focus {
-                box-shadow: 0 0 0 3px var(--gold-100);
-                border-color: var(--gold-500);
+                box-shadow: 0 0 0 3px var(--primary-100);
+                border-color: var(--primary-500);
             }
 
-            /* Panel Grid - Premium Table with Golden Header */
+            /* Panel Grid - Premium Table with Colorful Header */
             .ui-panelgrid .custom-panel-grid {
                 width: 100%;
                 border-collapse: separate;
@@ -346,12 +408,12 @@
                 overflow: hidden;
                 box-shadow: var(--shadow-lg);
                 background: var(--surface-0);
-                border: 1px solid rgba(255, 248, 225, 0.3);
+                border: 1px solid rgba(226, 232, 240, 0.3);
             }
 
             .ui-panelgrid .custom-panel-grid tr td {
                 padding: 1rem;
-                border: 1px solid var(--gold-100);
+                border: 1px solid var(--surface-200);
                 background: var(--surface-0);
                 transition: var(--transition);
                 font-family: 'Inter', sans-serif;
@@ -362,7 +424,7 @@
             }
 
             .ui-panelgrid .custom-panel-grid thead tr {
-                background: var(--gradient-premium);
+                background: var(--gradient-primary);
                 color: white;
             }
 
@@ -371,13 +433,13 @@
                 text-transform: uppercase;
                 letter-spacing: 0.05em;
                 padding: 1.25rem 1.5rem;
-                border-color: var(--gold-600);
+                border-color: var(--primary-600);
                 text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
                 font-family: 'Poppins', sans-serif;
                 font-size: 0.9rem;
             }
 
-            /* Premium Golden Buttons with Hover Effects */
+            /* Premium Buttons with Hover Effects */
             .ui-button {
                 border-radius: var(--radius-full);
                 font-weight: 600;
@@ -429,7 +491,7 @@
 
             .ui-button:hover {
                 transform: translateY(-4px) scale(1.02);
-                box-shadow: var(--shadow-lg), var(--golden-glow);
+                box-shadow: var(--shadow-lg);
             }
 
             .ui-button:active {
@@ -453,12 +515,12 @@
             }
 
             .ui-button-help {
-                background: var(--gradient-premium) !important;
+                background: var(--gradient-primary) !important;
                 color: white !important;
             }
 
             .ui-button-info {
-                background: var(--gradient-accent) !important;
+                background: var(--gradient-mint) !important;
                 color: white !important;
             }
 
@@ -470,7 +532,7 @@
                 justify-content: flex-start;
                 margin-top: 2rem;
                 padding-top: 1.5rem;
-                border-top: 1px solid rgba(220, 200, 167, 0.3);
+                border-top: 1px solid rgba(203, 213, 225, 0.3);
             }
 
             /* Responsive adjustments for buttons */
@@ -486,10 +548,10 @@
                 }
             }
 
-            /* Golden Chip Styling */
+            /* Chip Styling */
             .ui-chip {
-                background: linear-gradient(90deg, var(--gold-100), var(--accent-100));
-                color: var(--gold-800);
+                background: linear-gradient(90deg, var(--primary-100), var(--mint-100));
+                color: var(--primary-800);
                 border-radius: var(--radius-full);
                 padding: 0.6rem 1.2rem;
                 box-shadow: var(--shadow-sm);
@@ -497,7 +559,7 @@
                 display: inline-flex;
                 align-items: center;
                 font-weight: 500;
-                border: 1px solid var(--gold-200);
+                border: 1px solid var(--primary-200);
                 font-family: 'Inter', sans-serif;
                 backdrop-filter: blur(8px);
             }
@@ -505,47 +567,47 @@
             .ui-chip:hover {
                 transform: translateY(-2px);
                 box-shadow: var(--shadow);
-                background: linear-gradient(90deg, var(--gold-200), var(--accent-200));
+                background: linear-gradient(90deg, var(--primary-200), var(--mint-200));
             }
 
             .ui-chip-icon {
                 margin-right: 0.5rem;
-                color: var(--gold-600);
+                color: var(--primary-600);
             }
 
-            /* Signature Styling with Golden Border */
+            /* Signature Styling */
             .ui-signature {
-                border: 2px dashed var(--gold-200);
+                border: 2px dashed var(--primary-200);
                 border-radius: var(--radius-lg);
                 background: var(--surface-50);
                 transition: var(--transition);
                 background-image:
-                        linear-gradient(to right, var(--gold-50) 1px, transparent 1px),
-                        linear-gradient(to bottom, var(--gold-50) 1px, transparent 1px);
+                        linear-gradient(to right, var(--primary-50) 1px, transparent 1px),
+                        linear-gradient(to bottom, var(--primary-50) 1px, transparent 1px);
                 background-size: 20px 20px;
                 backdrop-filter: blur(4px);
             }
 
             .ui-signature:hover {
-                border-color: var(--gold-400);
-                background-color: var(--gold-50);
-                box-shadow: var(--golden-glow);
+                border-color: var(--primary-400);
+                background-color: var(--primary-50);
+                box-shadow: 0 0 20px rgba(14, 165, 233, 0.2);
             }
 
-            /* Golden Divider Styling */
+            /* Divider Styling */
             .ui-divider {
                 margin: 2rem 0;
                 border: none;
                 height: 1px;
-                background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
+                background: linear-gradient(90deg, transparent, var(--primary-400), transparent);
                 opacity: 0.5;
             }
 
             .ui-divider-solid {
-                background: var(--gold-300);
+                background: var(--primary-300);
             }
 
-            /* Field Group Styling with Golden Accent */
+            /* Field Group Styling with Colorful Accent */
             .field {
                 margin-bottom: 1.5rem;
                 position: relative;
@@ -559,7 +621,7 @@
                 top: 0;
                 bottom: 0;
                 width: 4px;
-                background: var(--gradient-gold);
+                background: var(--gradient-primary);
                 border-radius: var(--radius-full);
                 opacity: 0.8;
                 transition: var(--transition);
@@ -574,15 +636,15 @@
             .ui-dialog {
                 border-radius: var(--radius-2xl);
                 box-shadow: var(--shadow-2xl), var(--glass-shadow);
-                border: 1px solid rgba(255, 248, 225, 0.3);
+                border: 1px solid rgba(226, 232, 240, 0.3);
                 overflow: hidden;
-                border-top: 4px solid var(--gold-500);
+                border-top: 4px solid var(--primary-500);
                 backdrop-filter: blur(12px);
-                background: rgba(255, 253, 248, 0.95);
+                background: rgba(255, 255, 255, 0.95);
             }
 
             .ui-dialog .ui-dialog-titlebar {
-                background: var(--gradient-premium);
+                background: var(--gradient-primary);
                 color: white;
                 border-radius: 0;
                 padding: 1.25rem 1.5rem;
@@ -606,10 +668,10 @@
                 border-radius: var(--radius-lg);
                 box-shadow: var(--shadow-xl), var(--glass-shadow);
                 overflow: hidden;
-                border-left: 4px solid var(--gold-500);
+                border-left: 4px solid var(--primary-500);
                 backdrop-filter: blur(10px);
-                background: rgba(255, 253, 248, 0.95);
-                border: 1px solid rgba(255, 248, 225, 0.3);
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(226, 232, 240, 0.3);
             }
 
             .ui-growl-message {
@@ -622,11 +684,11 @@
                 right: 0.5rem;
             }
 
-            /* Status Dialog with Golden Animation */
+            /* Status Dialog with Animation */
             .pi-spinner {
                 animation: spin 1s linear infinite;
-                color: var(--gold-500);
-                filter: drop-shadow(0 0 2px rgba(253, 180, 20, 0.5));
+                color: var(--primary-500);
+                filter: drop-shadow(0 0 2px rgba(14, 165, 233, 0.5));
             }
 
             @keyframes spin {
@@ -639,7 +701,7 @@
                 border-radius: var(--radius-lg);
                 overflow: hidden;
                 box-shadow: var(--shadow);
-                border: 1px solid var(--gold-200);
+                border: 1px solid var(--primary-200);
             }
 
             /* Hover effects for all interactive elements */
@@ -690,7 +752,7 @@
                 justify-content: flex-start;
                 margin-top: 1.5rem;
                 padding-top: 1rem;
-                border-top: 1px solid rgba(220, 200, 167, 0.3);
+                border-top: 1px solid rgba(203, 213, 225, 0.3);
             }
 
             /* Extra Small Button Styles */
@@ -710,7 +772,7 @@
                 justify-content: flex-end;
                 margin-top: 1.5rem;
                 padding-top: 1rem;
-                border-top: 1px solid rgba(220, 200, 167, 0.3);
+                border-top: 1px solid rgba(203, 213, 225, 0.3);
                 width: 100%;
             }
 
@@ -727,77 +789,92 @@
                 height: 36px;
             }
 
-            /* Premium Golden Button Styles */
-            .btn-golden-primary {
-                background: var(--gradient-premium) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.3) !important;
-            }
-
-            .btn-golden-orange {
-                background: linear-gradient(135deg, #f59e0b, #d97706) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3) !important;
-            }
-
-            .btn-golden-blue {
-                background: linear-gradient(135deg, #0ea5e9, #0369a1) !important;
+            /* Colorful Button Styles */
+            .btn-primary {
+                background: var(--gradient-primary) !important;
                 color: white !important;
                 border: none !important;
                 box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3) !important;
             }
 
-            .btn-golden-red {
-                background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+            .btn-mint {
+                background: var(--gradient-mint) !important;
+                color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3) !important;
+            }
+
+            .btn-purple {
+                background: var(--gradient-purple) !important;
+                color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3) !important;
+            }
+
+            .btn-hazel {
+                background: var(--gradient-hazel) !important;
+                color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3) !important;
+            }
+
+            .btn-danger {
+                background: var(--gradient-danger) !important;
                 color: white !important;
                 border: none !important;
                 box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
             }
 
-            /* Hover Effects for Golden Buttons */
-            .btn-golden-primary:hover {
-                background: linear-gradient(135deg, #dc9200, #b26d00) !important;
-                transform: translateY(-3px) scale(1.05) !important;
-                box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4), var(--golden-glow) !important;
-            }
-
-            .btn-golden-orange:hover {
-                background: linear-gradient(135deg, #d97706, #b45309) !important;
-                transform: translateY(-3px) scale(1.05) !important;
-                box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4) !important;
-            }
-
-            .btn-golden-blue:hover {
-                background: linear-gradient(135deg, #0284c7, #075985) !important;
+            /* Hover Effects for Buttons */
+            .btn-primary:hover {
+                background: linear-gradient(135deg, var(--primary-600), var(--primary-800)) !important;
                 transform: translateY(-3px) scale(1.05) !important;
                 box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4) !important;
             }
 
-            .btn-golden-red:hover {
-                background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+            .btn-mint:hover {
+                background: linear-gradient(135deg, var(--mint-600), var(--mint-800)) !important;
+                transform: translateY(-3px) scale(1.05) !important;
+                box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4) !important;
+            }
+
+            .btn-purple:hover {
+                background: linear-gradient(135deg, var(--purple-600), var(--purple-800)) !important;
+                transform: translateY(-3px) scale(1.05) !important;
+                box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4) !important;
+            }
+
+            .btn-hazel:hover {
+                background: linear-gradient(135deg, var(--hazel-600), var(--hazel-800)) !important;
+                transform: translateY(-3px) scale(1.05) !important;
+                box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4) !important;
+            }
+
+            .btn-danger:hover {
+                background: linear-gradient(135deg, var(--danger-600), var(--danger-800)) !important;
                 transform: translateY(-3px) scale(1.05) !important;
                 box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
             }
 
             /* Active/Pressed State */
-            .btn-golden-primary:active,
-            .btn-golden-orange:active,
-            .btn-golden-blue:active,
-            .btn-golden-red:active {
+            .btn-primary:active,
+            .btn-mint:active,
+            .btn-purple:active,
+            .btn-hazel:active,
+            .btn-danger:active {
                 transform: translateY(0) scale(1) !important;
-                box-shadow: 0 2px 8px rgba(120, 63, 0, 0.2) !important;
+                box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2) !important;
             }
 
             /* Disabled State */
-            .btn-golden-primary.ui-state-disabled,
-            .btn-golden-orange.ui-state-disabled,
-            .btn-golden-blue.ui-state-disabled,
-            .btn-golden-red.ui-state-disabled {
+            .btn-primary.ui-state-disabled,
+            .btn-mint.ui-state-disabled,
+            .btn-purple.ui-state-disabled,
+            .btn-hazel.ui-state-disabled,
+            .btn-danger.ui-state-disabled {
                 opacity: 0.6 !important;
-                background: var(--gold-300) !important;
-                color: var(--gold-600) !important;
+                background: var(--surface-300) !important;
+                color: var(--surface-600) !important;
                 box-shadow: none !important;
                 transform: none !important;
             }
@@ -911,17 +988,17 @@
             }
 
             ::-webkit-scrollbar-track {
-                background: rgba(220, 200, 167, 0.1);
+                background: rgba(203, 213, 225, 0.1);
                 border-radius: 10px;
             }
 
             ::-webkit-scrollbar-thumb {
-                background: linear-gradient(to bottom, var(--gold-400), var(--gold-600));
+                background: linear-gradient(to bottom, var(--primary-400), var(--primary-600));
                 border-radius: 10px;
             }
 
             ::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(to bottom, var(--gold-500), var(--gold-700));
+                background: linear-gradient(to bottom, var(--primary-500), var(--primary-700));
             }
 
             /* Premium Section Headers */
@@ -931,7 +1008,7 @@
                 align-items: center;
                 margin-bottom: 2rem;
                 padding-bottom: 1rem;
-                border-bottom: 1px solid rgba(220, 200, 167, 0.3);
+                border-bottom: 1px solid rgba(203, 213, 225, 0.3);
                 position: relative;
             }
 
@@ -942,20 +1019,20 @@
                 left: 0;
                 width: 100px;
                 height: 2px;
-                background: var(--gradient-gold);
+                background: var(--gradient-primary);
                 border-radius: 2px;
             }
 
-            /* Premium Template Scroll Container - إضافة خاصية التمرير الأفقي للقالب */
+            /* Template Scroll Container */
             .template-scroll-container {
                 overflow-x: auto;
                 overflow-y: hidden;
                 width: 100%;
-                border: 1px solid rgba(220, 200, 167, 0.3);
+                border: 1px solid rgba(203, 213, 225, 0.3);
                 border-radius: var(--radius-lg);
                 margin-top: 1.5rem;
                 padding: 1rem;
-                background: linear-gradient(135deg, rgba(255, 253, 248, 0.95) 0%, rgba(255, 252, 242, 0.98) 100%);
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
                 box-shadow: var(--shadow-md), var(--glass-shadow);
                 backdrop-filter: blur(8px);
                 position: relative;
@@ -970,19 +1047,19 @@
 
             .scroll-indicator {
                 text-align: center;
-                color: var(--gold-600);
+                color: var(--primary-600);
                 font-size: 0.8rem;
                 margin-top: 0.5rem;
                 font-style: italic;
                 font-family: 'Poppins', sans-serif;
-                background: linear-gradient(90deg, transparent, var(--gold-100), transparent);
+                background: linear-gradient(90deg, transparent, var(--primary-100), transparent);
                 padding: 0.5rem;
                 border-radius: var(--radius-full);
-                border: 1px dashed var(--gold-200);
+                border: 1px dashed var(--primary-200);
             }
 
             .scroll-indicator i {
-                color: var(--gold-500);
+                color: var(--primary-500);
                 margin: 0 0.5rem;
                 animation: bounce 2s infinite;
             }
@@ -996,7 +1073,7 @@
             .template-scroll-container .custom-panel-grid {
                 margin-bottom: 0;
                 box-shadow: none;
-                border: 1px solid rgba(220, 200, 167, 0.2);
+                border: 1px solid rgba(203, 213, 225, 0.2);
             }
 
             .template-scroll-container .custom-panel-grid tr td {
@@ -1006,8 +1083,8 @@
 
             /* تأثيرات تفاعلية لحاوية التمرير */
             .template-scroll-container:hover {
-                box-shadow: var(--shadow-lg), 0 0 20px rgba(253, 180, 20, 0.1);
-                border-color: var(--gold-300);
+                box-shadow: var(--shadow-lg), 0 0 20px rgba(14, 165, 233, 0.1);
+                border-color: var(--primary-300);
             }
 
             /* شريط التمرير المخصص للحاوية */
@@ -1016,22 +1093,23 @@
             }
 
             .template-scroll-container::-webkit-scrollbar-track {
-                background: rgba(220, 200, 167, 0.1);
+                background: rgba(203, 213, 225, 0.1);
                 border-radius: 4px;
             }
 
             .template-scroll-container::-webkit-scrollbar-thumb {
-                background: linear-gradient(90deg, var(--gold-400), var(--gold-600));
+                background: linear-gradient(90deg, var(--primary-400), var(--primary-600));
                 border-radius: 4px;
-                border: 1px solid rgba(255, 248, 225, 0.3);
+                border: 1px solid rgba(226, 232, 240, 0.3);
             }
 
             .template-scroll-container::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(90deg, var(--gold-500), var(--gold-700));
+                background: linear-gradient(90deg, var(--primary-500), var(--primary-700));
             }
+
             /* إجبار العرض المطلوب، متوافق مع PrimeFaces */
             .smat-select-short.ui-selectonemenu {
-                width: 140px !important;      /* غيّر 140px حسب حاجتك (مثلاً 160px أو 200px) */
+                width: 140px !important;
                 min-width: 140px !important;
                 max-width: none !important;
                 display: inline-block;
@@ -1039,11 +1117,10 @@
                 vertical-align: middle;
             }
 
-            /* تأكد أن الليبل يستخدم كامل المساحة ولا يقطعها محدد آخر */
             .smat-select-short .ui-selectonemenu-label,
             .smat-select-short .ui-selectonemenu-label .ui-selectonemenu-value {
                 display: inline-block;
-                width: calc(100% - 1.5rem);   /* يحجز مكان للسهم */
+                width: calc(100% - 1.5rem);
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1057,12 +1134,12 @@
                 }
             }
 
-            /* إضافة تصميم جديد لأزرار Draft Management */
+            /* تصميم جديد لقسم إدارة المسودات باللون الأخضر الفاتح */
             .draft-management-section {
-                background: linear-gradient(135deg, rgba(255, 251, 240, 0.95) 0%, rgba(254, 247, 224, 0.98) 100%);
+                background: linear-gradient(135deg, rgba(240, 253, 250, 0.95) 0%, rgba(204, 251, 241, 0.98) 100%);
                 border-radius: var(--radius-xl);
-                border: 1px solid rgba(253, 180, 20, 0.3);
-                box-shadow: var(--shadow-md), 0 0 15px rgba(253, 180, 20, 0.1);
+                border: 1px solid rgba(20, 184, 166, 0.3);
+                box-shadow: var(--shadow-md), 0 0 15px rgba(20, 184, 166, 0.1);
                 padding: 1.5rem;
                 margin-bottom: 2rem;
                 position: relative;
@@ -1077,12 +1154,12 @@
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: var(--gradient-premium);
+                background: var(--gradient-mint);
                 z-index: 1;
             }
 
             .draft-management-section:hover {
-                box-shadow: var(--shadow-lg), 0 0 20px rgba(253, 180, 20, 0.15);
+                box-shadow: var(--shadow-lg), 0 0 20px rgba(20, 184, 166, 0.15);
                 transform: translateY(-2px);
             }
 
@@ -1091,22 +1168,22 @@
                 align-items: center;
                 margin-bottom: 1rem;
                 padding-bottom: 0.75rem;
-                border-bottom: 1px solid rgba(253, 180, 20, 0.2);
+                border-bottom: 1px solid rgba(20, 184, 166, 0.2);
             }
 
             .draft-management-header i {
-                color: var(--gold-500);
+                color: var(--mint-500);
                 font-size: 1.5rem;
                 margin-right: 0.75rem;
-                filter: drop-shadow(0 0 3px rgba(253, 180, 20, 0.5));
+                filter: drop-shadow(0 0 3px rgba(20, 184, 166, 0.5));
             }
 
             .draft-management-header h4 {
-                color: var(--gold-800);
+                color: var(--mint-800);
                 margin: 0;
                 font-family: 'Playfair Display', serif;
                 font-weight: 600;
-                background: var(--gradient-premium);
+                background: var(--gradient-mint);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -1120,222 +1197,107 @@
                 flex-wrap: wrap;
             }
 
-            .draft-button {
-                position: relative;
-                overflow: hidden;
-                border-radius: var(--radius-full);
-                font-weight: 600;
-                letter-spacing: 0.05em;
-                padding: 0.85rem 2rem;
-                min-width: 160px;
-                height: 48px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.75rem;
-                font-family: 'Poppins', sans-serif;
-                font-size: 0.95rem;
-                transition: var(--transition-slow);
-                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.25);
-                border: none;
+            .draft-button-rounded {
+                border-radius: 25px !important;
+                padding: 0.85rem 2rem !important;
+                min-width: 160px !important;
+                height: 48px !important;
             }
 
-            .draft-button::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-                transition: var(--transition-slow);
-            }
-
-            .draft-button:hover::before {
-                left: 100%;
-            }
-
-            .draft-button-save {
-                background: var(--gradient-premium) !important;
+            .draft-button-rounded.draft-button-save {
+                background: var(--gradient-mint) !important;
                 color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3) !important;
             }
 
-            .draft-button-load {
-                background: linear-gradient(135deg, #0ea5e9, #0369a1) !important;
+            .draft-button-rounded.draft-button-load {
+                background: var(--gradient-primary) !important;
                 color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3) !important;
             }
 
-            .draft-button:hover {
-                transform: translateY(-3px) scale(1.05);
-                box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4), var(--golden-glow);
-            }
-
-            .draft-button:active {
-                transform: translateY(0) scale(1);
-                box-shadow: 0 2px 8px rgba(253, 180, 20, 0.3);
+            .draft-button-rounded:hover {
+                transform: translateY(-3px) scale(1.05) !important;
+                box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4) !important;
             }
 
             .draft-description {
                 text-align: center;
                 margin-top: 1rem;
-                color: var(--gold-700);
+                color: var(--mint-700);
                 font-size: 0.875rem;
                 font-style: italic;
                 font-family: 'Inter', sans-serif;
             }
 
-            /* تأثير التوهج الذهبي للحقول */
-            .golden-glow {
-                animation: goldenGlowEffect 2s ease-in-out;
+            /* تأثير التوهج */
+            .mint-glow {
+                animation: mintGlowEffect 1s ease-in-out !important;
+                border-color: var(--mint-400) !important;
             }
 
-            @keyframes goldenGlowEffect {
+            .purple-glow {
+                animation: purpleGlowEffect 1s ease-in-out !important;
+                border-color: var(--purple-400) !important;
+            }
+
+            .hazel-glow {
+                animation: hazelGlowEffect 1s ease-in-out !important;
+                border-color: var(--hazel-400) !important;
+            }
+
+            @keyframes mintGlowEffect {
                 0% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
-                    border-color: rgba(253, 180, 20, 0.5);
-                }
-                25% {
-                    box-shadow: 0 0 20px rgba(253, 180, 20, 0.6), 0 0 30px rgba(253, 180, 20, 0.4);
-                    border-color: var(--gold-400);
-                    transform: scale(1.01);
-                }
-                50% {
-                    box-shadow: 0 0 25px rgba(253, 180, 20, 0.8), 0 0 40px rgba(253, 180, 20, 0.6);
-                    border-color: var(--gold-500);
-                    transform: scale(1.02);
-                }
-                75% {
-                    box-shadow: 0 0 20px rgba(253, 180, 20, 0.6), 0 0 30px rgba(253, 180, 20, 0.4);
-                    border-color: var(--gold-400);
-                    transform: scale(1.01);
-                }
-                100% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
-                    border-color: rgba(253, 180, 20, 0.5);
-                    transform: scale(1);
-                }
-            }
-
-            /* Responsive adjustments for draft section */
-            @media (max-width: 768px) {
-                .draft-management-section {
-                    padding: 1.25rem;
-                    margin: 1rem 0;
-                }
-
-                .draft-buttons-container {
-                    flex-direction: column;
-                    gap: 0.75rem;
-                }
-
-                .draft-button {
-                    width: 100%;
-                    min-width: auto;
-                }
-            }
-            /* حواف دائرية أكثر أناقة للأزرار */
-            .draft-button-rounded {
-                border-radius: 25px !important;
-                padding: 0.85rem 2rem !important;
-                min-width: 160px !important;
-                height: 48px !important;
-            }
-
-            /* تحسين تأثير التوهج */
-            .golden-glow {
-                animation: goldenGlowEffect 1s ease-in-out !important;
-                border-color: var(--gold-400) !important;
-            }
-
-            @keyframes goldenGlowEffect {
-                0% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
+                    box-shadow: 0 0 5px rgba(20, 184, 166, 0.3);
                     transform: scale(1);
                 }
                 50% {
-                    box-shadow: 0 0 20px rgba(253, 180, 20, 0.6), 0 0 30px rgba(253, 180, 20, 0.4);
+                    box-shadow: 0 0 20px rgba(20, 184, 166, 0.6), 0 0 30px rgba(20, 184, 166, 0.4);
                     transform: scale(1.02);
                 }
                 100% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
+                    box-shadow: 0 0 5px rgba(20, 184, 166, 0.3);
                     transform: scale(1);
                 }
             }
 
-            /* تحسين مظهر أزرار الـ Draft */
-            .draft-button-rounded.draft-button-save {
-                background: var(--gradient-premium) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 15px rgba(253, 180, 20, 0.3) !important;
-            }
-
-            .draft-button-rounded.draft-button-load {
-                background: linear-gradient(135deg, #0ea5e9, #0369a1) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3) !important;
-            }
-
-            .draft-button-rounded:hover {
-                transform: translateY(-3px) scale(1.05) !important;
-                box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4) !important;
-            }
-            /* حواف دائرية أكثر أناقة للأزرار */
-            .draft-button-rounded {
-                border-radius: 25px !important;
-                padding: 0.85rem 2rem !important;
-                min-width: 160px !important;
-                height: 48px !important;
-            }
-
-            /* تحسين تأثير التوهج */
-            .golden-glow {
-                animation: goldenGlowEffect 1s ease-in-out !important;
-                border-color: var(--gold-400) !important;
-            }
-
-            @keyframes goldenGlowEffect {
+            @keyframes purpleGlowEffect {
                 0% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
+                    box-shadow: 0 0 5px rgba(168, 85, 247, 0.3);
                     transform: scale(1);
                 }
                 50% {
-                    box-shadow: 0 0 20px rgba(253, 180, 20, 0.6), 0 0 30px rgba(253, 180, 20, 0.4);
+                    box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), 0 0 30px rgba(168, 85, 247, 0.4);
                     transform: scale(1.02);
                 }
                 100% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
+                    box-shadow: 0 0 5px rgba(168, 85, 247, 0.3);
                     transform: scale(1);
                 }
             }
 
-
-            /* تحسين مظهر أزرار الـ Draft */
-            .draft-button-rounded.draft-button-save {
-                background: var(--gradient-premium) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 15px rgba(253, 180, 20, 0.3) !important;
-            }
-
-            .draft-button-rounded.draft-button-load {
-                background: linear-gradient(135deg, #0ea5e9, #0369a1) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3) !important;
-            }
-
-            .draft-button-rounded:hover {
-                transform: translateY(-3px) scale(1.05) !important;
-                box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4) !important;
+            @keyframes hazelGlowEffect {
+                0% {
+                    box-shadow: 0 0 5px rgba(234, 179, 8, 0.3);
+                    transform: scale(1);
+                }
+                50% {
+                    box-shadow: 0 0 20px rgba(234, 179, 8, 0.6), 0 0 30px rgba(234, 179, 8, 0.4);
+                    transform: scale(1.02);
+                }
+                100% {
+                    box-shadow: 0 0 5px rgba(234, 179, 8, 0.3);
+                    transform: scale(1);
+                }
             }
 
             /* مؤشر التحميل */
             .loading-indicator {
-                background: rgba(255, 253, 248, 0.95);
+                background: rgba(255, 255, 255, 0.95);
                 border-radius: var(--radius-lg);
-                border: 1px solid var(--gold-200);
+                border: 1px solid var(--primary-200);
                 box-shadow: var(--shadow-md);
                 margin: 1rem 0;
                 animation: fadeIn 0.3s ease;
@@ -1355,7 +1317,7 @@
                 color: white;
                 padding: 1rem 1.5rem;
                 border-radius: var(--radius-lg);
-                box-shadow: var(--shadow-xl), 0 5px 20px rgba(16, 185, 129, 0.4);
+                box-shadow: var(--shadow-xl), 0 5px 20px rgba(34, 197, 94, 0.4);
                 z-index: 10000;
                 transform: translateX(400px);
                 opacity: 0;
@@ -1385,70 +1347,6 @@
                 filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
             }
 
-            /* حواف دائرية أكثر أناقة للأزرار */
-            .draft-button-rounded {
-                border-radius: 25px !important;
-                padding: 0.85rem 2rem !important;
-                min-width: 160px !important;
-                height: 48px !important;
-            }
-
-            /* تحسين تأثير التوهج */
-            .golden-glow {
-                animation: goldenGlowEffect 1s ease-in-out !important;
-                border-color: var(--gold-400) !important;
-            }
-
-            @keyframes goldenGlowEffect {
-                0% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
-                    transform: scale(1);
-                }
-                50% {
-                    box-shadow: 0 0 20px rgba(253, 180, 20, 0.6), 0 0 30px rgba(253, 180, 20, 0.4);
-                    transform: scale(1.02);
-                }
-                100% {
-                    box-shadow: 0 0 5px rgba(253, 180, 20, 0.3);
-                    transform: scale(1);
-                }
-            }
-
-            /* تحسين مظهر أزرار الـ Draft */
-            .draft-button-rounded.draft-button-save {
-                background: var(--gradient-premium) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 15px rgba(253, 180, 20, 0.3) !important;
-            }
-
-            .draft-button-rounded.draft-button-load {
-                background: linear-gradient(135deg, #0ea5e9, #0369a1) !important;
-                color: white !important;
-                border: none !important;
-                box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3) !important;
-            }
-
-            .draft-button-rounded:hover {
-                transform: translateY(-3px) scale(1.05) !important;
-                box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4) !important;
-            }
-
-            /* مؤشر التحميل */
-            .loading-indicator {
-                background: rgba(255, 253, 248, 0.95);
-                border-radius: var(--radius-lg);
-                border: 1px solid var(--gold-200);
-                box-shadow: var(--shadow-md);
-                margin: 1rem 0;
-                animation: fadeIn 0.3s ease;
-            }
-
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-
             /* تأثير اهتزاز بسيط للرسالة */
             @keyframes gentleBounce {
                 0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
@@ -1462,18 +1360,14 @@
                 animation: gentleBounce 0.6s ease;
             }
 
-            /* ==========================================================================
-               تحسينات جديدة لقسم المرفقات (Attachments)
-               ========================================================================== */
-
-            /* تصميم جديد ومحسّن لقسم المرفقات */
+            /* تصميم قسم المرفقات باللون البنفسجي */
             .attachments-section {
                 margin-top: 2rem;
                 padding: 1.5rem;
-                background: linear-gradient(135deg, rgba(255, 253, 248, 0.95) 0%, rgba(255, 252, 242, 0.98) 100%);
+                background: linear-gradient(135deg, rgba(250, 245, 255, 0.95) 0%, rgba(243, 232, 255, 0.98) 100%);
                 border-radius: var(--radius-xl);
-                border: 1px solid rgba(253, 180, 20, 0.3);
-                box-shadow: var(--shadow-md), 0 0 15px rgba(253, 180, 20, 0.1);
+                border: 1px solid rgba(168, 85, 247, 0.3);
+                box-shadow: var(--shadow-md), 0 0 15px rgba(168, 85, 247, 0.1);
                 position: relative;
                 overflow: hidden;
                 transition: var(--transition);
@@ -1486,12 +1380,12 @@
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: var(--gradient-premium);
+                background: var(--gradient-purple);
                 z-index: 1;
             }
 
             .attachments-section:hover {
-                box-shadow: var(--shadow-lg), 0 0 20px rgba(253, 180, 20, 0.15);
+                box-shadow: var(--shadow-lg), 0 0 20px rgba(168, 85, 247, 0.15);
                 transform: translateY(-2px);
             }
 
@@ -1501,7 +1395,7 @@
                 justify-content: space-between;
                 margin-bottom: 1.5rem;
                 padding-bottom: 0.75rem;
-                border-bottom: 1px solid rgba(253, 180, 20, 0.2);
+                border-bottom: 1px solid rgba(168, 85, 247, 0.2);
             }
 
             .attachments-title {
@@ -1511,24 +1405,24 @@
             }
 
             .attachments-title i {
-                color: var(--gold-500);
+                color: var(--purple-500);
                 font-size: 1.5rem;
-                filter: drop-shadow(0 0 3px rgba(253, 180, 20, 0.5));
+                filter: drop-shadow(0 0 3px rgba(168, 85, 247, 0.5));
             }
 
             .attachments-title h4 {
-                color: var(--gold-800);
+                color: var(--purple-800);
                 margin: 0;
                 font-family: 'Playfair Display', serif;
                 font-weight: 600;
-                background: var(--gradient-premium);
+                background: var(--gradient-purple);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
 
             .attachments-count {
-                background: var(--gradient-premium);
+                background: var(--gradient-purple);
                 color: white;
                 border-radius: var(--radius-full);
                 padding: 0.35rem 0.75rem;
@@ -1547,7 +1441,7 @@
             .attachment-card {
                 background: var(--surface-0);
                 border-radius: var(--radius-lg);
-                border: 1px solid rgba(253, 180, 20, 0.2);
+                border: 1px solid rgba(168, 85, 247, 0.2);
                 box-shadow: var(--shadow-sm);
                 padding: 1.25rem;
                 transition: var(--transition);
@@ -1565,15 +1459,15 @@
                 left: 0;
                 right: 0;
                 height: 3px;
-                background: var(--gradient-gold);
+                background: var(--gradient-purple);
                 opacity: 0;
                 transition: var(--transition);
             }
 
             .attachment-card:hover {
                 transform: translateY(-5px);
-                box-shadow: var(--shadow-lg), 0 5px 15px rgba(253, 180, 20, 0.2);
-                border-color: var(--gold-300);
+                box-shadow: var(--shadow-lg), 0 5px 15px rgba(168, 85, 247, 0.2);
+                border-color: var(--purple-300);
             }
 
             .attachment-card:hover::before {
@@ -1590,18 +1484,18 @@
                 width: 48px;
                 height: 48px;
                 border-radius: var(--radius-md);
-                background: linear-gradient(135deg, var(--gold-100), var(--gold-200));
+                background: linear-gradient(135deg, var(--purple-100), var(--purple-200));
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-shrink: 0;
                 box-shadow: var(--shadow-sm);
-                border: 1px solid var(--gold-200);
+                border: 1px solid var(--purple-200);
             }
 
             .attachment-icon i {
                 font-size: 1.5rem;
-                color: var(--gold-600);
+                color: var(--purple-600);
             }
 
             .attachment-info {
@@ -1611,7 +1505,7 @@
 
             .attachment-code {
                 font-size: 0.75rem;
-                color: var(--gold-600);
+                color: var(--purple-600);
                 font-weight: 600;
                 margin-bottom: 0.25rem;
                 font-family: 'Poppins', sans-serif;
@@ -1643,7 +1537,7 @@
                 gap: 0.5rem;
                 margin-top: auto;
                 padding-top: 0.75rem;
-                border-top: 1px solid rgba(253, 180, 20, 0.1);
+                border-top: 1px solid rgba(168, 85, 247, 0.1);
             }
 
             .attachment-action-btn {
@@ -1651,8 +1545,8 @@
                 padding: 0.5rem;
                 border-radius: var(--radius-md);
                 background: var(--surface-50);
-                border: 1px solid var(--gold-100);
-                color: var(--gold-700);
+                border: 1px solid var(--purple-100);
+                color: var(--purple-700);
                 font-size: 0.8rem;
                 font-weight: 500;
                 display: flex;
@@ -1665,23 +1559,37 @@
             }
 
             .attachment-action-btn:hover {
-                background: var(--gold-50);
-                color: var(--gold-800);
-                border-color: var(--gold-300);
+                background: var(--purple-50);
+                color: var(--purple-800);
+                border-color: var(--purple-300);
                 transform: translateY(-2px);
                 box-shadow: var(--shadow-sm);
             }
 
             .attachment-action-btn.download {
                 background: var(--gradient-success);
-                color: #f68585;
+                color: white;
                 border-color: var(--success-500);
             }
 
             .attachment-action-btn.download:hover {
                 background: linear-gradient(135deg, var(--success-600), var(--success-700));
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+                box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            }
+
+            .attachment-action-btn.delete {
+                background: var(--gradient-danger) !important;
+                color: white !important;
+                border-color: var(--danger-500);
+            }
+
+            .attachment-action-btn.delete:hover {
+                background: linear-gradient(135deg, var(--danger-600), var(--danger-700)) !important;
+                color: white !important;
+                border-color: var(--danger-600) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
             }
 
             .no-attachments {
@@ -1692,7 +1600,7 @@
 
             .no-attachments i {
                 font-size: 3rem;
-                color: var(--gold-300);
+                color: var(--purple-300);
                 margin-bottom: 1rem;
                 display: block;
             }
@@ -1705,8 +1613,8 @@
 
             /* تحسينات للزر Download All */
             .download-all-btn {
-                background: var(--gradient-info) !important;
-                color: #3b4587 !important;
+                background: var(--gradient-primary) !important;
+                color: white !important;
                 border: none !important;
                 box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3) !important;
                 border-radius: var(--radius-full) !important;
@@ -1719,9 +1627,45 @@
             }
 
             .download-all-btn:hover {
-                background: linear-gradient(135deg, #0284c7, #075985) !important;
+                background: linear-gradient(135deg, var(--primary-600), var(--primary-800)) !important;
                 transform: translateY(-2px) !important;
                 box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4) !important;
+            }
+
+            /* تأثيرات إضافية للزر الأحمر */
+            .attachment-action-btn.delete {
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .attachment-action-btn.delete::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 5px;
+                height: 5px;
+                background: rgba(255, 255, 255, 0.5);
+                opacity: 0;
+                border-radius: 100%;
+                transform: scale(1, 1) translate(-50%);
+                transform-origin: 50% 50%;
+            }
+
+            .attachment-action-btn.delete:hover::after {
+                animation: ripple-red 1s ease-out;
+            }
+
+            @keyframes ripple-red {
+                0% {
+                    transform: scale(0, 0);
+                    opacity: 0.5;
+                }
+                100% {
+                    transform: scale(20, 20);
+                    opacity: 0;
+                }
             }
 
             /* تحسينات التجاوب */
@@ -1765,68 +1709,14 @@
                     width: 100%;
                 }
             }
-            /* تصميم أزرار الحذف باللون الأحمر */
-            .attachment-action-btn.delete {
-                background: var(--gradient-danger) !important;
-                color: white !important;
-                border-color: var(--success-500);
-            }
-
-            .attachment-action-btn.delete:hover {
-                background: linear-gradient(135deg, var(--danger-600), var(--danger-700)) !important;
-                color: white !important;
-                border-color: var(--danger-600) !important;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
-            }
-
-            .attachment-action-btn.delete:active {
-                transform: translateY(0);
-                box-shadow: 0 1px 4px rgba(239, 68, 68, 0.3) !important;
-            }
-            /* تأثيرات إضافية للزر الأحمر */
-            .attachment-action-btn.delete {
-                position: relative;
-                overflow: hidden;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .attachment-action-btn.delete::after {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 5px;
-                height: 5px;
-                background: rgba(255, 255, 255, 0.5);
-                opacity: 0;
-                border-radius: 100%;
-                transform: scale(1, 1) translate(-50%);
-                transform-origin: 50% 50%;
-            }
-
-            .attachment-action-btn.delete:hover::after {
-                animation: ripple-red 1s ease-out;
-            }
-
-            @keyframes ripple-red {
-                0% {
-                    transform: scale(0, 0);
-                    opacity: 0.5;
-                }
-                100% {
-                    transform: scale(20, 20);
-                    opacity: 0;
-                }
-            }
-
         </style>
-
     </ui:define>
+
     <ui:define name="section-content">
         <h:form id="form">
             <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" life="5000" />
-            <!-- قسم إدارة المسودات الجديد -->
+
+            <!-- قسم إدارة المسودات الجديد باللون الأخضر الفاتح -->
             <div class="draft-management-section">
                 <div class="draft-management-header">
                     <i class="pi pi-cloud-upload"></i>
@@ -1846,7 +1736,7 @@
                                      update="@form" process="@this"
                                      styleClass="draft-button-rounded draft-button-load"
                                      onstart="showLoadingIndicator();"
-                                     oncomplete="setTimeout(triggerGoldenGlow, 1000);"
+                                     oncomplete="setTimeout(triggerMintGlow, 1000);"
                                      rendered="#{inspectionFormBean.inspectorVisible}" />
                 </div>
 
@@ -1867,8 +1757,8 @@
 
             <!-- مؤشر التحميل -->
             <p:outputPanel id="loadingIndicator" style="display:none; text-align: center; padding: 1rem;" styleClass="loading-indicator">
-                <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: var(--gold-500);"></i>
-                <p style="margin-top: 0.5rem; color: var(--gold-600);">Loading draft, please wait...</p>
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: var(--mint-500);"></i>
+                <p style="margin-top: 0.5rem; color: var(--mint-600);">Loading draft, please wait...</p>
             </p:outputPanel>
 
             <!-- remoteCommand to set savingDraft flag on the server BEFORE the real submit -->
@@ -1915,8 +1805,8 @@
                     }
                 }
 
-                // دالة محسنة لتأثير التوهج الذهبي مع تأخير
-                function triggerGoldenGlow() {
+                // دالة محسنة لتأثير التوهج الأخضر
+                function triggerMintGlow() {
                     console.log('loading draft');
 
                     // إخفاء مؤشر التحميل
@@ -1933,11 +1823,11 @@
                     // إضافة تأثير التوهج لكل حقل
                     formElements.forEach((element, index) => {
                         setTimeout(() => {
-                            element.classList.add('golden-glow');
+                            element.classList.add('mint-glow');
 
                             // إزالة التأثير بعد انتهاء الرسوم المتحركة
                             setTimeout(() => {
-                                element.classList.remove('golden-glow');
+                                element.classList.remove('mint-glow');
                             }, 1000);
                         }, index * 30); // تأثير متتالي للحقول
                     });
@@ -1946,7 +1836,7 @@
                     const mainCard = document.querySelector('.card');
                     if (mainCard) {
                         mainCard.style.transition = 'all 0.5s ease';
-                        mainCard.style.boxShadow = '0 0 30px rgba(253, 180, 20, 0.4), var(--shadow-xl)';
+                        mainCard.style.boxShadow = '0 0 30px rgba(20, 184, 166, 0.4), var(--shadow-xl)';
                         setTimeout(() => {
                             mainCard.style.boxShadow = '';
                         }, 1000);
@@ -1968,8 +1858,9 @@
                     console.log('draft loaded successfully');
                 });
             </script>
-            <!-- Main Form Card -->
-            <div class="card">
+
+            <!-- Main Form Card - باللون الأساسي -->
+            <div class="card basic-info-card">
                 <div class="section-header">
                     <h3 class="smat-label">#{inspectionFormBean.formTemplate.title}</h3>
                     <p:badge value="INSPECTION FORM" severity="info" styleClass="badge-lg" />
@@ -2128,10 +2019,10 @@
 
             <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
 
-            <!-- Dynamic Content Panel with Horizontal Scroll -->
-            <div class="card">
+            <!-- Dynamic Content Panel with Horizontal Scroll - باللون البنفسجي -->
+            <div class="card dynamic-content-card">
                 <div class="section-header">
-                    <h4 style="color: var(--gold-800); margin: 0; font-family: 'Playfair Display', serif;">
+                    <h4 style="color: var(--purple-800); margin: 0; font-family: 'Playfair Display', serif;">
                         <i class="pi pi-table" style="margin-right: 10px;"></i>
                         #{inspectionFormBean.formTemplate.title} - Details
                     </h4>
@@ -2195,8 +2086,8 @@
                             </ui:repeat>
                             <f:facet name="footer">
                                 <p:row>
-                                    <p:column colspan="12" style="text-align: center; padding: 1rem; background: var(--gold-50);">
-                                        <i class="pi pi-info-circle" style="margin-right: 8px; color: var(--gold-600);"></i>
+                                    <p:column colspan="12" style="text-align: center; padding: 1rem; background: var(--purple-50);">
+                                        <i class="pi pi-info-circle" style="margin-right: 8px; color: var(--purple-600);"></i>
                                         End of Inspection Details
                                     </p:column>
                                 </p:row>
@@ -2215,10 +2106,10 @@
 
             <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
 
-            <!-- Review and Actions Section -->
-            <div class="card">
+            <!-- Review and Actions Section - باللون الأزرق -->
+            <div class="card approval-card">
                 <div class="section-header">
-                    <h4 style="color: var(--gold-800); margin: 0; font-family: 'Playfair Display', serif;">
+                    <h4 style="color: var(--primary-800); margin: 0; font-family: 'Playfair Display', serif;">
                         <i class="pi pi-check-circle" style="margin-right: 10px;"></i>
                         Approval Process
                     </h4>
@@ -2292,7 +2183,7 @@
                     </div>
                 </div>
 
-                <!-- Attachments section - التصميم الجديد -->
+                <!-- Attachments section - باللون البنفسجي -->
                 <h:panelGroup id="ins_attachments_section" layout="block" styleClass="attachments-section">
                     <div class="attachments-header">
                         <div class="attachments-title">
@@ -2329,7 +2220,7 @@
                                       style="width: 100%;" />
                     </div>
 
-                    <!-- Attachments Grid - التصميم الجديد -->
+                    <!-- Attachments Grid -->
                     <h:panelGroup id="ins_attachments_wrapper" rendered="#{not empty inspectionFormBean.attachmentFiles}">
                         <div class="attachments-grid" id="ins_attachments_list">
                             <c:forEach items="#{inspectionFormBean.attachmentFiles}" var="archiveDocumentFile" varStatus="loop">
@@ -2384,16 +2275,16 @@
                 </h:panelGroup>
 
                 <div class="action-buttons-compact">
-                    <!-- Save/Done Button - Golden Primary -->
+                    <!-- Save/Done Button - Primary -->
                     <p:commandButton id="commandButton_save"
                                      value="#{inspectionFormBean.disabled ? 'Approve' : interfaceLabel.save}"
                                      icon="#{inspectionFormBean.disabled ? 'pi pi-check-circle' : 'pi pi-save'}"
                                      pt:data-tooltip="#{inspectionFormBean.disabled ? 'Done' : interfaceLabel.save}"
                                      process="@form" action="#{inspectionFormBean.doSave()}"
                                      update="@form" disabled="#{inspectionFormBean.step.equals('03')}"
-                                     styleClass="btn-golden-primary rounded-btn" />
+                                     styleClass="btn-primary rounded-btn" />
 
-                    <!-- Return Button - Golden Orange -->
+                    <!-- Return Button - Hazel -->
                     <p:commandButton id="commandButton_return"
                                      value="#{interfaceLabel.returnToInspector}"
                                      disabled="#{inspectionFormBean.step.equals('03')}"
@@ -2401,25 +2292,25 @@
                                      pt:data-tooltip="#{interfaceLabel.returnToInspector}"
                                      process="@form" update="@([id$=messages])"
                                      action="#{inspectionFormBean.returnToInspector()}"
-                                     styleClass="btn-golden-orange rounded-btn" />
+                                     styleClass="btn-hazel rounded-btn" />
 
-                    <!-- Print Button - Golden Blue -->
+                    <!-- Print Button - Mint -->
                     <p:commandButton id="commandButton_print"
                                      rendered="#{inspectionFormBean.step.equals('03')}"
                                      action="#{inspectionFormBean.doPrint()}"
                                      value="#{interfaceLabel.print}" icon="pi pi-print"
                                      pt:data-tooltip="#{interfaceLabel.print}"
-                                     styleClass="btn-golden-blue rounded-btn"
+                                     styleClass="btn-mint rounded-btn"
                                      onstart="PF('statusDialog').show();"
                                      onclick="window.open('#{request.contextPath}/attachments/zip?type=ins&amp;reportNo=' + encodeURIComponent('#{inspectionFormBean.equipmentInspectionForm.reportNo}'))"
                                      oncomplete="PF('statusDialog').hide(); setTimeout(function(){ window.print(); }, 800);" />
 
-                    <!-- Cancel Button - Golden Red -->
+                    <!-- Cancel Button - Danger -->
                     <p:button id="commandButton_cancel"
                               value="Return"
                               icon="pi pi-times"
                               pt:data-tooltip="Return"
-                              styleClass="btn-golden-red rounded-btn"
+                              styleClass="btn-danger rounded-btn"
                               outcome="pretty:inspection/my-tasks" />
                 </div>
             </div>
@@ -2432,7 +2323,7 @@
                   header="#{interfaceLabel.processing}" draggable="false"
                   closable="false" resizable="false" styleClass="glass-dialog">
             <div style="text-align: center; padding: 2.5rem;">
-                <i class="pi pi-spinner pi-spin" style="font-size: 3.5rem; color: var(--gold-500);"></i>
+                <i class="pi pi-spinner pi-spin" style="font-size: 3.5rem; color: var(--primary-500);"></i>
                 <p style="margin-top: 1.75rem; color: var(--text-primary); font-weight: 600; font-size: 1.1rem;">Processing your request...</p>
                 <p style="color: var(--text-secondary); font-size: 0.9rem;">Please wait while we complete your action</p>
             </div>

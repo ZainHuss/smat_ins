@@ -15,59 +15,89 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
         <style>
-            /* Golden Luxury Theme with Premium Glassmorphism */
+            /* نظام الألوان الجديد - أخضر فاتح، عسلي، بنفسجي */
             :root {
-                --gold-50: #fffbf0;
-                --gold-100: #fef7e0;
-                --gold-200: #fef0c7;
-                --gold-300: #fedf89;
-                --gold-400: #fec84b;
-                --gold-500: #fdb414;
-                --gold-600: #dc9200;
-                --gold-700: #b26d00;
-                --gold-800: #925a00;
-                --gold-900: #783f00;
+                /* الألوان الأساسية */
+                --primary-50: #f0f9ff;
+                --primary-100: #e0f2fe;
+                --primary-200: #bae6fd;
+                --primary-300: #7dd3fc;
+                --primary-400: #38bdf8;
+                --primary-500: #0ea5e9;
+                --primary-600: #0284c7;
+                --primary-700: #0369a1;
+                --primary-800: #075985;
+                --primary-900: #0c4a6e;
 
-                --primary-50: var(--gold-50);
-                --primary-100: var(--gold-100);
-                --primary-200: var(--gold-200);
-                --primary-300: var(--gold-300);
-                --primary-400: var(--gold-400);
-                --primary-500: var(--gold-500);
-                --primary-600: var(--gold-600);
-                --primary-700: var(--gold-700);
-                --primary-800: var(--gold-800);
-                --primary-900: var(--gold-900);
+                /* الأخضر الفاتح */
+                --mint-50: #f0fdfa;
+                --mint-100: #ccfbf1;
+                --mint-200: #99f6e4;
+                --mint-300: #5eead4;
+                --mint-400: #2dd4bf;
+                --mint-500: #14b8a6;
+                --mint-600: #0d9488;
+                --mint-700: #0f766e;
+                --mint-800: #115e59;
+                --mint-900: #134e4a;
 
-                --primary-color: var(--gold-600);
-                --primary-light: rgba(220, 146, 0, 0.15);
-                --secondary-color: var(--gold-800);
-                --accent-color: #c9a96e;
-                --success-color: #a8c26a;
-                --warning-color: #e6b450;
-                --error-color: #d9776e;
+                /* العسلي */
+                --hazel-50: #fefce8;
+                --hazel-100: #fef9c3;
+                --hazel-200: #fef08a;
+                --hazel-300: #fde047;
+                --hazel-400: #facc15;
+                --hazel-500: #eab308;
+                --hazel-600: #ca8a04;
+                --hazel-700: #a16207;
+                --hazel-800: #854d0e;
+                --hazel-900: #713f12;
 
-                --text-primary: #2c2c2c;
-                --text-secondary: #5a5a5a;
-                --surface-color: rgba(255, 253, 248, 0.92);
-                --surface-hover: rgba(255, 252, 242, 0.98);
-                --border-color: rgba(220, 200, 167, 0.4);
-                --required-color: #d9776e;
+                /* البنفسجي */
+                --purple-50: #faf5ff;
+                --purple-100: #f3e8ff;
+                --purple-200: #e9d5ff;
+                --purple-300: #d8b4fe;
+                --purple-400: #c084fc;
+                --purple-500: #a855f7;
+                --purple-600: #9333ea;
+                --purple-700: #7c3aed;
+                --purple-800: #6b21a8;
+                --purple-900: #581c87;
 
-                --shadow-sm: 0 1px 3px rgba(120, 63, 0, 0.08);
-                --shadow-md: 0 4px 12px rgba(120, 63, 0, 0.12);
-                --shadow-lg: 0 10px 25px rgba(120, 63, 0, 0.15);
-                --shadow-xl: 0 20px 40px rgba(120, 63, 0, 0.18);
-                --glass-shadow: 0 8px 32px 0 rgba(120, 63, 0, 0.15);
-                --glass-border: 1px solid rgba(255, 248, 225, 0.3);
+                /* الألوان المساعدة */
+                --success-color: #22c55e;
+                --warning-color: #eab308;
+                --error-color: #ef4444;
+                --info-color: #0ea5e9;
 
-                --gradient-primary: linear-gradient(135deg, var(--gold-500) 0%, var(--gold-700) 100%);
-                --gradient-gold: linear-gradient(135deg, #fdb414 0%, #b26d00 100%);
-                --gradient-premium: linear-gradient(135deg, #fdb414 0%, #dc9200 50%, #b26d00 100%);
-                --gradient-accent: linear-gradient(135deg, #c9a96e 0%, #a88b5e 100%);
-                --gradient-card: linear-gradient(135deg, rgba(255, 253, 248, 0.96) 0%, rgba(255, 252, 242, 0.98) 100%);
-                --neon-glow: 0 0 15px rgba(253, 180, 20, 0.3);
-                --golden-glow: 0 0 20px rgba(253, 180, 20, 0.4);
+                --text-primary: #1e293b;
+                --text-secondary: #64748b;
+                --surface-color: rgba(255, 255, 255, 0.92);
+                --surface-hover: rgba(248, 250, 252, 0.98);
+                --border-color: rgba(203, 213, 225, 0.4);
+                --required-color: #ef4444;
+
+                --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+                --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
+                --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.15);
+                --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.18);
+                --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.15);
+                --glass-border: 1px solid rgba(226, 232, 240, 0.3);
+
+                --gradient-mint: linear-gradient(135deg, var(--mint-400) 0%, var(--mint-600) 100%);
+                --gradient-purple: linear-gradient(135deg, var(--purple-400) 0%, var(--purple-600) 100%);
+                --gradient-hazel: linear-gradient(135deg, var(--hazel-400) 0%, var(--hazel-600) 100%);
+                --gradient-primary: linear-gradient(135deg, var(--primary-400) 0%, var(--primary-600) 100%);
+                --gradient-success: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+                --gradient-warning: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+                --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.98) 100%);
+
+                --neon-glow: 0 0 15px rgba(20, 184, 166, 0.3);
+                --mint-glow: 0 0 20px rgba(20, 184, 166, 0.4);
+                --purple-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+                --hazel-glow: 0 0 20px rgba(234, 179, 8, 0.4);
 
                 --border-radius-sm: 8px;
                 --border-radius-md: 12px;
@@ -84,14 +114,14 @@
             }
 
             body {
-                background-color: #fefaf0 !important;
+                background-color: #f8fafc !important;
                 background-image:
-                        radial-gradient(at 40% 20%, rgba(254, 244, 215, 0.7) 0px, transparent 50%),
-                        radial-gradient(at 80% 0%, rgba(254, 247, 224, 0.5) 0px, transparent 50%),
-                        radial-gradient(at 0% 50%, rgba(255, 251, 240, 0.6) 0px, transparent 50%),
-                        radial-gradient(at 80% 50%, rgba(254, 240, 199, 0.4) 0px, transparent 50%),
-                        radial-gradient(at 0% 100%, rgba(254, 223, 137, 0.3) 0px, transparent 50%),
-                        radial-gradient(at 80% 100%, rgba(254, 200, 75, 0.2) 0px, transparent 50%),
+                        radial-gradient(at 40% 20%, rgba(226, 232, 240, 0.7) 0px, transparent 50%),
+                        radial-gradient(at 80% 0%, rgba(241, 245, 249, 0.5) 0px, transparent 50%),
+                        radial-gradient(at 0% 50%, rgba(248, 250, 252, 0.6) 0px, transparent 50%),
+                        radial-gradient(at 80% 50%, rgba(203, 213, 225, 0.4) 0px, transparent 50%),
+                        radial-gradient(at 0% 100%, rgba(148, 163, 184, 0.3) 0px, transparent 50%),
+                        radial-gradient(at 80% 100%, rgba(100, 116, 139, 0.2) 0px, transparent 50%),
                         radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%);
                 background-attachment: fixed;
                 min-height: 100vh;
@@ -100,7 +130,7 @@
                 line-height: 1.6;
             }
 
-            /* Premium Card Styling with Golden Accents */
+            /* Premium Card Styling with New Color Accents */
             .card {
                 background: var(--gradient-card);
                 border-radius: var(--border-radius-lg);
@@ -115,7 +145,7 @@
                 animation: cardSlideIn 0.6s ease-out;
                 padding: 2rem;
                 transition: var(--transition-slow);
-                border-top: 1px solid rgba(255, 248, 225, 0.8);
+                border-top: 1px solid rgba(226, 232, 240, 0.8);
             }
 
             .card:before {
@@ -125,8 +155,35 @@
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: var(--gradient-premium);
+                background: var(--gradient-primary);
                 z-index: 1;
+            }
+
+            /* Main Info Card - باللون العسلي */
+            .main-info-card {
+                border-top: 4px solid var(--hazel-500);
+            }
+
+            .main-info-card:before {
+                background: var(--gradient-hazel);
+            }
+
+            /* Photo Upload Card - باللون الأخضر الفاتح */
+            .photo-upload-card {
+                border-top: 4px solid var(--mint-500);
+            }
+
+            .photo-upload-card:before {
+                background: var(--gradient-mint);
+            }
+
+            /* Approval Card - باللون البنفسجي */
+            .approval-card {
+                border-top: 4px solid var(--purple-500);
+            }
+
+            .approval-card:before {
+                background: var(--gradient-purple);
             }
 
             .card + .card {
@@ -146,17 +203,29 @@
 
             .card:hover {
                 transform: translateY(-8px);
-                box-shadow: var(--shadow-xl), var(--golden-glow), 0 8px 25px rgba(253, 180, 20, 0.25);
+                box-shadow: var(--shadow-xl), 0 8px 25px rgba(15, 23, 42, 0.15);
             }
 
-            /* Form Title with Premium Golden Style */
+            .main-info-card:hover {
+                box-shadow: var(--shadow-xl), var(--hazel-glow);
+            }
+
+            .photo-upload-card:hover {
+                box-shadow: var(--shadow-xl), var(--mint-glow);
+            }
+
+            .approval-card:hover {
+                box-shadow: var(--shadow-xl), var(--purple-glow);
+            }
+
+            /* Form Title with New Color Style */
             .form-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 2rem;
                 padding-bottom: 1.25rem;
-                border-bottom: 1px solid rgba(220, 200, 167, 0.3);
+                border-bottom: 1px solid rgba(203, 213, 225, 0.3);
                 position: relative;
             }
 
@@ -167,14 +236,14 @@
                 left: 0;
                 width: 100px;
                 height: 2px;
-                background: var(--gradient-gold);
+                background: var(--gradient-primary);
                 border-radius: 2px;
             }
 
             .form-title {
                 font-size: 1.85rem;
                 font-weight: 700;
-                color: var(--gold-800);
+                color: var(--primary-800);
                 margin: 0;
                 position: relative;
                 display: inline-block;
@@ -189,7 +258,7 @@
                 left: 0;
                 width: 60px;
                 height: 3px;
-                background: var(--gradient-premium);
+                background: var(--gradient-primary);
                 border-radius: 3px;
                 transition: width 0.4s ease;
             }
@@ -225,7 +294,7 @@
                 height: 8px;
                 background: var(--required-color);
                 border-radius: 50%;
-                box-shadow: 0 0 0 2px rgba(217, 119, 110, 0.4);
+                box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
                 animation: pulse 1.5s infinite;
                 z-index: 2;
             }
@@ -233,15 +302,15 @@
             @keyframes pulse {
                 0% {
                     opacity: 0.6;
-                    box-shadow: 0 0 0 2px rgba(217, 119, 110, 0.4);
+                    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
                 }
                 50% {
                     opacity: 1;
-                    box-shadow: 0 0 0 4px rgba(217, 119, 110, 0.6);
+                    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.6);
                 }
                 100% {
                     opacity: 0.6;
-                    box-shadow: 0 0 0 2px rgba(217, 119, 110, 0.4);
+                    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
                 }
             }
 
@@ -264,8 +333,8 @@
             .ui-calendar:focus,
             .ui-inputtextarea:focus {
                 outline: none;
-                border-color: var(--gold-500);
-                box-shadow: 0 0 0 3px var(--primary-light), var(--shadow-md), var(--neon-glow);
+                border-color: var(--primary-500);
+                box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15), var(--shadow-md);
                 background: white;
                 transform: translateY(-2px);
             }
@@ -274,8 +343,8 @@
             .ui-selectonemenu:hover,
             .ui-calendar:hover,
             .ui-inputtextarea:hover {
-                border-color: var(--gold-400);
-                box-shadow: var(--shadow-sm), 0 0 0 1px rgba(253, 180, 20, 0.2);
+                border-color: var(--primary-400);
+                box-shadow: var(--shadow-sm), 0 0 0 1px rgba(14, 165, 233, 0.2);
             }
 
             /* Labels */
@@ -301,16 +370,16 @@
                 top: -10px;
                 left: 12px;
                 font-size: 0.75rem;
-                background: linear-gradient(to bottom, #fffbf0, #fffdf8);
+                background: linear-gradient(to bottom, #f8fafc, #ffffff);
                 padding: 0 8px;
-                color: var(--gold-700);
+                color: var(--primary-700);
                 font-weight: 600;
                 z-index: 1;
                 border-radius: 12px;
                 box-shadow: 0 0 0 1px white;
                 transition: var(--transition-base);
                 letter-spacing: 0.5px;
-                border: 1px solid rgba(220, 200, 167, 0.3);
+                border: 1px solid rgba(203, 213, 225, 0.3);
             }
 
             .floating-label.required:after {
@@ -322,7 +391,7 @@
                 top: -1px;
             }
 
-            /* Premium Button Styling with Golden Effects */
+            /* Premium Button Styling with New Color Effects */
             .ui-button {
                 border-radius: var(--border-radius-pill) !important;
                 font-weight: 600 !important;
@@ -389,7 +458,7 @@
 
             .ui-button:hover {
                 transform: translateY(-4px) scale(1.03) !important;
-                box-shadow: var(--shadow-lg), var(--neon-glow) !important;
+                box-shadow: var(--shadow-lg) !important;
             }
 
             .ui-button:hover:after {
@@ -401,59 +470,68 @@
             }
 
             .ui-button-primary {
-                background: var(--gradient-premium) !important;
+                background: var(--gradient-primary) !important;
                 color: white !important;
             }
 
             .ui-button-primary:hover {
-                box-shadow: 0 8px 20px rgba(253, 180, 20, 0.4) !important;
+                box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4) !important;
+            }
+
+            .ui-button-mint {
+                background: var(--gradient-mint) !important;
+                color: white !important;
+            }
+
+            .ui-button-mint:hover {
+                box-shadow: 0 8px 20px rgba(20, 184, 166, 0.4) !important;
+            }
+
+            .ui-button-purple {
+                background: var(--gradient-purple) !important;
+                color: white !important;
+            }
+
+            .ui-button-purple:hover {
+                box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4) !important;
+            }
+
+            .ui-button-hazel {
+                background: var(--gradient-hazel) !important;
+                color: white !important;
+            }
+
+            .ui-button-hazel:hover {
+                box-shadow: 0 8px 20px rgba(234, 179, 8, 0.4) !important;
             }
 
             .ui-button-danger {
-                background: linear-gradient(135deg, #d9776e 0%, #b75a52 100%) !important;
+                background: var(--gradient-danger) !important;
                 color: white !important;
             }
 
             .ui-button-danger:hover {
-                box-shadow: 0 8px 20px rgba(217, 119, 110, 0.4) !important;
-            }
-
-            .ui-button-warning {
-                background: linear-gradient(135deg, #e6b450 0%, #d19d3a 100%) !important;
-                color: white !important;
-            }
-
-            .ui-button-warning:hover {
-                box-shadow: 0 8px 20px rgba(230, 180, 80, 0.4) !important;
+                box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4) !important;
             }
 
             .ui-button-success {
-                background: linear-gradient(135deg, #a8c26a 0%, #8fa856 100%) !important;
+                background: var(--gradient-success) !important;
                 color: white !important;
             }
 
             .ui-button-success:hover {
-                box-shadow: 0 8px 20px rgba(168, 194, 106, 0.4) !important;
-            }
-
-            .ui-button-help {
-                background: linear-gradient(135deg, var(--gold-400) 0%, var(--gold-600) 100%) !important;
-                color: white !important;
-            }
-
-            .ui-button-help:hover {
-                box-shadow: 0 8px 20px rgba(254, 200, 75, 0.4) !important;
+                box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4) !important;
             }
 
             .ui-button-secondary {
-                background: linear-gradient(135deg, #e8dfca 0%, #d4c9ad 100%) !important;
+                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
                 color: var(--text-primary) !important;
-                border: 1px solid rgba(220, 200, 167, 0.5) !important;
+                border: 1px solid rgba(203, 213, 225, 0.5) !important;
             }
 
             .ui-button-secondary:hover {
-                box-shadow: 0 8px 20px rgba(232, 223, 202, 0.4) !important;
-                background: linear-gradient(135deg, #e8dfca 0%, #d4c9ad 100%) !important;
+                box-shadow: 0 8px 20px rgba(241, 245, 249, 0.4) !important;
+                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
             }
 
             .ui-tooltip {
@@ -464,28 +542,17 @@
                 border-radius: var(--border-radius-md) !important;
                 padding: 0.75rem 1rem !important;
                 font-size: 0.85rem !important;
-                border-top: 2px solid var(--gold-500);
+                border-top: 2px solid var(--primary-500);
             }
 
-            /* Loading Spinner Animation */
-            .ui-spinner .ui-spinner-input {
-                padding-right: 2.8em !important;
-            }
-
-            .ui-spinner .ui-spinner-button {
-                background: var(--gradient-premium) !important;
-                color: white !important;
-                width: 1.8em !important;
-            }
-
-            /* Premium Photo Upload Section */
+            /* Premium Photo Upload Section - باللون الأخضر الفاتح */
             .photo-upload-section {
                 background: var(--surface-color);
                 border-radius: var(--border-radius-lg);
                 padding: 2rem;
                 margin-bottom: 2rem;
                 box-shadow: var(--shadow-md);
-                border-left: 3px solid var(--gold-400);
+                border-left: 3px solid var(--mint-400);
                 position: relative;
                 overflow: hidden;
             }
@@ -497,7 +564,7 @@
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: var(--gradient-premium);
+                background: var(--gradient-mint);
             }
 
             .photo-upload-header {
@@ -506,13 +573,13 @@
                 align-items: center;
                 margin-bottom: 1.75rem;
                 padding-bottom: 1rem;
-                border-bottom: 1px solid rgba(220, 200, 167, 0.3);
+                border-bottom: 1px solid rgba(203, 213, 225, 0.3);
             }
 
             .photo-upload-title {
                 font-size: 1.4rem;
                 font-weight: 700;
-                color: var(--gold-800);
+                color: var(--mint-800);
                 margin: 0;
                 display: flex;
                 align-items: center;
@@ -579,9 +646,9 @@
             }
 
             .photo-preview-container:hover {
-                border-color: var(--gold-500);
+                border-color: var(--mint-500);
                 transform: scale(1.05);
-                box-shadow: var(--golden-glow), 0 8px 20px rgba(253, 180, 20, 0.25);
+                box-shadow: var(--mint-glow), 0 8px 20px rgba(20, 184, 166, 0.25);
             }
 
             .photo-overlay {
@@ -590,7 +657,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(255, 251, 240, 0.85);
+                background: rgba(240, 253, 250, 0.85);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -602,7 +669,7 @@
 
             .photo-overlay i {
                 font-size: 3.5rem;
-                color: var(--gold-400);
+                color: var(--mint-400);
             }
 
             .photo-preview-image {
@@ -628,7 +695,7 @@
             }
 
             .ui-signature:hover {
-                border-color: var(--gold-500);
+                border-color: var(--primary-500);
                 box-shadow: var(--neon-glow);
             }
 
@@ -637,7 +704,7 @@
                 margin: 2rem 0;
                 border: none;
                 height: 1px;
-                background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
+                background: linear-gradient(90deg, transparent, var(--primary-400), transparent);
                 opacity: 0.5;
             }
 
@@ -651,7 +718,7 @@
                 align-items: center;
                 width: 100%;
                 padding-top: 1.5rem;
-                border-top: 1px solid rgba(220, 200, 167, 0.3);
+                border-top: 1px solid rgba(203, 213, 225, 0.3);
             }
 
             .button-group-left {
@@ -688,7 +755,7 @@
 
             .button-group-actions .ui-button:hover {
                 z-index: 3;
-                box-shadow: 0 8px 20px rgba(120, 63, 0, 0.2) !important;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2) !important;
             }
 
             /* Primary Button Enhancements */
@@ -707,7 +774,7 @@
 
             .button-group-actions .ui-button-secondary:hover {
                 background: var(--surface-hover) !important;
-                border-color: var(--gold-400) !important;
+                border-color: var(--primary-400) !important;
             }
 
             /* Responsive Adjustments */
@@ -780,13 +847,13 @@
 
             /* Premium Status Dialog */
             .ui-dialog.glass-dialog {
-                background: rgba(255, 253, 248, 0.95);
+                background: rgba(255, 255, 255, 0.95);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
                 border-radius: var(--border-radius-lg);
                 border: var(--glass-border);
                 box-shadow: var(--shadow-xl), var(--glass-shadow);
-                border-top: 4px solid var(--gold-500);
+                border-top: 4px solid var(--primary-500);
             }
 
             /* Premium Viewer Dialog */
@@ -797,7 +864,7 @@
                 border: var(--glass-border) !important;
                 box-shadow: var(--shadow-xl), var(--glass-shadow) !important;
                 backdrop-filter: blur(12px) !important;
-                border-top: 4px solid var(--gold-500);
+                border-top: 4px solid var(--primary-500);
             }
 
             /* Additional fixes for PrimeFaces components */
@@ -815,7 +882,7 @@
 
             /* Premium File Upload Styling */
             .ui-fileupload-choose {
-                background: var(--gradient-premium) !important;
+                background: var(--gradient-primary) !important;
                 color: white !important;
                 border-radius: var(--border-radius-pill) !important;
                 padding: 0.75rem 1.75rem !important;
@@ -842,13 +909,13 @@
                 backdrop-filter: blur(10px) !important;
                 background: var(--surface-color) !important;
                 border: var(--glass-border) !important;
-                border-top: 3px solid var(--gold-500);
+                border-top: 3px solid var(--primary-500);
             }
 
             /* Input Error Styling */
             .ui-state-error {
                 border-color: var(--error-color) !important;
-                background: rgba(217, 119, 110, 0.08) !important;
+                background: rgba(239, 68, 68, 0.08) !important;
             }
 
             .ui-message-error {
@@ -865,17 +932,17 @@
             }
 
             ::-webkit-scrollbar-track {
-                background: rgba(220, 200, 167, 0.1);
+                background: rgba(203, 213, 225, 0.1);
                 border-radius: 10px;
             }
 
             ::-webkit-scrollbar-thumb {
-                background: linear-gradient(to bottom, var(--gold-400), var(--gold-600));
+                background: linear-gradient(to bottom, var(--primary-400), var(--primary-600));
                 border-radius: 10px;
             }
 
             ::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(to bottom, var(--gold-500), var(--gold-700));
+                background: linear-gradient(to bottom, var(--primary-500), var(--primary-700));
             }
 
             /* Premium File Uploader Styling */
@@ -889,13 +956,13 @@
             }
 
             .modern-uploader .ui-fileupload-buttonbar:hover {
-                border-color: var(--gold-500) !important;
-                background: rgba(253, 180, 20, 0.08) !important;
+                border-color: var(--primary-500) !important;
+                background: rgba(14, 165, 233, 0.08) !important;
                 box-shadow: var(--neon-glow);
             }
 
             .modern-uploader .ui-fileupload-choose {
-                background: var(--gradient-premium) !important;
+                background: var(--gradient-primary) !important;
                 color: white !important;
                 border-radius: var(--border-radius-pill) !important;
                 padding: 0.75rem 1.75rem !important;
@@ -930,14 +997,14 @@
                 background: var(--surface-hover) !important;
                 transform: translateY(-3px);
                 box-shadow: var(--shadow-sm) !important;
-                border-color: var(--gold-300);
+                border-color: var(--primary-300);
             }
 
             /* Drag and Drop Highlight */
             .modern-uploader .ui-fileupload-buttonbar.ui-state-highlight {
-                border-color: var(--gold-500) !important;
-                background: rgba(253, 180, 20, 0.15) !important;
-                box-shadow: 0 0 0 3px var(--primary-light), var(--neon-glow) !important;
+                border-color: var(--primary-500) !important;
+                background: rgba(14, 165, 233, 0.15) !important;
+                box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15) !important;
             }
 
             /* Default Avatar Image */
@@ -949,10 +1016,10 @@
             .section-title {
                 font-size: 1.5rem;
                 font-weight: 700;
-                color: var(--gold-800);
+                color: var(--primary-800);
                 margin: 2rem 0 1.25rem;
                 padding-bottom: 0.75rem;
-                border-bottom: 1px solid rgba(220, 200, 167, 0.3);
+                border-bottom: 1px solid rgba(203, 213, 225, 0.3);
                 font-family: 'Playfair Display', serif;
                 position: relative;
             }
@@ -964,13 +1031,13 @@
                 left: 0;
                 width: 60px;
                 height: 2px;
-                background: var(--gradient-gold);
+                background: var(--gradient-primary);
                 border-radius: 2px;
             }
 
             /* Approval Section Styling */
             .approval-section {
-                border-top: 4px solid var(--gold-500);
+                border-top: 4px solid var(--purple-500);
                 position: relative;
             }
 
@@ -981,7 +1048,7 @@
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: var(--gradient-premium);
+                background: var(--gradient-purple);
             }
 
             /* Badge Styling */
@@ -998,17 +1065,17 @@
             }
 
             /* ==========================================================================
-               تحسينات جديدة لقسم المرفقات (Attachments) - من القالب الثاني
+               تحسينات جديدة لقسم المرفقات (Attachments) - بالألوان الجديدة
                ========================================================================== */
 
-            /* تصميم جديد ومحسّن لقسم المرفقات */
+            /* تصميم جديد ومحسّن لقسم المرفقات باللون البنفسجي */
             .attachments-section {
                 margin-top: 2rem;
                 padding: 1.5rem;
-                background: linear-gradient(135deg, rgba(255, 253, 248, 0.95) 0%, rgba(255, 252, 242, 0.98) 100%);
+                background: linear-gradient(135deg, rgba(250, 245, 255, 0.95) 0%, rgba(243, 232, 255, 0.98) 100%);
                 border-radius: var(--border-radius-lg);
-                border: 1px solid rgba(253, 180, 20, 0.3);
-                box-shadow: var(--shadow-md), 0 0 15px rgba(253, 180, 20, 0.1);
+                border: 1px solid rgba(168, 85, 247, 0.3);
+                box-shadow: var(--shadow-md), 0 0 15px rgba(168, 85, 247, 0.1);
                 position: relative;
                 overflow: hidden;
                 transition: var(--transition-base);
@@ -1021,12 +1088,12 @@
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: var(--gradient-premium);
+                background: var(--gradient-purple);
                 z-index: 1;
             }
 
             .attachments-section:hover {
-                box-shadow: var(--shadow-lg), 0 0 20px rgba(253, 180, 20, 0.15);
+                box-shadow: var(--shadow-lg), 0 0 20px rgba(168, 85, 247, 0.15);
                 transform: translateY(-2px);
             }
 
@@ -1036,7 +1103,7 @@
                 justify-content: space-between;
                 margin-bottom: 1.5rem;
                 padding-bottom: 0.75rem;
-                border-bottom: 1px solid rgba(253, 180, 20, 0.2);
+                border-bottom: 1px solid rgba(168, 85, 247, 0.2);
             }
 
             .attachments-title {
@@ -1046,24 +1113,24 @@
             }
 
             .attachments-title i {
-                color: var(--gold-500);
+                color: var(--purple-500);
                 font-size: 1.5rem;
-                filter: drop-shadow(0 0 3px rgba(253, 180, 20, 0.5));
+                filter: drop-shadow(0 0 3px rgba(168, 85, 247, 0.5));
             }
 
             .attachments-title h4 {
-                color: var(--gold-800);
+                color: var(--purple-800);
                 margin: 0;
                 font-family: 'Playfair Display', serif;
                 font-weight: 600;
-                background: var(--gradient-premium);
+                background: var(--gradient-purple);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
 
             .attachments-count {
-                background: var(--gradient-premium);
+                background: var(--gradient-purple);
                 color: white;
                 border-radius: var(--border-radius-pill);
                 padding: 0.35rem 0.75rem;
@@ -1080,9 +1147,9 @@
             }
 
             .attachment-card {
-                background: var(--surface-0);
+                background: white;
                 border-radius: var(--border-radius-lg);
-                border: 1px solid rgba(253, 180, 20, 0.2);
+                border: 1px solid rgba(168, 85, 247, 0.2);
                 box-shadow: var(--shadow-sm);
                 padding: 1.25rem;
                 transition: var(--transition-base);
@@ -1100,15 +1167,15 @@
                 left: 0;
                 right: 0;
                 height: 3px;
-                background: var(--gradient-gold);
+                background: var(--gradient-purple);
                 opacity: 0;
                 transition: var(--transition-base);
             }
 
             .attachment-card:hover {
                 transform: translateY(-5px);
-                box-shadow: var(--shadow-lg), 0 5px 15px rgba(253, 180, 20, 0.2);
-                border-color: var(--gold-300);
+                box-shadow: var(--shadow-lg), 0 5px 15px rgba(168, 85, 247, 0.2);
+                border-color: var(--purple-300);
             }
 
             .attachment-card:hover::before {
@@ -1125,18 +1192,18 @@
                 width: 48px;
                 height: 48px;
                 border-radius: var(--border-radius-md);
-                background: linear-gradient(135deg, var(--gold-100), var(--gold-200));
+                background: linear-gradient(135deg, var(--purple-100), var(--purple-200));
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-shrink: 0;
                 box-shadow: var(--shadow-sm);
-                border: 1px solid var(--gold-200);
+                border: 1px solid var(--purple-200);
             }
 
             .attachment-icon i {
                 font-size: 1.5rem;
-                color: var(--gold-600);
+                color: var(--purple-600);
             }
 
             .attachment-info {
@@ -1146,7 +1213,7 @@
 
             .attachment-code {
                 font-size: 0.75rem;
-                color: var(--gold-600);
+                color: var(--purple-600);
                 font-weight: 600;
                 margin-bottom: 0.25rem;
                 font-family: 'Poppins', sans-serif;
@@ -1178,7 +1245,7 @@
                 gap: 0.5rem;
                 margin-top: auto;
                 padding-top: 0.75rem;
-                border-top: 1px solid rgba(253, 180, 20, 0.1);
+                border-top: 1px solid rgba(168, 85, 247, 0.1);
             }
 
             .attachment-action-btn {
@@ -1186,8 +1253,8 @@
                 padding: 0.5rem;
                 border-radius: var(--border-radius-md);
                 background: var(--surface-50);
-                border: 1px solid var(--gold-100);
-                color: var(--gold-700);
+                border: 1px solid var(--purple-100);
+                color: var(--purple-700);
                 font-size: 0.8rem;
                 font-weight: 500;
                 display: flex;
@@ -1200,9 +1267,9 @@
             }
 
             .attachment-action-btn:hover {
-                background: var(--gold-50);
-                color: var(--gold-800);
-                border-color: var(--gold-300);
+                background: var(--purple-50);
+                color: var(--purple-800);
+                border-color: var(--purple-300);
                 transform: translateY(-2px);
                 box-shadow: var(--shadow-sm);
             }
@@ -1210,13 +1277,13 @@
             .attachment-action-btn.download {
                 background: var(--gradient-primary);
                 color: white;
-                border-color: var(--gold-500);
+                border-color: var(--primary-500);
             }
 
             .attachment-action-btn.download:hover {
-                background: linear-gradient(135deg, var(--gold-600), var(--gold-700));
+                background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.4);
+                box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
             }
 
             .no-attachments {
@@ -1227,7 +1294,7 @@
 
             .no-attachments i {
                 font-size: 3rem;
-                color: var(--gold-300);
+                color: var(--purple-300);
                 margin-bottom: 1rem;
                 display: block;
             }
@@ -1243,7 +1310,7 @@
                 background: var(--gradient-primary) !important;
                 color: white !important;
                 border: none !important;
-                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.3) !important;
+                box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3) !important;
                 border-radius: var(--border-radius-pill) !important;
                 padding: 0.65rem 1.5rem !important;
                 font-weight: 600 !important;
@@ -1254,9 +1321,61 @@
             }
 
             .download-all-btn:hover {
-                background: linear-gradient(135deg, var(--gold-600), var(--gold-700)) !important;
+                background: linear-gradient(135deg, var(--primary-600), var(--primary-700)) !important;
                 transform: translateY(-2px) !important;
-                box-shadow: 0 6px 20px rgba(253, 180, 20, 0.4) !important;
+                box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4) !important;
+            }
+
+            .attachment-action-btn.delete {
+                background: var(--gradient-danger) !important;
+                color: white !important;
+                border-color: var(--danger-500);
+            }
+
+            .attachment-action-btn.delete:hover {
+                background: linear-gradient(135deg, var(--danger-600), var(--danger-700)) !important;
+                border-color: var(--danger-600) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            }
+
+            /* تحسينات إضافية للأزرار */
+            .attachment-action-btn {
+                border-radius: var(--border-radius-pill) !important;
+                font-weight: 600 !important;
+                font-size: 0.8rem !important;
+                padding: 0.5rem 1rem !important;
+                transition: var(--transition-base) !important;
+                text-decoration: none !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.4rem !important;
+                min-height: 36px !important;
+                border: 1px solid transparent !important;
+            }
+
+            .attachment-action-btn i {
+                font-size: 0.9rem !important;
+            }
+
+            /* تأثيرات hover إضافية */
+            .attachment-action-btn:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            /* تخصيص زر Download */
+            .attachment-action-btn.download {
+                background: var(--gradient-primary) !important;
+                color: white !important;
+                border: 1px solid var(--primary-500) !important;
+            }
+
+            .attachment-action-btn.download:hover {
+                background: linear-gradient(135deg, var(--primary-600), var(--primary-700)) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4) !important;
             }
 
             /* تحسينات التجاوب */
@@ -1300,63 +1419,13 @@
                     width: 100%;
                 }
             }
-            .attachment-action-btn.delete {
-                background: linear-gradient(135deg, #d9776e 0%, #b75a52 100%) !important;
-                color: white !important;
-                border-color: var(--gold-500);
-            }
-
-            .attachment-action-btn.delete:hover {
-                background: linear-gradient(135deg, #b75a52 0%, #954a44 100%) !important;
-                border-color: #b75a52 !important;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(217, 119, 110, 0.4);
-            }
-            /* تحسينات إضافية للأزرار */
-            .attachment-action-btn {
-                border-radius: var(--border-radius-pill) !important;
-                font-weight: 600 !important;
-                font-size: 0.8rem !important;
-                padding: 0.5rem 1rem !important;
-                transition: var(--transition-base) !important;
-                text-decoration: none !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                gap: 0.4rem !important;
-                min-height: 36px !important;
-                border: 1px solid transparent !important;
-            }
-
-            .attachment-action-btn i {
-                font-size: 0.9rem !important;
-            }
-
-            /* تأثيرات hover إضافية */
-            .attachment-action-btn:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-            }
-
-            /* تخصيص زر Download */
-            .attachment-action-btn.download {
-                background: var(--gradient-primary) !important;
-                color: white !important;
-                border: 1px solid var(--gold-500) !important;
-            }
-
-            .attachment-action-btn.download:hover {
-                background: linear-gradient(135deg, var(--gold-600), var(--gold-700)) !important;
-                transform: translateY(-2px) !important;
-                box-shadow: 0 4px 12px rgba(253, 180, 20, 0.4) !important;
-            }
         </style>
     </ui:define>
     <ui:define name="section-content">
         <h:form id="form">
             <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" life="5000" />
 
-            <div class="card">
+            <div class="card main-info-card">
                 <div class="form-header">
                     <h3 class="form-title">Employee Certification Form</h3>
                     <div class="form-badge">
@@ -1449,8 +1518,8 @@
                     </div>
                 </div>
 
-                <!-- Employee Photo Section - Premium Version -->
-                <div class="photo-upload-section">
+                <!-- Employee Photo Section - Premium Version باللون الأخضر الفاتح -->
+                <div class="photo-upload-section photo-upload-card">
                     <div class="photo-upload-header">
                         <h4 class="photo-upload-title">
                             <i class="pi pi-image" style="margin-right: 8px;"></i>
@@ -1544,7 +1613,7 @@
                     }
                 </script>
 
-                <div class="card approval-section">
+                <div class="card approval-section approval-card">
                     <div class="form-header">
                         <h4 class="form-title">
                             <i class="pi pi-check-circle" style="margin-right: 8px;"></i>
@@ -1618,7 +1687,7 @@
                         </div>
                     </div>
 
-                    <!-- Attachments section - التصميم الجديد من القالب الثاني -->
+                    <!-- Attachments section - باللون البنفسحي الجديد -->
                     <h:panelGroup id="emp_attachments_section" layout="block" styleClass="attachments-section">
                         <div class="attachments-header">
                             <div class="attachments-title">
@@ -1646,8 +1715,8 @@
                                           multiple="true"
                                           dragDropSupport="true"
                                           allowTypes="/(\.|\/)(pdf|jpg|jpeg|png|gif|doc|docx|xls|xlsx|txt)$/"
-                                        auto="true"
-                                                      update=":form:messages :form:emp_attachments_section"
+                                          auto="true"
+                                          update=":form:messages :form:emp_attachments_section"
                                           listener="#{empCertificationBean.handleAttachmentUpload}"
                                           label="Choose Files"
                                           uploadLabel="Upload"
@@ -1735,7 +1804,7 @@
                                                  icon="pi pi-print"
                                                  pt:data-tooltip="Print"
                                                  onclick="windows.open('_blank')"
-                                                 styleClass="ui-button-help">
+                                                 styleClass="ui-button-purple">
                                 </p:commandButton>
                             </div>
 
@@ -1747,7 +1816,7 @@
                                                  icon="pi pi-print"
                                                  pt:data-tooltip="Print"
                                                  onclick="window.open('#{request.contextPath}/attachments/zip?type=emp&amp;certNo=' + encodeURIComponent('#{empCertificationBean.empCertification.certNumber}'))"
-                                                 styleClass="ui-button-help">
+                                                 styleClass="ui-button-mint">
                                 </p:commandButton>
                             </div>
                             <!-- Return Button -->
@@ -1772,7 +1841,7 @@
                                                  process="@form"
                                                  update="@([id$=messages])"
                                                  action="#{empCertificationBean.returnToIssuer}"
-                                                 styleClass="ui-button-warning">
+                                                 styleClass="ui-button-hazel">
                                 </p:commandButton>
                             </div>
                         </div>
@@ -1787,7 +1856,7 @@
                   header="#{interfaceLabel.processing}" draggable="false"
                   closable="false" resizable="false" styleClass="glass-dialog">
             <div style="text-align: center; padding: 2.5rem;">
-                <i class="pi pi-spinner pi-spin" style="font-size: 3.5rem; color: var(--gold-500);"></i>
+                <i class="pi pi-spinner pi-spin" style="font-size: 3.5rem; color: var(--primary-500);"></i>
                 <p style="margin-top: 1.75rem; color: var(--text-primary); font-weight: 600; font-size: 1.1rem;">Processing your request...</p>
                 <p style="color: var(--text-secondary); font-size: 0.9rem;">Please wait while we complete your action</p>
             </div>
