@@ -1862,7 +1862,7 @@
             <!-- Main Form Card - باللون الأساسي -->
             <div class="card basic-info-card">
                 <div class="section-header">
-                    <h3 class="smat-label">#{inspectionFormBean.formTemplate.title}</h3>
+                    <h3 style="color: var(--blue-700); margin: 0; font-family: 'Playfair Display', serif;">#{inspectionFormBean.formTemplate.title} </h3>
                     <p:badge value="INSPECTION FORM" severity="info" styleClass="badge-lg" />
                 </div>
 
@@ -2021,25 +2021,12 @@
 
             <!-- Dynamic Content Panel with Horizontal Scroll - باللون البنفسجي -->
             <div class="card dynamic-content-card">
-                <div class="section-header">
-                    <h4 style="color: var(--purple-800); margin: 0; font-family: 'Playfair Display', serif;">
-                        <i class="pi pi-table" style="margin-right: 10px;"></i>
-                        #{inspectionFormBean.formTemplate.title} - Details
-                    </h4>
-                </div>
+
 
                 <!-- إضافة حاوية التمرير الأفقي للقالب -->
                 <div class="template-scroll-container">
                     <div class="template-scroll-content">
                         <p:panelGrid id="panelGridDaynamicContent" styleClass="custom-panel-grid" layout="tabular" columns="0">
-                            <f:facet name="header">
-                                <p:row>
-                                    <p:column colspan="12" style="text-align: center; font-weight: 700; font-size: 1.1rem;">
-                                        <i class="pi pi-list" style="margin-right: 8px;"></i>
-                                        Inspection Details
-                                    </p:column>
-                                </p:row>
-                            </f:facet>
                             <ui:repeat value="#{inspectionFormBean.formRows}" var="formRow">
                                 <p:row>
                                     <ui:repeat
@@ -2084,14 +2071,6 @@
                                     </ui:repeat>
                                 </p:row>
                             </ui:repeat>
-                            <f:facet name="footer">
-                                <p:row>
-                                    <p:column colspan="12" style="text-align: center; padding: 1rem; background: var(--purple-50);">
-                                        <i class="pi pi-info-circle" style="margin-right: 8px; color: var(--purple-600);"></i>
-                                        End of Inspection Details
-                                    </p:column>
-                                </p:row>
-                            </f:facet>
                         </p:panelGrid>
                     </div>
                 </div>
