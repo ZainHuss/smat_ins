@@ -662,7 +662,7 @@ CREATE TABLE equipment_inspection_form_item(
     equipment_inspection_form    BIGINT                   NOT NULL,
     general_equipment_item       INT                      NOT NULL,
     alias_name                   NATIONAL VARCHAR(200),
-    item_value                   NATIONAL VARCHAR(18),
+    item_value                   NATIONAL VARCHAR(4000),
     PRIMARY KEY (id)
 )ENGINE=INNODB
 ;
