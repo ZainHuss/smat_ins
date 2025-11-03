@@ -745,8 +745,8 @@ public class InspectionFormBean implements Serializable {
 			equipmentTypes = equipmentTypeService.findAll();
 			companies = companyService.findAll();
 			Map<String, Object> criteria = new HashMap<String, Object>();
-			criteria.put("sysUserByForUser.id", loginBean.getUser().getId());
-			criteria.put("isUsed",false);
+			// Show all available stickers (not limited to current user)
+			criteria.put("isUsed", false);
 			stickers = stickerService.findByCriteria(criteria);
 
 

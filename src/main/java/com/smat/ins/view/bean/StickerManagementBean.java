@@ -69,6 +69,8 @@ public class StickerManagementBean implements Serializable {
 	private StickerService stickerService;
 	private List<UserAlias> userAliasList;
 	private UserAlias selectedUserAlias;
+	// support multiple recipients
+	private List<UserAlias> selectedUserAliases;
 	private LocalizationService localizationService;
 	private UserAliasService userAliasService;
 	private String searchText;
@@ -90,6 +92,8 @@ public class StickerManagementBean implements Serializable {
 		try {
 			userAliasList = userAliasService.getAllWithDetails();
 			stickers = stickerService.findAll();
+			// initialize multi-select recipients
+			selectedUserAliases = new ArrayList<>();
 			filterStickers();
 			calculateStatistics();
 			updateFilteredResultsCount(); // تحديث عدد النتائج المصفاة عند التهيئة
@@ -191,10 +195,11 @@ public class StickerManagementBean implements Serializable {
 
     public void generateStickers() {
         try {
-            if (selectedUserAlias == null) {
-                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldSelectUser"));
-                return;
-            }
+				// If using multi-select recipients, require at least one
+				if ((selectedUserAliases == null || selectedUserAliases.isEmpty()) && selectedUserAlias == null) {
+					UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldSelectUser"));
+					return;
+				}
 
             if (generatedStickerNum == null || generatedStickerNum <= 0) {
                 UtilityHelper
@@ -219,19 +224,30 @@ public class StickerManagementBean implements Serializable {
             int month = now.get(Calendar.MONTH) + 1;
             int day = now.get(Calendar.DAY_OF_MONTH);
 
-            for (int i = 0; i < generatedStickerNum; i++) {
-                Sticker sticker = new Sticker();
-                sticker.setSeq(stickerService.getLastSeq());
-                sticker.setSerialNo(
-                        String.format("%d%02d%02d%04d", year, month, day, stickerService.getLastSerialID() + 1));
-                sticker.setStickerNo("SK" + String.format("%05d", stickerService.getLastStickerNo() + 1));
-                sticker.setSysUserByCreatedBy(loginBean.getUser());
-                sticker.setYear((short) year);
-                sticker.setIsUsed(false);
-                sticker.setIsPrinted(false);
-                sticker.setSysUserByForUser(selectedUserAlias.getSysUserBySysUser());
-                stickerService.save(sticker);
-            }
+			// Determine recipients: prefer selectedUserAliases if set, otherwise single selectedUserAlias
+			List<UserAlias> recipients = new ArrayList<>();
+			if (selectedUserAliases != null && !selectedUserAliases.isEmpty()) {
+				recipients.addAll(selectedUserAliases);
+			} else if (selectedUserAlias != null) {
+				recipients.add(selectedUserAlias);
+			}
+
+			for (UserAlias recipient : recipients) {
+				for (int i = 0; i < generatedStickerNum; i++) {
+					Sticker sticker = new Sticker();
+					sticker.setSeq(stickerService.getLastSeq());
+					sticker.setSerialNo(
+							String.format("%d%02d%02d%04d", year, month, day, stickerService.getLastSerialID() + 1));
+					sticker.setStickerNo("SK" + String.format("%05d", stickerService.getLastStickerNo() + 1));
+					sticker.setSysUserByCreatedBy(loginBean.getUser());
+					sticker.setYear((short) year);
+					sticker.setIsUsed(false);
+					sticker.setIsPrinted(false);
+					if (recipient != null && recipient.getSysUserBySysUser() != null)
+						sticker.setSysUserByForUser(recipient.getSysUserBySysUser());
+					stickerService.save(sticker);
+				}
+			}
 
             // بعد الإنشاء، نقوم بالبحث مرة أخرى لتحديث النتائج
             searchStickers();
@@ -241,6 +257,17 @@ public class StickerManagementBean implements Serializable {
             log.error("Failed to generate stickers", e);
         }
     }
+
+	public void selectAllRecipients() {
+		if (userAliasList != null) {
+			selectedUserAliases = new ArrayList<>(userAliasList);
+		}
+	}
+
+	public void clearRecipients() {
+		if (selectedUserAliases != null) selectedUserAliases.clear();
+		selectedUserAlias = null;
+	}
 
 	public void exportStickers() {
 		try {

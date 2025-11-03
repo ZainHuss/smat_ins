@@ -1606,6 +1606,54 @@
                 letter-spacing: 2px;
             }
         }
+        /* إصلاح ألوان حقول الإدخال */
+        .form-control {
+            color: #ffffff !important; /* لون النص أبيض */
+            background: rgba(40, 40, 40, 0.9) !important; /* خلفية أغمق قليلاً */
+        }
+
+        /* إصلاح لون النص عند التركيز */
+        .form-control:focus {
+            color: #ffffff !important;
+            background: rgba(50, 50, 50, 0.95) !important;
+        }
+
+        /* إصلاح لون النص في حقل كلمة المرور */
+        input[type="password"].form-control {
+            color: #ffffff !important;
+        }
+
+        /* إصلاح لون النص في حقل البريد الإلكتروني */
+        input[type="email"].form-control {
+            color: #ffffff !important;
+        }
+
+        /* إصلاح لون النص في حالات validation */
+        .form-control.is-valid {
+            color: #ffffff !important;
+        }
+
+        .form-control.is-invalid {
+            color: #ffffff !important;
+        }
+
+        /* إصلاح لون placeholder */
+        .form-control::placeholder {
+            color: rgba(200, 200, 220, 0.6) !important;
+            opacity: 1;
+        }
+
+        /* إصلاح لون النص في العناوين العائمة */
+        .floating-label {
+            color: rgba(200, 200, 220, 0.8) !important;
+        }
+
+        .form-control:focus + .floating-label,
+        .form-control:not(:placeholder-shown) + .floating-label,
+        .form-control.has-value + .floating-label {
+            color: #00ccff !important;
+            background: rgba(50, 50, 50, 0.95) !important;
+        }
     </style>
 </h:head>
 <h:body>

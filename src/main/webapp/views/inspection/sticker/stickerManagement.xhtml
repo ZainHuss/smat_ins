@@ -454,6 +454,159 @@
                 color: #4a5568;
             }
 
+            /* Enhanced SelectCheckboxMenu Styling */
+            .enhanced-select-menu {
+                width: 100% !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-trigger {
+                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%) !important;
+                border: none !important;
+                border-radius: 10px !important;
+                padding: 0.75rem !important;
+                color: white !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-trigger:hover {
+                background: linear-gradient(135deg, #1a202c 0%, #4a5568 100%) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-label {
+                padding: 0.75rem 1rem !important;
+                border: 2px solid #e2e8f0 !important;
+                border-radius: 10px !important;
+                font-size: 1rem !important;
+                background: rgba(255, 255, 255, 0.9) !important;
+                color: #4a5568 !important;
+                min-height: 48px !important;
+                display: flex !important;
+                align-items: center !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-label:hover {
+                border-color: #4a5568 !important;
+                cursor: pointer !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-label-container {
+                width: 100% !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-panel {
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 15px !important;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+                padding: 1rem !important;
+                min-width: 500px !important;
+                max-height: 400px !important;
+                overflow-y: auto !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-header {
+                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%) !important;
+                border: none !important;
+                border-radius: 10px !important;
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-filter-container {
+                margin-bottom: 1rem !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-filter-container .ui-inputtext {
+                width: 100% !important;
+                padding: 0.75rem 1rem !important;
+                border: 2px solid #e2e8f0 !important;
+                border-radius: 10px !important;
+                font-size: 1rem !important;
+                background: rgba(255, 255, 255, 0.9) !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-filter-container .ui-inputtext:focus {
+                border-color: #4a5568 !important;
+                box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1) !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-items {
+                padding: 0 !important;
+                background: transparent !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-item {
+                padding: 0.75rem 1rem !important;
+                margin: 0.25rem 0 !important;
+                border-radius: 10px !important;
+                background: rgba(255, 255, 255, 0.9) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-item:hover {
+                background: rgba(74, 85, 104, 0.1) !important;
+                transform: translateX(5px);
+            }
+
+            .enhanced-select-menu .ui-selectcheckboxmenu-item .ui-chkbox {
+                margin-right: 0.5rem !important;
+            }
+
+            .enhanced-select-menu .ui-chkbox-box {
+                border: 2px solid #cbd5e0 !important;
+                border-radius: 5px !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .enhanced-select-menu .ui-chkbox-box.ui-state-active {
+                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%) !important;
+                border-color: #4a5568 !important;
+            }
+
+            .enhanced-select-menu .ui-chkbox-box .ui-chkbox-icon {
+                color: white !important;
+            }
+
+            /* Control Buttons Styling */
+            .control-buttons {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+                min-width: 160px;
+            }
+
+            .control-button {
+                position: relative;
+                overflow: hidden;
+                border-radius: 10px !important;
+                padding: 0.5rem 1rem !important;
+                font-weight: 600 !important;
+                font-size: 0.9rem !important;
+                transition: all 0.3s ease !important;
+                border: none !important;
+                min-width: 100px;
+            }
+
+            .control-button:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+            }
+
+            .select-all-btn {
+                background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+                color: white !important;
+            }
+
+            .clear-btn {
+                background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+                color: white !important;
+            }
+
             /* Responsive Design */
             @media ( max-width : 768px) {
                 .input-group {
@@ -473,6 +626,16 @@
                 .enhanced-button {
                     width: 100%;
                     max-width: 250px;
+                }
+                .control-buttons {
+                    width: 100%;
+                    justify-content: center;
+                    margin-top: 1rem;
+                }
+                .enhanced-select-menu .ui-selectcheckboxmenu-panel {
+                    min-width: 300px !important;
+                    max-width: 90vw !important;
+                    left: 5vw !important;
                 }
             }
 
@@ -512,6 +675,26 @@
                     container.classList.remove('page-success-pulse');
                 }, 800); // Duration of the page pulse animation
             }
+
+            // Enhanced SelectCheckboxMenu functionality
+            function enhanceSelectMenu() {
+                // Make the entire label clickable
+                var selectMenus = document.querySelectorAll('.enhanced-select-menu .ui-selectcheckboxmenu-label');
+                selectMenus.forEach(function(menu) {
+                    menu.addEventListener('click', function(e) {
+                        // Only trigger if not clicking on the trigger button
+                        if (!e.target.closest('.ui-selectcheckboxmenu-trigger')) {
+                            var widgetVar = this.closest('.ui-selectcheckboxmenu').getAttribute('id').replace(':', '\\:');
+                            PF(widgetVar.replace('selectRecipients', 'widgetVar_SelectRecipients')).show();
+                        }
+                    });
+                });
+            }
+
+            // Initialize enhancements when document is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                enhanceSelectMenu();
+            });
             //]]>
         </script>
     </ui:define>
@@ -547,22 +730,29 @@
 
                     <div class="input-group">
                         <div class="input-label">
-                            <i class="pi pi-hashtag" style="color: #4a5568;"></i> For User:
+                            <i class="pi pi-users" style="color: #4a5568;"></i> For Users:
                         </div>
                         <div class="input-field">
-                            <p:selectOneMenu id="selectoneMenu_UserAlias"
-                                             style="width:100%;" filter="true" filterMatchMode="contains"
-                                             widgetVar="widgetVar_SelectOneMenu"
-                                             converter="omnifaces.SelectItemsIndexConverter"
-                                             value="#{stickerManagementBean.selectedUserAlias}">
-                                <f:selectItem itemLabel="Choose user please:" value="#{null}" noSelectionOption="true" />
+                            <!-- Select multiple recipients using checkbox menu -->
+                            <p:selectCheckboxMenu id="selectRecipients"
+                                                  styleClass="enhanced-select-menu"
+                                                  filter="true" filterMatchMode="contains"
+                                                  widgetVar="widgetVar_SelectRecipients"
+                                                  converter="omnifaces.SelectItemsIndexConverter"
+                                                  value="#{stickerManagementBean.selectedUserAliases}">
+                                
                                 <f:selectItems
-                                        itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                        itemLabel="( #{userAlias.userCode} ) #{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
                                         itemValue="#{userAlias}" var="userAlias"
                                         value="#{stickerManagementBean.userAliasList}" />
-                                <p:ajax event="change" listener="#{stickerManagementBean.findStickerForSelectedUser()}" update="@([id$=datatable-stickers])"></p:ajax>
-
-                            </p:selectOneMenu>
+                                <p:ajax event="change" listener="#{stickerManagementBean.searchStickers}" update="@([id$=datatable-stickers])" />
+                            </p:selectCheckboxMenu>
+                        </div>
+                        <div class="control-buttons">
+                            <p:commandButton value="Select All" icon="pi pi-check-double" styleClass="control-button select-all-btn"
+                                             action="#{stickerManagementBean.selectAllRecipients}" update="selectRecipients" />
+                            <p:commandButton value="Clear" icon="pi pi-times" styleClass="control-button clear-btn"
+                                             action="#{stickerManagementBean.clearRecipients}" update="selectRecipients" />
                         </div>
                     </div>
 

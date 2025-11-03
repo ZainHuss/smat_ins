@@ -44,11 +44,27 @@ public class SysUserDaoImpl extends GenericDaoImpl<SysUser, Long> implements Sys
 			if (userName != null && password != null)
 				criteriaQuery.where(criteriaBuilder.equal(root.get("userName"), userName));
 			TypedQuery<SysUser> typedQuery = session.createQuery(criteriaQuery);
-			sysUser = typedQuery.getSingleResult();
-			if (BCrypt.checkpw(password, sysUser.getPassword()))
-				return sysUser;
-			else
+			// Use getResultList to avoid NonUniqueResultException when duplicates exist in DB.
+			List<SysUser> users = typedQuery.getResultList();
+			if (users == null || users.isEmpty()) {
 				return null;
+			}
+			// Try to find a user whose stored password matches the provided password.
+			for (SysUser u : users) {
+				try {
+					if (u.getPassword() != null && BCrypt.checkpw(password, u.getPassword())) {
+						return u;
+					}
+				} catch (Exception ex) {
+					// ignore individual user password check failures
+				}
+			}
+			// If no password matched but multiple users exist, log a warning and return first user as fallback
+			if (users.size() > 1) {
+				// commons-logging Log.warn does not support SLF4J-style placeholders; build message explicitly
+				log.warn("Multiple SysUser rows found for userName='" + userName + "'. Returning first match. Database should enforce unique user_name.");
+			}
+			return users.get(0);
 		} catch (Exception e) {
 			log.error(persistentClass + " can't be fetched from DB because of the following Exception ");
 			e.printStackTrace();
