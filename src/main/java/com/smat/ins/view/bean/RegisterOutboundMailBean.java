@@ -605,10 +605,41 @@ public class RegisterOutboundMailBean implements Serializable {
 				cabinetDefinitions = cabinetDefinitionService.getByCabinet(cabinet);
 			}
 		}
-		List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
-		for (UserAlias userAlias : userAliasRecipientListDb) {
-			if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "010"))
-				userAliasRecipientList.add(userAlias);
+		// Populate recipients: include all UserAlias entries whose SysUser has the Inspector role (role.code == "001").
+		// Previously we used getListRecipients(...) + permission filter which limited results to organization-related recipients.
+		try {
+			List<UserAlias> allAliases = userAliasService.getAllWithDetails();
+			if (allAliases != null) {
+				for (UserAlias ua : allAliases) {
+					if (ua == null || ua.getSysUserBySysUser() == null)
+						continue;
+					// sysUserRoles holds SysUserRole entries which reference SysRole with a code field.
+					if (ua.getSysUserBySysUser().getSysUserRoles() != null) {
+						for (Object oRole : ua.getSysUserBySysUser().getSysUserRoles()) {
+							try {
+								com.smat.ins.model.entity.SysUserRole sur = (com.smat.ins.model.entity.SysUserRole) oRole;
+								if (sur != null && sur.getSysRole() != null && "001".equals(sur.getSysRole().getCode())) {
+									userAliasRecipientList.add(ua);
+									break;
+								}
+							} catch (Exception ignore) {
+								// ignore malformed role entries and continue
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			// fallback to previous behavior if anything goes wrong
+			try {
+				List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
+				for (UserAlias userAlias : userAliasRecipientListDb) {
+					if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "010"))
+						userAliasRecipientList.add(userAlias);
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		}
 		languages = new ArrayList<>();
 		responsiveOptions = new ArrayList<>();
