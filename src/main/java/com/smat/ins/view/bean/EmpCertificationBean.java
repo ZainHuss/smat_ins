@@ -171,13 +171,32 @@ public class EmpCertificationBean implements Serializable {
             userAliasRecipientList = new ArrayList<>();
             selectedUserAliasRecipient = new UserAlias();
             SysUser sysUserLogin = (SysUser) UtilityHelper.getSessionAttr("user");
-            List<UserAlias> myUserAliasList = userAliasService.getBySysUser(sysUserLogin);
-            if (myUserAliasList != null && !myUserAliasList.isEmpty()) {
-                UserAlias userAliasOwner = myUserAliasList.get(0);
-                List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
-                for (UserAlias userAlias : userAliasRecipientListDb) {
-                    if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "011"))
-                        userAliasRecipientList.add(userAlias);
+            // Populate reviewer list from all SysUsers who have permission '011'
+            try {
+                java.util.List<com.smat.ins.model.entity.SysUser> reviewers = sysUserService
+                        .listUserHasPersmission("011");
+                if (reviewers != null) {
+                    for (com.smat.ins.model.entity.SysUser su : reviewers) {
+                        try {
+                            java.util.List<UserAlias> aliases = userAliasService.getBySysUser(su);
+                            if (aliases != null && !aliases.isEmpty()) {
+                                userAliasRecipientList.addAll(aliases);
+                            }
+                        } catch (Exception ignore) {
+                            // continue on per-user failures
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // fallback to previous behavior (organization-based recipients filtered by permission)
+                List<UserAlias> myUserAliasList = userAliasService.getBySysUser(sysUserLogin);
+                if (myUserAliasList != null && !myUserAliasList.isEmpty()) {
+                    UserAlias userAliasOwner = myUserAliasList.get(0);
+                    List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
+                    for (UserAlias userAlias : userAliasRecipientListDb) {
+                        if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "011"))
+                            userAliasRecipientList.add(userAlias);
+                    }
                 }
             }
         } catch (Exception e) {
