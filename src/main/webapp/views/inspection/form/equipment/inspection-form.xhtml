@@ -1963,14 +1963,20 @@
                     <div class="col-lg-6 col-xl-6 col-xxl-6">
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.company}" styleClass="smat-label" />
-                            <p:selectOneMenu disabled="#{inspectionFormBean.disabled}"
-                                             style="width:100%;"
-                                             value="#{inspectionFormBean.equipmentInspectionForm.company}"
-                                             converter="omnifaces.SelectItemsIndexConverter">
+                            <p:selectOneMenu
+                                    disabled="#{inspectionFormBean.disabled}"
+                                    style="width:100%;"
+                                    value="#{inspectionFormBean.equipmentInspectionForm.company}"
+                                    converter="omnifaces.SelectItemsIndexConverter"
+                                    filter="true"
+                                    filterMatchMode="contains"
+                                    filterPlaceholder="Search companies...">
                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" />
-                                <f:selectItems itemLabel="#{companyVar.name} "
-                                               itemValue="#{companyVar}" var="companyVar"
-                                               value="#{inspectionFormBean.companies}" />
+                                <f:selectItems
+                                        itemLabel="#{companyVar.name}"
+                                        itemValue="#{companyVar}"
+                                        var="companyVar"
+                                        value="#{inspectionFormBean.companies}" />
                                 <p:ajax update="@([id$=companyAddress])" />
                             </p:selectOneMenu>
                         </div>
@@ -1978,14 +1984,15 @@
                     <div class="col-lg-6 col-xl-6 col-xxl-6">
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.nameAndAddressOfEmployer}" styleClass="smat-label" />
-                            <p:inputTextarea id="companyAddress"
-                                             disabled="#{inspectionFormBean.disabled}"
-                                             value="#{inspectionFormBean.equipmentInspectionForm.company.address}"
-                                             styleClass="block" rows="2" />
+                            <p:inputTextarea
+                                    id="companyAddress"
+                                    disabled="#{inspectionFormBean.disabled}"
+                                    value="#{inspectionFormBean.equipmentInspectionForm.company.address}"
+                                    styleClass="block"
+                                    rows="2" />
                         </div>
                     </div>
                 </div>
-
                 <!-- Examination and Equipment Type -->
                 <div class="row">
                     <div class="col-lg-6 col-xl-6 col-xxl-6">

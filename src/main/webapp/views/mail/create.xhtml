@@ -1,844 +1,848 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:pe="http://primefaces.org/ui/extensions"
-	xmlns:o="http://omnifaces.org/ui"
-	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:of="http://omnifaces.org/functions"
-	template="./mail-template.xhtml">
-	<f:metadata>
-		<f:event type="preRenderView"
-			listener="#{registerOutboundMailBean.registerNewCorrespondence()}" />
-	</f:metadata>
-
-	<ui:define name="toolbar">
-		<p:commandLink id="outbox" value="" action="pretty:outBox" ajax="true"
-			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.outBox}">
-			<i class="fa fa-inbox" style="font-size: 2rem; color: green;"></i>
-		</p:commandLink>
-
-		<p:commandLink id="home" value="" action="pretty:registerOutboundMail"
-			ajax="true"
-			title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.registerOutboundMail}">
-			<i class="fa fa-mail-forward" style="font-size: 2rem"></i>
-		</p:commandLink>
-
-		<p:commandLink id="close" value="" action="pretty:index" ajax="true"
-			title="#{interfaceLabel.close}">
-			<i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
-		</p:commandLink>
-
-	</ui:define>
-	<ui:define name="head">
-
-		<h:outputStylesheet library="#{appSetting.resourceLib}"
-			name="css/material-theme.css"></h:outputStylesheet>
-		<h:outputScript library="#{appSetting.resourceLib}"
-			name="script/primefaces-rtl-tree.js"></h:outputScript>
-		<h:outputScript name="script/jquery.transit.min.js"
-			library="#{appSetting.resourceLib}"></h:outputScript>
-		<script>
-		   
-	   function pageNav(){
-     	  setTimeout(function() { 
-         	  PF('caroulsel_drawer_widget').getJQ().find('div.ui-carousel-item-active').find('.ui-button').click();
-   	        
-     	    }, 100);
-           }
-       
-
-		  function resetFilterSearch(){
-			   PF('widgetvar_lang').filter(); 
-			   $('[id$=selectOneMenu_lang_filter]').val('');
-           return false;
-			}
-
-		  function selectImg(event){
-			  event.target.parentElement.style.backgroundColor="#F8F9FA";
-			 
-			}
-
-		
-		  window.onload = function() {
-			  
-			  CKEDITOR.on('instanceReady', function() {
-				  setTimeout(cke_print(), 15000); 
-			  });
-			}
-		    
-		 
-		    
-	   </script>
-	</ui:define>
-	<ui:define name="mail-template-content">
-		<style>
-.ui-sticky {
-	top: 90px !important;
-}
-
-@media ( max-width : 960px) {
-	.ui-sticky {
-		top: 130px !important;
-	}
-	.ui-panelgrid.panelgrid-text-align-center .ui-grid-responsive .ui-panelgrid-cell
-		{
-		text-align: center;
-	}
-}
-
-.ui-panelgrid.panelgrid-text-align-center .ui-grid-responsive .ui-panelgrid-cell
-	{
-	text-align: center;
-}
-
-.customPanelGrid .ui-panelgrid-content {
-	align-items: center;
-}
-
-.product-item .product-item-content {
-	border: 1px solid var(- -surface-d);
-	border-radius: 3px;
-	margin: .3rem;
-	text-align: center;
-	padding: 2rem 0;
-}
-
-.product-item .product-image {
-	width: 50%;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
-}
-
-.mt-5 {
-	margin-top: 2rem !important;
-}
-
-.mr-2 {
-	margin: 0.5rem !important;
-}
-
-.custom-scrolltop.ui-scrolltop {
-	width: 2rem;
-	height: 2rem;
-	border-radius: 4px;
-	outline: 0 none;
-	background-color: #B9CEF2;
-}
-
-.custom-scrolltop.ui-scrolltop:hover {
-	background-color: #B9CEF2;
-}
-
-.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
-	font-size: 1rem;
-	color: var(- -primary-color-text);
-}
-
-.block-rtl {
-	margin-right: 98px;
-	margin-top: 16px;
-}
-
-.block-ltr {
-	margin-left: 14px;
-	margin-top: 16px;
-}
-
-img {
-	cursor: pointer;
-}
-
-.ui-panelgrid.grid-text-align-right .ui-grid-responsive .ui-panelgrid-cell
-	{
-	text-align: right !important;
-}
-
-.ui-panelgrid.grid-text-align-left .ui-grid-responsive .ui-panelgrid-cell
-	{
-	text-align: left !important;
-}
-
-.customPanelGrid .ui-panelgrid-content {
-	align-items: baseline;
-}
-
-.ui-divider.ui-divider-dashed.ui-divider-vertical::before {
-	color: green !important;
-}
-
-body .ui-menu {
-	padding: 0;
-	border: 1px solid #dee2e6;
-	border-radius: 4px;
-	width: auto;
-}
-
-div.ui-chip {
-	cursor: pointer;
-}
-
-span.ui-chip-remove-icon {
-	cursor: default;
-}
-
-.ui-chip.chip-select {
-	background: var(- -primary-color);
-	color: var(- -primary-color-text);
-}
-
-.product .product-grid-item img {
-	box-shadow: none !important;
-}
-
-.product .product-list-item img {
-	box-shadow: none !important;
-}
-
-.product .product-list-item .product-price {
-	font-size: 1rem;
-	font-weight: 600;
-	margin-bottom: .5rem;
-	margin-top: .5rem;
-	align-self: center;
-}
-
-.required-field label:after {
-    content: " *";
-    color: red;
-}
-
-/* أنماط الحقول المطلوبة - موحدة الحجم */
-.field-label {
-    font-size: 15px;
-    font-weight: 600;
-    color: #2E7D32;
-    margin-bottom: 8px;
-    display: block;
-    line-height: 1.4;
-}
-
-.field-container {
-    background-color: #F8F9FA;
-    border-radius: 6px;
-    padding: 10px 12px;
-    border: 1px solid #E0E0E0;
-    transition: all 0.3s ease;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-}
-
-.field-container:focus-within {
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-}
-
-/* ألوان مميزة لكل حقل */
-.priority-field {
-    border-left: 4px solid #FF9800;
-}
-
-.service-field {
-    border-left: 4px solid #2196F3;
-}
-
-.purpose-field {
-    border-left: 4px solid #9C27B0;
-}
-
-.company-field {
-    border-left: 4px solid #F44336;
-}
-
-.to-field {
-    border-left: 4px solid #4CAF50;
-}
-
-.note-field {
-    border-left: 4px solid #607D8B;
-}
-
-/* تحسين مظهر الحقول - موحد الحجم */
-.enhanced-field {
-    font-size: 14px;
-    color: #37474F;
-    border: none;
-    background: transparent;
-    width: 100%;
-    line-height: 1.4;
-}
-
-.enhanced-field .ui-selectonemenu-label {
-    font-size: 14px;
-    color: #37474F;
-    font-weight: 500;
-}
-
-.enhanced-field .ui-selectcheckboxmenu-label {
-    font-size: 14px;
-    color: #37474F;
-    font-weight: 500;
-}
-
-.enhanced-field .ui-inputfield {
-    font-size: 14px;
-    color: #37474F;
-}
-
-/* توحيد حجم الخطوط للعناصر الأخرى */
-.sidebar-field-row {
-    margin-bottom: 15px;
-    align-items: center;
-}
-
-.sidebar-label-col {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.sidebar-field-col {
-    display: flex;
-    align-items: center;
-}
-
-/* تحسين CKEditor */
-.ckeditor-enhanced {
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.ckeditor-enhanced .cke_contents {
-    font-size: 14px;
-    line-height: 1.4;
-}
-</style>
-		<p:tooltip trackMouse="true" widgetVar="tooltip_widgetVar" />
-		<h:form id="form">
-			<p:remoteCommand name="cke_print"
-				oncomplete="PF('widgetvar_subject').getEditorInstance().addContentsCss('@page { size: auto;  margin: 0mm; }');"></p:remoteCommand>
-
-			<pe:remoteCommand id="applySubjectDataCommand"
-				name="applySubjectData" process="@form"
-				action="#{registerOutboundMailBean.doSaveDraft()}">
-				<pe:assignableParam name="subject"
-					assignTo="#{registerOutboundMailBean.subject}" />
-				<pe:assignableParam name="htmlSubject"
-					assignTo="#{registerOutboundMailBean.htmlSubject}" />
-			</pe:remoteCommand>
-			<pe:remoteCommand id="applySendDataCommand" name="applySendData"
-				process="@form" action="#{registerOutboundMailBean.send()}"
-				update=":form:messages">
-				<pe:assignableParam name="subject"
-					assignTo="#{registerOutboundMailBean.subject}" />
-				<pe:assignableParam name="htmlSubject"
-					assignTo="#{registerOutboundMailBean.htmlSubject}" />
-			</pe:remoteCommand>
-			<p:growl id="messages" showDetail="true" showSummary="false" />
-			<p:sticky id="sticky_events" target="toolbar_events"></p:sticky>
-			<div
-				style="border: 0px; margin-right: 0.5%; margin-left: 0.5%; margin-top: 10px; word-wrap: break-word; border-radius: .25rem; background-color: transparent;">
-
-				<p:divider layout="horizontal" type="dashed"></p:divider>
-
-				<p:toolbar id="toolbar_events" style="margin-top:-10px;">
-					<f:facet name="left">
-						<p:commandButton id="commandButton_send"
-							value="#{interfaceLabel.send}"
-							disabled="#{registerOutboundMailBean.correspondence.seq eq null}"
-							onclick="applySendData(PF('widgetvar_subject').getEditorInstance().document.getBody().getText(),PF('widgetvar_subject').getEditorInstance().getData())"
-							icon="pi pi-send"
-							pt:data-tooltip="#{interfaceLabel.infoAboutSendRegisteredMail}"
-							styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat mr-2"
-							style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'};width:auto; ">
-							<p:confirm header="#{interfaceLabel.confirmation}"
-								message="#{interfaceLabel.wouldYouContinueAndSendCorrespondence}"
-								icon="pi pi-exclamation-triangle" />
-						</p:commandButton>
-						<p:button id="commandButton_cancel"
-						        value="#{interfaceLabel.cancel}"
-						        icon="pi pi-times"
-						        pt:data-tooltip="#{interfaceLabel.cancel}"
-						        styleClass="rounded-button ui-button-help ui-button-raised ui-button-flat mr-2"
-						        outcome="pretty:inspection/my-tasks" />
-
-
-					</f:facet>
-
-
-				</p:toolbar>
-
-				<h:panelGroup id="panelGroup_chips" styleClass="chip-container"
-					style="margin-right:5%;margin-left:5%;margin-top:0px;margin-bottom:5px;"
-					layout="block">
-					<script type="text/javascript" style="display: none;">
-						  //<![CDATA[
-	   $(".ui-panelgrid").click(function() { 
-		   setTimeout(cke_print(), 15000);
-		   $(".ui-chip").removeClass('chip-select');
-	   });
-
-	   function resetClass(){
-		   $(".ui-chip").removeClass('chip-select'); 
-		}
-		
-	   // دالة لملء الحقول تلقائياً
-	   function autoFillFields() {
-		   // ملء عنوان المراسلة
-		   var titleField = document.querySelector('[id$=inputText_title]');
-		   if (titleField && !titleField.value) {
-			   var selectedCompany = '#{registerOutboundMailBean.company.name}';
-			   var selectedService = '#{registerOutboundMailBean.serviceType.name}';
-			   var selectedEquipment = '#{registerOutboundMailBean.equipmentCategory.name}';
-			   
-			   var autoTitle = '';
-			   if (selectedCompany) autoTitle += selectedCompany;
-			   if (selectedService) autoTitle += ' - ' + selectedService;
-			   if (selectedEquipment) autoTitle += ' - ' + selectedEquipment;
-			   
-			   if (autoTitle) {
-				   titleField.value = autoTitle;
-			   }
-		   }
-		   
-		   // ملء موضوع المراسلة
-		   var subjectEditor = PF('widgetvar_subject');
-		   if (subjectEditor && !subjectEditor.getEditorInstance().getData()) {
-			   var noteContent = PF('widgetvar_note').getEditorInstance().getData();
-			   if (noteContent) {
-				   subjectEditor.getEditorInstance().setData(noteContent);
-			   }
-		   }
-	   }
-	   
-	   // استدعاء الدالة عند الضغط على زر الحفظ
-	   function prepareSave() {
-		   autoFillFields();
-		   applyData(PF('widgetvar_note').getEditorInstance().document.getBody().getText(), 
-		             'badge_recipient_size badge_recipients panelGroup_chips ckEditor_note ckEditor_subject inputText_title', 
-		             'registerOutboundMailBean.addHtmlNote()', 
-		             PF('widgetvar_note').getEditorInstance().getData());
-	   }
-	   //]]>
-						</script>
-					<div class="flex align-items-center flex-wrap">
-						<c:forEach items="#{registerOutboundMailBean.recipientList}"
-							var="recipient" varStatus="loop">
-							<c:if test="#{loop.count eq 5}">
-								<p:commandButton value="#{interfaceLabel.more}"
-									icon="pi pi-ellipsis-h"
-									styleClass="ui-button-danger ui-button-flat"
-									style="align-self: first baseline;flex: initial;width: auto;border-radius: 10px;display: inline-flex;"
-									onclick="PF('sidebar_recipients').show()"></p:commandButton>
-							</c:if>
-							<c:if test="#{loop.count lt 5}">
-							</c:if>
-						</c:forEach>
-					</div>
-				</h:panelGroup>
-
-
-				<div class="row justify-content-center text-center">
-					<div class="col-lg-6 col-xl-4 col-xxl-3">
-
-						<p:outputLabel for="@next"
-						style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.jobPositionTitle}</p:outputLabel>	
-					</div>
-					<div class="col-lg-6 col-xl-8 col-xxl-9">
-						<p:selectOneMenu
-							value="#{registerOutboundMailBean.userAliasOwner}"
-							converter="omnifaces.SelectItemsIndexConverter"
-							style="background-color:#F9F9FB;color:black;font-weight:bolder;font-style:italic;width:100%;">
-							<p:ajax
-								listener="#{registerOutboundMailBean.updateUserAliasList()}"
-								update="@([id$=selectCheckBoxMenu_UserAliasRecpient],[id$=caroulssel_myCabinets])"></p:ajax>
-							<f:selectItems
-								itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
-								itemValue="#{userAlias}" var="userAlias"
-								value="#{registerOutboundMailBean.myUserAliasList}" />
-						</p:selectOneMenu>
-					</div>
-				</div>
-
-				<p:divider layout="horizontal" type="dashed"></p:divider>
-				<div class="row">
-					<div class="col-12 col-lg-2 col-xl-1 col-xxl-1">
-
-						<p:badge id="badge_recipient_size"
-							value="#{registerOutboundMailBean.selectedUserAliasRecipients.size()}"
-							severity="danger">
-							<p:commandLink title="#{interfaceLabel.recipients}"
-								action="#{registerOutboundMailBean.initRecepientSideBar()}"
-								oncomplete="PF('sidebar_recipients').show()"
-								update="@([id$=sidebar_recipient_content])">
-								<i class="pi pi-users" style="font-size: 2rem; color: red"></i>
-							</p:commandLink>
-						</p:badge>
-
-
-
-					</div>
-					<div class="col-12 col-lg-10 col-xl-11 col-xxl-11">
-						<div class="row" style="margin-bottom: 5px;">
-							<div class="col-lg-6 col-xl-3 col-xxl-3">
-								<p:outputLabel
-									style="color:black;font-weight:bolder;font-style:italic;"
-									value="#{interfaceLabel.correspondenceType}" />
-							</div>
-
-							<div class="col-lg-6 col-xl-9 col-xxl-9">
-								<p:selectOneMenu
-									style="background-color:#F9F9FB;font-weight:bolder;font-style:italic;width:100%;"
-									value="#{registerOutboundMailBean.correspondence.correspondenceType}"
-									converter="omnifaces.SelectItemsIndexConverter">
-									<f:selectItems itemLabel="#{correspondenceType.name} "
-										itemValue="#{correspondenceType}" var="correspondenceType"
-										value="#{registerOutboundMailBean.correspondenceTypeList}" />
-								</p:selectOneMenu>
-							</div>
-						</div>
-						<div class="row " style="margin-bottom: 5px;">
-							<div class="col-lg-6 col-xl-3 col-xxl-3">
-								<p:outputLabel
-									style="color:black;font-weight:bolder;font-style:italic;"
-									for="@next" value="#{interfaceLabel.priorityType}"></p:outputLabel>
-							</div>
-							<div class="col-lg-6 col-xl-9 col-xxl-9">
-								<p:selectOneMenu
-									style="background-color:#F9F9FB;font-weight:bolder;font-style:italic;width:100%;"
-									value="#{registerOutboundMailBean.correspondence.priorityType}"
-									converter="omnifaces.SelectItemsIndexConverter">
-									<p:ajax event="change"
-										listener="#{registerOutboundMailBean.updatePriorityType()}"
-										update="@([id$=selectOneMenu_Priority_Type])"></p:ajax>
-									<f:selectItems itemLabel="#{priorityType.name}"
-										itemValue="#{priorityType}" var="priorityType"
-										value="#{registerOutboundMailBean.priorityTypeList}" />
-								</p:selectOneMenu>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-lg-6 col-xl-3 col-xxl-3">
-								<p:outputLabel value="#{interfaceLabel.number}" />
-							</div>
-							<div class="col-lg-6 col-xl-9 col-xxl-9">
-								<p:inputText readonly="true" style="color:#2196F3"
-									value="#{registerOutboundMailBean.correspondence.correspondenceSeq}"></p:inputText>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-lg-6 col-xl-3 col-xxl-3">
-								<p:outputLabel value="#{interfaceLabel.date}" rendered="false" />
-							</div>
-							<div class="col-lg-6 col-xl-9 col-xxl-9">
-								<p:datePicker rendered="false"
-									pattern="#{app.locale.rtl ? 'yyyy/MM/dd':'dd/MM/yyyy'}"
-									value="#{registerOutboundMailBean.correspondence.correspondenceDate}"></p:datePicker>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-lg-6 col-xl-3 col-xxl-3">
-								<p:outputLabel value="#{interfaceLabel.creatorDate}" />
-							</div>
-							<div class="col-lg-6 col-xl-9 col-xxl-9">
-								<p:datePicker disabled="true" readonly="true"
-									pattern="#{app.locale.rtl ? 'yyyy/MM/dd':'dd/MM/yyyy'}"
-									value="#{registerOutboundMailBean.correspondence.createdDate}"></p:datePicker>
-							</div>
-
-						</div>
-
-					</div>
-				</div>
-				<p:divider layout="horizontal" type="dashed"></p:divider>
-
-				<div class="row justify-content-center text-center"
-					style="margin-bottom: 5px;">
-					<div class="col-lg-12 col-xl-12 col-xxl-12">
-
-						<p:inputText id="inputText_title"
-							placeholder="#{interfaceLabel.correspondenceTitle}"
-							style="font-weight:bolder;font-style:italic;color:black;background-color:#F9F9FB;width:100%"
-							value="#{registerOutboundMailBean.correspondence.title}"></p:inputText>
-
-					</div>
-				</div>
-
-				<script type="text/javascript">
-                $(".cke_print_editor").on( "mouseover", function(){
-                	cke_print();
-                	
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:of="http://omnifaces.org/functions"
+                template="./mail-template.xhtml">
+    <f:metadata>
+        <f:event type="preRenderView"
+                 listener="#{registerOutboundMailBean.registerNewCorrespondence()}" />
+    </f:metadata>
+
+    <ui:define name="toolbar">
+        <p:commandLink id="outbox" value="" action="pretty:outBox" ajax="true"
+                       title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.outBox}">
+            <i class="fa fa-inbox" style="font-size: 2rem; color: green;"></i>
+        </p:commandLink>
+
+        <p:commandLink id="home" value="" action="pretty:registerOutboundMail"
+                       ajax="true"
+                       title="#{interfaceLabel.goTo} #{interfaceLabel.page} #{interfaceLabel.registerOutboundMail}">
+            <i class="fa fa-mail-forward" style="font-size: 2rem"></i>
+        </p:commandLink>
+
+        <p:commandLink id="close" value="" action="pretty:index" ajax="true"
+                       title="#{interfaceLabel.close}">
+            <i class="pi pi-times-circle" style="font-size: 2rem; color: red"></i>
+        </p:commandLink>
+
+    </ui:define>
+    <ui:define name="head">
+
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+                            name="css/material-theme.css"></h:outputStylesheet>
+        <h:outputScript library="#{appSetting.resourceLib}"
+                        name="script/primefaces-rtl-tree.js"></h:outputScript>
+        <h:outputScript name="script/jquery.transit.min.js"
+                        library="#{appSetting.resourceLib}"></h:outputScript>
+        <script>
+
+            function pageNav(){
+                setTimeout(function() {
+                    PF('caroulsel_drawer_widget').getJQ().find('div.ui-carousel-item-active').find('.ui-button').click();
+
+                }, 100);
+            }
+
+
+            function resetFilterSearch(){
+                PF('widgetvar_lang').filter();
+                $('[id$=selectOneMenu_lang_filter]').val('');
+                return false;
+            }
+
+            function selectImg(event){
+                event.target.parentElement.style.backgroundColor="#F8F9FA";
+
+            }
+
+
+            window.onload = function() {
+
+                CKEDITOR.on('instanceReady', function() {
+                    setTimeout(cke_print(), 15000);
                 });
-               
+            }
+
+
+
+        </script>
+    </ui:define>
+    <ui:define name="mail-template-content">
+        <style>
+            .ui-sticky {
+                top: 90px !important;
+            }
+
+            @media ( max-width : 960px) {
+                .ui-sticky {
+                    top: 130px !important;
+                }
+                .ui-panelgrid.panelgrid-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+                {
+                    text-align: center;
+                }
+            }
+
+            .ui-panelgrid.panelgrid-text-align-center .ui-grid-responsive .ui-panelgrid-cell
+            {
+                text-align: center;
+            }
+
+            .customPanelGrid .ui-panelgrid-content {
+                align-items: center;
+            }
+
+            .product-item .product-item-content {
+                border: 1px solid var(- -surface-d);
+                border-radius: 3px;
+                margin: .3rem;
+                text-align: center;
+                padding: 2rem 0;
+            }
+
+            .product-item .product-image {
+                width: 50%;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+            }
+
+            .mt-5 {
+                margin-top: 2rem !important;
+            }
+
+            .mr-2 {
+                margin: 0.5rem !important;
+            }
+
+            .custom-scrolltop.ui-scrolltop {
+                width: 2rem;
+                height: 2rem;
+                border-radius: 4px;
+                outline: 0 none;
+                background-color: #B9CEF2;
+            }
+
+            .custom-scrolltop.ui-scrolltop:hover {
+                background-color: #B9CEF2;
+            }
+
+            .custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+                font-size: 1rem;
+                color: var(- -primary-color-text);
+            }
+
+            .block-rtl {
+                margin-right: 98px;
+                margin-top: 16px;
+            }
+
+            .block-ltr {
+                margin-left: 14px;
+                margin-top: 16px;
+            }
+
+            img {
+                cursor: pointer;
+            }
+
+            .ui-panelgrid.grid-text-align-right .ui-grid-responsive .ui-panelgrid-cell
+            {
+                text-align: right !important;
+            }
+
+            .ui-panelgrid.grid-text-align-left .ui-grid-responsive .ui-panelgrid-cell
+            {
+                text-align: left !important;
+            }
+
+            .customPanelGrid .ui-panelgrid-content {
+                align-items: baseline;
+            }
+
+            .ui-divider.ui-divider-dashed.ui-divider-vertical::before {
+                color: green !important;
+            }
+
+            body .ui-menu {
+                padding: 0;
+                border: 1px solid #dee2e6;
+                border-radius: 4px;
+                width: auto;
+            }
+
+            div.ui-chip {
+                cursor: pointer;
+            }
+
+            span.ui-chip-remove-icon {
+                cursor: default;
+            }
+
+            .ui-chip.chip-select {
+                background: var(- -primary-color);
+                color: var(- -primary-color-text);
+            }
+
+            .product .product-grid-item img {
+                box-shadow: none !important;
+            }
+
+            .product .product-list-item img {
+                box-shadow: none !important;
+            }
+
+            .product .product-list-item .product-price {
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: .5rem;
+                margin-top: .5rem;
+                align-self: center;
+            }
+
+            .required-field label:after {
+                content: " *";
+                color: red;
+            }
+
+            /* أنماط الحقول المطلوبة - موحدة الحجم */
+            .field-label {
+                font-size: 15px;
+                font-weight: 600;
+                color: #2E7D32;
+                margin-bottom: 8px;
+                display: block;
+                line-height: 1.4;
+            }
+
+            .field-container {
+                background-color: #F8F9FA;
+                border-radius: 6px;
+                padding: 10px 12px;
+                border: 1px solid #E0E0E0;
+                transition: all 0.3s ease;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+
+            .field-container:focus-within {
+                border-color: #4CAF50;
+                box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+            }
+
+            /* ألوان مميزة لكل حقل */
+            .priority-field {
+                border-left: 4px solid #FF9800;
+            }
+
+            .service-field {
+                border-left: 4px solid #2196F3;
+            }
+
+            .purpose-field {
+                border-left: 4px solid #9C27B0;
+            }
+
+            .company-field {
+                border-left: 4px solid #F44336;
+            }
+
+            .to-field {
+                border-left: 4px solid #4CAF50;
+            }
+
+            .note-field {
+                border-left: 4px solid #607D8B;
+            }
+
+            /* تحسين مظهر الحقول - موحد الحجم */
+            .enhanced-field {
+                font-size: 14px;
+                color: #37474F;
+                border: none;
+                background: transparent;
+                width: 100%;
+                line-height: 1.4;
+            }
+
+            .enhanced-field .ui-selectonemenu-label {
+                font-size: 14px;
+                color: #37474F;
+                font-weight: 500;
+            }
+
+            .enhanced-field .ui-selectcheckboxmenu-label {
+                font-size: 14px;
+                color: #37474F;
+                font-weight: 500;
+            }
+
+            .enhanced-field .ui-inputfield {
+                font-size: 14px;
+                color: #37474F;
+            }
+
+            /* توحيد حجم الخطوط للعناصر الأخرى */
+            .sidebar-field-row {
+                margin-bottom: 15px;
+                align-items: center;
+            }
+
+            .sidebar-label-col {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+            }
+
+            .sidebar-field-col {
+                display: flex;
+                align-items: center;
+            }
+
+            /* تحسين CKEditor */
+            .ckeditor-enhanced {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            .ckeditor-enhanced .cke_contents {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+        </style>
+        <p:tooltip trackMouse="true" widgetVar="tooltip_widgetVar" />
+        <h:form id="form">
+            <p:remoteCommand name="cke_print"
+                             oncomplete="PF('widgetvar_subject').getEditorInstance().addContentsCss('@page { size: auto;  margin: 0mm; }');"></p:remoteCommand>
+
+            <pe:remoteCommand id="applySubjectDataCommand"
+                              name="applySubjectData" process="@form"
+                              action="#{registerOutboundMailBean.doSaveDraft()}">
+                <pe:assignableParam name="subject"
+                                    assignTo="#{registerOutboundMailBean.subject}" />
+                <pe:assignableParam name="htmlSubject"
+                                    assignTo="#{registerOutboundMailBean.htmlSubject}" />
+            </pe:remoteCommand>
+            <pe:remoteCommand id="applySendDataCommand" name="applySendData"
+                              process="@form" action="#{registerOutboundMailBean.send()}"
+                              update=":form:messages">
+                <pe:assignableParam name="subject"
+                                    assignTo="#{registerOutboundMailBean.subject}" />
+                <pe:assignableParam name="htmlSubject"
+                                    assignTo="#{registerOutboundMailBean.htmlSubject}" />
+            </pe:remoteCommand>
+            <p:growl id="messages" showDetail="true" showSummary="false" />
+            <p:sticky id="sticky_events" target="toolbar_events"></p:sticky>
+            <div
+                    style="border: 0px; margin-right: 0.5%; margin-left: 0.5%; margin-top: 10px; word-wrap: break-word; border-radius: .25rem; background-color: transparent;">
+
+                <p:divider layout="horizontal" type="dashed"></p:divider>
+
+                <p:toolbar id="toolbar_events" style="margin-top:-10px;">
+                    <f:facet name="left">
+                        <p:commandButton id="commandButton_send"
+                                         value="#{interfaceLabel.send}"
+                                         disabled="#{registerOutboundMailBean.correspondence.seq eq null}"
+                                         onclick="applySendData(PF('widgetvar_subject').getEditorInstance().document.getBody().getText(),PF('widgetvar_subject').getEditorInstance().getData())"
+                                         icon="pi pi-send"
+                                         pt:data-tooltip="#{interfaceLabel.infoAboutSendRegisteredMail}"
+                                         styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat mr-2"
+                                         style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'};width:auto; ">
+                            <p:confirm header="#{interfaceLabel.confirmation}"
+                                       message="#{interfaceLabel.wouldYouContinueAndSendCorrespondence}"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                        <p:button id="commandButton_cancel"
+                                  value="#{interfaceLabel.cancel}"
+                                  icon="pi pi-times"
+                                  pt:data-tooltip="#{interfaceLabel.cancel}"
+                                  styleClass="rounded-button ui-button-help ui-button-raised ui-button-flat mr-2"
+                                  outcome="pretty:inspection/my-tasks" />
+
+
+                    </f:facet>
+
+
+                </p:toolbar>
+
+                <h:panelGroup id="panelGroup_chips" styleClass="chip-container"
+                              style="margin-right:5%;margin-left:5%;margin-top:0px;margin-bottom:5px;"
+                              layout="block">
+                    <script type="text/javascript" style="display: none;">
+                        //<![CDATA[
+                        $(".ui-panelgrid").click(function() {
+                            setTimeout(cke_print(), 15000);
+                            $(".ui-chip").removeClass('chip-select');
+                        });
+
+                        function resetClass(){
+                            $(".ui-chip").removeClass('chip-select');
+                        }
+
+                        // دالة لملء الحقول تلقائياً
+                        function autoFillFields() {
+                            // ملء عنوان المراسلة
+                            var titleField = document.querySelector('[id$=inputText_title]');
+                            if (titleField && !titleField.value) {
+                                var selectedCompany = '#{registerOutboundMailBean.company.name}';
+                                var selectedService = '#{registerOutboundMailBean.serviceType.name}';
+                                var selectedEquipment = '#{registerOutboundMailBean.equipmentCategory.name}';
+
+                                var autoTitle = '';
+                                if (selectedCompany) autoTitle += selectedCompany;
+                                if (selectedService) autoTitle += ' - ' + selectedService;
+                                if (selectedEquipment) autoTitle += ' - ' + selectedEquipment;
+
+                                if (autoTitle) {
+                                    titleField.value = autoTitle;
+                                }
+                            }
+
+                            // ملء موضوع المراسلة
+                            var subjectEditor = PF('widgetvar_subject');
+                            if (subjectEditor && !subjectEditor.getEditorInstance().getData()) {
+                                var noteContent = PF('widgetvar_note').getEditorInstance().getData();
+                                if (noteContent) {
+                                    subjectEditor.getEditorInstance().setData(noteContent);
+                                }
+                            }
+                        }
+
+                        // استدعاء الدالة عند الضغط على زر الحفظ
+                        function prepareSave() {
+                            autoFillFields();
+                            applyData(PF('widgetvar_note').getEditorInstance().document.getBody().getText(),
+                                'badge_recipient_size badge_recipients panelGroup_chips ckEditor_note ckEditor_subject inputText_title',
+                                'registerOutboundMailBean.addHtmlNote()',
+                                PF('widgetvar_note').getEditorInstance().getData());
+                        }
+                        //]]>
+                    </script>
+                    <div class="flex align-items-center flex-wrap">
+                        <c:forEach items="#{registerOutboundMailBean.recipientList}"
+                                   var="recipient" varStatus="loop">
+                            <c:if test="#{loop.count eq 5}">
+                                <p:commandButton value="#{interfaceLabel.more}"
+                                                 icon="pi pi-ellipsis-h"
+                                                 styleClass="ui-button-danger ui-button-flat"
+                                                 style="align-self: first baseline;flex: initial;width: auto;border-radius: 10px;display: inline-flex;"
+                                                 onclick="PF('sidebar_recipients').show()"></p:commandButton>
+                            </c:if>
+                            <c:if test="#{loop.count lt 5}">
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </h:panelGroup>
+
+
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-6 col-xl-4 col-xxl-3">
+
+                        <p:outputLabel for="@next"
+                                       style="color:black;font-weight:bolder;font-style:italic;">#{interfaceLabel.jobPositionTitle}</p:outputLabel>
+                    </div>
+                    <div class="col-lg-6 col-xl-8 col-xxl-9">
+                        <p:selectOneMenu
+                                value="#{registerOutboundMailBean.userAliasOwner}"
+                                converter="omnifaces.SelectItemsIndexConverter"
+                                style="background-color:#F9F9FB;color:black;font-weight:bolder;font-style:italic;width:100%;">
+                            <p:ajax
+                                    listener="#{registerOutboundMailBean.updateUserAliasList()}"
+                                    update="@([id$=selectCheckBoxMenu_UserAliasRecpient],[id$=caroulssel_myCabinets])"></p:ajax>
+                            <f:selectItems
+                                    itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                    itemValue="#{userAlias}" var="userAlias"
+                                    value="#{registerOutboundMailBean.myUserAliasList}" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+
+                <p:divider layout="horizontal" type="dashed"></p:divider>
+                <div class="row">
+                    <div class="col-12 col-lg-2 col-xl-1 col-xxl-1">
+
+                        <p:badge id="badge_recipient_size"
+                                 value="#{registerOutboundMailBean.selectedUserAliasRecipients.size()}"
+                                 severity="danger">
+                            <p:commandLink title="#{interfaceLabel.recipients}"
+                                           action="#{registerOutboundMailBean.initRecepientSideBar()}"
+                                           oncomplete="PF('sidebar_recipients').show()"
+                                           update="@([id$=sidebar_recipient_content])">
+                                <i class="pi pi-users" style="font-size: 2rem; color: red"></i>
+                            </p:commandLink>
+                        </p:badge>
+
+
+
+                    </div>
+                    <div class="col-12 col-lg-10 col-xl-11 col-xxl-11">
+                        <div class="row" style="margin-bottom: 5px;">
+                            <div class="col-lg-6 col-xl-3 col-xxl-3">
+                                <p:outputLabel
+                                        style="color:black;font-weight:bolder;font-style:italic;"
+                                        value="#{interfaceLabel.correspondenceType}" />
+                            </div>
+
+                            <div class="col-lg-6 col-xl-9 col-xxl-9">
+                                <p:selectOneMenu
+                                        style="background-color:#F9F9FB;font-weight:bolder;font-style:italic;width:100%;"
+                                        value="#{registerOutboundMailBean.correspondence.correspondenceType}"
+                                        converter="omnifaces.SelectItemsIndexConverter">
+                                    <f:selectItems itemLabel="#{correspondenceType.name} "
+                                                   itemValue="#{correspondenceType}" var="correspondenceType"
+                                                   value="#{registerOutboundMailBean.correspondenceTypeList}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="row " style="margin-bottom: 5px;">
+                            <div class="col-lg-6 col-xl-3 col-xxl-3">
+                                <p:outputLabel
+                                        style="color:black;font-weight:bolder;font-style:italic;"
+                                        for="@next" value="#{interfaceLabel.priorityType}"></p:outputLabel>
+                            </div>
+                            <div class="col-lg-6 col-xl-9 col-xxl-9">
+                                <p:selectOneMenu
+                                        style="background-color:#F9F9FB;font-weight:bolder;font-style:italic;width:100%;"
+                                        value="#{registerOutboundMailBean.correspondence.priorityType}"
+                                        converter="omnifaces.SelectItemsIndexConverter">
+                                    <p:ajax event="change"
+                                            listener="#{registerOutboundMailBean.updatePriorityType()}"
+                                            update="@([id$=selectOneMenu_Priority_Type])"></p:ajax>
+                                    <f:selectItems itemLabel="#{priorityType.name}"
+                                                   itemValue="#{priorityType}" var="priorityType"
+                                                   value="#{registerOutboundMailBean.priorityTypeList}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-xl-3 col-xxl-3">
+                                <p:outputLabel value="#{interfaceLabel.number}" />
+                            </div>
+                            <div class="col-lg-6 col-xl-9 col-xxl-9">
+                                <p:inputText readonly="true" style="color:#2196F3"
+                                             value="#{registerOutboundMailBean.correspondence.correspondenceSeq}"></p:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-xl-3 col-xxl-3">
+                                <p:outputLabel value="#{interfaceLabel.date}" rendered="false" />
+                            </div>
+                            <div class="col-lg-6 col-xl-9 col-xxl-9">
+                                <p:datePicker rendered="false"
+                                              pattern="#{app.locale.rtl ? 'yyyy/MM/dd':'dd/MM/yyyy'}"
+                                              value="#{registerOutboundMailBean.correspondence.correspondenceDate}"></p:datePicker>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-xl-3 col-xxl-3">
+                                <p:outputLabel value="#{interfaceLabel.creatorDate}" />
+                            </div>
+                            <div class="col-lg-6 col-xl-9 col-xxl-9">
+                                <p:datePicker disabled="true" readonly="true"
+                                              pattern="#{app.locale.rtl ? 'yyyy/MM/dd':'dd/MM/yyyy'}"
+                                              value="#{registerOutboundMailBean.correspondence.createdDate}"></p:datePicker>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <p:divider layout="horizontal" type="dashed"></p:divider>
+
+                <div class="row justify-content-center text-center"
+                     style="margin-bottom: 5px;">
+                    <div class="col-lg-12 col-xl-12 col-xxl-12">
+
+                        <p:inputText id="inputText_title"
+                                     placeholder="#{interfaceLabel.correspondenceTitle}"
+                                     style="font-weight:bolder;font-style:italic;color:black;background-color:#F9F9FB;width:100%"
+                                     value="#{registerOutboundMailBean.correspondence.title}"></p:inputText>
+
+                    </div>
+                </div>
+
+                <script type="text/javascript">
+                    $(".cke_print_editor").on( "mouseover", function(){
+                        cke_print();
+
+                    });
+
                 </script>
-				<div class="row justify-content-center text-center">
-					<div class="col-lg-12 col-xl-12 col-xxl-12">
-						<pe:ckEditor id="ckEditor_subject" widgetVar="widgetvar_subject"
-							value="#{registerOutboundMailBean.htmlSubject}" width="100%"
-							height="200px" placeholder="#{interfaceLabel.subject}"
-							toolbar="#{registerOutboundMailBean.localizationCkEditorToolBar()}"
-							skin="office2013" defaultLanguage="#{app.locale.language}"
-							language="#{app.locale.language}"></pe:ckEditor>
-					</div>
-				</div>
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-12 col-xl-12 col-xxl-12">
+                        <pe:ckEditor id="ckEditor_subject" widgetVar="widgetvar_subject"
+                                     value="#{registerOutboundMailBean.htmlSubject}" width="100%"
+                                     height="200px" placeholder="#{interfaceLabel.subject}"
+                                     toolbar="#{registerOutboundMailBean.localizationCkEditorToolBar()}"
+                                     skin="office2013" defaultLanguage="#{app.locale.language}"
+                                     language="#{app.locale.language}"></pe:ckEditor>
+                    </div>
+                </div>
 
-			</div>
+            </div>
 
-			<p:sidebar id="sidebar_recipient_content"
-				style="width:65%;overflow: auto;" widgetVar="sidebar_recipients"
-				blockScroll="true" dynamic="true" onShow="changez_index();"
-				onHide="reset_index();"
-				position="#{app.locale.locale eq 'en'? 'left' : 'right'}">
-				<p:divider align="center" type="dashed">
-					<div class="inline-flex align-items-center">
-						<p:badge id="badge_recipients"
-							value="#{registerOutboundMailBean.selectedUserAliasRecipients.size()}"
-							severity="danger">
-							<i class="pi pi-users" style="font-size: 2rem; color: red"></i>
-						</p:badge>
-						<p:spacer width="5"></p:spacer>
-						<p:outputLabel value="#{interfaceLabel.recipients}"
-							style="color:red;font-weight: bold"></p:outputLabel>
-					</div>
-				</p:divider>
+            <p:sidebar id="sidebar_recipient_content"
+                       style="width:65%;overflow: auto;" widgetVar="sidebar_recipients"
+                       blockScroll="true" dynamic="true" onShow="changez_index();"
+                       onHide="reset_index();"
+                       position="#{app.locale.locale eq 'en'? 'left' : 'right'}">
+                <p:divider align="center" type="dashed">
+                    <div class="inline-flex align-items-center">
+                        <p:badge id="badge_recipients"
+                                 value="#{registerOutboundMailBean.selectedUserAliasRecipients.size()}"
+                                 severity="danger">
+                            <i class="pi pi-users" style="font-size: 2rem; color: red"></i>
+                        </p:badge>
+                        <p:spacer width="5"></p:spacer>
+                        <p:outputLabel value="#{interfaceLabel.recipients}"
+                                       style="color:red;font-weight: bold"></p:outputLabel>
+                    </div>
+                </p:divider>
 
-				<div class="row sidebar-field-row">
-					<div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
-						<p:outputLabel for="@next" value="#{interfaceLabel.priorityType}" styleClass="field-label"></p:outputLabel>
-					</div>
-					<div class="col-12 col-lg-2 col-xl-4 col-xxl-4 sidebar-field-col">
-						<div class="field-container priority-field">
-							<p:selectOneMenu id="selectOneMenu_Priority_Type"
-								styleClass="enhanced-field"
-								value="#{registerOutboundMailBean.priorityType}"
-								converter="omnifaces.SelectItemsIndexConverter">
-								<f:selectItems itemLabel="#{priorityType.name}"
-									itemValue="#{priorityType}" var="priorityType"
-									value="#{registerOutboundMailBean.priorityTypeList}" />
-							</p:selectOneMenu>
-						</div>
-					</div>
-					<div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
-						<p:outputLabel for="@next" value="#{interfaceLabel.purposeType}" styleClass="field-label"/>
-					</div>
-					<div class="col-12 col-lg-2 col-xl-4 col-xxl-4 sidebar-field-col">
-						<div class="field-container purpose-field">
-							<p:selectOneMenu
-								styleClass="enhanced-field"
-								value="#{registerOutboundMailBean.purposeType}"
-								converter="omnifaces.SelectItemsIndexConverter">
-								<p:ajax update="@([id$=panelGroup_Task])"></p:ajax>
-								<f:selectItems itemLabel="#{purposeType.name} "
-									itemValue="#{purposeType}" var="purposeType"
-									value="#{registerOutboundMailBean.purposeTypeList}" />
-							</p:selectOneMenu>
-						</div>
-					</div>
-				</div>
-				<h:panelGroup id="panelGroup_Task">
-					<div class="row sidebar-field-row">
-						<div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
-							<h:outputLabel value="#{interfaceLabel.serviceType}"
-								styleClass="field-label required-field"
-								rendered="#{registerOutboundMailBean.purposeType.code eq '03'}" />
-						</div>
-						<div class="col-12 col-lg-4 col-xl-4 col-xxl-4 sidebar-field-col">
-							<div class="field-container service-field">
-								<p:selectOneMenu id="selectOneMenu_serviceType"
-									rendered="#{registerOutboundMailBean.purposeType.code eq '03'}"
-									styleClass="enhanced-field"
-									value="#{registerOutboundMailBean.serviceType}"
-									converter="omnifaces.SelectItemsIndexConverter"
-									required="#{registerOutboundMailBean.purposeType.code eq '03'}"
-									requiredMessage="#{interfaceLabel.serviceType} #{errorLabel.validateInput}">
-									<f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
-										noSelectionOption="true" />
-									<f:selectItems itemLabel="#{serviceType.name} "
-										itemValue="#{serviceType}" var="serviceType"
-										value="#{registerOutboundMailBean.serviceTypes}" />
-									<p:ajax listener="#{registerOutboundMailBean.onChangeServiceType()}" update="@([id$=panelGroup_Task])"></p:ajax>
-								</p:selectOneMenu>
-							</div>
-						</div>
-						<div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
-							<h:outputLabel value="#{interfaceLabel.company}"
-								styleClass="field-label required-field"
-								rendered="#{registerOutboundMailBean.purposeType.code eq '03'}" />
-						</div>
-						<div class="col-12 col-lg-3 col-xl-3 col-xxl-3 sidebar-field-col">
-							<div class="field-container company-field">
-								<p:selectOneMenu id="selectoneMenu_Company"
-									rendered="#{registerOutboundMailBean.purposeType.code eq '03'}"
-									styleClass="enhanced-field"
-									value="#{registerOutboundMailBean.company}"
-									converter="omnifaces.SelectItemsIndexConverter"
-									required="#{registerOutboundMailBean.purposeType.code eq '03'}"
-									requiredMessage="#{interfaceLabel.company} #{errorLabel.validateInput}">
-									<f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
-										noSelectionOption="true" />
-									<f:selectItems itemLabel="#{company.name} "
-										itemValue="#{company}" var="company"
-										value="#{registerOutboundMailBean.companies}" />
-								</p:selectOneMenu>
-							</div>
-						</div>
-					</div>
-					<div class="row sidebar-field-row">
-						<div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
-							<h:outputLabel value="#{interfaceLabel.equipmentCategory}"
-								rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03' 
-           and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}" 
-           styleClass="field-label required-field"/>
-						</div>
-						<div class="col-12 col-lg-10 col-xl-10 col-xxl-10 sidebar-field-col">
-							<div class="field-container service-field">
-								<p:selectOneMenu id="select_equipment_cat"
-									rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03' 
+                <div class="row sidebar-field-row">
+                    <div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
+                        <p:outputLabel for="@next" value="#{interfaceLabel.priorityType}" styleClass="field-label"></p:outputLabel>
+                    </div>
+                    <div class="col-12 col-lg-2 col-xl-4 col-xxl-4 sidebar-field-col">
+                        <div class="field-container priority-field">
+                            <p:selectOneMenu id="selectOneMenu_Priority_Type"
+                                             styleClass="enhanced-field"
+                                             value="#{registerOutboundMailBean.priorityType}"
+                                             converter="omnifaces.SelectItemsIndexConverter">
+                                <f:selectItems itemLabel="#{priorityType.name}"
+                                               itemValue="#{priorityType}" var="priorityType"
+                                               value="#{registerOutboundMailBean.priorityTypeList}" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
+                        <p:outputLabel for="@next" value="#{interfaceLabel.purposeType}" styleClass="field-label"/>
+                    </div>
+                    <div class="col-12 col-lg-2 col-xl-4 col-xxl-4 sidebar-field-col">
+                        <div class="field-container purpose-field">
+                            <p:selectOneMenu
+                                    styleClass="enhanced-field"
+                                    value="#{registerOutboundMailBean.purposeType}"
+                                    converter="omnifaces.SelectItemsIndexConverter">
+                                <p:ajax update="@([id$=panelGroup_Task])"></p:ajax>
+                                <f:selectItems itemLabel="#{purposeType.name} "
+                                               itemValue="#{purposeType}" var="purposeType"
+                                               value="#{registerOutboundMailBean.purposeTypeList}" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </div>
+                <h:panelGroup id="panelGroup_Task">
+                    <div class="row sidebar-field-row">
+                        <div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
+                            <h:outputLabel value="#{interfaceLabel.serviceType}"
+                                           styleClass="field-label required-field"
+                                           rendered="#{registerOutboundMailBean.purposeType.code eq '03'}" />
+                        </div>
+                        <div class="col-12 col-lg-4 col-xl-4 col-xxl-4 sidebar-field-col">
+                            <div class="field-container service-field">
+                                <p:selectOneMenu id="selectOneMenu_serviceType"
+                                                 rendered="#{registerOutboundMailBean.purposeType.code eq '03'}"
+                                                 styleClass="enhanced-field"
+                                                 value="#{registerOutboundMailBean.serviceType}"
+                                                 converter="omnifaces.SelectItemsIndexConverter"
+                                                 required="#{registerOutboundMailBean.purposeType.code eq '03'}"
+                                                 requiredMessage="#{interfaceLabel.serviceType} #{errorLabel.validateInput}">
+                                    <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
+                                                  noSelectionOption="true" />
+                                    <f:selectItems itemLabel="#{serviceType.name} "
+                                                   itemValue="#{serviceType}" var="serviceType"
+                                                   value="#{registerOutboundMailBean.serviceTypes}" />
+                                    <p:ajax listener="#{registerOutboundMailBean.onChangeServiceType()}" update="@([id$=panelGroup_Task])"></p:ajax>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
+                            <h:outputLabel value="#{interfaceLabel.company}"
+                                           styleClass="field-label required-field"
+                                           rendered="#{registerOutboundMailBean.purposeType.code eq '03'}" />
+                        </div>
+                        <div class="col-12 col-lg-3 col-xl-3 col-xxl-3 sidebar-field-col">
+                            <div class="field-container company-field">
+                                <p:selectOneMenu id="selectoneMenu_Company"
+                                                 rendered="#{registerOutboundMailBean.purposeType.code eq '03'}"
+                                                 styleClass="enhanced-field"
+                                                 value="#{registerOutboundMailBean.company}"
+                                                 converter="omnifaces.SelectItemsIndexConverter"
+                                                 filter="true"
+                                                 filterMatchMode="contains"
+                                                 required="#{registerOutboundMailBean.purposeType.code eq '03'}"
+                                                 requiredMessage="#{interfaceLabel.company} #{errorLabel.validateInput}">
+                                    <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
+                                                  noSelectionOption="true" />
+                                    <f:selectItems itemLabel="#{company.name} "
+                                                   itemValue="#{company}" var="company"
+                                                   value="#{registerOutboundMailBean.companies}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row sidebar-field-row">
+                        <div class="col-12 col-lg-2 col-xl-2 col-xxl-2 sidebar-label-col">
+                            <h:outputLabel value="#{interfaceLabel.equipmentCategory}"
+                                           rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03'
            and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
-									styleClass="enhanced-field"
-									value="#{registerOutboundMailBean.equipmentCategory}"
-									converter="omnifaces.SelectItemsIndexConverter"
-									required="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03' 
+                                           styleClass="field-label required-field"/>
+                        </div>
+                        <div class="col-12 col-lg-10 col-xl-10 col-xxl-10 sidebar-field-col">
+                            <div class="field-container service-field">
+                                <p:selectOneMenu id="select_equipment_cat"
+                                                 rendered="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03'
            and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
-									requiredMessage="#{interfaceLabel.equipmentCategory} #{errorLabel.validateInput}">
-									<f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
-										noSelectionOption="true" />
-									<f:selectItems itemLabel="#{equipmentCategory.name} "
-										itemValue="#{equipmentCategory}" var="equipmentCategory"
-										value="#{registerOutboundMailBean.equipmentCategories}" />
-								</p:selectOneMenu>
-							</div>
-						</div>
-					</div>
-				</h:panelGroup>
-				<div class="row sidebar-field-row">
-					<div class="col-12 col-lg-3 col-xl-2 col-xxl-2 sidebar-label-col">
-						<p:outputLabel for="@next" styleClass="field-label">#{interfaceLabel.to}</p:outputLabel>
-					</div>
-					<div class="col-12 col-lg-9 col-xl-10 col-xxl-10 sidebar-field-col">
-						<div class="field-container to-field">
-							<p:selectCheckboxMenu id="selectCheckBoxMenu_UserAliasRecpient"
-								styleClass="enhanced-field" multiple="true" filter="true"
-								filterMatchMode="contains" updateLabel="true"
-								widgetVar="widgetVar_SelectCheckBoxMenu"
-								valueChangeListener="#{registerOutboundMailBean.updateBadge()}"
-								emptyLabel="#{interfaceLabel.noRecipientsSelected}"
-								value="#{registerOutboundMailBean.selectedUserAliasRecipients}">
-								<p:ajax event="toggleSelect"
-								    update="badge_recipient_size badge_recipients panelGroup_chips commandButton_save"></p:ajax>
-								<p:ajax event="change"
-								    process="@([id$=sidebar_recipient_content])"
-								    listener="#{registerOutboundMailBean.addHtmlNote()}"
-								    update="badge_recipient_size badge_recipients panelGroup_chips ckEditor_note ckEditor_subject inputText_title commandButton_save"></p:ajax>
-								<p:ajax event="itemUnselect"
-								    update="badge_recipient_size badge_recipients panelGroup_chips commandButton_save"></p:ajax>
-								<f:selectItems
-									itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
-									itemValue="#{userAlias}" var="userAlias"
-									value="#{registerOutboundMailBean.userAliasRecipientList}" />
-								<o:converter converterId="omnifaces.ListIndexConverter"
-									list="#{registerOutboundMailBean.userAliasRecipientList}" />
-							</p:selectCheckboxMenu>
-						</div>
-					</div>
-				</div>
-				<div class="row sidebar-field-row">
-					<div class="col-12 col-lg-3 col-xl-2 col-xxl-2 sidebar-label-col">
-						<p:outputLabel for="@next" value="#{interfaceLabel.note}" styleClass="field-label"/>
-					</div>
-					<div class="col-12 col-lg-9 col-xl-10 col-xxl-10 sidebar-field-col">
-						<div class="field-container note-field">
-							<pe:ckEditor id="ckEditor_note" widgetVar="widgetvar_note"
-								value="#{registerOutboundMailBean.htmlNote}" skin="office2013"
-								width="100%" height="70px"
-								toolbar="#{registerOutboundMailBean.localizationCkEditorNoteToolBar()}"
-								placeholder="#{interfaceLabel.note}"
-								defaultLanguage="#{app.locale.language}"
-								language="#{app.locale.language}"
-								style="border: none;"
-								styleClass="ckeditor-enhanced"/>
-						</div>
-					</div>
-				</div>
-				<pe:remoteCommand id="applyDataCommand" name="applyData"
-				    process="@([id$=sidebar_recipient_content])"
-				    update="@([id$=dt-correspondenceRecipient],[id$=ckEditor_note],[id$=badge_recipient],[id$=panelGroup_chips],[id$=commandButton_save])"
-				    actionListener="#{registerOutboundMailBean.addCorrespondenceRecipient()}">
-				    <pe:assignableParam name="note"
-				        assignTo="#{registerOutboundMailBean.note}" />
-				    <pe:assignableParam name="htmlNote"
-				        assignTo="#{registerOutboundMailBean.htmlNote}" />
-				</pe:remoteCommand>
-				<p:toolbar id="toolbar">
-				    <f:facet name="left">
-				        <p:spacer width="160px;"></p:spacer>
-							   <p:commandButton value="#{interfaceLabel.add}"
-			                icon="pi pi-plus-circle"
-			                styleClass="ui-button-raised ui-button-success ui-button-flat"
-			                type="button"
-			                onclick="prepareSave()" />
-		                     	<p:divider layout="vertical" type="dashed"></p:divider>
-				        
-				        <p:commandButton value="#{interfaceLabel.save}"
-				            id="commandButton_save"
-				            icon="pi pi-save"
-				            styleClass="ui-button-raised ui-button-info ui-button-flat"
-				            disabled="#{empty registerOutboundMailBean.recipientList}"
-				            onclick="PF('sidebar_recipients').hide(); window.close(); return false;" />
-				    </f:facet>
-				</p:toolbar>
-				<p:divider type="dashed" style="margin-top:-10px;"></p:divider>
-				<p:dataTable id="dt-correspondenceRecipient"
-					widgetVar="dtCorrespondenceRecipient"
-					var="correspondenceRecipientVar"
-					value="#{registerOutboundMailBean.recipientList}" reflow="true"
-					rowKey="#{correspondenceRecipientVar.id}" paginator="true"
-					rows="10" emptyMessage="#{interfaceLabel.noRecordsFound}"
-					paginatorPosition="bottom">
+                                                 styleClass="enhanced-field"
+                                                 value="#{registerOutboundMailBean.equipmentCategory}"
+                                                 converter="omnifaces.SelectItemsIndexConverter"
+                                                 filter="true"
+                                                 filterMatchMode="contains"
+                                                 required="#{registerOutboundMailBean.purposeType != null and registerOutboundMailBean.purposeType.code eq '03'
+           and registerOutboundMailBean.serviceType != null and registerOutboundMailBean.serviceType.code eq '001'}"
+                                                 requiredMessage="#{interfaceLabel.equipmentCategory} #{errorLabel.validateInput}">
+                                    <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue=""
+                                                  noSelectionOption="true" />
+                                    <f:selectItems itemLabel="#{equipmentCategory.name} "
+                                                   itemValue="#{equipmentCategory}" var="equipmentCategory"
+                                                   value="#{registerOutboundMailBean.equipmentCategories}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                </h:panelGroup>
+                <div class="row sidebar-field-row">
+                    <div class="col-12 col-lg-3 col-xl-2 col-xxl-2 sidebar-label-col">
+                        <p:outputLabel for="@next" styleClass="field-label">#{interfaceLabel.to}</p:outputLabel>
+                    </div>
+                    <div class="col-12 col-lg-9 col-xl-10 col-xxl-10 sidebar-field-col">
+                        <div class="field-container to-field">
+                            <p:selectCheckboxMenu id="selectCheckBoxMenu_UserAliasRecpient"
+                                                  styleClass="enhanced-field" multiple="true" filter="true"
+                                                  filterMatchMode="contains" updateLabel="true"
+                                                  widgetVar="widgetVar_SelectCheckBoxMenu"
+                                                  valueChangeListener="#{registerOutboundMailBean.updateBadge()}"
+                                                  emptyLabel="#{interfaceLabel.noRecipientsSelected}"
+                                                  value="#{registerOutboundMailBean.selectedUserAliasRecipients}">
+                                <p:ajax event="toggleSelect"
+                                        update="badge_recipient_size badge_recipients panelGroup_chips commandButton_save"></p:ajax>
+                                <p:ajax event="change"
+                                        process="@([id$=sidebar_recipient_content])"
+                                        listener="#{registerOutboundMailBean.addHtmlNote()}"
+                                        update="badge_recipient_size badge_recipients panelGroup_chips ckEditor_note ckEditor_subject inputText_title commandButton_save"></p:ajax>
+                                <p:ajax event="itemUnselect"
+                                        update="badge_recipient_size badge_recipients panelGroup_chips commandButton_save"></p:ajax>
+                                <f:selectItems
+                                        itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                        itemValue="#{userAlias}" var="userAlias"
+                                        value="#{registerOutboundMailBean.userAliasRecipientList}" />
+                                <o:converter converterId="omnifaces.ListIndexConverter"
+                                             list="#{registerOutboundMailBean.userAliasRecipientList}" />
+                            </p:selectCheckboxMenu>
+                        </div>
+                    </div>
+                </div>
+                <div class="row sidebar-field-row">
+                    <div class="col-12 col-lg-3 col-xl-2 col-xxl-2 sidebar-label-col">
+                        <p:outputLabel for="@next" value="#{interfaceLabel.note}" styleClass="field-label"/>
+                    </div>
+                    <div class="col-12 col-lg-9 col-xl-10 col-xxl-10 sidebar-field-col">
+                        <div class="field-container note-field">
+                            <pe:ckEditor id="ckEditor_note" widgetVar="widgetvar_note"
+                                         value="#{registerOutboundMailBean.htmlNote}" skin="office2013"
+                                         width="100%" height="70px"
+                                         toolbar="#{registerOutboundMailBean.localizationCkEditorNoteToolBar()}"
+                                         placeholder="#{interfaceLabel.note}"
+                                         defaultLanguage="#{app.locale.language}"
+                                         language="#{app.locale.language}"
+                                         style="border: none;"
+                                         styleClass="ckeditor-enhanced"/>
+                        </div>
+                    </div>
+                </div>
+                <pe:remoteCommand id="applyDataCommand" name="applyData"
+                                  process="@([id$=sidebar_recipient_content])"
+                                  update="@([id$=dt-correspondenceRecipient],[id$=ckEditor_note],[id$=badge_recipient],[id$=panelGroup_chips],[id$=commandButton_save])"
+                                  actionListener="#{registerOutboundMailBean.addCorrespondenceRecipient()}">
+                    <pe:assignableParam name="note"
+                                        assignTo="#{registerOutboundMailBean.note}" />
+                    <pe:assignableParam name="htmlNote"
+                                        assignTo="#{registerOutboundMailBean.htmlNote}" />
+                </pe:remoteCommand>
+                <p:toolbar id="toolbar">
+                    <f:facet name="left">
+                        <p:spacer width="160px;"></p:spacer>
+                        <p:commandButton value="#{interfaceLabel.add}"
+                                         icon="pi pi-plus-circle"
+                                         styleClass="ui-button-raised ui-button-success ui-button-flat"
+                                         type="button"
+                                         onclick="prepareSave()" />
+                        <p:divider layout="vertical" type="dashed"></p:divider>
 
-					<p:column headerText="#{interfaceLabel.to}" width="40%">
-						<h:outputText
-							style="font-weight:bolder;font-style:italic;color:green;"
-							value="#{correspondenceRecipientVar.userAlias.sysUserBySysUser.displayName} / #{correspondenceRecipientVar.userAlias.jobPosition.name}  / #{correspondenceRecipientVar.userAlias.organizationByOrganization.name} " />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.priorityType}" width="20%">
-						<h:outputText
-							style="font-weight:bolder;font-style:italic;color:green;"
-							value="#{correspondenceRecipientVar.priorityType.name}" />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.purposeType}" width="20%">
-						<h:outputText
-							style="font-weight:bolder;font-style:italic;color:green;"
-							value="#{correspondenceRecipientVar.purposeType.name}" />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.note}" width="20%">
-						<h:outputText
-							style="font-weight:bolder;font-style:italic;color:green;"
-							value="#{correspondenceRecipientVar.note}" escape="false" />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.action}" width="5%">
-						<p:commandButton
-						    styleClass="rounded-button ui-button-danger ui-button-outlined"
-						    icon="pi pi-trash" title="#{interfaceLabel.delete}"
-						    process="@this"
-						    update="@([id$=panelGroup_chips],[id$=scrollPanel_badges],[id$=badge_recipient_size],[id$=badge_recipients],[id$=commandButton_save])"
-						    action="#{registerOutboundMailBean.removeCorrespondenceRecipient(correspondenceRecipientVar)}">
-						</p:commandButton>
-					</p:column>
-				</p:dataTable>
-			</p:sidebar>
+                        <p:commandButton value="#{interfaceLabel.save}"
+                                         id="commandButton_save"
+                                         icon="pi pi-save"
+                                         styleClass="ui-button-raised ui-button-info ui-button-flat"
+                                         disabled="#{empty registerOutboundMailBean.recipientList}"
+                                         onclick="PF('sidebar_recipients').hide(); window.close(); return false;" />
+                    </f:facet>
+                </p:toolbar>
+                <p:divider type="dashed" style="margin-top:-10px;"></p:divider>
+                <p:dataTable id="dt-correspondenceRecipient"
+                             widgetVar="dtCorrespondenceRecipient"
+                             var="correspondenceRecipientVar"
+                             value="#{registerOutboundMailBean.recipientList}" reflow="true"
+                             rowKey="#{correspondenceRecipientVar.id}" paginator="true"
+                             rows="10" emptyMessage="#{interfaceLabel.noRecordsFound}"
+                             paginatorPosition="bottom">
+
+                    <p:column headerText="#{interfaceLabel.to}" width="40%">
+                        <h:outputText
+                                style="font-weight:bolder;font-style:italic;color:green;"
+                                value="#{correspondenceRecipientVar.userAlias.sysUserBySysUser.displayName} / #{correspondenceRecipientVar.userAlias.jobPosition.name}  / #{correspondenceRecipientVar.userAlias.organizationByOrganization.name} " />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.priorityType}" width="20%">
+                        <h:outputText
+                                style="font-weight:bolder;font-style:italic;color:green;"
+                                value="#{correspondenceRecipientVar.priorityType.name}" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.purposeType}" width="20%">
+                        <h:outputText
+                                style="font-weight:bolder;font-style:italic;color:green;"
+                                value="#{correspondenceRecipientVar.purposeType.name}" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.note}" width="20%">
+                        <h:outputText
+                                style="font-weight:bolder;font-style:italic;color:green;"
+                                value="#{correspondenceRecipientVar.note}" escape="false" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.action}" width="5%">
+                        <p:commandButton
+                                styleClass="rounded-button ui-button-danger ui-button-outlined"
+                                icon="pi pi-trash" title="#{interfaceLabel.delete}"
+                                process="@this"
+                                update="@([id$=panelGroup_chips],[id$=scrollPanel_badges],[id$=badge_recipient_size],[id$=badge_recipients],[id$=commandButton_save])"
+                                action="#{registerOutboundMailBean.removeCorrespondenceRecipient(correspondenceRecipientVar)}">
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:sidebar>
 
 
-			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-				<p:commandButton value="#{interfaceLabel.yes}" type="button"
-					styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-				<p:commandButton value="#{interfaceLabel.no}" type="button"
-					styleClass="ui-confirmdialog-no" icon="pi pi-times" />
-			</p:confirmDialog>
-			<p:scrollTop threshold="100" widgetVar="scrollTop"
-				styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
-		</h:form>
-	</ui:define>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="#{interfaceLabel.yes}" type="button"
+                                 styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                <p:commandButton value="#{interfaceLabel.no}" type="button"
+                                 styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+            </p:confirmDialog>
+            <p:scrollTop threshold="100" widgetVar="scrollTop"
+                         styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+        </h:form>
+    </ui:define>
 </ui:composition>

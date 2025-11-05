@@ -1471,7 +1471,10 @@
                         <p:selectOneMenu
                                 style="width:100%;"
                                 value="#{empCertificationBean.company}"
-                                converter="omnifaces.SelectItemsIndexConverter">
+                                converter="omnifaces.SelectItemsIndexConverter"
+                                filter="true"
+                                filterMatchMode="contains"
+                                filterPlaceholder="Search companies...">
                             <f:selectItem itemLabel="Select Company" itemValue="#{null}" />
                             <f:selectItems value="#{empCertificationBean.companies}"
                                            var="comp" itemLabel="#{comp.name}" itemValue="#{comp}" />
