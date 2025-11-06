@@ -128,7 +128,7 @@ public class InspectionFormSearchBean implements Serializable {
                         sortField = sortMeta.getField();
                         ascending = sortMeta.getOrder().isAscending();
                         if (sortBy.size() > 1) {
-                            LOGGER.warn("Multiple sort fields provided, using only the first: {}", sortField);
+                            // suppressed warn per requested removal
                         }
                     }
 
