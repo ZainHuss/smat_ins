@@ -2037,7 +2037,7 @@
                     <div class="col-lg-6 col-xl-3 col-xxl-3">
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.dateOfThoroughExamination}" styleClass="smat-label" />
-                            <p:calendar disabled="#{inspectionFormBean.disabled}"
+                            <p:calendar
                                         value="#{inspectionFormBean.equipmentInspectionForm.dateOfThoroughExamination}"
                                         styleClass="block" showIcon="true" />
                         </div>
@@ -2045,7 +2045,7 @@
                     <div class="col-lg-6 col-xl-3 col-xxl-3">
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.nextExaminationDate}" styleClass="smat-label" />
-                            <p:calendar disabled="#{inspectionFormBean.disabled}"
+                            <p:calendar
                                         value="#{inspectionFormBean.equipmentInspectionForm.nextExaminationDate}"
                                         styleClass="block" showIcon="true" />
                         </div>
@@ -2053,7 +2053,7 @@
                     <div class="col-lg-6 col-xl-3 col-xxl-3">
                         <div class="field">
                             <h:outputText value="#{interfaceLabel.previousExaminationDate}" styleClass="smat-label" />
-                            <p:calendar disabled="#{inspectionFormBean.disabled}"
+                            <p:calendar
                                         value="#{inspectionFormBean.equipmentInspectionForm.previousExaminationDate}"
                                         styleClass="block" showIcon="true" />
                         </div>
@@ -2066,7 +2066,7 @@
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.company}" styleClass="smat-label" />
                             <p:selectOneMenu
-                                    disabled="#{inspectionFormBean.disabled}"
+
                                     style="width:100%;"
                                     value="#{inspectionFormBean.equipmentInspectionForm.company}"
                                     converter="omnifaces.SelectItemsIndexConverter"
@@ -2088,7 +2088,7 @@
                             <h:outputText value="#{interfaceLabel.nameAndAddressOfEmployer}" styleClass="smat-label" />
                             <p:inputTextarea
                                     id="companyAddress"
-                                    disabled="#{inspectionFormBean.disabled}"
+
                                     value="#{inspectionFormBean.equipmentInspectionForm.company.address}"
                                     styleClass="block"
                                     rows="2" />
@@ -2100,7 +2100,7 @@
                     <div class="col-lg-6 col-xl-6 col-xxl-6">
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.examinationType}" styleClass="smat-label" />
-                            <p:selectOneMenu disabled="#{inspectionFormBean.disabled}"
+                            <p:selectOneMenu
                                              style="width:100%;"
                                              value="#{inspectionFormBean.examinationType}"
                                              converter="omnifaces.SelectItemsIndexConverter">
@@ -2113,7 +2113,7 @@
                     <div class="col-lg-6 col-xl-6 col-xxl-6">
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.equipmentType}" styleClass="smat-label" />
-                            <p:selectOneMenu disabled="#{inspectionFormBean.disabled}"
+                            <p:selectOneMenu
                                              style="width:100%;"
                                              value="#{inspectionFormBean.equipmentType}"
                                              converter="omnifaces.SelectItemsIndexConverter">
