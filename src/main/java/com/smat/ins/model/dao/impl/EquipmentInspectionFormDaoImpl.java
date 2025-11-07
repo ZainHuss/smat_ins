@@ -31,10 +31,13 @@ public class EquipmentInspectionFormDaoImpl extends
 
         try {
             session = sessionFactory.getCurrentSession();
-            return Integer.parseInt((String) session.createNativeQuery(
-                            "SELECT COALESCE(MAX(SUBSTR(eif.report_no,-5)),0) as Max_Report_Code from equipment_inspection_form eif \r\n"
-                                    + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?".toLowerCase())
-                    .setParameter(1, code).addScalar("Max_Report_Code").uniqueResult());
+        Object result = session.createNativeQuery(
+            "SELECT COALESCE(MAX(CAST(SUBSTR(eif.report_no,-5) AS UNSIGNED)),0) as Max_Report_Code from equipment_inspection_form eif "
+                + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?")
+            .setParameter(1, code).getSingleResult();
+        if (result instanceof Number) return ((Number) result).intValue();
+        if (result != null) return Integer.parseInt(result.toString());
+        return 0;
 
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -49,10 +52,13 @@ public class EquipmentInspectionFormDaoImpl extends
 
         try {
             session = sessionFactory.getCurrentSession();
-            return Integer.parseInt((String) session.createNativeQuery(
-                            "SELECT COALESCE(MAX(SUBSTR(eif.time_sheet_no,-5)),0) as Max_Time_Sheet_Code from equipment_inspection_form eif \r\n"
-                                    + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?".toLowerCase())
-                    .setParameter(1, code).addScalar("Max_Time_Sheet_Code").uniqueResult());
+        Object result = session.createNativeQuery(
+            "SELECT COALESCE(MAX(CAST(SUBSTR(eif.time_sheet_no,-5) AS UNSIGNED)),0) as Max_Time_Sheet_Code from equipment_inspection_form eif "
+                + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?")
+            .setParameter(1, code).getSingleResult();
+        if (result instanceof Number) return ((Number) result).intValue();
+        if (result != null) return Integer.parseInt(result.toString());
+        return 0;
 
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -67,10 +73,13 @@ public class EquipmentInspectionFormDaoImpl extends
 
         try {
             session = sessionFactory.getCurrentSession();
-            return Integer.parseInt((String) session.createNativeQuery(
-                            "SELECT COALESCE(MAX(SUBSTR(eif.job_no,-5)),0) as Max_Job_Code from equipment_inspection_form eif \r\n"
-                                    + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?".toLowerCase())
-                    .setParameter(1, code).addScalar("Max_Job_Code").uniqueResult());
+        Object result = session.createNativeQuery(
+            "SELECT COALESCE(MAX(CAST(SUBSTR(eif.job_no,-5) AS UNSIGNED)),0) as Max_Job_Code from equipment_inspection_form eif "
+                + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?")
+            .setParameter(1, code).getSingleResult();
+        if (result instanceof Number) return ((Number) result).intValue();
+        if (result != null) return Integer.parseInt(result.toString());
+        return 0;
 
         } catch (HibernateException e) {
             e.printStackTrace();
@@ -85,10 +94,13 @@ public class EquipmentInspectionFormDaoImpl extends
 
         try {
             session = sessionFactory.getCurrentSession();
-            return Integer.parseInt((String) session.createNativeQuery(
-                            "SELECT COALESCE(MAX(SUBSTR(eif.sticker_no,-5)),0) as Max_Sticker_Code from equipment_inspection_form eif \r\n"
-                                    + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?".toLowerCase())
-                    .setParameter(1, code).addScalar("Max_Sticker_Code").uniqueResult());
+        Object result = session.createNativeQuery(
+            "SELECT COALESCE(MAX(CAST(SUBSTR(eif.sticker_no,-5) AS UNSIGNED)),0) as Max_Sticker_Code from equipment_inspection_form eif "
+                + "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id WHERE ec.code= ?")
+            .setParameter(1, code).getSingleResult();
+        if (result instanceof Number) return ((Number) result).intValue();
+        if (result != null) return Integer.parseInt(result.toString());
+        return 0;
 
         } catch (HibernateException e) {
             e.printStackTrace();

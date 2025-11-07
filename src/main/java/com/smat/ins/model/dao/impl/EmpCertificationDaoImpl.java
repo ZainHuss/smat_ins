@@ -26,10 +26,17 @@ public class EmpCertificationDaoImpl extends GenericDaoImpl<EmpCertification, In
 		Integer maxCertNo = null;
 		try {
 			session = sessionFactory.getCurrentSession();
-			return Integer.parseInt((String) session.createNativeQuery(
-					"SELECT COALESCE(MAX(SUBSTR(ec.cert_number,-7)),0) as max_cert_no from emp_certification ec \r\n"
-							.toLowerCase())
-					.addScalar("max_cert_no").uniqueResult());
+			// cast substring to unsigned so DB returns a numeric type instead of a string
+			Object result = session.createNativeQuery(
+					"SELECT COALESCE(MAX(CAST(SUBSTR(ec.cert_number,-7) AS UNSIGNED)),0) as max_cert_no from emp_certification ec")
+					.getSingleResult();
+			if (result instanceof Number) {
+				return ((Number) result).intValue();
+			} else if (result != null) {
+				return Integer.parseInt(result.toString());
+			} else {
+				return 0;
+			}
 		} catch (HibernateException e) {
 			e.printStackTrace();
 			return maxCertNo;
@@ -42,10 +49,17 @@ public class EmpCertificationDaoImpl extends GenericDaoImpl<EmpCertification, In
 		Integer maxTsNo = null;
 		try {
 			session = sessionFactory.getCurrentSession();
-			return Integer.parseInt((String) session.createNativeQuery(
-					"SELECT COALESCE(MAX(SUBSTR(ec.ts_number,-5)),0) as ts_number from emp_certification ec \r\n"
-							.toLowerCase())
-					.addScalar("ts_number").uniqueResult());
+			// cast substring to unsigned so DB returns a numeric type instead of a string
+			Object result = session.createNativeQuery(
+					"SELECT COALESCE(MAX(CAST(SUBSTR(ec.ts_number,-5) AS UNSIGNED)),0) as ts_number from emp_certification ec")
+					.getSingleResult();
+			if (result instanceof Number) {
+				return ((Number) result).intValue();
+			} else if (result != null) {
+				return Integer.parseInt(result.toString());
+			} else {
+				return 0;
+			}
 		} catch (HibernateException e) {
 			e.printStackTrace();
 			return maxTsNo;
