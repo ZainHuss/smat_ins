@@ -14,75 +14,75 @@ import com.smat.ins.model.entity.InspectionFormWorkflow;
 import com.smat.ins.model.entity.InspectionFormWorkflowStep;
 
 public class EquipmentInspectionFormServiceImpl extends
-		GenericServiceImpl<EquipmentInspectionForm, EquipmentInspectionFormDao, Long> implements   EquipmentInspectionFormService {
+        GenericServiceImpl<EquipmentInspectionForm, EquipmentInspectionFormDao, Long> implements   EquipmentInspectionFormService {
 
-	private InspectionFormWorkflowDao inspectionFormWorkflowDao;
-	
-	private InspectionFormWorkflowStepDao inspectionFormWorkflowStepDao;
-	
-	
-	
-	
-	public InspectionFormWorkflowDao getInspectionFormWorkflowDao() {
-		return inspectionFormWorkflowDao;
-	}
+    private InspectionFormWorkflowDao inspectionFormWorkflowDao;
 
-	public void setInspectionFormWorkflowDao(InspectionFormWorkflowDao inspectionFormWorkflowDao) {
-		this.inspectionFormWorkflowDao = inspectionFormWorkflowDao;
-	}
+    private InspectionFormWorkflowStepDao inspectionFormWorkflowStepDao;
 
-	public InspectionFormWorkflowStepDao getInspectionFormWorkflowStepDao() {
-		return inspectionFormWorkflowStepDao;
-	}
 
-	public void setInspectionFormWorkflowStepDao(InspectionFormWorkflowStepDao inspectionFormWorkflowStepDao) {
-		this.inspectionFormWorkflowStepDao = inspectionFormWorkflowStepDao;
-	}
 
-	@Override
-	public Integer getMaxReportNoCodeByEquipmentCat(String code) {
-		// TODO Auto-generated method stub
-		return dao.getMaxReportNoCodeByEquipmentCat(code);
-	}
 
-	@Override
-	public Integer getMaxTimeSheetNoCodeByEquipmentCat(String code) {
-		// TODO Auto-generated method stub
-		return dao.getMaxTimeSheetNoCodeByEquipmentCat(code);
-	}
+    public InspectionFormWorkflowDao getInspectionFormWorkflowDao() {
+        return inspectionFormWorkflowDao;
+    }
 
-	@Override
-	public Integer getMaxJobNoCodeByEquipmentCat(String code) {
-		// TODO Auto-generated method stub
-		return dao.getMaxJobNoCodeByEquipmentCat(code);
-	}
+    public void setInspectionFormWorkflowDao(InspectionFormWorkflowDao inspectionFormWorkflowDao) {
+        this.inspectionFormWorkflowDao = inspectionFormWorkflowDao;
+    }
 
-	@Override
-	public Integer getMaxStickerNoCodeByEquipmentCat(String code) {
-		// TODO Auto-generated method stub
-		return dao.getMaxStickerNoCodeByEquipmentCat(code);
-	}
+    public InspectionFormWorkflowStepDao getInspectionFormWorkflowStepDao() {
+        return inspectionFormWorkflowStepDao;
+    }
 
-	@Override
-	public List<EquipmentInspectionForm> getForReview() {
-		// TODO Auto-generated method stub
-		return dao.getForReview();
-	}
+    public void setInspectionFormWorkflowStepDao(InspectionFormWorkflowStepDao inspectionFormWorkflowStepDao) {
+        this.inspectionFormWorkflowStepDao = inspectionFormWorkflowStepDao;
+    }
 
-	@Override
-	public EquipmentInspectionForm getBy(Integer taskId) {
-		// TODO Auto-generated method stub
-		return dao.getBy(taskId);
-	}
+    @Override
+    public Integer getMaxReportNoCodeByEquipmentCat(String code) {
+        // TODO Auto-generated method stub
+        return dao.getMaxReportNoCodeByEquipmentCat(code);
+    }
 
-	@Override
-	public Boolean saveToStep(EquipmentInspectionForm equipmentInspectionForm, InspectionFormWorkflow inspectionFormWorkflow,
-			InspectionFormWorkflowStep inspectionFormWorkflowStep) throws Exception {
-		// TODO Auto-generated method stub
-		dao.update(equipmentInspectionForm);
-		inspectionFormWorkflowDao.update(inspectionFormWorkflow);
-		inspectionFormWorkflowStepDao.insert(inspectionFormWorkflowStep);
-		return true;
-	}
+    @Override
+    public Integer getMaxTimeSheetNoCodeByEquipmentCat(String code) {
+        // TODO Auto-generated method stub
+        return dao.getMaxTimeSheetNoCodeByEquipmentCat(code);
+    }
+
+    @Override
+    public Integer getMaxJobNoCodeByEquipmentCat(String code) {
+        // TODO Auto-generated method stub
+        return dao.getMaxJobNoCodeByEquipmentCat(code);
+    }
+
+    @Override
+    public Integer getMaxStickerNoCodeByEquipmentCat(String code) {
+        // TODO Auto-generated method stub
+        return dao.getMaxStickerNoCodeByEquipmentCat(code);
+    }
+
+    @Override
+    public List<EquipmentInspectionForm> getForReview() {
+        // TODO Auto-generated method stub
+        return dao.getForReview();
+    }
+
+    @Override
+    public EquipmentInspectionForm getBy(Integer taskId) {
+        // TODO Auto-generated method stub
+        return dao.getBy(taskId);
+    }
+
+    @Override
+    public Boolean saveToStep(EquipmentInspectionForm equipmentInspectionForm, InspectionFormWorkflow inspectionFormWorkflow,
+                              InspectionFormWorkflowStep inspectionFormWorkflowStep) throws Exception {
+        // TODO Auto-generated method stub
+        dao.update(equipmentInspectionForm);
+        inspectionFormWorkflowDao.update(inspectionFormWorkflow);
+        inspectionFormWorkflowStepDao.insert(inspectionFormWorkflowStep);
+        return true;
+    }
 
 }

@@ -16,101 +16,101 @@ import com.smat.ins.model.service.EmpCertificationService;
 
 public class EmpCertificationServiceImpl extends GenericServiceImpl<EmpCertification,EmpCertificationDao, Integer> implements EmpCertificationService {
 
-	private EmployeeDao employeeDao;
-	private EmpCertificationWorkflowDao empCertificationWorkflowDao;
-	
-	private EmpCertificationWorkflowStepDao empCertificationWorkflowStepDao;
-	
-	
+    private EmployeeDao employeeDao;
+    private EmpCertificationWorkflowDao empCertificationWorkflowDao;
 
-	public EmployeeDao getEmployeeDao() {
-		return employeeDao;
-	}
+    private EmpCertificationWorkflowStepDao empCertificationWorkflowStepDao;
 
-	public void setEmployeeDao(EmployeeDao employeeDao) {
-		this.employeeDao = employeeDao;
-	}
 
-	public EmpCertificationWorkflowDao getEmpCertificationWorkflowDao() {
-		return empCertificationWorkflowDao;
-	}
 
-	public void setEmpCertificationWorkflowDao(EmpCertificationWorkflowDao empCertificationWorkflowDao) {
-		this.empCertificationWorkflowDao = empCertificationWorkflowDao;
-	}
+    public EmployeeDao getEmployeeDao() {
+        return employeeDao;
+    }
 
-	public EmpCertificationWorkflowStepDao getEmpCertificationWorkflowStepDao() {
-		return empCertificationWorkflowStepDao;
-	}
+    public void setEmployeeDao(EmployeeDao employeeDao) {
+        this.employeeDao = employeeDao;
+    }
 
-	public void setEmpCertificationWorkflowStepDao(EmpCertificationWorkflowStepDao empCertificationWorkflowStepDao) {
-		this.empCertificationWorkflowStepDao = empCertificationWorkflowStepDao;
-	}
+    public EmpCertificationWorkflowDao getEmpCertificationWorkflowDao() {
+        return empCertificationWorkflowDao;
+    }
 
-	@Override
-	public Integer getMaxCertNo() {
-		// TODO Auto-generated method stub
-		return dao.getMaxCertNo();
-	}
+    public void setEmpCertificationWorkflowDao(EmpCertificationWorkflowDao empCertificationWorkflowDao) {
+        this.empCertificationWorkflowDao = empCertificationWorkflowDao;
+    }
 
-	@Override
-	public Integer getMaxTimeSheetNo() {
-		// TODO Auto-generated method stub
-		return dao.getMaxTimeSheetNo();
-	}
+    public EmpCertificationWorkflowStepDao getEmpCertificationWorkflowStepDao() {
+        return empCertificationWorkflowStepDao;
+    }
 
-	@Override
-	public List<EmpCertification> getForReview() {
-		// TODO Auto-generated method stub
-		return dao.getForReview();
-	}
+    public void setEmpCertificationWorkflowStepDao(EmpCertificationWorkflowStepDao empCertificationWorkflowStepDao) {
+        this.empCertificationWorkflowStepDao = empCertificationWorkflowStepDao;
+    }
 
-	@Override
-	public EmpCertification getBy(Integer taskId) {
-		// TODO Auto-generated method stub
-		return dao.getBy(taskId);
-	}
+    @Override
+    public Integer getMaxCertNo() {
+        // TODO Auto-generated method stub
+        return dao.getMaxCertNo();
+    }
 
-	@Override
-	public Boolean saveToStep(EmpCertification empCertification,Employee employee, EmpCertificationWorkflow empCertificationWorkflow,
-			EmpCertificationWorkflowStep empCertificationWorkflowStep) throws Exception {
-		// TODO Auto-generated method stub
-		
-		employeeDao.update(employee);
-		dao.update(empCertification);
-		empCertificationWorkflowDao.update(empCertificationWorkflow);
-		empCertificationWorkflowStepDao.insert(empCertificationWorkflowStep);
-		return true;
-	}
+    @Override
+    public Integer getMaxTimeSheetNo() {
+        // TODO Auto-generated method stub
+        return dao.getMaxTimeSheetNo();
+    }
 
-	@Override
-	public Boolean merge(EmpCertification empCertification, Employee employee)throws Exception {
-		// TODO Auto-generated method stub
-		
-		employeeDao.update(employee);
-		dao.merge(empCertification);
-		return true;
-	}
+    @Override
+    public List<EmpCertification> getForReview() {
+        // TODO Auto-generated method stub
+        return dao.getForReview();
+    }
 
-	@Override
-	public Boolean saveOrUpdate(EmpCertification empCertification, Employee employee) throws Exception {
-		// TODO Auto-generated method stub
-		Employee employeeResult=employeeDao.insert(employee);
-		empCertification.setEmployee(employeeResult);
-		dao.insert(empCertification);
-		return true;
-	}
+    @Override
+    public EmpCertification getBy(Integer taskId) {
+        // TODO Auto-generated method stub
+        return dao.getBy(taskId);
+    }
 
-	@Override
-	public EmpCertification findBy(Integer certId) {
-		// TODO Auto-generated method stub
-		return dao.findBy(certId);
-	}
+    @Override
+    public Boolean saveToStep(EmpCertification empCertification,Employee employee, EmpCertificationWorkflow empCertificationWorkflow,
+                              EmpCertificationWorkflowStep empCertificationWorkflowStep) throws Exception {
+        // TODO Auto-generated method stub
 
-	@Override
-	public EmpCertification getByCertNumberAndTsNumber(String certNumber, String tsNumber) {
-		// TODO Auto-generated method stub
-		return dao.getByCertNumberAndTsNumber(certNumber, tsNumber);
-	}
+        employeeDao.update(employee);
+        dao.update(empCertification);
+        empCertificationWorkflowDao.update(empCertificationWorkflow);
+        empCertificationWorkflowStepDao.insert(empCertificationWorkflowStep);
+        return true;
+    }
+
+    @Override
+    public Boolean merge(EmpCertification empCertification, Employee employee)throws Exception {
+        // TODO Auto-generated method stub
+
+        employeeDao.update(employee);
+        dao.merge(empCertification);
+        return true;
+    }
+
+    @Override
+    public Boolean saveOrUpdate(EmpCertification empCertification, Employee employee) throws Exception {
+        // TODO Auto-generated method stub
+        Employee employeeResult=employeeDao.insert(employee);
+        empCertification.setEmployee(employeeResult);
+        dao.insert(empCertification);
+        return true;
+    }
+
+    @Override
+    public EmpCertification findBy(Integer certId) {
+        // TODO Auto-generated method stub
+        return dao.findBy(certId);
+    }
+
+    @Override
+    public EmpCertification getByCertNumberAndTsNumber(String certNumber, String tsNumber) {
+        // TODO Auto-generated method stub
+        return dao.getByCertNumberAndTsNumber(certNumber, tsNumber);
+    }
 
 }

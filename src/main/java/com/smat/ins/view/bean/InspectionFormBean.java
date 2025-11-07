@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+// import javax.inject.Inject;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.ServletOutputStream;
@@ -91,950 +92,950 @@ import java.nio.file.StandardOpenOption;
 @ViewScoped
 public class InspectionFormBean implements Serializable {
 
-	// #region "properties"
+    // #region "properties"
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3900928087796493653L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3900928087796493653L;
     private ObjectMapper objectMapper = new ObjectMapper();
-	private String equipmentCatStr;
-	private String equipmentCatCode;
+    private String equipmentCatStr;
+    private String equipmentCatCode;
     private TaskDraftService taskDraftService; // inject via BeanUtility or setter
 
 
     private String taskIdStr;
-	private Integer taskId;
-
-	private String permission;
-
-	private boolean disabled;
-
-	private String persistentMode;
-
-	private String step;
-
-	private String stepComment;
-	private boolean viewOnly;
-	private boolean disableSticker;
-	private boolean savingDraft = false;
-
-	public String getStepComment() {
-		return stepComment;
-	}
-
-	public void setStepComment(String stepComment) {
-		this.stepComment = stepComment;
-	}
-
-	public String getStep() {
-		return step;
-	}
-
-	public void setStep(String step) {
-		this.step = step;
-	}
-
-	public String getPersistentMode() {
-		return persistentMode;
-	}
-
-	public void setPersistentMode(String persistentMode) {
-		this.persistentMode = persistentMode;
-	}
-
-	private String comment;
+    private Integer taskId;
 
-	public String getComment() {
-		return comment;
-	}
+    private String permission;
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    private boolean disabled;
 
-	public boolean isDisabled() {
-		return disabled;
-	}
+    private String persistentMode;
 
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
-	}
-	
-	
+    private String step;
 
-	public boolean isDisableSticker() {
-		return disableSticker;
-	}
+    private String stepComment;
+    private boolean viewOnly;
+    private boolean disableSticker;
+    private boolean savingDraft = false;
 
-	public void setDisableSticker(boolean disableSticker) {
-		this.disableSticker = disableSticker;
-	}
+    public String getStepComment() {
+        return stepComment;
+    }
 
-	public boolean isSavingDraft() {
-		return savingDraft;
-	}
-
-	public void setSavingDraft(boolean savingDraft) {
-		this.savingDraft = savingDraft;
-	}
-
-	// prepareSaveDraft will be invoked by an ajax remoteCommand to set the flag before full submit
-	public void prepareSaveDraft() {
-		this.savingDraft = true;
-	}
-
-	/**
-	 * Return true when the current view is the inspector stage (i.e. not the final reviewer/print step).
-	 * The print button is shown when step == '03', so drafts should be available when step != '03'.
-	 */
-	public boolean isInspectorVisible() {
-		// Inspector stage is step "01". Also allow null (new/insert mode) to show draft.
-		try {
-			if (this.step == null) return true;
-			return "01".equals(this.step);
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	public String getPermission() {
-		return permission;
-	}
-
-	public void setPermission(String permission) {
-		this.permission = permission;
-	}
+    public void setStepComment(String stepComment) {
+        this.stepComment = stepComment;
+    }
 
-	public String getEquipmentCatStr() {
-		return equipmentCatStr;
-	}
+    public String getStep() {
+        return step;
+    }
 
-	public void setEquipmentCatStr(String equipmentCatStr) {
-		this.equipmentCatStr = equipmentCatStr;
-	}
+    public void setStep(String step) {
+        this.step = step;
+    }
 
-	public String getEquipmentCatCode() {
-		return equipmentCatCode;
-	}
+    public String getPersistentMode() {
+        return persistentMode;
+    }
 
-	public void setEquipmentCatCode(String equipmentCatCode) {
-		this.equipmentCatCode = equipmentCatCode;
-	}
+    public void setPersistentMode(String persistentMode) {
+        this.persistentMode = persistentMode;
+    }
 
-	public String getTaskIdStr() {
-		return taskIdStr;
-	}
+    private String comment;
 
-	public void setTaskIdStr(String taskIdStr) {
-		this.taskIdStr = taskIdStr;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public Integer getTaskId() {
-		return taskId;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public void setTaskId(Integer taskId) {
-		this.taskId = taskId;
-	}
+    public boolean isDisabled() {
+        return disabled;
+    }
 
-	private EquipmentCategory equipmentCategory;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
-	private EquipmentInspectionForm equipmentInspectionForm;
-	private InspectionFormWorkflow inspectionFormWorkflow;
-	private InspectionFormWorkflowStep inspectionFormWorkflowStep;
 
-	private EquipmentType equipmentType;
 
-	private ExaminationType examinationType;
+    public boolean isDisableSticker() {
+        return disableSticker;
+    }
 
-	private Company company;
+    public void setDisableSticker(boolean disableSticker) {
+        this.disableSticker = disableSticker;
+    }
 
-	private List<Company> companies;
+    public boolean isSavingDraft() {
+        return savingDraft;
+    }
 
-	private List<EquipmentType> equipmentTypes;
+    public void setSavingDraft(boolean savingDraft) {
+        this.savingDraft = savingDraft;
+    }
 
-	private List<ExaminationType> examinationTypes;
+    // prepareSaveDraft will be invoked by an ajax remoteCommand to set the flag before full submit
+    public void prepareSaveDraft() {
+        this.savingDraft = true;
+    }
 
-	private List<Sticker> stickers;
-	private List<UserAlias> userAliasRecipientList;
-	private UserAlias selectedUserAliasRecipient;
+    /**
+     * Return true when the current view is the inspector stage (i.e. not the final reviewer/print step).
+     * The print button is shown when step == '03', so drafts should be available when step != '03'.
+     */
+    public boolean isInspectorVisible() {
+        // Inspector stage is step "01". Also allow null (new/insert mode) to show draft.
+        try {
+            if (this.step == null) return true;
+            return "01".equals(this.step);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	private FormTemplate formTemplate;
-	private GeneralEquipmentItem generalEquipmentItem;
-	private List<GeneralEquipmentItem> generalEquipmentItems;
-	private List<FormRow> formRows;
-	private List<FormColumn> formColumns;
-	private List<ColumnContent> columnContents;
-	private FormRow formRow;
-	private FormColumn formColumn;
-	private ColumnContent columnContent;
-	private FormRow selectedFormRow;
-	private FormColumn selectedFormColumn;
-	private ColumnContent selectedColumnContent;
-	private List<FormColumn> formColumnsPerRow;
-	private List<ColumnContent> columnContentsPerColumn;
-	private Task task;
+    public String getPermission() {
+        return permission;
+    }
 
-	public GeneralEquipmentItem getGeneralEquipmentItem() {
-		return generalEquipmentItem;
-	}
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
-	public void setGeneralEquipmentItem(GeneralEquipmentItem generalEquipmentItem) {
-		this.generalEquipmentItem = generalEquipmentItem;
-	}
+    public String getEquipmentCatStr() {
+        return equipmentCatStr;
+    }
 
-	public List<GeneralEquipmentItem> getGeneralEquipmentItems() {
-		return generalEquipmentItems;
-	}
+    public void setEquipmentCatStr(String equipmentCatStr) {
+        this.equipmentCatStr = equipmentCatStr;
+    }
 
-	public void setGeneralEquipmentItems(List<GeneralEquipmentItem> generalEquipmentItems) {
-		this.generalEquipmentItems = generalEquipmentItems;
-	}
+    public String getEquipmentCatCode() {
+        return equipmentCatCode;
+    }
 
-	public List<FormRow> getFormRows() {
-		return formRows;
-	}
+    public void setEquipmentCatCode(String equipmentCatCode) {
+        this.equipmentCatCode = equipmentCatCode;
+    }
 
-	public void setFormRows(List<FormRow> formRows) {
-		this.formRows = formRows;
-	}
+    public String getTaskIdStr() {
+        return taskIdStr;
+    }
 
-	public List<FormColumn> getFormColumns() {
-		return formColumns;
-	}
+    public void setTaskIdStr(String taskIdStr) {
+        this.taskIdStr = taskIdStr;
+    }
 
-	public void setFormColumns(List<FormColumn> formColumns) {
-		this.formColumns = formColumns;
-	}
+    public Integer getTaskId() {
+        return taskId;
+    }
 
-	public List<ColumnContent> getColumnContents() {
-		return columnContents;
-	}
+    public void setTaskId(Integer taskId) {
+        this.taskId = taskId;
+    }
 
-	public void setColumnContents(List<ColumnContent> columnContents) {
-		this.columnContents = columnContents;
-	}
+    private EquipmentCategory equipmentCategory;
 
-	public FormRow getFormRow() {
-		return formRow;
-	}
+    private EquipmentInspectionForm equipmentInspectionForm;
+    private InspectionFormWorkflow inspectionFormWorkflow;
+    private InspectionFormWorkflowStep inspectionFormWorkflowStep;
 
-	public void setFormRow(FormRow formRow) {
-		this.formRow = formRow;
-	}
+    private EquipmentType equipmentType;
 
-	public FormColumn getFormColumn() {
-		return formColumn;
-	}
+    private ExaminationType examinationType;
 
-	public void setFormColumn(FormColumn formColumn) {
-		this.formColumn = formColumn;
-	}
+    private Company company;
 
-	public ColumnContent getColumnContent() {
-		return columnContent;
-	}
+    private List<Company> companies;
 
-	public void setColumnContent(ColumnContent columnContent) {
-		this.columnContent = columnContent;
-	}
+    private List<EquipmentType> equipmentTypes;
 
-	public FormRow getSelectedFormRow() {
-		return selectedFormRow;
-	}
+    private List<ExaminationType> examinationTypes;
 
-	public void setSelectedFormRow(FormRow selectedFormRow) {
-		this.selectedFormRow = selectedFormRow;
-	}
+    private List<Sticker> stickers;
+    private List<UserAlias> userAliasRecipientList;
+    private UserAlias selectedUserAliasRecipient;
 
-	public FormColumn getSelectedFormColumn() {
-		return selectedFormColumn;
-	}
+    private FormTemplate formTemplate;
+    private GeneralEquipmentItem generalEquipmentItem;
+    private List<GeneralEquipmentItem> generalEquipmentItems;
+    private List<FormRow> formRows;
+    private List<FormColumn> formColumns;
+    private List<ColumnContent> columnContents;
+    private FormRow formRow;
+    private FormColumn formColumn;
+    private ColumnContent columnContent;
+    private FormRow selectedFormRow;
+    private FormColumn selectedFormColumn;
+    private ColumnContent selectedColumnContent;
+    private List<FormColumn> formColumnsPerRow;
+    private List<ColumnContent> columnContentsPerColumn;
+    private Task task;
 
-	public void setSelectedFormColumn(FormColumn selectedFormColumn) {
-		this.selectedFormColumn = selectedFormColumn;
-	}
+    public GeneralEquipmentItem getGeneralEquipmentItem() {
+        return generalEquipmentItem;
+    }
 
-	public ColumnContent getSelectedColumnContent() {
-		return selectedColumnContent;
-	}
+    public void setGeneralEquipmentItem(GeneralEquipmentItem generalEquipmentItem) {
+        this.generalEquipmentItem = generalEquipmentItem;
+    }
 
-	public void setSelectedColumnContent(ColumnContent selectedColumnContent) {
-		this.selectedColumnContent = selectedColumnContent;
-	}
+    public List<GeneralEquipmentItem> getGeneralEquipmentItems() {
+        return generalEquipmentItems;
+    }
 
-	public List<FormColumn> getFormColumnsPerRow() {
-		return formColumnsPerRow;
-	}
+    public void setGeneralEquipmentItems(List<GeneralEquipmentItem> generalEquipmentItems) {
+        this.generalEquipmentItems = generalEquipmentItems;
+    }
 
-	public void setFormColumnsPerRow(List<FormColumn> formColumnsPerRow) {
-		this.formColumnsPerRow = formColumnsPerRow;
-	}
+    public List<FormRow> getFormRows() {
+        return formRows;
+    }
 
-	public List<ColumnContent> getColumnContentsPerColumn() {
-		return columnContentsPerColumn;
-	}
+    public void setFormRows(List<FormRow> formRows) {
+        this.formRows = formRows;
+    }
 
-	public void setColumnContentsPerColumn(List<ColumnContent> columnContentsPerColumn) {
-		this.columnContentsPerColumn = columnContentsPerColumn;
-	}
+    public List<FormColumn> getFormColumns() {
+        return formColumns;
+    }
 
-	public EquipmentCategory getEquipmentCategory() {
-		return equipmentCategory;
-	}
+    public void setFormColumns(List<FormColumn> formColumns) {
+        this.formColumns = formColumns;
+    }
 
-	public void setEquipmentCategory(EquipmentCategory equipmentCategory) {
-		this.equipmentCategory = equipmentCategory;
-	}
+    public List<ColumnContent> getColumnContents() {
+        return columnContents;
+    }
 
-	public EquipmentInspectionForm getEquipmentInspectionForm() {
-		return equipmentInspectionForm;
-	}
+    public void setColumnContents(List<ColumnContent> columnContents) {
+        this.columnContents = columnContents;
+    }
 
-	public void setEquipmentInspectionForm(EquipmentInspectionForm equipmentInspectionForm) {
-		this.equipmentInspectionForm = equipmentInspectionForm;
-	}
+    public FormRow getFormRow() {
+        return formRow;
+    }
 
-	public InspectionFormWorkflow getInspectionFormWorkflow() {
-		return inspectionFormWorkflow;
-	}
+    public void setFormRow(FormRow formRow) {
+        this.formRow = formRow;
+    }
 
-	public void setInspectionFormWorkflow(InspectionFormWorkflow inspectionFormWorkflow) {
-		this.inspectionFormWorkflow = inspectionFormWorkflow;
-	}
+    public FormColumn getFormColumn() {
+        return formColumn;
+    }
 
-	public InspectionFormWorkflowStep getInspectionFormWorkflowStep() {
-		return inspectionFormWorkflowStep;
-	}
-
-	public void setInspectionFormWorkflowStep(InspectionFormWorkflowStep inspectionFormWorkflowStep) {
-		this.inspectionFormWorkflowStep = inspectionFormWorkflowStep;
-	}
-
-	public EquipmentType getEquipmentType() {
-		return equipmentType;
-	}
-
-	public void setEquipmentType(EquipmentType equipmentType) {
-		this.equipmentType = equipmentType;
-	}
-
-	public ExaminationType getExaminationType() {
-		return examinationType;
-	}
-
-	public void setExaminationType(ExaminationType examinationType) {
-		this.examinationType = examinationType;
-	}
-
-	public Company getCompany() {
-		return company;
-	}
+    public void setFormColumn(FormColumn formColumn) {
+        this.formColumn = formColumn;
+    }
 
-	public void setCompany(Company company) {
-		this.company = company;
-	}
+    public ColumnContent getColumnContent() {
+        return columnContent;
+    }
 
-	public FormTemplate getFormTemplate() {
-		return formTemplate;
-	}
+    public void setColumnContent(ColumnContent columnContent) {
+        this.columnContent = columnContent;
+    }
 
-	public void setFormTemplate(FormTemplate formTemplate) {
-		this.formTemplate = formTemplate;
-	}
+    public FormRow getSelectedFormRow() {
+        return selectedFormRow;
+    }
 
-	public List<Company> getCompanies() {
-		return companies;
-	}
+    public void setSelectedFormRow(FormRow selectedFormRow) {
+        this.selectedFormRow = selectedFormRow;
+    }
 
-	public void setCompanies(List<Company> companies) {
-		this.companies = companies;
-	}
+    public FormColumn getSelectedFormColumn() {
+        return selectedFormColumn;
+    }
 
-	public List<EquipmentType> getEquipmentTypes() {
-		return equipmentTypes;
-	}
+    public void setSelectedFormColumn(FormColumn selectedFormColumn) {
+        this.selectedFormColumn = selectedFormColumn;
+    }
 
-	public void setEquipmentTypes(List<EquipmentType> equipmentTypes) {
-		this.equipmentTypes = equipmentTypes;
-	}
+    public ColumnContent getSelectedColumnContent() {
+        return selectedColumnContent;
+    }
 
-	public List<ExaminationType> getExaminationTypes() {
-		return examinationTypes;
-	}
+    public void setSelectedColumnContent(ColumnContent selectedColumnContent) {
+        this.selectedColumnContent = selectedColumnContent;
+    }
 
-	public void setExaminationTypes(List<ExaminationType> examinationTypes) {
-		this.examinationTypes = examinationTypes;
-	}
+    public List<FormColumn> getFormColumnsPerRow() {
+        return formColumnsPerRow;
+    }
 
-	public List<Sticker> getStickers() {
-		return stickers;
-	}
-
-	public void setStickers(List<Sticker> stickers) {
-		this.stickers = stickers;
-	}
-
-	public List<UserAlias> getUserAliasRecipientList() {
-		return userAliasRecipientList;
-	}
-
-	public void setUserAliasRecipientList(List<UserAlias> userAliasRecipientList) {
-		this.userAliasRecipientList = userAliasRecipientList;
-	}
-
-	public UserAlias getSelectedUserAliasRecipient() {
-		return selectedUserAliasRecipient;
-	}
-
-	public void setSelectedUserAliasRecipient(UserAlias selectedUserAliasRecipient) {
-		this.selectedUserAliasRecipient = selectedUserAliasRecipient;
-	}
-
-	public Task getTask() {
-		return task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
-	}
-
-	public List<FormColumn> getFormColumnsPerRow(FormRow formRow) {
-		List<FormColumn> resultsColumns = new ArrayList<FormColumn>();
-		for (FormColumn formColumn : formColumns) {
-			if (formColumn.getFormRow().getId().equals(formRow.getId()))
-				resultsColumns.add(formColumn);
-		}
-		return resultsColumns;
-	}
-
-	public List<ColumnContent> getColumnContentByColumn(FormColumn formColumn) {
-		List<ColumnContent> resultColumnContents = new ArrayList<ColumnContent>();
-		for (ColumnContent columnContent : this.columnContents) {
-			if (columnContent.getFormColumn().getId().equals(formColumn.getId())) {
-				if (columnContent.getFormColumn().getFormRow().getId().equals(formColumn.getFormRow().getId()))
-					resultColumnContents.add(columnContent);
-			}
-		}
-		return resultColumnContents;
-	}
-
-	// #endregion
-
-	// #region "services"
-
-	private EquipmentInspectionFormService equipmentInspectionFormService;
-
-	private InspectionFormWorkflowService inspectionFormWorkflowService;
-
-	private InspectionFormWorkflowStepService inspectionFormWorkflowStepService;
-
-	private EquipmentTypeService equipmentTypeService;
-
-	private EquipmentCategoryService equipmentCategoryService;
-
-	private ExaminationTypeService examinationTypeService;
-
-	private ChecklistDetailDataSourceService checklistDetailDataSourceService;
-	private WorkflowDefinitionService workflowDefinitionService;
-
-	private CompanyService companyService;
-	private StickerService stickerService;
-	private FormTemplateService formTemplateService;
-	private FormRowService formRowService;
-	private FormColumnService formColumnService;
-	private ColumnContentService columnContentService;
-	private TaskService taskService;
-	private EquipmentInspectionCertificateService equipmentInspectionCertificateService;
-	private UserAliasService userAliasService;
-	private SysUserService sysUserService;
-
-	private LocalizationService localizationService;
-
-	// #endregion
-
-	@Inject
-	private LoginBean loginBean;
-
-	public InspectionFormBean() {
-		super();
-		// TODO Auto-generated constructor stub
-		try {
-			equipmentTypeService = (EquipmentTypeService) BeanUtility.getBean("equipmentTypeService");
-			equipmentCategoryService = (EquipmentCategoryService) BeanUtility.getBean("equipmentCategoryService");
-			examinationTypeService = (ExaminationTypeService) BeanUtility.getBean("examinationTypeService");
-			equipmentInspectionFormService = (EquipmentInspectionFormService) BeanUtility
-					.getBean("equipmentInspectionFormService");
-
-			checklistDetailDataSourceService = (ChecklistDetailDataSourceService) BeanUtility
-					.getBean("checklistDetailDataSourceService");
-			workflowDefinitionService = (WorkflowDefinitionService) BeanUtility.getBean("workflowDefinitionService");
-			companyService = (CompanyService) BeanUtility.getBean("companyService");
-			stickerService = (StickerService) BeanUtility.getBean("stickerService");
-			localizationService = (LocalizationService) BeanUtility.getBean("localizationService");
-			formTemplateService = (FormTemplateService) BeanUtility.getBean("formTemplateService");
-			formRowService = (FormRowService) BeanUtility.getBean("formRowService");
-			formColumnService = (FormColumnService) BeanUtility.getBean("formColumnService");
-			columnContentService = (ColumnContentService) BeanUtility.getBean("columnContentService");
-			taskService = (TaskService) BeanUtility.getBean("taskService");
+    public void setFormColumnsPerRow(List<FormColumn> formColumnsPerRow) {
+        this.formColumnsPerRow = formColumnsPerRow;
+    }
+
+    public List<ColumnContent> getColumnContentsPerColumn() {
+        return columnContentsPerColumn;
+    }
+
+    public void setColumnContentsPerColumn(List<ColumnContent> columnContentsPerColumn) {
+        this.columnContentsPerColumn = columnContentsPerColumn;
+    }
+
+    public EquipmentCategory getEquipmentCategory() {
+        return equipmentCategory;
+    }
+
+    public void setEquipmentCategory(EquipmentCategory equipmentCategory) {
+        this.equipmentCategory = equipmentCategory;
+    }
+
+    public EquipmentInspectionForm getEquipmentInspectionForm() {
+        return equipmentInspectionForm;
+    }
+
+    public void setEquipmentInspectionForm(EquipmentInspectionForm equipmentInspectionForm) {
+        this.equipmentInspectionForm = equipmentInspectionForm;
+    }
+
+    public InspectionFormWorkflow getInspectionFormWorkflow() {
+        return inspectionFormWorkflow;
+    }
+
+    public void setInspectionFormWorkflow(InspectionFormWorkflow inspectionFormWorkflow) {
+        this.inspectionFormWorkflow = inspectionFormWorkflow;
+    }
+
+    public InspectionFormWorkflowStep getInspectionFormWorkflowStep() {
+        return inspectionFormWorkflowStep;
+    }
+
+    public void setInspectionFormWorkflowStep(InspectionFormWorkflowStep inspectionFormWorkflowStep) {
+        this.inspectionFormWorkflowStep = inspectionFormWorkflowStep;
+    }
+
+    public EquipmentType getEquipmentType() {
+        return equipmentType;
+    }
+
+    public void setEquipmentType(EquipmentType equipmentType) {
+        this.equipmentType = equipmentType;
+    }
+
+    public ExaminationType getExaminationType() {
+        return examinationType;
+    }
+
+    public void setExaminationType(ExaminationType examinationType) {
+        this.examinationType = examinationType;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public FormTemplate getFormTemplate() {
+        return formTemplate;
+    }
+
+    public void setFormTemplate(FormTemplate formTemplate) {
+        this.formTemplate = formTemplate;
+    }
+
+    public List<Company> getCompanies() {
+        return companies;
+    }
+
+    public void setCompanies(List<Company> companies) {
+        this.companies = companies;
+    }
+
+    public List<EquipmentType> getEquipmentTypes() {
+        return equipmentTypes;
+    }
+
+    public void setEquipmentTypes(List<EquipmentType> equipmentTypes) {
+        this.equipmentTypes = equipmentTypes;
+    }
+
+    public List<ExaminationType> getExaminationTypes() {
+        return examinationTypes;
+    }
+
+    public void setExaminationTypes(List<ExaminationType> examinationTypes) {
+        this.examinationTypes = examinationTypes;
+    }
+
+    public List<Sticker> getStickers() {
+        return stickers;
+    }
+
+    public void setStickers(List<Sticker> stickers) {
+        this.stickers = stickers;
+    }
+
+    public List<UserAlias> getUserAliasRecipientList() {
+        return userAliasRecipientList;
+    }
+
+    public void setUserAliasRecipientList(List<UserAlias> userAliasRecipientList) {
+        this.userAliasRecipientList = userAliasRecipientList;
+    }
+
+    public UserAlias getSelectedUserAliasRecipient() {
+        return selectedUserAliasRecipient;
+    }
+
+    public void setSelectedUserAliasRecipient(UserAlias selectedUserAliasRecipient) {
+        this.selectedUserAliasRecipient = selectedUserAliasRecipient;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public List<FormColumn> getFormColumnsPerRow(FormRow formRow) {
+        List<FormColumn> resultsColumns = new ArrayList<FormColumn>();
+        for (FormColumn formColumn : formColumns) {
+            if (formColumn.getFormRow().getId().equals(formRow.getId()))
+                resultsColumns.add(formColumn);
+        }
+        return resultsColumns;
+    }
+
+    public List<ColumnContent> getColumnContentByColumn(FormColumn formColumn) {
+        List<ColumnContent> resultColumnContents = new ArrayList<ColumnContent>();
+        for (ColumnContent columnContent : this.columnContents) {
+            if (columnContent.getFormColumn().getId().equals(formColumn.getId())) {
+                if (columnContent.getFormColumn().getFormRow().getId().equals(formColumn.getFormRow().getId()))
+                    resultColumnContents.add(columnContent);
+            }
+        }
+        return resultColumnContents;
+    }
+
+    // #endregion
+
+    // #region "services"
+
+    private EquipmentInspectionFormService equipmentInspectionFormService;
+
+    private InspectionFormWorkflowService inspectionFormWorkflowService;
+
+    private InspectionFormWorkflowStepService inspectionFormWorkflowStepService;
+
+    private EquipmentTypeService equipmentTypeService;
+
+    private EquipmentCategoryService equipmentCategoryService;
+
+    private ExaminationTypeService examinationTypeService;
+
+    private ChecklistDetailDataSourceService checklistDetailDataSourceService;
+    private WorkflowDefinitionService workflowDefinitionService;
+
+    private CompanyService companyService;
+    private StickerService stickerService;
+    private FormTemplateService formTemplateService;
+    private FormRowService formRowService;
+    private FormColumnService formColumnService;
+    private ColumnContentService columnContentService;
+    private TaskService taskService;
+    private EquipmentInspectionCertificateService equipmentInspectionCertificateService;
+    private UserAliasService userAliasService;
+    private SysUserService sysUserService;
+
+    private LocalizationService localizationService;
+
+    // #endregion
+
+    @Inject
+    private LoginBean loginBean;
+
+    public InspectionFormBean() {
+        super();
+        // TODO Auto-generated constructor stub
+        try {
+            equipmentTypeService = (EquipmentTypeService) BeanUtility.getBean("equipmentTypeService");
+            equipmentCategoryService = (EquipmentCategoryService) BeanUtility.getBean("equipmentCategoryService");
+            examinationTypeService = (ExaminationTypeService) BeanUtility.getBean("examinationTypeService");
+            equipmentInspectionFormService = (EquipmentInspectionFormService) BeanUtility
+                    .getBean("equipmentInspectionFormService");
+
+            checklistDetailDataSourceService = (ChecklistDetailDataSourceService) BeanUtility
+                    .getBean("checklistDetailDataSourceService");
+            workflowDefinitionService = (WorkflowDefinitionService) BeanUtility.getBean("workflowDefinitionService");
+            companyService = (CompanyService) BeanUtility.getBean("companyService");
+            stickerService = (StickerService) BeanUtility.getBean("stickerService");
+            localizationService = (LocalizationService) BeanUtility.getBean("localizationService");
+            formTemplateService = (FormTemplateService) BeanUtility.getBean("formTemplateService");
+            formRowService = (FormRowService) BeanUtility.getBean("formRowService");
+            formColumnService = (FormColumnService) BeanUtility.getBean("formColumnService");
+            columnContentService = (ColumnContentService) BeanUtility.getBean("columnContentService");
+            taskService = (TaskService) BeanUtility.getBean("taskService");
             taskDraftService = (TaskDraftService) BeanUtility.getBean("taskDraftService");
 
 
             inspectionFormWorkflowService = (InspectionFormWorkflowService) BeanUtility
-					.getBean("inspectionFormWorkflowService");
-			equipmentInspectionCertificateService = (EquipmentInspectionCertificateService) BeanUtility
-					.getBean("equipmentInspectionCertificateService");
+                    .getBean("inspectionFormWorkflowService");
+            equipmentInspectionCertificateService = (EquipmentInspectionCertificateService) BeanUtility
+                    .getBean("equipmentInspectionCertificateService");
 
-			inspectionFormWorkflowStepService = (InspectionFormWorkflowStepService) BeanUtility
-					.getBean("inspectionFormWorkflowStepService");
-			userAliasService = (UserAliasService) BeanUtility.getBean("userAliasService");
-			sysUserService = (SysUserService) BeanUtility.getBean("sysUserService");
+            inspectionFormWorkflowStepService = (InspectionFormWorkflowStepService) BeanUtility
+                    .getBean("inspectionFormWorkflowStepService");
+            userAliasService = (UserAliasService) BeanUtility.getBean("userAliasService");
+            sysUserService = (SysUserService) BeanUtility.getBean("sysUserService");
 
-			formRows = new ArrayList<FormRow>();
-			formColumns = new ArrayList<FormColumn>();
-			columnContents = new ArrayList<ColumnContent>();
-			formRow = new FormRow();
-			formColumn = new FormColumn();
-			columnContent = new ColumnContent();
-			userAliasRecipientList = new ArrayList<UserAlias>();
-			selectedUserAliasRecipient = new UserAlias();
-			SysUser sysUserLogin = (SysUser) UtilityHelper.getSessionAttr("user");
-			// Populate reviewer list: include every UserAlias that belongs to any SysUser who has permission '011'
-			try {
-				java.util.List<com.smat.ins.model.entity.SysUser> reviewers = sysUserService
-						.listUserHasPersmission("011");
-				if (reviewers != null) {
-					for (com.smat.ins.model.entity.SysUser su : reviewers) {
-						try {
-							java.util.List<UserAlias> aliases = userAliasService.getBySysUser(su);
-							if (aliases != null && !aliases.isEmpty()) {
-								userAliasRecipientList.addAll(aliases);
-							}
-						} catch (Exception ignore) {
-							// ignore per-user alias fetch problems and continue
-						}
-					}
-				}
-			} catch (Exception e) {
-				// fallback to previous behavior (organization-based recipients filtered by permission)
-				List<UserAlias> myUserAliasList = userAliasService.getBySysUser(sysUserLogin);
-				if (myUserAliasList != null && !myUserAliasList.isEmpty()) {
-					UserAlias userAliasOwner = myUserAliasList.get(0);
-					List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
-					for (UserAlias userAlias : userAliasRecipientListDb) {
-						if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "011"))
-							userAliasRecipientList.add(userAlias);
-					}
-				}
-			}
-		} catch (Exception e) {
-			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("errorDuringGetData"));
-			e.printStackTrace();
-		}
+            formRows = new ArrayList<FormRow>();
+            formColumns = new ArrayList<FormColumn>();
+            columnContents = new ArrayList<ColumnContent>();
+            formRow = new FormRow();
+            formColumn = new FormColumn();
+            columnContent = new ColumnContent();
+            userAliasRecipientList = new ArrayList<UserAlias>();
+            selectedUserAliasRecipient = new UserAlias();
+            SysUser sysUserLogin = (SysUser) UtilityHelper.getSessionAttr("user");
+            // Populate reviewer list: include every UserAlias that belongs to any SysUser who has permission '011'
+            try {
+                java.util.List<com.smat.ins.model.entity.SysUser> reviewers = sysUserService
+                        .listUserHasPersmission("011");
+                if (reviewers != null) {
+                    for (com.smat.ins.model.entity.SysUser su : reviewers) {
+                        try {
+                            java.util.List<UserAlias> aliases = userAliasService.getBySysUser(su);
+                            if (aliases != null && !aliases.isEmpty()) {
+                                userAliasRecipientList.addAll(aliases);
+                            }
+                        } catch (Exception ignore) {
+                            // ignore per-user alias fetch problems and continue
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // fallback to previous behavior (organization-based recipients filtered by permission)
+                List<UserAlias> myUserAliasList = userAliasService.getBySysUser(sysUserLogin);
+                if (myUserAliasList != null && !myUserAliasList.isEmpty()) {
+                    UserAlias userAliasOwner = myUserAliasList.get(0);
+                    List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
+                    for (UserAlias userAlias : userAliasRecipientListDb) {
+                        if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "011"))
+                            userAliasRecipientList.add(userAlias);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("errorDuringGetData"));
+            e.printStackTrace();
+        }
 
-		step = "01";
-		disableSticker=false;
-	}
+        step = "01";
+        disableSticker=false;
+    }
 
-	@PostConstruct
-	public void init() {
-		try {
-			equipmentCatStr = UtilityHelper.getRequestParameter("eqct");
-			taskIdStr = UtilityHelper.getRequestParameter("t");
-			permission = UtilityHelper.getRequestParameter("p");
-			persistentMode = UtilityHelper.getRequestParameter("m");
-		    String mode = UtilityHelper.getRequestParameter("mode");
-		    if ("view".equals(mode)) {
-		        viewOnly = true; // يجعل كل الحقول للعرض فقط
-		    }
-			if (persistentMode != null)
-				persistentMode = UtilityHelper.decipher(persistentMode);
-			if (permission != null) {
-				permission = UtilityHelper.decipher(permission);
-				if (permission.equalsIgnoreCase("readOnly"))
-					disabled = true;
-				if (permission.equalsIgnoreCase("editable"))
-					disabled = false;
-			}
-			if (taskIdStr != null) {
-				taskId = Integer.valueOf(UtilityHelper.decipher(taskIdStr));
-				task = taskService.findById(taskId);
-			}
+    @PostConstruct
+    public void init() {
+        try {
+            equipmentCatStr = UtilityHelper.getRequestParameter("eqct");
+            taskIdStr = UtilityHelper.getRequestParameter("t");
+            permission = UtilityHelper.getRequestParameter("p");
+            persistentMode = UtilityHelper.getRequestParameter("m");
+            String mode = UtilityHelper.getRequestParameter("mode");
+            if ("view".equals(mode)) {
+                viewOnly = true; // يجعل كل الحقول للعرض فقط
+            }
+            if (persistentMode != null)
+                persistentMode = UtilityHelper.decipher(persistentMode);
+            if (permission != null) {
+                permission = UtilityHelper.decipher(permission);
+                if (permission.equalsIgnoreCase("readOnly"))
+                    disabled = true;
+                if (permission.equalsIgnoreCase("editable"))
+                    disabled = false;
+            }
+            if (taskIdStr != null) {
+                taskId = Integer.valueOf(UtilityHelper.decipher(taskIdStr));
+                task = taskService.findById(taskId);
+            }
 
-			if (equipmentCatStr != null) {
-				equipmentCatCode = UtilityHelper.decipher(equipmentCatStr);
-				equipmentCategory = equipmentCategoryService.findByUniqueField("code", equipmentCatCode);
+            if (equipmentCatStr != null) {
+                equipmentCatCode = UtilityHelper.decipher(equipmentCatStr);
+                equipmentCategory = equipmentCategoryService.findByUniqueField("code", equipmentCatCode);
 
-				if (!disabled && persistentMode.equals("insert")) {
-					if (equipmentCategory != null) {
-						formTemplate = formTemplateService.getBy(equipmentCategory.getCode());
-						if (formTemplate != null) {
-							formRows = formRowService.getBy(formTemplate.getId());
-							for (FormRow formRow : formRows) {
-								formColumnsPerRow = formColumnService.getBy(formRow.getId());
-								for (FormColumn formColumn : formColumnsPerRow) {
-									columnContentsPerColumn = columnContentService.getBy(formColumn.getId());
-									columnContents.addAll(columnContentsPerColumn);
-								}
-								formColumns.addAll(formColumnsPerRow);
-							}
-							PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
-						}
-					}
-					equipmentInspectionForm = new EquipmentInspectionForm();
+                if (!disabled && persistentMode.equals("insert")) {
+                    if (equipmentCategory != null) {
+                        formTemplate = formTemplateService.getBy(equipmentCategory.getCode());
+                        if (formTemplate != null) {
+                            formRows = formRowService.getBy(formTemplate.getId());
+                            for (FormRow formRow : formRows) {
+                                formColumnsPerRow = formColumnService.getBy(formRow.getId());
+                                for (FormColumn formColumn : formColumnsPerRow) {
+                                    columnContentsPerColumn = columnContentService.getBy(formColumn.getId());
+                                    columnContents.addAll(columnContentsPerColumn);
+                                }
+                                formColumns.addAll(formColumnsPerRow);
+                            }
+                            PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
+                        }
+                    }
+                    equipmentInspectionForm = new EquipmentInspectionForm();
 
-					Integer maxReportNo = equipmentInspectionFormService
-							.getMaxReportNoCodeByEquipmentCat(equipmentCatCode);
-					if (maxReportNo != null) {
-						equipmentInspectionForm.setReportNo("A0247" + String.format("%0" + 5 + "d", maxReportNo + 1));
-					}
+                    Integer maxReportNo = equipmentInspectionFormService
+                            .getMaxReportNoCodeByEquipmentCat(equipmentCatCode);
+                    if (maxReportNo != null) {
+                        equipmentInspectionForm.setReportNo("A0247" + String.format("%0" + 5 + "d", maxReportNo + 1));
+                    }
 
-					Integer maxTimeSheetNo = equipmentInspectionFormService
-							.getMaxTimeSheetNoCodeByEquipmentCat(equipmentCatCode);
-					if (maxTimeSheetNo != null) {
-						equipmentInspectionForm
-								.setTimeSheetNo("TS" + String.format("%0" + 5 + "d", maxTimeSheetNo + 1));
-					}
+                    Integer maxTimeSheetNo = equipmentInspectionFormService
+                            .getMaxTimeSheetNoCodeByEquipmentCat(equipmentCatCode);
+                    if (maxTimeSheetNo != null) {
+                        equipmentInspectionForm
+                                .setTimeSheetNo("TS" + String.format("%0" + 5 + "d", maxTimeSheetNo + 1));
+                    }
 
-					Integer maxJobNo = equipmentInspectionFormService.getMaxJobNoCodeByEquipmentCat(equipmentCatCode);
-					if (maxJobNo != null) {
-						equipmentInspectionForm.setJobNo("JO" + String.format("%0" + 5 + "d", maxJobNo + 1));
-					}
+                    Integer maxJobNo = equipmentInspectionFormService.getMaxJobNoCodeByEquipmentCat(equipmentCatCode);
+                    if (maxJobNo != null) {
+                        equipmentInspectionForm.setJobNo("JO" + String.format("%0" + 5 + "d", maxJobNo + 1));
+                    }
 
-					Integer maxStickerNo = equipmentInspectionFormService
-							.getMaxStickerNoCodeByEquipmentCat(equipmentCatCode);
-					if (maxStickerNo != null) {
-						equipmentInspectionForm.setStickerNo("SK" + String.format("%0" + 5 + "d", maxStickerNo + 1));
-					}
+                    Integer maxStickerNo = equipmentInspectionFormService
+                            .getMaxStickerNoCodeByEquipmentCat(equipmentCatCode);
+                    if (maxStickerNo != null) {
+                        equipmentInspectionForm.setStickerNo("SK" + String.format("%0" + 5 + "d", maxStickerNo + 1));
+                    }
 
-					equipmentInspectionForm.setDateOfThoroughExamination(Calendar.getInstance().getTime());
-					Calendar cal = Calendar.getInstance();
-					cal.add(Calendar.MONTH, 6);
-					Date updatedDate = cal.getTime();
-					equipmentInspectionForm.setNextExaminationDate(updatedDate);
-					if (task != null)
-						equipmentInspectionForm.setCompany(task.getCompany());
+                    equipmentInspectionForm.setDateOfThoroughExamination(Calendar.getInstance().getTime());
+                    Calendar cal = Calendar.getInstance();
+                    cal.add(Calendar.MONTH, 6);
+                    Date updatedDate = cal.getTime();
+                    equipmentInspectionForm.setNextExaminationDate(updatedDate);
+                    if (task != null)
+                        equipmentInspectionForm.setCompany(task.getCompany());
 
-				} else {
-					if (taskIdStr != null) {
-						equipmentInspectionForm = equipmentInspectionFormService.getBy(taskId);
-						if (equipmentInspectionForm != null) {
-							this.inspectionFormWorkflow = inspectionFormWorkflowService
-									.getCurrentInspectionFormWorkFlow(equipmentInspectionForm.getId());
-							this.inspectionFormWorkflowStep = inspectionFormWorkflowStepService
-									.getLastStep(equipmentInspectionForm.getId());
-							if (this.inspectionFormWorkflowStep != null)
-								stepComment = this.inspectionFormWorkflowStep.getSysUserComment();
-							step = this.inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode();
-							if(step.equals("01"))
-								disableSticker=true;
-						}
-						List<EquipmentInspectionFormItem> equipmentInspectionFormItems = new ArrayList<EquipmentInspectionFormItem>(
-								equipmentInspectionForm.getEquipmentInspectionFormItems());
-						formTemplate = formTemplateService.getBy(equipmentCategory.getCode());
-						if (formTemplate != null) {
-							formRows = formRowService.getBy(formTemplate.getId());
-							for (FormRow formRow : formRows) {
-								formColumnsPerRow = formColumnService.getBy(formRow.getId());
-								for (FormColumn formColumn : formColumnsPerRow) {
-									columnContentsPerColumn = columnContentService.getBy(formColumn.getId());
-									for (ColumnContent columnContentObj : columnContentsPerColumn) {
-										for (EquipmentInspectionFormItem equipmentInspectionFormItem : equipmentInspectionFormItems) {
-											if (equipmentInspectionFormItem.getAliasName()
-													.equalsIgnoreCase(columnContentObj.getAliasName())) {
-												columnContentObj
-														.setContentValue(equipmentInspectionFormItem.getItemValue());
-												break;
-											}
-										}
-									}
-									columnContents.addAll(columnContentsPerColumn);
-								}
-								formColumns.addAll(formColumnsPerRow);
-							}
-							PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
-						}
-					}
-				}
-			}
+                } else {
+                    if (taskIdStr != null) {
+                        equipmentInspectionForm = equipmentInspectionFormService.getBy(taskId);
+                        if (equipmentInspectionForm != null) {
+                            this.inspectionFormWorkflow = inspectionFormWorkflowService
+                                    .getCurrentInspectionFormWorkFlow(equipmentInspectionForm.getId());
+                            this.inspectionFormWorkflowStep = inspectionFormWorkflowStepService
+                                    .getLastStep(equipmentInspectionForm.getId());
+                            if (this.inspectionFormWorkflowStep != null)
+                                stepComment = this.inspectionFormWorkflowStep.getSysUserComment();
+                            step = this.inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode();
+                            if(step.equals("01"))
+                                disableSticker=true;
+                        }
+                        List<EquipmentInspectionFormItem> equipmentInspectionFormItems = new ArrayList<EquipmentInspectionFormItem>(
+                                equipmentInspectionForm.getEquipmentInspectionFormItems());
+                        formTemplate = formTemplateService.getBy(equipmentCategory.getCode());
+                        if (formTemplate != null) {
+                            formRows = formRowService.getBy(formTemplate.getId());
+                            for (FormRow formRow : formRows) {
+                                formColumnsPerRow = formColumnService.getBy(formRow.getId());
+                                for (FormColumn formColumn : formColumnsPerRow) {
+                                    columnContentsPerColumn = columnContentService.getBy(formColumn.getId());
+                                    for (ColumnContent columnContentObj : columnContentsPerColumn) {
+                                        for (EquipmentInspectionFormItem equipmentInspectionFormItem : equipmentInspectionFormItems) {
+                                            if (equipmentInspectionFormItem.getAliasName()
+                                                    .equalsIgnoreCase(columnContentObj.getAliasName())) {
+                                                columnContentObj
+                                                        .setContentValue(equipmentInspectionFormItem.getItemValue());
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    columnContents.addAll(columnContentsPerColumn);
+                                }
+                                formColumns.addAll(formColumnsPerRow);
+                            }
+                            PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
+                        }
+                    }
+                }
+            }
 
-			examinationTypes = examinationTypeService.findAll();
-			equipmentTypes = equipmentTypeService.findAll();
-			companies = companyService.findAll();
-			Map<String, Object> criteria = new HashMap<String, Object>();
-			// Show all available stickers (not limited to current user)
-			criteria.put("isUsed", false);
-			stickers = stickerService.findByCriteria(criteria);
+            examinationTypes = examinationTypeService.findAll();
+            equipmentTypes = equipmentTypeService.findAll();
+            companies = companyService.findAll();
+            Map<String, Object> criteria = new HashMap<String, Object>();
+            // Show all available stickers (not limited to current user)
+            criteria.put("isUsed", false);
+            stickers = stickerService.findByCriteria(criteria);
 
 
-		} catch (Exception e) { // TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) { // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-	public void defineEquipmentCategoryByCode(Integer taskId, String code) {
-		try {
+    public void defineEquipmentCategoryByCode(Integer taskId, String code) {
+        try {
 
-			taskIdStr = UtilityHelper.cipher(taskId.toString());
-			equipmentCatStr = UtilityHelper.cipher(code);
+            taskIdStr = UtilityHelper.cipher(taskId.toString());
+            equipmentCatStr = UtilityHelper.cipher(code);
 
-			equipmentInspectionForm = equipmentInspectionFormService.getBy(taskId);
-			InspectionFormWorkflow inspectionFormWorkflow = null;
-			if (equipmentInspectionForm != null) {
-				if (equipmentInspectionForm.getInspectionFormWorkflows() != null) {
-					inspectionFormWorkflow = (InspectionFormWorkflow) equipmentInspectionForm
-							.getInspectionFormWorkflows().iterator().next();
-				}
-			}
-			if (loginBean.hasSysPermission("011") && loginBean.hasSysPermission("010")) {
-				if (equipmentInspectionForm == null) {
-					permission = UtilityHelper.cipher("editable");
-					persistentMode = UtilityHelper.cipher("insert");
-				} else {
-					if (inspectionFormWorkflow != null) {
-						if (inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode().equals("02")) {
-							permission = UtilityHelper.cipher("readOnly");
-							persistentMode = UtilityHelper.cipher("changeStep");
-						}
-						if (inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode().equals("01")) {
-							permission = UtilityHelper.cipher("editable");
-							persistentMode = UtilityHelper.cipher("update");
-						}
-					}
-				}
+            equipmentInspectionForm = equipmentInspectionFormService.getBy(taskId);
+            InspectionFormWorkflow inspectionFormWorkflow = null;
+            if (equipmentInspectionForm != null) {
+                if (equipmentInspectionForm.getInspectionFormWorkflows() != null) {
+                    inspectionFormWorkflow = (InspectionFormWorkflow) equipmentInspectionForm
+                            .getInspectionFormWorkflows().iterator().next();
+                }
+            }
+            if (loginBean.hasSysPermission("011") && loginBean.hasSysPermission("010")) {
+                if (equipmentInspectionForm == null) {
+                    permission = UtilityHelper.cipher("editable");
+                    persistentMode = UtilityHelper.cipher("insert");
+                } else {
+                    if (inspectionFormWorkflow != null) {
+                        if (inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode().equals("02")) {
+                            permission = UtilityHelper.cipher("readOnly");
+                            persistentMode = UtilityHelper.cipher("changeStep");
+                        }
+                        if (inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode().equals("01")) {
+                            permission = UtilityHelper.cipher("editable");
+                            persistentMode = UtilityHelper.cipher("update");
+                        }
+                    }
+                }
 
-			} else if (loginBean.hasSysPermission("011")) {
-				permission = UtilityHelper.cipher("readOnly");
-				persistentMode = UtilityHelper.cipher("changeStep");
-			} else if (loginBean.hasSysPermission("010")) {
-				permission = UtilityHelper.cipher("editable");
-				if (equipmentInspectionForm == null) {
-					persistentMode = UtilityHelper.cipher("insert");
-				} else {
-					if (inspectionFormWorkflow != null) {
-						if (inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode().equals("01"))
-							persistentMode = UtilityHelper.cipher("update");
-					}
-				}
-			}
+            } else if (loginBean.hasSysPermission("011")) {
+                permission = UtilityHelper.cipher("readOnly");
+                persistentMode = UtilityHelper.cipher("changeStep");
+            } else if (loginBean.hasSysPermission("010")) {
+                permission = UtilityHelper.cipher("editable");
+                if (equipmentInspectionForm == null) {
+                    persistentMode = UtilityHelper.cipher("insert");
+                } else {
+                    if (inspectionFormWorkflow != null) {
+                        if (inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode().equals("01"))
+                            persistentMode = UtilityHelper.cipher("update");
+                    }
+                }
+            }
 
-		} catch (Exception e) { // TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) { // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
-	private String getServletContextPath(String relativePath) {
-		return ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(relativePath);
-	}
+    private String getServletContextPath(String relativePath) {
+        return ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(relativePath);
+    }
 
-	/**
-	 * Handle attachments uploaded from the inspection form.
-	 * Files are stored under ../attachments/cabinet_for_inspection/{reportNo or id}/attachment
-	 */
-	public void handleAttachmentUpload(org.primefaces.event.FileUploadEvent event) {
-		try {
-			if (event.getFile() == null || event.getFile().getContent() == null) return;
-			if (event.getFile().getSize() > 30L * 1024L * 1024L) {
-				UtilityHelper.addErrorMessage("File size exceeds 30MB limit");
-				return;
-			}
+    /**
+     * Handle attachments uploaded from the inspection form.
+     * Files are stored under ../attachments/cabinet_for_inspection/{reportNo or id}/attachment
+     */
+    public void handleAttachmentUpload(org.primefaces.event.FileUploadEvent event) {
+        try {
+            if (event.getFile() == null || event.getFile().getContent() == null) return;
+            if (event.getFile().getSize() > 30L * 1024L * 1024L) {
+                UtilityHelper.addErrorMessage("File size exceeds 30MB limit");
+                return;
+            }
 
-			// services
-			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
-			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
-			com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
-			com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
-			com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+            // services
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+            com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+            com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+            com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
 
-			// find inspection cabinet
-			String targetCabinetCode = "INS-DEFAULT";
-			com.smat.ins.model.entity.Cabinet targetCabinet = null;
-			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
-				if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
-			}
-			if (targetCabinet == null) {
-				com.smat.ins.util.CabinetDefaultsCreator.ensureDefaultCabinets(loginBean.getUser());
-				for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
-					if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
-				}
-			}
-			if (targetCabinet == null) {
-				UtilityHelper.addErrorMessage("Inspection cabinet not available");
-				return;
-			}
+            // find inspection cabinet
+            String targetCabinetCode = "INS-DEFAULT";
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) {
+                com.smat.ins.util.CabinetDefaultsCreator.ensureDefaultCabinets(loginBean.getUser());
+                for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                    if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+                }
+            }
+            if (targetCabinet == null) {
+                UtilityHelper.addErrorMessage("Inspection cabinet not available");
+                return;
+            }
 
-			// pick drawer
-			com.smat.ins.model.entity.CabinetDefinition def = null;
-			if (targetCabinet.getCabinetDefinitions() != null) {
-				for (Object od : targetCabinet.getCabinetDefinitions()) {
-					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
-					if ("01".equals(cd.getCode())) { def = cd; break; }
-				}
-			}
-			if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
-				def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
-			if (def == null) { UtilityHelper.addErrorMessage("No cabinet definition found"); return; }
+            // pick drawer
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if ("01".equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+                def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+            if (def == null) { UtilityHelper.addErrorMessage("No cabinet definition found"); return; }
 
-			// folder per task/report - reuse folder named by reportNo if exists
-			String folderName = null;
-			if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
-				folderName = equipmentInspectionForm.getReportNo().trim();
-			} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
-				folderName = "form_" + equipmentInspectionForm.getId().toString();
-			} else {
-				folderName = "form_" + String.valueOf(System.currentTimeMillis());
-			}
+            // folder per task/report - reuse folder named by reportNo if exists
+            String folderName = null;
+            if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+                folderName = equipmentInspectionForm.getReportNo().trim();
+            } else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+                folderName = "form_" + equipmentInspectionForm.getId().toString();
+            } else {
+                folderName = "form_" + String.valueOf(System.currentTimeMillis());
+            }
 
-			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
-			try {
-				java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
-				if (existing != null) {
-					for (com.smat.ins.model.entity.CabinetFolder f : existing) {
-						String fn = folderName == null ? "" : folderName.trim().toLowerCase();
-						String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
-						String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
-						if (fn.equals(fa) || fn.equals(fe)) {
-							cabinetFolder = f;
-							break;
-						}
-					}
-				}
-			} catch (Exception ignore) {}
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            try {
+                java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+                if (existing != null) {
+                    for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                        String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                        String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                        String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                        if (fn.equals(fa) || fn.equals(fe)) {
+                            cabinetFolder = f;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
 
-			if (cabinetFolder == null) {
-				cabinetFolder = new com.smat.ins.model.entity.CabinetFolder();
-				cabinetFolder.setCabinetDefinition(def);
-				cabinetFolder.setSysUser(loginBean.getUser());
-				cabinetFolder.setArabicName(folderName);
-				cabinetFolder.setEnglishName(folderName);
-				int nextCode = 1;
-				try { java.util.List<com.smat.ins.model.entity.CabinetFolder> existing2 = cabinetFolderService.getByCabinetDefinition(def); nextCode = existing2 != null ? existing2.size() + 1 : 1; } catch (Exception ignore) {}
-				cabinetFolder.setCode(String.format("%03d", nextCode));
-				cabinetFolder.setCreatedDate(new java.util.Date());
-				cabinetFolderService.saveOrUpdate(cabinetFolder);
-			}
+            if (cabinetFolder == null) {
+                cabinetFolder = new com.smat.ins.model.entity.CabinetFolder();
+                cabinetFolder.setCabinetDefinition(def);
+                cabinetFolder.setSysUser(loginBean.getUser());
+                cabinetFolder.setArabicName(folderName);
+                cabinetFolder.setEnglishName(folderName);
+                int nextCode = 1;
+                try { java.util.List<com.smat.ins.model.entity.CabinetFolder> existing2 = cabinetFolderService.getByCabinetDefinition(def); nextCode = existing2 != null ? existing2.size() + 1 : 1; } catch (Exception ignore) {}
+                cabinetFolder.setCode(String.format("%03d", nextCode));
+                cabinetFolder.setCreatedDate(new java.util.Date());
+                cabinetFolderService.saveOrUpdate(cabinetFolder);
+            }
 
-			// create disk path
-			String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
-			java.nio.file.Path folderPath = Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
-			Files.createDirectories(folderPath);
+            // create disk path
+            String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+            java.nio.file.Path folderPath = Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+            Files.createDirectories(folderPath);
 
-			// store file
-			String original = event.getFile().getFileName();
-			String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
+            // store file
+            String original = event.getFile().getFileName();
+            String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
 
-			// create ArchiveDocument + file
-			com.smat.ins.model.entity.ArchiveDocument archiveDocument = new com.smat.ins.model.entity.ArchiveDocument();
-			// ensure archiveDocumentType is set (DB column non-null)
-			try {
-				com.smat.ins.model.service.ArchiveDocumentTypeService archiveDocumentTypeService = (com.smat.ins.model.service.ArchiveDocumentTypeService) BeanUtility.getBean("archiveDocumentTypeService");
-				java.util.List<com.smat.ins.model.entity.ArchiveDocumentType> types = archiveDocumentTypeService.findAll();
-				if (types != null && !types.isEmpty()) archiveDocument.setArchiveDocumentType(types.get(0));
-			} catch (Exception ignore) {}
-			archiveDocument.setArabicName(original); archiveDocument.setEnglishName(original); archiveDocument.setIsDirectory(false);
-			archiveDocument.setCreatedDate(new java.util.Date()); archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
-			// set organization and root organization from the user who uploaded the attachment
-			try {
-				com.smat.ins.model.service.OrganizationService organizationService = (com.smat.ins.model.service.OrganizationService) BeanUtility.getBean("organizationService");
-				com.smat.ins.model.entity.Organization userOrg = null;
-				if (loginBean.getUser() != null) userOrg = loginBean.getUser().getOrganizationByOrganization();
-				if (userOrg != null) {
-					archiveDocument.setOrganizationByOrganization(userOrg);
-					// find root organization by walking up parents
-					com.smat.ins.model.entity.Organization rootOrg = userOrg;
-					try {
-						com.smat.ins.model.entity.Organization parentOrg = organizationService.getParentOrganization(rootOrg);
-						while (parentOrg != null && !parentOrg.equals(rootOrg)) {
-							rootOrg = parentOrg;
-							parentOrg = organizationService.getParentOrganization(rootOrg);
-						}
-					} catch (Exception ignore) {
-						// if service fails, ignore and keep userOrg as rootOrg
-					}
-					archiveDocument.setOrganizationByRootOrganization(rootOrg);
-				}
-			} catch (Exception ignore) {}
-			archiveDocumentService.saveOrUpdate(archiveDocument);
+            // create ArchiveDocument + file
+            com.smat.ins.model.entity.ArchiveDocument archiveDocument = new com.smat.ins.model.entity.ArchiveDocument();
+            // ensure archiveDocumentType is set (DB column non-null)
+            try {
+                com.smat.ins.model.service.ArchiveDocumentTypeService archiveDocumentTypeService = (com.smat.ins.model.service.ArchiveDocumentTypeService) BeanUtility.getBean("archiveDocumentTypeService");
+                java.util.List<com.smat.ins.model.entity.ArchiveDocumentType> types = archiveDocumentTypeService.findAll();
+                if (types != null && !types.isEmpty()) archiveDocument.setArchiveDocumentType(types.get(0));
+            } catch (Exception ignore) {}
+            archiveDocument.setArabicName(original); archiveDocument.setEnglishName(original); archiveDocument.setIsDirectory(false);
+            archiveDocument.setCreatedDate(new java.util.Date()); archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
+            // set organization and root organization from the user who uploaded the attachment
+            try {
+                com.smat.ins.model.service.OrganizationService organizationService = (com.smat.ins.model.service.OrganizationService) BeanUtility.getBean("organizationService");
+                com.smat.ins.model.entity.Organization userOrg = null;
+                if (loginBean.getUser() != null) userOrg = loginBean.getUser().getOrganizationByOrganization();
+                if (userOrg != null) {
+                    archiveDocument.setOrganizationByOrganization(userOrg);
+                    // find root organization by walking up parents
+                    com.smat.ins.model.entity.Organization rootOrg = userOrg;
+                    try {
+                        com.smat.ins.model.entity.Organization parentOrg = organizationService.getParentOrganization(rootOrg);
+                        while (parentOrg != null && !parentOrg.equals(rootOrg)) {
+                            rootOrg = parentOrg;
+                            parentOrg = organizationService.getParentOrganization(rootOrg);
+                        }
+                    } catch (Exception ignore) {
+                        // if service fails, ignore and keep userOrg as rootOrg
+                    }
+                    archiveDocument.setOrganizationByRootOrganization(rootOrg);
+                }
+            } catch (Exception ignore) {}
+            archiveDocumentService.saveOrUpdate(archiveDocument);
 
-			com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
-			docFile.setArchiveDocument(archiveDocument);
-			docFile.setName(original);
-			String ext = org.apache.commons.io.FilenameUtils.getExtension(original);
-			docFile.setExtension(ext);
-			docFile.setMimeType(event.getFile().getContentType());
-			docFile.setUuid(java.util.UUID.randomUUID().toString());
-			docFile.setFileSize(event.getFile().getSize());
-			docFile.setCreatedDate(new java.util.Date());
+            com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
+            docFile.setArchiveDocument(archiveDocument);
+            docFile.setName(original);
+            String ext = org.apache.commons.io.FilenameUtils.getExtension(original);
+            docFile.setExtension(ext);
+            docFile.setMimeType(event.getFile().getContentType());
+            docFile.setUuid(java.util.UUID.randomUUID().toString());
+            docFile.setFileSize(event.getFile().getSize());
+            docFile.setCreatedDate(new java.util.Date());
 
-			// determine next file code (use ArchiveDocumentFileService helper to get max code)
-			try {
-				Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
-				int codeLength = 9; // default (matches ArchiveDocumentServiceImpl)
-				String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
-				docFile.setCode(fileCode);
+            // determine next file code (use ArchiveDocumentFileService helper to get max code)
+            try {
+                Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
+                int codeLength = 9; // default (matches ArchiveDocumentServiceImpl)
+                String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
+                docFile.setCode(fileCode);
 
-				String storedName = fileCode + "." + ext;
-				java.nio.file.Path target = folderPath.resolve(storedName);
-				Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
+                String storedName = fileCode + "." + ext;
+                java.nio.file.Path target = folderPath.resolve(storedName);
+                Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
 
-				String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
-				docFile.setLogicalPath(logical);
-				docFile.setServerPath(target.toString());
+                String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+                docFile.setLogicalPath(logical);
+                docFile.setServerPath(target.toString());
 
-			} catch (Exception ex) {
-				// fallback to original behaviour if service fails
-				int seq = 1; try { seq += (int) java.nio.file.Files.list(folderPath).count(); } catch (Exception ignore) {}
-				String storedName = String.format("%03d_%s", seq, safe);
-				java.nio.file.Path target = folderPath.resolve(storedName);
-				Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
-				String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
-				docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
-			}
+            } catch (Exception ex) {
+                // fallback to original behaviour if service fails
+                int seq = 1; try { seq += (int) java.nio.file.Files.list(folderPath).count(); } catch (Exception ignore) {}
+                String storedName = String.format("%03d_%s", seq, safe);
+                java.nio.file.Path target = folderPath.resolve(storedName);
+                Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
+                String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+                docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
+            }
 
-			archiveDocumentFileService.saveOrUpdate(docFile);
+            archiveDocumentFileService.saveOrUpdate(docFile);
 
-			com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
-			cfd.setCabinetFolder(cabinetFolder); cfd.setSysUser(loginBean.getUser()); cfd.setArchiveDocument(archiveDocument);
-			cfd.setCreatedDate(new java.util.Date()); cabinetFolderDocumentService.saveOrUpdate(cfd);
+            com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
+            cfd.setCabinetFolder(cabinetFolder); cfd.setSysUser(loginBean.getUser()); cfd.setArchiveDocument(archiveDocument);
+            cfd.setCreatedDate(new java.util.Date()); cabinetFolderDocumentService.saveOrUpdate(cfd);
 
-			UtilityHelper.addInfoMessage("Attachment uploaded to cabinet: " + original);
+            UtilityHelper.addInfoMessage("Attachment uploaded to cabinet: " + original);
 
-		} catch (Exception e) {
-			UtilityHelper.addErrorMessage("Error uploading attachment: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage("Error uploading attachment: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-	public List<ChecklistDetailDataSource> getBy(String dataSourceCode) {
-		return checklistDetailDataSourceService.getByDataSource(dataSourceCode);
-	}
+    public List<ChecklistDetailDataSource> getBy(String dataSourceCode) {
+        return checklistDetailDataSourceService.getByDataSource(dataSourceCode);
+    }
 
-	public boolean doValidate() {
-		try {
-			if (comment == null || comment.isEmpty()) {
-				UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldEnterComment"));
-				return false;
-			}
-			
-			if(equipmentInspectionForm.getSticker()==null) {
-				UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldChooseSticker"));
-				return false;
-			}
-			// Add validation for selectedUserAliasRecipient if needed (e.g., must be
-			// selected for certain steps)
-			if (UtilityHelper.decipher(persistentMode).equals("insert")) {
-				if (selectedUserAliasRecipient == null || selectedUserAliasRecipient.getSysUserBySysUser() == null) {
-					UtilityHelper.addErrorMessage("Please select a reviewer.");
-					return false;
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
+    public boolean doValidate() {
+        try {
+            if (comment == null || comment.isEmpty()) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldEnterComment"));
+                return false;
+            }
+
+            if(equipmentInspectionForm.getSticker()==null) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldChooseSticker"));
+                return false;
+            }
+            // Add validation for selectedUserAliasRecipient if needed (e.g., must be
+            // selected for certain steps)
+            if (UtilityHelper.decipher(persistentMode).equals("insert")) {
+                if (selectedUserAliasRecipient == null || selectedUserAliasRecipient.getSysUserBySysUser() == null) {
+                    UtilityHelper.addErrorMessage("Please select a reviewer.");
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 
     public String doSave() {
         if (!doValidate())
@@ -1046,79 +1047,15 @@ public class InspectionFormBean implements Serializable {
             Set<InspectionFormWorkflowStep> inspectionFormWorkflowSteps = new HashSet<InspectionFormWorkflowStep>();
 
             Short maxStepSeq = null;
-            // protect against null sticker (keep original behavior)
-            if (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null) {
-                equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
-            }
+            equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
 
-            // ----------------- CHANGE STEP (Reviewer approves) - MODIFIED -----------------
             if (UtilityHelper.decipher(persistentMode).equals("changeStep")) {
 
-                // ensure sticker no kept (defensive)
-                if (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null) {
-                    equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
-                }
-
-                // 1) Sync dynamic columnContents -> EquipmentInspectionFormItem (update existing or create new)
-                // ensure collection initialized
-                if (equipmentInspectionForm.getEquipmentInspectionFormItems() == null) {
-                    equipmentInspectionForm.setEquipmentInspectionFormItems(new HashSet<EquipmentInspectionFormItem>());
-                }
-
-                // build a map of existing items by alias for quick lookup
-                Map<String, EquipmentInspectionFormItem> existingItemsByAlias = new HashMap<>();
-                for (Object existingObj : equipmentInspectionForm.getEquipmentInspectionFormItems()) {
-                    if (existingObj instanceof EquipmentInspectionFormItem) {
-                        EquipmentInspectionFormItem existingItem = (EquipmentInspectionFormItem) existingObj;
-                        if (existingItem.getAliasName() != null) {
-                            existingItemsByAlias.put(existingItem.getAliasName().toLowerCase(), existingItem);
-                        }
-                    }
-                }
-
-                // iterate columnContents and update/create items
-                for (ColumnContent cc : columnContents) {
-                    String alias = cc.getAliasName();
-                    if (alias == null) continue;
-                    String key = alias.toLowerCase();
-                    Object value = cc.getContentValue();
-
-                    EquipmentInspectionFormItem item = existingItemsByAlias.get(key);
-                    if (item == null) {
-                        item = new EquipmentInspectionFormItem();
-                        item.setEquipmentInspectionForm(equipmentInspectionForm);
-                        item.setAliasName(cc.getAliasName());
-                        item.setGeneralEquipmentItem(cc.getGeneralEquipmentItem());
-                        // add newly created item to the form's collection
-                        equipmentInspectionForm.getEquipmentInspectionFormItems().add(item);
-                        existingItemsByAlias.put(key, item);
-                    }
-
-                    // convert incoming value to String because setItemValue expects String
-                    String valueAsString = null;
-                    if (value != null) {
-                        if (value instanceof Date) {
-                            // use existing helper to format date (date-only)
-                            valueAsString = formatDate((Date) value);
-                        } else {
-                            valueAsString = String.valueOf(value);
-                        }
-                    }
-                    item.setItemValue(valueAsString);
-                }
-
-                // 2) keep other important fields up-to-date (name/address, reviewer)
-                equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
-                equipmentInspectionForm.setNameAndAddressOfEmployer(
-                        equipmentInspectionForm.getCompany() != null
-                                ? equipmentInspectionForm.getCompany().getName()
-                                : equipmentInspectionForm.getNameAndAddressOfEmployer());
-
-                // 3) prepare workflow and step as before
                 maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(equipmentInspectionForm.getId());
                 InspectionFormWorkflow inspectionFormWorkflow = inspectionFormWorkflowService
                         .getCurrentInspectionFormWorkFlow(equipmentInspectionForm.getId());
-
+                equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
+                equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
                 inspectionFormWorkflow.setEquipmentInspectionForm(equipmentInspectionForm);
                 inspectionFormWorkflow.setWorkflowDefinition(workflowDefinitionFinal);
                 inspectionFormWorkflow.setTask(task);
@@ -1132,37 +1069,20 @@ public class InspectionFormBean implements Serializable {
                 inspectionFormWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
                 inspectionFormWorkflowStep.setWorkflowDefinition(workflowDefinitionFinal);
 
-                // 4) finally persist (this should save the updated items too)
                 equipmentInspectionFormService.saveToStep(equipmentInspectionForm, inspectionFormWorkflow,
                         inspectionFormWorkflowStep);
-
-                // 5) set local state and print if you want same behavior
                 step = "03";
                 doPrint();
-                
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
                 return "";
             }
-            // ----------------- END changeStep -----------------
 
-            // original behavior for building items in other branches (insert/update)
             for (ColumnContent columnContent : columnContents) {
                 EquipmentInspectionFormItem equipmentInspectionFormItem = new EquipmentInspectionFormItem();
                 equipmentInspectionFormItem.setEquipmentInspectionForm(equipmentInspectionForm);
                 equipmentInspectionFormItem.setGeneralEquipmentItem(columnContent.getGeneralEquipmentItem());
                 equipmentInspectionFormItem.setAliasName(columnContent.getAliasName());
-
-                // convert content value to String (defensive, since setItemValue expects String)
-                Object ccVal = columnContent.getContentValue();
-                String ccValStr = null;
-                if (ccVal != null) {
-                    if (ccVal instanceof Date) {
-                        ccValStr = formatDate((Date) ccVal);
-                    } else {
-                        ccValStr = String.valueOf(ccVal);
-                    }
-                }
-                equipmentInspectionFormItem.setItemValue(ccValStr);
-
+                equipmentInspectionFormItem.setItemValue(columnContent.getContentValue());
                 equipmentInspectionForm.getEquipmentInspectionFormItems().add(equipmentInspectionFormItem);
             }
 
@@ -1194,7 +1114,7 @@ public class InspectionFormBean implements Serializable {
                 equipmentInspectionForm.getInspectionFormWorkflowSteps().add(inspectionFormWorkflowStepTwo);
 
                 equipmentInspectionFormService.merge(equipmentInspectionForm);
-                
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
 
                 return "pretty:inspection/my-tasks";
 
@@ -1221,7 +1141,6 @@ public class InspectionFormBean implements Serializable {
                 inspectionFormWorkflowStepOne.setSysUserComment(comment);
                 inspectionFormWorkflowStepOne.setStepSeq((short) (maxStepSeq + 1));
                 inspectionFormWorkflowSteps.add(inspectionFormWorkflowStepOne);
-
                 InspectionFormWorkflowStep inspectionFormWorkflowStepTwo = new InspectionFormWorkflowStep();
                 inspectionFormWorkflowStepTwo.setEquipmentInspectionForm(equipmentInspectionForm);
                 inspectionFormWorkflowStepTwo
@@ -1237,64 +1156,63 @@ public class InspectionFormBean implements Serializable {
 
                 equipmentInspectionFormService.saveOrUpdate(equipmentInspectionForm);
                 Sticker sticker = stickerService.findByUniqueField("stickerNo", equipmentInspectionForm.getStickerNo());
-                if (sticker != null) {
-                    sticker.setIsUsed(true);
-                    sticker.setIsPrinted(true);
-                    sticker.setSysUserByCreatedBy(loginBean.getUser());
-                    sticker.setSysUserByPrintedBy(loginBean.getUser());
-                    stickerService.update(sticker);
-                }
-                
+                sticker.setIsUsed(true);
+                sticker.setIsPrinted(true);
+                sticker.setSysUserByCreatedBy(loginBean.getUser());
+                sticker.setSysUserByPrintedBy(loginBean.getUser());
+                stickerService.update(sticker);
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
                 return "pretty:inspection/my-tasks";
             }
         } catch (Exception e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
-            
+            UtilityHelper.addInfoMessage(localizationService.getErrorMessage().getString("operationFaild"));
             return "";
         }
         return "";
     }
 
-	public String returnToInspector() {
-		if (!doValidate())
-			return "";
-		try {
-			WorkflowDefinition workflowDefinitionInit = workflowDefinitionService.getInitStep((short) 1);
-			Short maxStepSeq = null;
-			equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
-			if (disabled) {
-				maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(equipmentInspectionForm.getId());
-				InspectionFormWorkflow inspectionFormWorkflow = inspectionFormWorkflowService
-						.getCurrentInspectionFormWorkFlow(equipmentInspectionForm.getId());
+    public String returnToInspector() {
+        if (!doValidate())
+            return "";
+        try {
+            WorkflowDefinition workflowDefinitionInit = workflowDefinitionService.getInitStep((short) 1);
+            Short maxStepSeq = null;
+            equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
+            if (disabled) {
+                maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(equipmentInspectionForm.getId());
+                InspectionFormWorkflow inspectionFormWorkflow = inspectionFormWorkflowService
+                        .getCurrentInspectionFormWorkFlow(equipmentInspectionForm.getId());
 
-				equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
-				equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
-				inspectionFormWorkflow.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflow.setWorkflowDefinition(workflowDefinitionInit);
-				inspectionFormWorkflow.setTask(task);
-				inspectionFormWorkflow.setReviewedBy(null);
+                equipmentInspectionForm.setSysUserByReviewedBy(loginBean.getUser());
+                equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
+                inspectionFormWorkflow.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflow.setWorkflowDefinition(workflowDefinitionInit);
+                inspectionFormWorkflow.setTask(task);
+                inspectionFormWorkflow.setReviewedBy(null);
 
-				InspectionFormWorkflowStep inspectionFormWorkflowStep = new InspectionFormWorkflowStep();
-				inspectionFormWorkflowStep.setEquipmentInspectionForm(equipmentInspectionForm);
-				inspectionFormWorkflowStep.setInspectionFormDocument("document-final".getBytes());
-				inspectionFormWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
-				inspectionFormWorkflowStep.setSysUser(loginBean.getUser());
-				inspectionFormWorkflowStep.setSysUserComment(comment);
-				inspectionFormWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
-				inspectionFormWorkflowStep.setWorkflowDefinition(workflowDefinitionInit);
+                InspectionFormWorkflowStep inspectionFormWorkflowStep = new InspectionFormWorkflowStep();
+                inspectionFormWorkflowStep.setEquipmentInspectionForm(equipmentInspectionForm);
+                inspectionFormWorkflowStep.setInspectionFormDocument("document-final".getBytes());
+                inspectionFormWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
+                inspectionFormWorkflowStep.setSysUser(loginBean.getUser());
+                inspectionFormWorkflowStep.setSysUserComment(comment);
+                inspectionFormWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
+                inspectionFormWorkflowStep.setWorkflowDefinition(workflowDefinitionInit);
 
-				equipmentInspectionFormService.saveToStep(equipmentInspectionForm, inspectionFormWorkflow,
-						inspectionFormWorkflowStep);
-                
-				return "pretty:inspection/my-tasks";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-            
-			return "";
-		}
-		return "";
-	}
+                equipmentInspectionFormService.saveToStep(equipmentInspectionForm, inspectionFormWorkflow,
+                        inspectionFormWorkflowStep);
+                UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+                return "pretty:inspection/my-tasks";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addInfoMessage(localizationService.getErrorMessage().getString("operationFaild"));
+            return "";
+        }
+        return "";
+    }
     // helper: convert any object to safe string
     private String safeString(Object o) {
         return (o == null) ? "" : String.valueOf(o);
@@ -1311,10 +1229,10 @@ public class InspectionFormBean implements Serializable {
 
     public void doPrint() {
         try {
-			// prepare attachments zip session attributes so ZipDocumentDownloadBean can build/download it
-			try { prepareAttachmentsZipDownload(); } catch (Exception ignore) {}
+            // prepare attachments zip session attributes so ZipDocumentDownloadBean can build/download it
+            try { prepareAttachmentsZipDownload(); } catch (Exception ignore) {}
 
-			if (formTemplate == null || formTemplate.getPrintedDoc() == null) {
+            if (formTemplate == null || formTemplate.getPrintedDoc() == null) {
                 UtilityHelper.addErrorMessage("Template not available for printing.");
                 return;
             }
@@ -1453,147 +1371,147 @@ public class InspectionFormBean implements Serializable {
                 bookmarkReviewedByImg.getBookmarkStart().getParentNode().appendChild(shape);
             }
 
-			// Save the filled document to PDF bytes
-			ByteArrayOutputStream pdfDocOutputStream = new ByteArrayOutputStream();
-			document.save(pdfDocOutputStream, SaveFormat.PDF);
+            // Save the filled document to PDF bytes
+            ByteArrayOutputStream pdfDocOutputStream = new ByteArrayOutputStream();
+            document.save(pdfDocOutputStream, SaveFormat.PDF);
 
-			// --- Persist a copy of the generated PDF into the inspection attachments folder ---
-			try {
-				byte[] pdfBytes = pdfDocOutputStream.toByteArray();
+            // --- Persist a copy of the generated PDF into the inspection attachments folder ---
+            try {
+                byte[] pdfBytes = pdfDocOutputStream.toByteArray();
 
-				// services used for storing attachments (reuse same pattern as handleAttachmentUpload)
-				com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
-				com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
-				com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
-				com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
-				com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+                // services used for storing attachments (reuse same pattern as handleAttachmentUpload)
+                com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+                com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+                com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+                com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+                com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
 
-				// locate/ensure inspection cabinet
-				String targetCabinetCode = "INS-DEFAULT";
-				com.smat.ins.model.entity.Cabinet targetCabinet = null;
-				for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
-					if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
-				}
-				if (targetCabinet == null) {
-					com.smat.ins.util.CabinetDefaultsCreator.ensureDefaultCabinets(loginBean.getUser());
-					for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
-						if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
-					}
-				}
-				if (targetCabinet != null) {
-					// pick drawer/definition code "01"
-					com.smat.ins.model.entity.CabinetDefinition def = null;
-					if (targetCabinet.getCabinetDefinitions() != null) {
-						for (Object od : targetCabinet.getCabinetDefinitions()) {
-							com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
-							if ("01".equals(cd.getCode())) { def = cd; break; }
-						}
-					}
-					if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
-						def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+                // locate/ensure inspection cabinet
+                String targetCabinetCode = "INS-DEFAULT";
+                com.smat.ins.model.entity.Cabinet targetCabinet = null;
+                for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                    if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+                }
+                if (targetCabinet == null) {
+                    com.smat.ins.util.CabinetDefaultsCreator.ensureDefaultCabinets(loginBean.getUser());
+                    for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                        if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+                    }
+                }
+                if (targetCabinet != null) {
+                    // pick drawer/definition code "01"
+                    com.smat.ins.model.entity.CabinetDefinition def = null;
+                    if (targetCabinet.getCabinetDefinitions() != null) {
+                        for (Object od : targetCabinet.getCabinetDefinitions()) {
+                            com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                            if ("01".equals(cd.getCode())) { def = cd; break; }
+                        }
+                    }
+                    if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+                        def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
 
-					if (def != null) {
-						// determine folder name (reportNo preferred)
-						String folderName = null;
-						if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
-							folderName = equipmentInspectionForm.getReportNo().trim();
-						} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
-							folderName = "form_" + equipmentInspectionForm.getId().toString();
-						} else {
-							folderName = "form_" + String.valueOf(System.currentTimeMillis());
-						}
+                    if (def != null) {
+                        // determine folder name (reportNo preferred)
+                        String folderName = null;
+                        if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+                            folderName = equipmentInspectionForm.getReportNo().trim();
+                        } else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+                            folderName = "form_" + equipmentInspectionForm.getId().toString();
+                        } else {
+                            folderName = "form_" + String.valueOf(System.currentTimeMillis());
+                        }
 
-						com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
-						try {
-							java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
-							if (existing != null) {
-								for (com.smat.ins.model.entity.CabinetFolder f : existing) {
-									String fn = folderName == null ? "" : folderName.trim().toLowerCase();
-									String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
-									String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
-									if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
-								}
-							}
-						} catch (Exception ignore) {}
+                        com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+                        try {
+                            java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+                            if (existing != null) {
+                                for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                                    String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                                    String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                                    String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                                    if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+                                }
+                            }
+                        } catch (Exception ignore) {}
 
-						if (cabinetFolder == null) {
-							cabinetFolder = new com.smat.ins.model.entity.CabinetFolder();
-							cabinetFolder.setCabinetDefinition(def);
-							cabinetFolder.setSysUser(loginBean.getUser());
-							cabinetFolder.setArabicName(folderName);
-							cabinetFolder.setEnglishName(folderName);
-							int nextCode = 1;
-							try { java.util.List<com.smat.ins.model.entity.CabinetFolder> existing2 = cabinetFolderService.getByCabinetDefinition(def); nextCode = existing2 != null ? existing2.size() + 1 : 1; } catch (Exception ignore) {}
-							cabinetFolder.setCode(String.format("%03d", nextCode));
-							cabinetFolder.setCreatedDate(new java.util.Date());
-							cabinetFolderService.saveOrUpdate(cabinetFolder);
-						}
+                        if (cabinetFolder == null) {
+                            cabinetFolder = new com.smat.ins.model.entity.CabinetFolder();
+                            cabinetFolder.setCabinetDefinition(def);
+                            cabinetFolder.setSysUser(loginBean.getUser());
+                            cabinetFolder.setArabicName(folderName);
+                            cabinetFolder.setEnglishName(folderName);
+                            int nextCode = 1;
+                            try { java.util.List<com.smat.ins.model.entity.CabinetFolder> existing2 = cabinetFolderService.getByCabinetDefinition(def); nextCode = existing2 != null ? existing2.size() + 1 : 1; } catch (Exception ignore) {}
+                            cabinetFolder.setCode(String.format("%03d", nextCode));
+                            cabinetFolder.setCreatedDate(new java.util.Date());
+                            cabinetFolderService.saveOrUpdate(cabinetFolder);
+                        }
 
-						// create physical folder
-						String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
-						java.nio.file.Path folderPath = Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
-						Files.createDirectories(folderPath);
+                        // create physical folder
+                        String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+                        java.nio.file.Path folderPath = Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+                        Files.createDirectories(folderPath);
 
-						// create ArchiveDocument and ArchiveDocumentFile for the pdf
-						String original = "EquipmentCertificate_" + folderName + ".pdf";
-						String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
+                        // create ArchiveDocument and ArchiveDocumentFile for the pdf
+                        String original = "EquipmentCertificate_" + folderName + ".pdf";
+                        String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
 
-						com.smat.ins.model.entity.ArchiveDocument archiveDocument = new com.smat.ins.model.entity.ArchiveDocument();
-						try {
-							com.smat.ins.model.service.ArchiveDocumentTypeService archiveDocumentTypeService = (com.smat.ins.model.service.ArchiveDocumentTypeService) BeanUtility.getBean("archiveDocumentTypeService");
-							java.util.List<com.smat.ins.model.entity.ArchiveDocumentType> types = archiveDocumentTypeService.findAll();
-							if (types != null && !types.isEmpty()) archiveDocument.setArchiveDocumentType(types.get(0));
-						} catch (Exception ignore) {}
-						archiveDocument.setArabicName(original); archiveDocument.setEnglishName(original); archiveDocument.setIsDirectory(false);
-						archiveDocument.setCreatedDate(new java.util.Date()); archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
-						archiveDocumentService.saveOrUpdate(archiveDocument);
+                        com.smat.ins.model.entity.ArchiveDocument archiveDocument = new com.smat.ins.model.entity.ArchiveDocument();
+                        try {
+                            com.smat.ins.model.service.ArchiveDocumentTypeService archiveDocumentTypeService = (com.smat.ins.model.service.ArchiveDocumentTypeService) BeanUtility.getBean("archiveDocumentTypeService");
+                            java.util.List<com.smat.ins.model.entity.ArchiveDocumentType> types = archiveDocumentTypeService.findAll();
+                            if (types != null && !types.isEmpty()) archiveDocument.setArchiveDocumentType(types.get(0));
+                        } catch (Exception ignore) {}
+                        archiveDocument.setArabicName(original); archiveDocument.setEnglishName(original); archiveDocument.setIsDirectory(false);
+                        archiveDocument.setCreatedDate(new java.util.Date()); archiveDocument.setSysUserByCreatorUser(loginBean.getUser());
+                        archiveDocumentService.saveOrUpdate(archiveDocument);
 
-						com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
-						docFile.setArchiveDocument(archiveDocument);
-						docFile.setName(original);
-						String ext = "pdf";
-						docFile.setExtension(ext);
-						docFile.setMimeType("application/pdf");
-						docFile.setUuid(java.util.UUID.randomUUID().toString());
-						docFile.setFileSize((long) pdfBytes.length);
-						docFile.setCreatedDate(new java.util.Date());
+                        com.smat.ins.model.entity.ArchiveDocumentFile docFile = new com.smat.ins.model.entity.ArchiveDocumentFile();
+                        docFile.setArchiveDocument(archiveDocument);
+                        docFile.setName(original);
+                        String ext = "pdf";
+                        docFile.setExtension(ext);
+                        docFile.setMimeType("application/pdf");
+                        docFile.setUuid(java.util.UUID.randomUUID().toString());
+                        docFile.setFileSize((long) pdfBytes.length);
+                        docFile.setCreatedDate(new java.util.Date());
 
-						try {
-							Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
-							int codeLength = 9;
-							String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
-							docFile.setCode(fileCode);
+                        try {
+                            Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
+                            int codeLength = 9;
+                            String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
+                            docFile.setCode(fileCode);
 
-							// Save with fixed friendly name 'inspection_report.pdf' (avoid numeric prefix)
-							String storedName = "inspection_report." + ext;
-							java.nio.file.Path target = folderPath.resolve(storedName);
-							// If file already exists, Files.write with CREATE_NEW will throw; let fallback handle unique naming
-							Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
+                            // Save with fixed friendly name 'inspection_report.pdf' (avoid numeric prefix)
+                            String storedName = "inspection_report." + ext;
+                            java.nio.file.Path target = folderPath.resolve(storedName);
+                            // If file already exists, Files.write with CREATE_NEW will throw; let fallback handle unique naming
+                            Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
 
-							String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
-							docFile.setLogicalPath(logical);
-							docFile.setServerPath(target.toString());
+                            String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+                            docFile.setLogicalPath(logical);
+                            docFile.setServerPath(target.toString());
 
-						} catch (Exception ex) {
-							// fallback: use timestamp to produce a unique friendly name
-							String storedName = "inspection_report_" + System.currentTimeMillis() + "." + ext;
-							java.nio.file.Path target = folderPath.resolve(storedName);
-							Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
-							String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
-							docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
-						}
+                        } catch (Exception ex) {
+                            // fallback: use timestamp to produce a unique friendly name
+                            String storedName = "inspection_report_" + System.currentTimeMillis() + "." + ext;
+                            java.nio.file.Path target = folderPath.resolve(storedName);
+                            Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
+                            String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
+                            docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
+                        }
 
-						archiveDocumentFileService.saveOrUpdate(docFile);
+                        archiveDocumentFileService.saveOrUpdate(docFile);
 
-						com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
-						cfd.setCabinetFolder(cabinetFolder); cfd.setSysUser(loginBean.getUser()); cfd.setArchiveDocument(archiveDocument);
-						cfd.setCreatedDate(new java.util.Date()); cabinetFolderDocumentService.saveOrUpdate(cfd);
-					}
-				}
-			} catch (Exception writeEx) {
-				// don't break printing if storing attachment fails; just log
-				writeEx.printStackTrace();
-			}
+                        com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
+                        cfd.setCabinetFolder(cabinetFolder); cfd.setSysUser(loginBean.getUser()); cfd.setArchiveDocument(archiveDocument);
+                        cfd.setCreatedDate(new java.util.Date()); cabinetFolderDocumentService.saveOrUpdate(cfd);
+                    }
+                }
+            } catch (Exception writeEx) {
+                // don't break printing if storing attachment fails; just log
+                writeEx.printStackTrace();
+            }
 
             // Persist or update EquipmentInspectionCertificate (same logic as الأصلي)
             EquipmentInspectionCertificate equipmentInspectionCertificate = equipmentInspectionCertificateService
@@ -1629,20 +1547,20 @@ public class InspectionFormBean implements Serializable {
             PrimeFaces.current().ajax().update("form_viewer:manage-viewer-content");
             PrimeFaces.current().executeScript("PF('viewerWidgetVar').show();");
 
-			// If there are attachments for this report folder, open a zip download in a new tab
-			try {
-				String folderName = null;
-				if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
-					folderName = equipmentInspectionForm.getReportNo().trim();
-				} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
-					folderName = "form_" + equipmentInspectionForm.getId().toString();
-				}
-				if (folderName != null && hasFilesInCabinetFolder("INS-DEFAULT", "01", folderName)) {
-					String ctx = ((javax.faces.context.FacesContext) javax.faces.context.FacesContext.getCurrentInstance()).getExternalContext().getRequestContextPath();
-					String url = ctx + "/attachments/zip?type=ins&reportNo=" + java.net.URLEncoder.encode(folderName, "UTF-8");
-					PrimeFaces.current().executeScript("window.open('" + url + "', '_blank')");
-				}
-			} catch (Exception ignore) {}
+            // If there are attachments for this report folder, open a zip download in a new tab
+            try {
+                String folderName = null;
+                if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+                    folderName = equipmentInspectionForm.getReportNo().trim();
+                } else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+                    folderName = "form_" + equipmentInspectionForm.getId().toString();
+                }
+                if (folderName != null && hasFilesInCabinetFolder("INS-DEFAULT", "01", folderName)) {
+                    String ctx = ((javax.faces.context.FacesContext) javax.faces.context.FacesContext.getCurrentInstance()).getExternalContext().getRequestContextPath();
+                    String url = ctx + "/attachments/zip?type=ins&reportNo=" + java.net.URLEncoder.encode(folderName, "UTF-8");
+                    PrimeFaces.current().executeScript("window.open('" + url + "', '_blank')");
+                }
+            } catch (Exception ignore) {}
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1655,194 +1573,194 @@ public class InspectionFormBean implements Serializable {
         }
     }
 
-	/**
-	 * Locate the cabinet folder used for this inspection (by reportNo or id),
-	 * and populate session attributes expected by ZipDocumentDownloadBean:
-	 * archDocId, cabinetFolderId, cabinetId, cabinetDefinitionId
-	 */
-	public void prepareAttachmentsZipDownload() throws Exception {
-		try {
-			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
-			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
-			com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
-			com.smat.ins.model.service.CabinetDefinitionService cabinetDefinitionService = (com.smat.ins.model.service.CabinetDefinitionService) BeanUtility.getBean("cabinetDefinitionService");
+    /**
+     * Locate the cabinet folder used for this inspection (by reportNo or id),
+     * and populate session attributes expected by ZipDocumentDownloadBean:
+     * archDocId, cabinetFolderId, cabinetId, cabinetDefinitionId
+     */
+    public void prepareAttachmentsZipDownload() throws Exception {
+        try {
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+            com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+            com.smat.ins.model.service.CabinetDefinitionService cabinetDefinitionService = (com.smat.ins.model.service.CabinetDefinitionService) BeanUtility.getBean("cabinetDefinitionService");
 
-			String targetCabinetCode = "INS-DEFAULT";
-			com.smat.ins.model.entity.Cabinet targetCabinet = null;
-			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
-				if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
-			}
-			if (targetCabinet == null) return;
+            String targetCabinetCode = "INS-DEFAULT";
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) return;
 
-			com.smat.ins.model.entity.CabinetDefinition def = null;
-			if (targetCabinet.getCabinetDefinitions() != null) {
-				for (Object od : targetCabinet.getCabinetDefinitions()) {
-					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
-					if ("01".equals(cd.getCode())) { def = cd; break; }
-				}
-			}
-			if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
-				def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
-			if (def == null) return;
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if ("01".equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+                def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+            if (def == null) return;
 
-			String folderName = null;
-			if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
-				folderName = equipmentInspectionForm.getReportNo().trim();
-			} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
-				folderName = "form_" + equipmentInspectionForm.getId().toString();
-			} else {
-				return; // nothing to prepare
-			}
+            String folderName = null;
+            if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+                folderName = equipmentInspectionForm.getReportNo().trim();
+            } else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+                folderName = "form_" + equipmentInspectionForm.getId().toString();
+            } else {
+                return; // nothing to prepare
+            }
 
-			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
-			try {
-				java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
-				if (existing != null) {
-					for (com.smat.ins.model.entity.CabinetFolder f : existing) {
-						String fn = folderName == null ? "" : folderName.trim().toLowerCase();
-						String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
-						String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
-						if (fn.equals(fa) || fn.equals(fe)) {
-							cabinetFolder = f;
-							break;
-						}
-					}
-				}
-			} catch (Exception ignore) {}
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            try {
+                java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+                if (existing != null) {
+                    for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                        String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                        String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                        String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                        if (fn.equals(fa) || fn.equals(fe)) {
+                            cabinetFolder = f;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
 
-			if (cabinetFolder == null) return;
+            if (cabinetFolder == null) return;
 
-			java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
-			if (items == null || items.isEmpty()) return;
-			com.smat.ins.model.entity.ArchiveDocument firstDoc = items.get(0).getArchiveDocument();
-			if (firstDoc == null) return;
+            java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+            if (items == null || items.isEmpty()) return;
+            com.smat.ins.model.entity.ArchiveDocument firstDoc = items.get(0).getArchiveDocument();
+            if (firstDoc == null) return;
 
-			UtilityHelper.putSessionAttr("archDocId", firstDoc.getId());
-			UtilityHelper.putSessionAttr("cabinetFolderId", cabinetFolder.getId());
-			UtilityHelper.putSessionAttr("cabinetId", targetCabinet.getId());
-			UtilityHelper.putSessionAttr("cabinetDefinitionId", def.getId());
+            UtilityHelper.putSessionAttr("archDocId", firstDoc.getId());
+            UtilityHelper.putSessionAttr("cabinetFolderId", cabinetFolder.getId());
+            UtilityHelper.putSessionAttr("cabinetId", targetCabinet.getId());
+            UtilityHelper.putSessionAttr("cabinetDefinitionId", def.getId());
 
-		} catch (Exception e) {
-			// swallow - caller will continue printing even if zip not prepared
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            // swallow - caller will continue printing even if zip not prepared
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Return the list of ArchiveDocumentFile objects that are recorded in the
-	 * cabinet folder for this inspection form. Returns empty list on error.
-	 */
-	public java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> getAttachmentFiles() {
-		try {
-			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
-			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
-			com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
-			com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+    /**
+     * Return the list of ArchiveDocumentFile objects that are recorded in the
+     * cabinet folder for this inspection form. Returns empty list on error.
+     */
+    public java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> getAttachmentFiles() {
+        try {
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+            com.smat.ins.model.service.CabinetFolderDocumentService cabinetFolderDocumentService = (com.smat.ins.model.service.CabinetFolderDocumentService) BeanUtility.getBean("cabinetFolderDocumentService");
+            com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
 
-			String targetCabinetCode = "INS-DEFAULT";
-			com.smat.ins.model.entity.Cabinet targetCabinet = null;
-			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
-				if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
-			}
-			if (targetCabinet == null) return java.util.Collections.emptyList();
+            String targetCabinetCode = "INS-DEFAULT";
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (targetCabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) return java.util.Collections.emptyList();
 
-			com.smat.ins.model.entity.CabinetDefinition def = null;
-			if (targetCabinet.getCabinetDefinitions() != null) {
-				for (Object od : targetCabinet.getCabinetDefinitions()) {
-					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
-					if ("01".equals(cd.getCode())) { def = cd; break; }
-				}
-			}
-			if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
-				def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
-			if (def == null) return java.util.Collections.emptyList();
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if ("01".equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null && targetCabinet.getCabinetDefinitions() != null && !targetCabinet.getCabinetDefinitions().isEmpty())
+                def = (com.smat.ins.model.entity.CabinetDefinition) targetCabinet.getCabinetDefinitions().iterator().next();
+            if (def == null) return java.util.Collections.emptyList();
 
-			String folderName = null;
-			if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
-				folderName = equipmentInspectionForm.getReportNo().trim();
-			} else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
-				folderName = "form_" + equipmentInspectionForm.getId().toString();
-			} else {
-				return java.util.Collections.emptyList();
-			}
+            String folderName = null;
+            if (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null && !equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+                folderName = equipmentInspectionForm.getReportNo().trim();
+            } else if (equipmentInspectionForm != null && equipmentInspectionForm.getId() != null) {
+                folderName = "form_" + equipmentInspectionForm.getId().toString();
+            } else {
+                return java.util.Collections.emptyList();
+            }
 
-			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
-			try {
-				java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
-				if (existing != null) {
-					for (com.smat.ins.model.entity.CabinetFolder f : existing) {
-						String fn = folderName == null ? "" : folderName.trim().toLowerCase();
-						String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
-						String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
-						if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
-					}
-				}
-			} catch (Exception ignore) {}
-			if (cabinetFolder == null) return java.util.Collections.emptyList();
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            try {
+                java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+                if (existing != null) {
+                    for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                        String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                        String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                        String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                        if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+                    }
+                }
+            } catch (Exception ignore) {}
+            if (cabinetFolder == null) return java.util.Collections.emptyList();
 
-			java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
-			if (items == null || items.isEmpty()) return java.util.Collections.emptyList();
+            java.util.List<com.smat.ins.model.entity.CabinetFolderDocument> items = cabinetFolderDocumentService.getByCabinetFolder(cabinetFolder);
+            if (items == null || items.isEmpty()) return java.util.Collections.emptyList();
 
-			java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> result = new java.util.ArrayList<>();
-			for (com.smat.ins.model.entity.CabinetFolderDocument cfd : items) {
-				com.smat.ins.model.entity.ArchiveDocument ad = cfd.getArchiveDocument();
-				if (ad == null) continue;
-				java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> files = archiveDocumentFileService.getBy(ad);
-				if (files != null && !files.isEmpty()) result.addAll(files);
-			}
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return java.util.Collections.emptyList();
-		}
-	}
+            java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> result = new java.util.ArrayList<>();
+            for (com.smat.ins.model.entity.CabinetFolderDocument cfd : items) {
+                com.smat.ins.model.entity.ArchiveDocument ad = cfd.getArchiveDocument();
+                if (ad == null) continue;
+                java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> files = archiveDocumentFileService.getBy(ad);
+                if (files != null && !files.isEmpty()) result.addAll(files);
+            }
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
+    }
 
-	// Check whether the given cabinet (by code) and drawer (code) contains a folder
-	// with given folderName and that the physical folder contains at least one regular file.
-	private boolean hasFilesInCabinetFolder(String cabinetCode, String drawerCode, String folderName) {
-		try {
-			com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
-			com.smat.ins.model.service.CabinetDefinitionService cabinetDefinitionService = (com.smat.ins.model.service.CabinetDefinitionService) BeanUtility.getBean("cabinetDefinitionService");
-			com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
+    // Check whether the given cabinet (by code) and drawer (code) contains a folder
+    // with given folderName and that the physical folder contains at least one regular file.
+    private boolean hasFilesInCabinetFolder(String cabinetCode, String drawerCode, String folderName) {
+        try {
+            com.smat.ins.model.service.CabinetService cabinetService = (com.smat.ins.model.service.CabinetService) BeanUtility.getBean("cabinetService");
+            com.smat.ins.model.service.CabinetDefinitionService cabinetDefinitionService = (com.smat.ins.model.service.CabinetDefinitionService) BeanUtility.getBean("cabinetDefinitionService");
+            com.smat.ins.model.service.CabinetFolderService cabinetFolderService = (com.smat.ins.model.service.CabinetFolderService) BeanUtility.getBean("cabinetFolderService");
 
-			com.smat.ins.model.entity.Cabinet targetCabinet = null;
-			for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
-				if (cabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
-			}
-			if (targetCabinet == null) return false;
+            com.smat.ins.model.entity.Cabinet targetCabinet = null;
+            for (com.smat.ins.model.entity.Cabinet c : cabinetService.findAll()) {
+                if (cabinetCode.equals(c.getCode())) { targetCabinet = c; break; }
+            }
+            if (targetCabinet == null) return false;
 
-			com.smat.ins.model.entity.CabinetDefinition def = null;
-			if (targetCabinet.getCabinetDefinitions() != null) {
-				for (Object od : targetCabinet.getCabinetDefinitions()) {
-					com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
-					if (drawerCode.equals(cd.getCode())) { def = cd; break; }
-				}
-			}
-			if (def == null) return false;
+            com.smat.ins.model.entity.CabinetDefinition def = null;
+            if (targetCabinet.getCabinetDefinitions() != null) {
+                for (Object od : targetCabinet.getCabinetDefinitions()) {
+                    com.smat.ins.model.entity.CabinetDefinition cd = (com.smat.ins.model.entity.CabinetDefinition) od;
+                    if (drawerCode.equals(cd.getCode())) { def = cd; break; }
+                }
+            }
+            if (def == null) return false;
 
-			java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
-			com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
-			if (existing != null) {
-				for (com.smat.ins.model.entity.CabinetFolder f : existing) {
-					String fn = folderName == null ? "" : folderName.trim().toLowerCase();
-					String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
-					String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
-					if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
-				}
-			}
-			if (cabinetFolder == null) return false;
+            java.util.List<com.smat.ins.model.entity.CabinetFolder> existing = cabinetFolderService.getByCabinetDefinition(def);
+            com.smat.ins.model.entity.CabinetFolder cabinetFolder = null;
+            if (existing != null) {
+                for (com.smat.ins.model.entity.CabinetFolder f : existing) {
+                    String fn = folderName == null ? "" : folderName.trim().toLowerCase();
+                    String fa = f.getArabicName() == null ? "" : f.getArabicName().trim().toLowerCase();
+                    String fe = f.getEnglishName() == null ? "" : f.getEnglishName().trim().toLowerCase();
+                    if (fn.equals(fa) || fn.equals(fe)) { cabinetFolder = f; break; }
+                }
+            }
+            if (cabinetFolder == null) return false;
 
-			String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
-			java.nio.file.Path folderPath = java.nio.file.Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
-			if (!java.nio.file.Files.exists(folderPath) || !java.nio.file.Files.isDirectory(folderPath)) return false;
-			try (java.util.stream.Stream<java.nio.file.Path> s = java.nio.file.Files.list(folderPath)) {
-				return s.anyMatch(p -> java.nio.file.Files.isRegularFile(p));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
+            String mainLocation = com.smat.ins.util.CabinetDefaultsCreator.selectMainLocation(targetCabinet.getCabinetLocation());
+            java.nio.file.Path folderPath = java.nio.file.Paths.get(mainLocation, targetCabinet.getCode(), def.getCode(), cabinetFolder.getCode());
+            if (!java.nio.file.Files.exists(folderPath) || !java.nio.file.Files.isDirectory(folderPath)) return false;
+            try (java.util.stream.Stream<java.nio.file.Path> s = java.nio.file.Files.list(folderPath)) {
+                return s.anyMatch(p -> java.nio.file.Files.isRegularFile(p));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
 
@@ -1936,104 +1854,104 @@ public class InspectionFormBean implements Serializable {
         return out.toByteArray();
     }
 
-	/**
-	 * Delete an attachment (ArchiveDocumentFile) by id.
-	 * This removes the DB record, deletes the physical file if present,
-	 * and deletes the parent ArchiveDocument when it has no remaining files.
-	 */
-	public void deleteAttachment(java.lang.Long archiveDocumentFileId) {
-		try {
-			if (archiveDocumentFileId == null) {
-				UtilityHelper.addErrorMessage("Invalid attachment id");
-				return;
-			}
+    /**
+     * Delete an attachment (ArchiveDocumentFile) by id.
+     * This removes the DB record, deletes the physical file if present,
+     * and deletes the parent ArchiveDocument when it has no remaining files.
+     */
+    public void deleteAttachment(java.lang.Long archiveDocumentFileId) {
+        try {
+            if (archiveDocumentFileId == null) {
+                UtilityHelper.addErrorMessage("Invalid attachment id");
+                return;
+            }
 
-			com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
-			com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
+            com.smat.ins.model.service.ArchiveDocumentFileService archiveDocumentFileService = (com.smat.ins.model.service.ArchiveDocumentFileService) BeanUtility.getBean("archiveDocumentFileService");
+            com.smat.ins.model.service.ArchiveDocumentService archiveDocumentService = (com.smat.ins.model.service.ArchiveDocumentService) BeanUtility.getBean("archiveDocumentService");
 
-			com.smat.ins.model.entity.ArchiveDocumentFile docFile = archiveDocumentFileService.findById(archiveDocumentFileId);
-			if (docFile == null) {
-				UtilityHelper.addErrorMessage("Attachment not found");
-				return;
-			}
+            com.smat.ins.model.entity.ArchiveDocumentFile docFile = archiveDocumentFileService.findById(archiveDocumentFileId);
+            if (docFile == null) {
+                UtilityHelper.addErrorMessage("Attachment not found");
+                return;
+            }
 
-			com.smat.ins.model.entity.ArchiveDocument archiveDocument = docFile.getArchiveDocument();
-			String serverPath = docFile.getServerPath();
+            com.smat.ins.model.entity.ArchiveDocument archiveDocument = docFile.getArchiveDocument();
+            String serverPath = docFile.getServerPath();
 
-			// delete DB record for the file
-			try {
-				archiveDocumentFileService.delete(docFile);
-			} catch (Exception ex) {
-				// attempt fallback: mark error but continue trying to remove file
-				ex.printStackTrace();
-			}
+            // delete DB record for the file
+            try {
+                archiveDocumentFileService.delete(docFile);
+            } catch (Exception ex) {
+                // attempt fallback: mark error but continue trying to remove file
+                ex.printStackTrace();
+            }
 
-			// remove physical file if present
-			try {
-				if (serverPath != null && !serverPath.trim().isEmpty()) {
-					java.nio.file.Path p = java.nio.file.Paths.get(serverPath);
-					java.nio.file.Files.deleteIfExists(p);
-				}
-			} catch (Exception ex) {
-				// non-fatal
-				ex.printStackTrace();
-			}
+            // remove physical file if present
+            try {
+                if (serverPath != null && !serverPath.trim().isEmpty()) {
+                    java.nio.file.Path p = java.nio.file.Paths.get(serverPath);
+                    java.nio.file.Files.deleteIfExists(p);
+                }
+            } catch (Exception ex) {
+                // non-fatal
+                ex.printStackTrace();
+            }
 
-			// if no remaining files belong to this archiveDocument, delete the archiveDocument
-			try {
-				if (archiveDocument != null) {
-					java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> remaining = null;
-					try { remaining = archiveDocumentFileService.getBy(archiveDocument); } catch (Exception ign) { }
-					if (remaining == null || remaining.isEmpty()) {
-						try { archiveDocumentService.deleteArchiveDoc(archiveDocument); } catch (Exception ign) { ign.printStackTrace(); }
-					}
-				}
-			} catch (Exception ex) { ex.printStackTrace(); }
+            // if no remaining files belong to this archiveDocument, delete the archiveDocument
+            try {
+                if (archiveDocument != null) {
+                    java.util.List<com.smat.ins.model.entity.ArchiveDocumentFile> remaining = null;
+                    try { remaining = archiveDocumentFileService.getBy(archiveDocument); } catch (Exception ign) { }
+                    if (remaining == null || remaining.isEmpty()) {
+                        try { archiveDocumentService.deleteArchiveDoc(archiveDocument); } catch (Exception ign) { ign.printStackTrace(); }
+                    }
+                }
+            } catch (Exception ex) { ex.printStackTrace(); }
 
-			UtilityHelper.addInfoMessage("Attachment deleted");
-		} catch (Exception e) {
-			e.printStackTrace();
-			UtilityHelper.addErrorMessage("Error deleting attachment: " + e.getMessage());
-		} finally {
-			try { PrimeFaces.current().ajax().update(":form:ins_attachments_section"); } catch (Exception ignore) {}
-		}
-	}
+            UtilityHelper.addInfoMessage("Attachment deleted");
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error deleting attachment: " + e.getMessage());
+        } finally {
+            try { PrimeFaces.current().ajax().update(":form:ins_attachments_section"); } catch (Exception ignore) {}
+        }
+    }
 
 
     // Save current form as draft
     public void saveDraft() {
-		try {
+        try {
             TaskDraft draft = new TaskDraft();
             if (task != null) draft.setTaskId(task.getId());
             if (loginBean != null && loginBean.getUser() != null) {
                 draft.setDraftOwnerId(loginBean.getUser().getId().intValue());
                 draft.setDraftOwnerName(loginBean.getUser().getDisplayName());
             }
-			// set a clear task type so we can scope drafts per form
-			draft.setTaskType("inspection_equipment");
-			Map<String,Object> payload = new HashMap<>();
-			// convert to safe shallow structures to avoid serializing full JPA graphs
-			payload.put("equipmentInspectionForm", com.smat.ins.util.DraftUtils.toSafeStructure(this.equipmentInspectionForm));
-			payload.put("columnContents", com.smat.ins.util.DraftUtils.toSafeStructure(this.columnContents));
-			payload.put("examinationType", com.smat.ins.util.DraftUtils.toSafeStructure(this.examinationType));
-			payload.put("equipmentType", com.smat.ins.util.DraftUtils.toSafeStructure(this.equipmentType));
-			// add a few extra UI-related fields so we can fully restore the form
-			payload.put("stepComment", this.stepComment);
-			payload.put("persistentMode", this.persistentMode);
-			payload.put("disabled", this.disabled);
-			byte[] bytes = objectMapper.writeValueAsBytes(payload);
+            // set a clear task type so we can scope drafts per form
+            draft.setTaskType("inspection_equipment");
+            Map<String,Object> payload = new HashMap<>();
+            // convert to safe shallow structures to avoid serializing full JPA graphs
+            payload.put("equipmentInspectionForm", com.smat.ins.util.DraftUtils.toSafeStructure(this.equipmentInspectionForm));
+            payload.put("columnContents", com.smat.ins.util.DraftUtils.toSafeStructure(this.columnContents));
+            payload.put("examinationType", com.smat.ins.util.DraftUtils.toSafeStructure(this.examinationType));
+            payload.put("equipmentType", com.smat.ins.util.DraftUtils.toSafeStructure(this.equipmentType));
+            // add a few extra UI-related fields so we can fully restore the form
+            payload.put("stepComment", this.stepComment);
+            payload.put("persistentMode", this.persistentMode);
+            payload.put("disabled", this.disabled);
+            byte[] bytes = objectMapper.writeValueAsBytes(payload);
             draft.setDraftData(bytes);
             draft.setCreatedDate(new Date());
-			TaskDraft saved = taskDraftService.saveOrUpdate(draft);
-			if (saved != null) UtilityHelper.addInfoMessage("Draft saved successfully (v=" + saved.getVersion() + ")");
-			else UtilityHelper.addErrorMessage("Failed to save draft");
-		} catch (Exception e) {
-			e.printStackTrace();
-			UtilityHelper.addErrorMessage("Error saving draft: " + e.getMessage());
-		} finally {
-			// reset the savingDraft flag so normal validations resume
-			try { this.savingDraft = false; } catch (Exception ex) {}
-		}
+            TaskDraft saved = taskDraftService.saveOrUpdate(draft);
+            if (saved != null) UtilityHelper.addInfoMessage("Draft saved successfully (v=" + saved.getVersion() + ")");
+            else UtilityHelper.addErrorMessage("Failed to save draft");
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error saving draft: " + e.getMessage());
+        } finally {
+            // reset the savingDraft flag so normal validations resume
+            try { this.savingDraft = false; } catch (Exception ex) {}
+        }
     }
     public void loadDraft() {
         try {
@@ -2042,17 +1960,17 @@ public class InspectionFormBean implements Serializable {
             if (task != null && task.getId() != null) {
                 draft = taskDraftService.findByTaskId(task.getId());
             }
-			if (draft == null) {
-				SysUser current = loginBean.getUser();
-				if (current != null) {
-					// try to get a draft scoped to this form type first
-					draft = taskDraftService.findLatestByOwnerAndType(current.getId().intValue(), "inspection_equipment");
-					if (draft == null) {
-						// fallback to any latest draft of the owner
-						draft = taskDraftService.findLatestByOwner(current.getId().intValue());
-					}
-				}
-			}
+            if (draft == null) {
+                SysUser current = loginBean.getUser();
+                if (current != null) {
+                    // try to get a draft scoped to this form type first
+                    draft = taskDraftService.findLatestByOwnerAndType(current.getId().intValue(), "inspection_equipment");
+                    if (draft == null) {
+                        // fallback to any latest draft of the owner
+                        draft = taskDraftService.findLatestByOwner(current.getId().intValue());
+                    }
+                }
+            }
 
             if (draft == null) {
                 UtilityHelper.addInfoMessage("No draft found.");
@@ -2065,219 +1983,219 @@ public class InspectionFormBean implements Serializable {
                 return;
             }
 
-			Map<String, Object> payload = objectMapper.readValue(data, Map.class);
+            Map<String, Object> payload = objectMapper.readValue(data, Map.class);
 
-			// Try best-effort restoring from the shallow structures we stored
-			if (payload.containsKey("equipmentInspectionForm")) {
-				try {
-					Object raw = payload.get("equipmentInspectionForm");
-					if (raw instanceof Map) {
-						Map<String, Object> m = (Map<String, Object>) raw;
-						EquipmentInspectionForm eif = new EquipmentInspectionForm();
-						// primitive/string fields
-						if (m.containsKey("reportNo")) eif.setReportNo((String) m.get("reportNo"));
-						if (m.containsKey("timeSheetNo")) eif.setTimeSheetNo((String) m.get("timeSheetNo"));
-						if (m.containsKey("jobNo")) eif.setJobNo((String) m.get("jobNo"));
-						if (m.containsKey("stickerNo")) eif.setStickerNo((String) m.get("stickerNo"));
-						if (m.containsKey("nameAndAddressOfEmployer")) eif.setNameAndAddressOfEmployer((String) m.get("nameAndAddressOfEmployer"));
-						// dates may be serialized as timestamps/strings
-						try { if (m.containsKey("dateOfThoroughExamination")) eif.setDateOfThoroughExamination(objectMapper.convertValue(m.get("dateOfThoroughExamination"), java.util.Date.class)); } catch (Exception ex) {}
-						try { if (m.containsKey("nextExaminationDate")) eif.setNextExaminationDate(objectMapper.convertValue(m.get("nextExaminationDate"), java.util.Date.class)); } catch (Exception ex) {}
-						try { if (m.containsKey("previousExaminationDate")) eif.setPreviousExaminationDate(objectMapper.convertValue(m.get("previousExaminationDate"), java.util.Date.class)); } catch (Exception ex) {}
+            // Try best-effort restoring from the shallow structures we stored
+            if (payload.containsKey("equipmentInspectionForm")) {
+                try {
+                    Object raw = payload.get("equipmentInspectionForm");
+                    if (raw instanceof Map) {
+                        Map<String, Object> m = (Map<String, Object>) raw;
+                        EquipmentInspectionForm eif = new EquipmentInspectionForm();
+                        // primitive/string fields
+                        if (m.containsKey("reportNo")) eif.setReportNo((String) m.get("reportNo"));
+                        if (m.containsKey("timeSheetNo")) eif.setTimeSheetNo((String) m.get("timeSheetNo"));
+                        if (m.containsKey("jobNo")) eif.setJobNo((String) m.get("jobNo"));
+                        if (m.containsKey("stickerNo")) eif.setStickerNo((String) m.get("stickerNo"));
+                        if (m.containsKey("nameAndAddressOfEmployer")) eif.setNameAndAddressOfEmployer((String) m.get("nameAndAddressOfEmployer"));
+                        // dates may be serialized as timestamps/strings
+                        try { if (m.containsKey("dateOfThoroughExamination")) eif.setDateOfThoroughExamination(objectMapper.convertValue(m.get("dateOfThoroughExamination"), java.util.Date.class)); } catch (Exception ex) {}
+                        try { if (m.containsKey("nextExaminationDate")) eif.setNextExaminationDate(objectMapper.convertValue(m.get("nextExaminationDate"), java.util.Date.class)); } catch (Exception ex) {}
+                        try { if (m.containsKey("previousExaminationDate")) eif.setPreviousExaminationDate(objectMapper.convertValue(m.get("previousExaminationDate"), java.util.Date.class)); } catch (Exception ex) {}
 
-						// relations by id (DraftUtils stores related entity id under fieldName + "_id")
-						try {
-							Object companyIdObj = m.get("company_id") != null ? m.get("company_id") : (m.get("company") instanceof Map ? ((Map) m.get("company")).get("id") : null);
-							if (companyIdObj != null) {
-								Integer cid = objectMapper.convertValue(companyIdObj, Integer.class);
-								try { eif.setCompany(companyService.findById(cid)); } catch (Exception ex) {}
-							}
-						} catch (Throwable t) {}
+                        // relations by id (DraftUtils stores related entity id under fieldName + "_id")
+                        try {
+                            Object companyIdObj = m.get("company_id") != null ? m.get("company_id") : (m.get("company") instanceof Map ? ((Map) m.get("company")).get("id") : null);
+                            if (companyIdObj != null) {
+                                Integer cid = objectMapper.convertValue(companyIdObj, Integer.class);
+                                try { eif.setCompany(companyService.findById(cid)); } catch (Exception ex) {}
+                            }
+                        } catch (Throwable t) {}
 
-						try {
-							Object etIdObj = m.get("equipmentType_id") != null ? m.get("equipmentType_id") : (m.get("equipmentType") instanceof Map ? ((Map) m.get("equipmentType")).get("id") : null);
-							if (etIdObj != null) {
-								Number n = objectMapper.convertValue(etIdObj, Number.class);
-								if (n != null) {
-									Short etid = n.shortValue();
-									try { this.equipmentType = equipmentTypeService.findById(etid); eif.setEquipmentType(this.equipmentType); } catch (Exception ex) {}
-								}
-							}
-						} catch (Throwable t) {}
+                        try {
+                            Object etIdObj = m.get("equipmentType_id") != null ? m.get("equipmentType_id") : (m.get("equipmentType") instanceof Map ? ((Map) m.get("equipmentType")).get("id") : null);
+                            if (etIdObj != null) {
+                                Number n = objectMapper.convertValue(etIdObj, Number.class);
+                                if (n != null) {
+                                    Short etid = n.shortValue();
+                                    try { this.equipmentType = equipmentTypeService.findById(etid); eif.setEquipmentType(this.equipmentType); } catch (Exception ex) {}
+                                }
+                            }
+                        } catch (Throwable t) {}
 
-						try {
-							Object exTypeIdObj = m.get("examinationType_id") != null ? m.get("examinationType_id") : (m.get("examinationType") instanceof Map ? ((Map) m.get("examinationType")).get("id") : null);
-							if (exTypeIdObj != null) {
-								Number n2 = objectMapper.convertValue(exTypeIdObj, Number.class);
-								if (n2 != null) {
-									Short exid = n2.shortValue();
-									try { this.examinationType = examinationTypeService.findById(exid); eif.setExaminationType(this.examinationType); } catch (Exception ex) {}
-								}
-							}
-						} catch (Throwable t) {}
+                        try {
+                            Object exTypeIdObj = m.get("examinationType_id") != null ? m.get("examinationType_id") : (m.get("examinationType") instanceof Map ? ((Map) m.get("examinationType")).get("id") : null);
+                            if (exTypeIdObj != null) {
+                                Number n2 = objectMapper.convertValue(exTypeIdObj, Number.class);
+                                if (n2 != null) {
+                                    Short exid = n2.shortValue();
+                                    try { this.examinationType = examinationTypeService.findById(exid); eif.setExaminationType(this.examinationType); } catch (Exception ex) {}
+                                }
+                            }
+                        } catch (Throwable t) {}
 
-						// if stickerNo present, try to resolve the Sticker entity so the selectOneMenu can bind to it
-						try {
-							if (eif.getStickerNo() != null && !eif.getStickerNo().isEmpty()) {
-								Sticker st = null;
-								try {
-									st = stickerService.findByUniqueField("stickerNo", eif.getStickerNo());
-								} catch (Exception ex) {
-									// ignore
-								}
-								if (st == null) {
-									// create a lightweight placeholder so UI shows the value
-									st = new Sticker();
-									st.setStickerNo(eif.getStickerNo());
-								}
-								eif.setSticker(st);
-								// ensure stickers list contains it so selectItems include the current sticker
-								if (this.stickers == null) this.stickers = new java.util.ArrayList<>();
-								boolean contains = false;
-								for (Sticker s : this.stickers) { if (s != null && s.getStickerNo() != null && s.getStickerNo().equals(st.getStickerNo())) { contains = true; break; } }
-								if (!contains) this.stickers.add(0, st);
-							}
-						} catch (Throwable t) {}
-						this.equipmentInspectionForm = eif;
-					} else {
-						EquipmentInspectionForm eif = objectMapper.convertValue(raw, EquipmentInspectionForm.class);
-						this.equipmentInspectionForm = eif;
-					}
-				} catch (Exception ex) {
-					// ignore and keep current
-				}
-			}
+                        // if stickerNo present, try to resolve the Sticker entity so the selectOneMenu can bind to it
+                        try {
+                            if (eif.getStickerNo() != null && !eif.getStickerNo().isEmpty()) {
+                                Sticker st = null;
+                                try {
+                                    st = stickerService.findByUniqueField("stickerNo", eif.getStickerNo());
+                                } catch (Exception ex) {
+                                    // ignore
+                                }
+                                if (st == null) {
+                                    // create a lightweight placeholder so UI shows the value
+                                    st = new Sticker();
+                                    st.setStickerNo(eif.getStickerNo());
+                                }
+                                eif.setSticker(st);
+                                // ensure stickers list contains it so selectItems include the current sticker
+                                if (this.stickers == null) this.stickers = new java.util.ArrayList<>();
+                                boolean contains = false;
+                                for (Sticker s : this.stickers) { if (s != null && s.getStickerNo() != null && s.getStickerNo().equals(st.getStickerNo())) { contains = true; break; } }
+                                if (!contains) this.stickers.add(0, st);
+                            }
+                        } catch (Throwable t) {}
+                        this.equipmentInspectionForm = eif;
+                    } else {
+                        EquipmentInspectionForm eif = objectMapper.convertValue(raw, EquipmentInspectionForm.class);
+                        this.equipmentInspectionForm = eif;
+                    }
+                } catch (Exception ex) {
+                    // ignore and keep current
+                }
+            }
 
-			if (payload.containsKey("columnContents")) {
-				try {
-					List<?> rawContents = (List<?>) payload.get("columnContents");
-					List<ColumnContent> loaded = new ArrayList<>();
+            if (payload.containsKey("columnContents")) {
+                try {
+                    List<?> rawContents = (List<?>) payload.get("columnContents");
+                    List<ColumnContent> loaded = new ArrayList<>();
 
-					// map to keep resolved form columns
-					Map<Integer, FormColumn> formColumnById = new java.util.HashMap<>();
-					if (this.formColumns != null) {
-						for (FormColumn fc : this.formColumns) {
-							if (fc != null && fc.getId() != null) formColumnById.put(fc.getId(), fc);
-						}
-					} else {
-						this.formColumns = new ArrayList<>();
-					}
+                    // map to keep resolved form columns
+                    Map<Integer, FormColumn> formColumnById = new java.util.HashMap<>();
+                    if (this.formColumns != null) {
+                        for (FormColumn fc : this.formColumns) {
+                            if (fc != null && fc.getId() != null) formColumnById.put(fc.getId(), fc);
+                        }
+                    } else {
+                        this.formColumns = new ArrayList<>();
+                    }
 
-					// Resolve general equipment item service lazily
-					com.smat.ins.model.service.GeneralEquipmentItemService geService = null;
+                    // Resolve general equipment item service lazily
+                    com.smat.ins.model.service.GeneralEquipmentItemService geService = null;
 
-					for (Object rc : rawContents) {
-						if (rc == null) continue;
-						ColumnContent cc = new ColumnContent();
-						if (rc instanceof Map) {
-							Map m = (Map) rc;
-							// id
-							if (m.get("id") != null) {
-								try { cc.setId(objectMapper.convertValue(m.get("id"), Integer.class)); } catch (Exception ex) {}
-							}
-							// aliasName
-							if (m.get("aliasName") != null) cc.setAliasName(String.valueOf(m.get("aliasName")));
-							// contentValue
-							if (m.get("contentValue") != null) cc.setContentValue(String.valueOf(m.get("contentValue")));
-							// contentOrder
-							if (m.get("contentOrder") != null) {
-								try {
-									Number nc = objectMapper.convertValue(m.get("contentOrder"), Number.class);
-									if (nc != null) cc.setContentOrder(Short.valueOf(nc.shortValue()));
-								} catch (Exception ex) {}
-							}
+                    for (Object rc : rawContents) {
+                        if (rc == null) continue;
+                        ColumnContent cc = new ColumnContent();
+                        if (rc instanceof Map) {
+                            Map m = (Map) rc;
+                            // id
+                            if (m.get("id") != null) {
+                                try { cc.setId(objectMapper.convertValue(m.get("id"), Integer.class)); } catch (Exception ex) {}
+                            }
+                            // aliasName
+                            if (m.get("aliasName") != null) cc.setAliasName(String.valueOf(m.get("aliasName")));
+                            // contentValue
+                            if (m.get("contentValue") != null) cc.setContentValue(String.valueOf(m.get("contentValue")));
+                            // contentOrder
+                            if (m.get("contentOrder") != null) {
+                                try {
+                                    Number nc = objectMapper.convertValue(m.get("contentOrder"), Number.class);
+                                    if (nc != null) cc.setContentOrder(Short.valueOf(nc.shortValue()));
+                                } catch (Exception ex) {}
+                            }
 
-							// formColumn_id (may be present as number)
-							Object fcIdObj = m.get("formColumn_id") != null ? m.get("formColumn_id") : (m.get("formColumn") instanceof Map ? ((Map) m.get("formColumn")).get("id") : null);
-							if (fcIdObj != null) {
-								try {
-									Integer nInt = objectMapper.convertValue(fcIdObj, Integer.class);
-									if (nInt != null) {
-										Integer fcId = nInt.intValue();
-										FormColumn real = formColumnById.get(fcId);
-										if (real == null) {
-											try {
-												real = formColumnService.findById(fcId);
-												if (real != null) {
-													formColumnById.put(real.getId(), real);
-													this.formColumns.add(real);
-												}
-											} catch (Exception ex) {
-												// ignore missing column
-											}
-										}
-										if (real != null) cc.setFormColumn(real);
-									}
-								} catch (Exception ex) {}
-							}
+                            // formColumn_id (may be present as number)
+                            Object fcIdObj = m.get("formColumn_id") != null ? m.get("formColumn_id") : (m.get("formColumn") instanceof Map ? ((Map) m.get("formColumn")).get("id") : null);
+                            if (fcIdObj != null) {
+                                try {
+                                    Integer nInt = objectMapper.convertValue(fcIdObj, Integer.class);
+                                    if (nInt != null) {
+                                        Integer fcId = nInt.intValue();
+                                        FormColumn real = formColumnById.get(fcId);
+                                        if (real == null) {
+                                            try {
+                                                real = formColumnService.findById(fcId);
+                                                if (real != null) {
+                                                    formColumnById.put(real.getId(), real);
+                                                    this.formColumns.add(real);
+                                                }
+                                            } catch (Exception ex) {
+                                                // ignore missing column
+                                            }
+                                        }
+                                        if (real != null) cc.setFormColumn(real);
+                                    }
+                                } catch (Exception ex) {}
+                            }
 
-							// generalEquipmentItem_id
-							Object geIdObj = m.get("generalEquipmentItem_id") != null ? m.get("generalEquipmentItem_id") : (m.get("generalEquipmentItem") instanceof Map ? ((Map) m.get("generalEquipmentItem")).get("id") : null);
-							if (geIdObj != null) {
-								try {
-									Integer ngInt = objectMapper.convertValue(geIdObj, Integer.class);
-									if (ngInt != null) {
-										Integer gid = ngInt.intValue();
-										try {
-											if (geService == null) geService = (com.smat.ins.model.service.GeneralEquipmentItemService) BeanUtility.getBean("generalEquipmentItemService");
-											if (geService != null) {
-												GeneralEquipmentItem ge = geService.findById(gid);
-												if (ge != null) cc.setGeneralEquipmentItem(ge);
-											}
-										} catch (Exception ex) {
-											// ignore
-										}
-									}
-								} catch (Exception ex) {}
-							}
+                            // generalEquipmentItem_id
+                            Object geIdObj = m.get("generalEquipmentItem_id") != null ? m.get("generalEquipmentItem_id") : (m.get("generalEquipmentItem") instanceof Map ? ((Map) m.get("generalEquipmentItem")).get("id") : null);
+                            if (geIdObj != null) {
+                                try {
+                                    Integer ngInt = objectMapper.convertValue(geIdObj, Integer.class);
+                                    if (ngInt != null) {
+                                        Integer gid = ngInt.intValue();
+                                        try {
+                                            if (geService == null) geService = (com.smat.ins.model.service.GeneralEquipmentItemService) BeanUtility.getBean("generalEquipmentItemService");
+                                            if (geService != null) {
+                                                GeneralEquipmentItem ge = geService.findById(gid);
+                                                if (ge != null) cc.setGeneralEquipmentItem(ge);
+                                            }
+                                        } catch (Exception ex) {
+                                            // ignore
+                                        }
+                                    }
+                                } catch (Exception ex) {}
+                            }
 
-						} else {
-							// fallback: try to convert the whole object
-							try {
-								ColumnContent conv = objectMapper.convertValue(rc, ColumnContent.class);
-								if (conv != null) cc = conv;
-							} catch (Exception ex) {
-								// ignore
-							}
-						}
-						loaded.add(cc);
-					}
+                        } else {
+                            // fallback: try to convert the whole object
+                            try {
+                                ColumnContent conv = objectMapper.convertValue(rc, ColumnContent.class);
+                                if (conv != null) cc = conv;
+                            } catch (Exception ex) {
+                                // ignore
+                            }
+                        }
+                        loaded.add(cc);
+                    }
 
-					// Ensure formRows contains rows referenced by the loaded columns
-					if ((this.formRows == null || this.formRows.isEmpty()) && !formColumnById.isEmpty()) {
-						java.util.Set<FormRow> rows = new java.util.LinkedHashSet<>();
-						for (FormColumn fc : formColumnById.values()) {
-							if (fc != null && fc.getFormRow() != null) rows.add(fc.getFormRow());
-						}
-						this.formRows = new ArrayList<>(rows);
-					}
+                    // Ensure formRows contains rows referenced by the loaded columns
+                    if ((this.formRows == null || this.formRows.isEmpty()) && !formColumnById.isEmpty()) {
+                        java.util.Set<FormRow> rows = new java.util.LinkedHashSet<>();
+                        for (FormColumn fc : formColumnById.values()) {
+                            if (fc != null && fc.getFormRow() != null) rows.add(fc.getFormRow());
+                        }
+                        this.formRows = new ArrayList<>(rows);
+                    }
 
-					this.columnContents = loaded;
-					// refresh the dynamic content and sticker select on UI so restored values appear
-					try {
-						PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
-						PrimeFaces.current().ajax().update("form:selectoneMenu_sticker");
-					} catch (Exception ex) {
-						// ignore if PrimeFaces not available in this context
-					}
-				} catch (Exception ex) {
-					// ignore
-				}
-			}
+                    this.columnContents = loaded;
+                    // refresh the dynamic content and sticker select on UI so restored values appear
+                    try {
+                        PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
+                        PrimeFaces.current().ajax().update("form:selectoneMenu_sticker");
+                    } catch (Exception ex) {
+                        // ignore if PrimeFaces not available in this context
+                    }
+                } catch (Exception ex) {
+                    // ignore
+                }
+            }
 
-			if (payload.containsKey("equipmentType")) {
-				try { this.equipmentType = objectMapper.convertValue(payload.get("equipmentType"), EquipmentType.class); } catch (Exception ex) {}
-			}
-			if (payload.containsKey("examinationType")) {
-				try { this.examinationType = objectMapper.convertValue(payload.get("examinationType"), ExaminationType.class); } catch (Exception ex) {}
-			}
+            if (payload.containsKey("equipmentType")) {
+                try { this.equipmentType = objectMapper.convertValue(payload.get("equipmentType"), EquipmentType.class); } catch (Exception ex) {}
+            }
+            if (payload.containsKey("examinationType")) {
+                try { this.examinationType = objectMapper.convertValue(payload.get("examinationType"), ExaminationType.class); } catch (Exception ex) {}
+            }
 
-			if (payload.containsKey("stepComment")) {
-				this.stepComment = payload.get("stepComment") != null ? payload.get("stepComment").toString() : null;
-			}
-			if (payload.containsKey("persistentMode")) {
-				this.persistentMode = payload.get("persistentMode") != null ? payload.get("persistentMode").toString() : null;
-			}
+            if (payload.containsKey("stepComment")) {
+                this.stepComment = payload.get("stepComment") != null ? payload.get("stepComment").toString() : null;
+            }
+            if (payload.containsKey("persistentMode")) {
+                this.persistentMode = payload.get("persistentMode") != null ? payload.get("persistentMode").toString() : null;
+            }
 
             UtilityHelper.addInfoMessage("Draft loaded successfully.");
             PrimeFaces.current().ajax().update("@form"); // تحدّث الواجهة
@@ -2294,64 +2212,64 @@ public class InspectionFormBean implements Serializable {
 
 
     public void downloadCert(Integer taskId) {
-	    FacesContext fc = FacesContext.getCurrentInstance();
-	    try {
-	        EquipmentInspectionForm eForm = equipmentInspectionFormService.getBy(taskId);
-	        if (eForm == null) {
-	            UtilityHelper.addErrorMessage("Form not found for task: " + taskId);
-	            return;
-	        }
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            EquipmentInspectionForm eForm = equipmentInspectionFormService.getBy(taskId);
+            if (eForm == null) {
+                UtilityHelper.addErrorMessage("Form not found for task: " + taskId);
+                return;
+            }
 
-	        FormTemplate tpl = this.formTemplate;
-	        if (tpl == null) {
-	            if (eForm.getEquipmentCategory() != null) {
-	                tpl = formTemplateService.getBy(eForm.getEquipmentCategory().getCode());
-	            }
-	        }
-	        if (tpl == null || tpl.getPrintedDoc() == null) {
-	            UtilityHelper.addErrorMessage("Template not available for this equipment category.");
-	            return;
-	        }
+            FormTemplate tpl = this.formTemplate;
+            if (tpl == null) {
+                if (eForm.getEquipmentCategory() != null) {
+                    tpl = formTemplateService.getBy(eForm.getEquipmentCategory().getCode());
+                }
+            }
+            if (tpl == null || tpl.getPrintedDoc() == null) {
+                UtilityHelper.addErrorMessage("Template not available for this equipment category.");
+                return;
+            }
 
-	        byte[] pdfBytes = generateEquipmentPdfBytes(eForm, tpl);
-	        if (pdfBytes == null || pdfBytes.length == 0) {
-	            UtilityHelper.addErrorMessage("Failed to generate PDF.");
-	            return;
-	        }
+            byte[] pdfBytes = generateEquipmentPdfBytes(eForm, tpl);
+            if (pdfBytes == null || pdfBytes.length == 0) {
+                UtilityHelper.addErrorMessage("Failed to generate PDF.");
+                return;
+            }
 
-	        ExternalContext ec = fc.getExternalContext();
-	        HttpServletResponse response = (HttpServletResponse) ec.getResponse();
-	        response.reset();
-	        response.setContentType("application/pdf");
-	        String fname = "EquipmentCertificate_" + (eForm.getReportNo() != null ? eForm.getReportNo() : taskId) + ".pdf";
-	        response.setHeader("Content-Disposition", "inline; filename=\"" + fname + "\"");
-	        response.setContentLength(pdfBytes.length);
+            ExternalContext ec = fc.getExternalContext();
+            HttpServletResponse response = (HttpServletResponse) ec.getResponse();
+            response.reset();
+            response.setContentType("application/pdf");
+            String fname = "EquipmentCertificate_" + (eForm.getReportNo() != null ? eForm.getReportNo() : taskId) + ".pdf";
+            response.setHeader("Content-Disposition", "inline; filename=\"" + fname + "\"");
+            response.setContentLength(pdfBytes.length);
 
-	        try (ServletOutputStream os = response.getOutputStream()) {
-	            os.write(pdfBytes);
-	            os.flush();
-	        }
-	        fc.responseComplete();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        UtilityHelper.addErrorMessage("Failed to generate certificate: " + e.getMessage());
-	    }
-	}
-	// helper: convert any object to safe string
-
-
+            try (ServletOutputStream os = response.getOutputStream()) {
+                os.write(pdfBytes);
+                os.flush();
+            }
+            fc.responseComplete();
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Failed to generate certificate: " + e.getMessage());
+        }
+    }
+    // helper: convert any object to safe string
 
 
 
-	public String returnStyle() {
-		if (disabled)
-			return "display:block;";
-		else
-			return "display:none;";
-	}
 
-	public boolean isViewOnly() {
-	    return viewOnly;
-	}
+
+    public String returnStyle() {
+        if (disabled)
+            return "display:block;";
+        else
+            return "display:none;";
+    }
+
+    public boolean isViewOnly() {
+        return viewOnly;
+    }
 }
 

@@ -308,6 +308,8 @@
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
 
+
+
 	<bean name="sysPermissionDao" class="com.smat.ins.model.dao.impl.SysPermissionDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
