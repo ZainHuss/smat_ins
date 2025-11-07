@@ -776,7 +776,12 @@ public class RegisterOutboundMailBean implements Serializable {
             correspondence.setUserAlias(userAliasOwner);
             correspondence.setOrganizationByOrganization(userAliasOwner.getOrganizationByOrganization());
             correspondence.setOrganizationByRootOrganization(userAliasOwner.getOrganizationByRootOrganization());
-            correspondence.setHtmlSubject(Base64.getMimeEncoder().encode(htmlSubject.getBytes()));
+            // subject is required (validated). htmlSubject may be null/empty -> guard it.
+            if (htmlSubject != null && !htmlSubject.isEmpty()) {
+                correspondence.setHtmlSubject(Base64.getMimeEncoder().encode(htmlSubject.getBytes()));
+            } else {
+                correspondence.setHtmlSubject(null);
+            }
             correspondence.setSubject(Base64.getMimeEncoder().encode(subject.getBytes()));
             Set<CorrespondenceNote> correspondenceNotes = new HashSet<CorrespondenceNote>();
             Set<CorrespondenceTransmission> correspondenceTransmissions = new HashSet<CorrespondenceTransmission>();
@@ -786,10 +791,19 @@ public class RegisterOutboundMailBean implements Serializable {
                 correspondenceNote.setCorrespondence(correspondence);
                 correspondenceNote.setDeleted(null);
                 correspondenceNote.setDeletedDate(null);
-                correspondenceNote
-                        .setHtmlNote(Base64.getMimeEncoder().encode(correspondenceRecipient.getHtmlNote().getBytes()));
-                correspondenceNote
-                        .setNote(Base64.getMimeEncoder().encode(correspondenceRecipient.getNote().getBytes()));
+                // recipient notes may be null — guard before encoding
+                if (correspondenceRecipient.getHtmlNote() != null && !correspondenceRecipient.getHtmlNote().isEmpty()) {
+                    correspondenceNote.setHtmlNote(
+                            Base64.getMimeEncoder().encode(correspondenceRecipient.getHtmlNote().getBytes()));
+                } else {
+                    correspondenceNote.setHtmlNote(null);
+                }
+                if (correspondenceRecipient.getNote() != null && !correspondenceRecipient.getNote().isEmpty()) {
+                    correspondenceNote.setNote(
+                            Base64.getMimeEncoder().encode(correspondenceRecipient.getNote().getBytes()));
+                } else {
+                    correspondenceNote.setNote(null);
+                }
                 correspondenceNote.setNoteDate(Calendar.getInstance().getTime());
                 correspondenceNote.setOrganization(userAliasOwner.getOrganizationByDivan());
                 correspondenceNote.setSeqByCorrespondence(++seq);
@@ -876,9 +890,16 @@ public class RegisterOutboundMailBean implements Serializable {
         correspondence.setUserAlias(userAliasOwner);
         correspondence.setOrganizationByOrganization(userAliasOwner.getOrganizationByOrganization());
         correspondence.setOrganizationByRootOrganization(userAliasOwner.getOrganizationByRootOrganization());
+        // subject may be required elsewhere; guard htmlSubject which can be null
         if (htmlSubject != null && !htmlSubject.isEmpty()) {
             correspondence.setHtmlSubject(Base64.getMimeEncoder().encode(htmlSubject.getBytes()));
+        } else {
+            correspondence.setHtmlSubject(null);
+        }
+        if (subject != null) {
             correspondence.setSubject(Base64.getMimeEncoder().encode(subject.getBytes()));
+        } else {
+            correspondence.setSubject(null);
         }
         Set<CorrespondenceNote> correspondenceNotes = new HashSet<CorrespondenceNote>();
         Integer seq = 0;
@@ -887,12 +908,20 @@ public class RegisterOutboundMailBean implements Serializable {
             correspondenceNote.setCorrespondence(correspondence);
             correspondenceNote.setDeleted(null);
             correspondenceNote.setDeletedDate(null);
-            if (correspondenceRecipient != null && correspondenceRecipient.getNote() != null
-                    && !correspondenceRecipient.getNote().isEmpty()) {
-                correspondenceNote
-                        .setHtmlNote(Base64.getMimeEncoder().encode(correspondenceRecipient.getHtmlNote().getBytes()));
-                correspondenceNote
-                        .setNote(Base64.getMimeEncoder().encode(correspondenceRecipient.getNote().getBytes()));
+            // guard html/note fields
+            if (correspondenceRecipient != null) {
+                if (correspondenceRecipient.getHtmlNote() != null && !correspondenceRecipient.getHtmlNote().isEmpty()) {
+                    correspondenceNote.setHtmlNote(
+                            Base64.getMimeEncoder().encode(correspondenceRecipient.getHtmlNote().getBytes()));
+                } else {
+                    correspondenceNote.setHtmlNote(null);
+                }
+                if (correspondenceRecipient.getNote() != null && !correspondenceRecipient.getNote().isEmpty()) {
+                    correspondenceNote.setNote(
+                            Base64.getMimeEncoder().encode(correspondenceRecipient.getNote().getBytes()));
+                } else {
+                    correspondenceNote.setNote(null);
+                }
             }
             correspondenceNote.setNoteDate(Calendar.getInstance().getTime());
             correspondenceNote.setOrganization(userAliasOwner.getOrganizationByDivan());
