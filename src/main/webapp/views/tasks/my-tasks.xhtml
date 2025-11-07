@@ -60,6 +60,16 @@
                 --card-radius: 16px;
                 --element-radius: 12px;
                 --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+                /* ألوان جديدة للمجموعات */
+                --group-color-1: #6366f1;
+                --group-color-2: #10b981;
+                --group-color-3: #f59e0b;
+                --group-color-4: #ef4444;
+                --group-color-5: #8b5cf6;
+                --group-color-6: #06b6d4;
+                --group-color-7: #f97316;
+                --group-color-8: #84cc16;
             }
 
             /* Animation Styles - محسّنة */
@@ -88,6 +98,12 @@
             @keyframes shimmer {
                 0% { background-position: -200px 0; }
                 100% { background-position: 200px 0; }
+            }
+
+            @keyframes borderGlow {
+                0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+                70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
             }
 
             /* Task Container */
@@ -643,24 +659,79 @@
                 opacity: 1;
             }
 
-            /* Panel Styles - تحسينات للوحة المجموعة */
-            .ui-panel {
+            /* Group Panel Styles - تصميم محسّن وجذاب للمجموعات */
+            .group-panel {
                 border-radius: var(--card-radius) !important;
                 box-shadow: var(--box-shadow-medium) !important;
                 border: none !important;
                 overflow: hidden !important;
-                margin-bottom: 2rem !important;
+                margin-bottom: 2.5rem !important;
                 background: white !important;
                 transition: var(--transition-smooth) !important;
+                position: relative;
+                border: 2px solid transparent;
+                background-clip: padding-box;
             }
 
-            .ui-panel:hover {
-                box-shadow: var(--box-shadow-dark) !important;
-                transform: translateY(-3px) !important;
+            .group-panel::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(135deg, var(--group-color-1), var(--group-color-2), var(--group-color-3), var(--group-color-4));
+                border-radius: calc(var(--card-radius) + 2px);
+                z-index: -1;
+                opacity: 0.7;
+                transition: var(--transition-smooth);
             }
 
-            .ui-panel .ui-panel-titlebar {
-                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+            .group-panel:hover::before {
+                opacity: 1;
+                animation: borderGlow 2s infinite;
+            }
+
+            .group-panel:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(50, 50, 93, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            /* ألوان مختلفة للمجموعات */
+            .group-panel.color-1::before {
+                background: linear-gradient(135deg, var(--group-color-1), var(--group-color-5));
+            }
+
+            .group-panel.color-2::before {
+                background: linear-gradient(135deg, var(--group-color-2), var(--group-color-6));
+            }
+
+            .group-panel.color-3::before {
+                background: linear-gradient(135deg, var(--group-color-3), var(--group-color-7));
+            }
+
+            .group-panel.color-4::before {
+                background: linear-gradient(135deg, var(--group-color-4), var(--group-color-8));
+            }
+
+            .group-panel.color-5::before {
+                background: linear-gradient(135deg, var(--group-color-5), var(--group-color-1));
+            }
+
+            .group-panel.color-6::before {
+                background: linear-gradient(135deg, var(--group-color-6), var(--group-color-2));
+            }
+
+            .group-panel.color-7::before {
+                background: linear-gradient(135deg, var(--group-color-7), var(--group-color-3));
+            }
+
+            .group-panel.color-8::before {
+                background: linear-gradient(135deg, var(--group-color-8), var(--group-color-4));
+            }
+
+            .group-panel .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-1) 0%, var(--group-color-5) 100%) !important;
                 color: white !important;
                 border: none !important;
                 padding: 1.8rem 2rem !important;
@@ -670,7 +741,40 @@
                 overflow: hidden !important;
             }
 
-            .ui-panel .ui-panel-titlebar::before {
+            /* ألوان مختلفة لعناوين المجموعات */
+            .group-panel.color-1 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-1) 0%, var(--group-color-5) 100%) !important;
+            }
+
+            .group-panel.color-2 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-2) 0%, var(--group-color-6) 100%) !important;
+            }
+
+            .group-panel.color-3 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-3) 0%, var(--group-color-7) 100%) !important;
+            }
+
+            .group-panel.color-4 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-4) 0%, var(--group-color-8) 100%) !important;
+            }
+
+            .group-panel.color-5 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-5) 0%, var(--group-color-1) 100%) !important;
+            }
+
+            .group-panel.color-6 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-6) 0%, var(--group-color-2) 100%) !important;
+            }
+
+            .group-panel.color-7 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-7) 0%, var(--group-color-3) 100%) !important;
+            }
+
+            .group-panel.color-8 .ui-panel-titlebar {
+                background: linear-gradient(135deg, var(--group-color-8) 0%, var(--group-color-4) 100%) !important;
+            }
+
+            .group-panel .ui-panel-titlebar::before {
                 content: '';
                 position: absolute;
                 top: 0;
@@ -681,7 +785,7 @@
                 z-index: 0;
             }
 
-            .ui-panel .ui-panel-titlebar .ui-panel-title {
+            .group-panel .ui-panel-titlebar .ui-panel-title {
                 position: relative;
                 z-index: 1;
                 display: flex;
@@ -690,12 +794,56 @@
                 width: 100%;
             }
 
-            .ui-panel .ui-panel-content {
+            .group-panel .ui-panel-content {
                 padding: 2rem !important;
-                background: #f8fafc !important;
+                background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+                position: relative;
             }
 
-            .ui-panel .ui-panel-titlebar-icon {
+            .group-panel .ui-panel-content::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, var(--group-color-1), var(--group-color-5));
+                opacity: 0.7;
+            }
+
+            .group-panel.color-1 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-1), var(--group-color-5));
+            }
+
+            .group-panel.color-2 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-2), var(--group-color-6));
+            }
+
+            .group-panel.color-3 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-3), var(--group-color-7));
+            }
+
+            .group-panel.color-4 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-4), var(--group-color-8));
+            }
+
+            .group-panel.color-5 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-5), var(--group-color-1));
+            }
+
+            .group-panel.color-6 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-6), var(--group-color-2));
+            }
+
+            .group-panel.color-7 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-7), var(--group-color-3));
+            }
+
+            .group-panel.color-8 .ui-panel-content::before {
+                background: linear-gradient(90deg, var(--group-color-8), var(--group-color-4));
+            }
+
+            .group-panel .ui-panel-titlebar-icon {
                 color: white !important;
                 background: rgba(255, 255, 255, 0.15) !important;
                 border-radius: 50% !important;
@@ -709,7 +857,7 @@
                 z-index: 1 !important;
             }
 
-            .ui-panel .ui-panel-titlebar-icon:hover {
+            .group-panel .ui-panel-titlebar-icon:hover {
                 background: rgba(255, 255, 255, 0.25) !important;
                 transform: scale(1.1) !important;
             }
@@ -748,77 +896,6 @@
             /* إزالة زر الطرح السفلي */
             .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon:last-child {
                 display: none !important;
-            }
-
-            /* تحسينات للوحة المجموعة */
-            .group-panel {
-                border-radius: var(--card-radius) !important;
-                box-shadow: var(--box-shadow-medium) !important;
-                border: none !important;
-                overflow: hidden !important;
-                margin-bottom: 2.5rem !important;
-                background: white !important;
-                transition: var(--transition-smooth) !important;
-            }
-
-            .group-panel:hover {
-                box-shadow: var(--box-shadow-dark) !important;
-                transform: translateY(-3px) !important;
-            }
-
-            .group-panel .ui-panel-titlebar {
-                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
-                color: white !important;
-                border: none !important;
-                padding: 2rem 2.2rem !important;
-                font-family: 'Plus Jakarta Sans', sans-serif !important;
-                font-weight: 600 !important;
-                position: relative !important;
-                overflow: hidden !important;
-            }
-
-            .group-panel .ui-panel-titlebar::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-                z-index: 0;
-            }
-
-            .group-panel .ui-panel-titlebar .ui-panel-title {
-                position: relative;
-                z-index: 1;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-            }
-
-            .group-panel .ui-panel-content {
-                padding: 2rem !important;
-                background: #f8fafc !important;
-            }
-
-            .group-panel .ui-panel-titlebar-icon {
-                color: white !important;
-                background: rgba(255, 255, 255, 0.15) !important;
-                border-radius: 50% !important;
-                width: 40px !important;
-                height: 40px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                transition: var(--transition-smooth) !important;
-                position: relative !important;
-                z-index: 1 !important;
-            }
-
-            .group-panel .ui-panel-titlebar-icon:hover {
-                background: rgba(255, 255, 255, 0.25) !important;
-                transform: scale(1.1) !important;
             }
 
             /* Responsive Adjustments - تصميم محسّن */
@@ -1306,7 +1383,7 @@
                                 <p:panel widgetVar="grpPanel#{gstatus.index}"
                                          toggleable="true"
                                          toggleSpeed="300"
-                                         styleClass="group-panel"
+                                         styleClass="group-panel color-#{(gstatus.index mod 8) + 1}"
                                          style="margin-bottom:2.5rem; border-radius:16px; overflow:hidden; box-shadow:var(--box-shadow-medium);"
                                          header="#{groupKey} (#{fn:length(taskManagementBean.groupedTasksByCorrespondence[groupKey])} tasks)">
                                     <f:facet name="header">
