@@ -113,6 +113,8 @@ import com.smat.ins.util.UtilityHelper;
 import com.smat.ins.util.model.Language;
 import com.smat.ins.util.model.NetworkElement;
 import com.smat.ins.view.app.App;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sourceforge.tess4j.Tesseract;
 
@@ -165,6 +167,10 @@ public class RegisterOutboundMailBean implements Serializable {
     private List<BoxType> boxTypes;
     private Set<CorrespondenceNote> correspondenceNotes = new HashSet<CorrespondenceNote>();
     private Set<CorrespondenceTask> correspondenceTasks = new HashSet<CorrespondenceTask>();
+    // map to track which CorrespondenceTask was created for which recipient (by UserAlias id)
+    // map to track which CorrespondenceTask(s) were created for which recipient instance
+    // allow multiple tasks per recipient -> store a list per recipient
+    private java.util.Map<CorrespondenceRecipient, java.util.List<CorrespondenceTask>> taskByRecipient = new java.util.HashMap<>();
 
     public Correspondence getCorrespondence() {
         return correspondence;
@@ -528,6 +534,8 @@ public class RegisterOutboundMailBean implements Serializable {
 
     }
 
+    private static final Logger log = LoggerFactory.getLogger(RegisterOutboundMailBean.class);
+
     public RegisterOutboundMailBean() throws Exception {
 
         correspondence = new Correspondence();
@@ -735,6 +743,30 @@ public class RegisterOutboundMailBean implements Serializable {
     }
 
     public String send() throws Exception {
+        // debug logging at the start of send
+        try {
+            log.info("send invoked -> recipients={}, tasks={}", recipientList == null ? 0 : recipientList.size(),
+                    correspondenceTasks == null ? 0 : correspondenceTasks.size());
+            if (recipientList != null) {
+                String ids = "";
+                for (CorrespondenceRecipient r : recipientList) {
+                    if (r != null && r.getUserAlias() != null && r.getUserAlias().getId() != null)
+                        ids += r.getUserAlias().getId() + ",";
+                }
+                log.info("send recipients userAliasIds=[{}]", ids);
+            }
+            if (correspondenceTasks != null) {
+                String tids = "";
+                for (CorrespondenceTask ct : correspondenceTasks) {
+                    if (ct != null && ct.getTask() != null && ct.getTask().getUserAliasByAssignTo() != null
+                            && ct.getTask().getUserAliasByAssignTo().getId() != null)
+                        tids += ct.getTask().getUserAliasByAssignTo().getId() + ",";
+                }
+                log.info("send correspondenceTasks assignToIds=[{}]", tids);
+            }
+        } catch (Exception e) {
+            // ignore logging issues
+        }
 
         String str = "";
         if (doValidate()) {
@@ -793,8 +825,25 @@ public class RegisterOutboundMailBean implements Serializable {
             }
             correspondence.setCorrespondenceArchives(correspondenceArchives);
 
-            if (!correspondenceTasks.isEmpty()) {
-                correspondence.setCorrespondenceTasks(correspondenceTasks);
+            // Attach all tasks whose assignTo user is present in the current recipient list.
+            if (correspondenceTasks != null && !correspondenceTasks.isEmpty() && recipientList != null
+                    && !recipientList.isEmpty()) {
+                java.util.Set<Long> recipientIds = new java.util.HashSet<>();
+                for (CorrespondenceRecipient r : recipientList) {
+                    if (r != null && r.getUserAlias() != null && r.getUserAlias().getId() != null)
+                        recipientIds.add(r.getUserAlias().getId());
+                }
+                java.util.Set<CorrespondenceTask> tasksToAttach = new java.util.HashSet<>();
+                for (CorrespondenceTask ct : correspondenceTasks) {
+                    if (ct != null && ct.getTask() != null && ct.getTask().getUserAliasByAssignTo() != null
+                            && ct.getTask().getUserAliasByAssignTo().getId() != null
+                            && recipientIds.contains(ct.getTask().getUserAliasByAssignTo().getId())) {
+                        tasksToAttach.add(ct);
+                    }
+                }
+                if (!tasksToAttach.isEmpty()) {
+                    correspondence.setCorrespondenceTasks(tasksToAttach);
+                }
             }
 
             if (correspondenceService.merge(correspondence)) {
@@ -805,6 +854,13 @@ public class RegisterOutboundMailBean implements Serializable {
                     inboxPushContext.send("ajaxListenerEvent", recipient.getUserAlias().getSysUserBySysUser().getId());
                 }
                 UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+                // clear in-memory tasks/map to avoid leaking between operations
+                if (correspondenceTasks != null) {
+                    correspondenceTasks.clear();
+                }
+                if (taskByRecipient != null) {
+                    taskByRecipient.clear();
+                }
                 correspondence = new Correspondence();
                 recipientList = new ArrayList<CorrespondenceRecipient>();
 
@@ -864,8 +920,30 @@ public class RegisterOutboundMailBean implements Serializable {
             correspondenceArchives.add(correspondenceArchive);
         }
         correspondence.setCorrespondenceArchives(correspondenceArchives);
+        // attach all tasks whose assignTo user is present in the current recipient list when saving draft
+        if (correspondenceTasks != null && !correspondenceTasks.isEmpty() && recipientList != null
+                && !recipientList.isEmpty()) {
+            java.util.Set<Long> recipientIds = new java.util.HashSet<>();
+            for (CorrespondenceRecipient r : recipientList) {
+                if (r != null && r.getUserAlias() != null && r.getUserAlias().getId() != null)
+                    recipientIds.add(r.getUserAlias().getId());
+            }
+            java.util.Set<CorrespondenceTask> tasksToAttach = new java.util.HashSet<>();
+            for (CorrespondenceTask ct : correspondenceTasks) {
+                if (ct != null && ct.getTask() != null && ct.getTask().getUserAliasByAssignTo() != null
+                        && ct.getTask().getUserAliasByAssignTo().getId() != null
+                        && recipientIds.contains(ct.getTask().getUserAliasByAssignTo().getId())) {
+                    tasksToAttach.add(ct);
+                }
+            }
+            if (!tasksToAttach.isEmpty()) {
+                correspondence.setCorrespondenceTasks(tasksToAttach);
+            }
+        }
         if (correspondenceService.merge(correspondence)) {
             UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+            // DO NOT clear correspondenceTasks/taskByRecipient here so that immediate Send after Save
+            // still has the in-memory tasks available. Clearing is done after a real Send.
             correspondence = new Correspondence();
             recipientList = new ArrayList<CorrespondenceRecipient>();
 
@@ -983,6 +1061,7 @@ public class RegisterOutboundMailBean implements Serializable {
             correspondenceRecipient.setNote(note);
             correspondenceRecipient.setHtmlNote(htmlNote);
             if (purposeType.getCode().equals("03")) {
+                // create a task for this recipient — allow multiple tasks per same recipient
                 Task task = new Task();
                 task.setServiceType(serviceType);
                 task.setCompany(company);
@@ -999,6 +1078,13 @@ public class RegisterOutboundMailBean implements Serializable {
                 correspondenceTask.setCorrespondence(correspondence);
                 correspondenceTask.setTask(task);
                 correspondenceTasks.add(correspondenceTask);
+                // track the created task(s) for this recipient instance so we can remove only tasks created
+                java.util.List<CorrespondenceTask> list = taskByRecipient.get(correspondenceRecipient);
+                if (list == null) {
+                    list = new java.util.ArrayList<>();
+                    taskByRecipient.put(correspondenceRecipient, list);
+                }
+                list.add(correspondenceTask);
             }
             // if (!checkIfContain(correspondenceRecipient))
             recipientList.add(correspondenceRecipient);
@@ -1006,6 +1092,14 @@ public class RegisterOutboundMailBean implements Serializable {
 
         setNote("");
         setHtmlNote("");
+
+        // debug log current sizes after adding recipients/tasks
+        try {
+            log.info("addCorrespondenceRecipient -> recipients={}, tasks={}", recipientList == null ? 0 : recipientList.size(),
+                    correspondenceTasks == null ? 0 : correspondenceTasks.size());
+        } catch (Exception e) {
+            // ignore logging errors
+        }
 
         PrimeFaces.current().ajax().update("form:messages", "form:panelGrid_editor");
         PrimeFaces.current().ajax().update("form:messages", "form:dt-correspondenceRecipient");
@@ -1024,16 +1118,40 @@ public class RegisterOutboundMailBean implements Serializable {
     }
 
     public void removeCorrespondenceRecipient(CorrespondenceRecipient correspondenceRecipient) {
+        // remove the recipient from the list shown in the UI
         recipientList.remove(correspondenceRecipient);
-        for (UserAlias toAlias : selectedUserAliasRecipients) {
-            if (toAlias.getId().equals(correspondenceRecipient.getUserAlias().getId())) {
-                selectedUserAliasRecipients.remove(toAlias);
-                break;
+
+        // safely remove the alias from the selectedUserAliasRecipients list (if present)
+        if (selectedUserAliasRecipients != null) {
+            java.util.Iterator<UserAlias> iter = selectedUserAliasRecipients.iterator();
+            while (iter.hasNext()) {
+                UserAlias toAlias = iter.next();
+                if (toAlias != null && toAlias.getId() != null && correspondenceRecipient.getUserAlias() != null
+                        && correspondenceRecipient.getUserAlias().getId() != null
+                        && toAlias.getId().equals(correspondenceRecipient.getUserAlias().getId())) {
+                    iter.remove();
+                    break;
+                }
             }
         }
 
+        // If we tracked CorrespondenceTask(s) for this exact recipient instance, remove only those
+        java.util.List<CorrespondenceTask> toRemoveList = taskByRecipient.remove(correspondenceRecipient);
+        if (toRemoveList != null && correspondenceTasks != null) {
+            correspondenceTasks.removeAll(toRemoveList);
+        }
+
         PrimeFaces.current().ajax().update("form:dt-correspondenceRecipient",
-                "form:selectCheckBoxMenu_UserAliasRecpient");
+                "form:selectCheckBoxMenu_UserAliasRecpient", "form:panelGroup_chips", "form:badge_recipient_size");
+
+        // debug log after removal
+        try {
+            log.info("removeCorrespondenceRecipient -> recipients={}, tasks={}",
+                    recipientList == null ? 0 : recipientList.size(),
+                    correspondenceTasks == null ? 0 : correspondenceTasks.size());
+        } catch (Exception e) {
+            // ignore
+        }
 
     }
 
@@ -1041,6 +1159,62 @@ public class RegisterOutboundMailBean implements Serializable {
 
         PrimeFaces.current().ajax().update("form:badge_recipient_size", "form:panelGrid_badges");
 
+    }
+
+    /**
+     * Remove a specific CorrespondenceTask (in-memory). This will also remove
+     * the task from any recipient->task lists tracked in taskByRecipient.
+     */
+    public void removeCorrespondenceTask(CorrespondenceTask ct) {
+        if (ct == null)
+            return;
+        if (correspondenceTasks != null) {
+            correspondenceTasks.remove(ct);
+        }
+        if (taskByRecipient != null && !taskByRecipient.isEmpty()) {
+            java.util.Iterator<java.util.Map.Entry<CorrespondenceRecipient, java.util.List<CorrespondenceTask>>> iter = taskByRecipient
+                    .entrySet().iterator();
+            while (iter.hasNext()) {
+                java.util.Map.Entry<CorrespondenceRecipient, java.util.List<CorrespondenceTask>> e = iter.next();
+                java.util.List<CorrespondenceTask> list = e.getValue();
+                if (list != null) {
+                    list.remove(ct);
+                    if (list.isEmpty()) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+
+        PrimeFaces.current().ajax().update("form:dt-correspondenceRecipient",
+                "form:selectCheckBoxMenu_UserAliasRecpient", "form:panelGroup_chips", "form:badge_recipient_size");
+
+        try {
+            log.info("removeCorrespondenceTask -> recipients={}, tasks={}", recipientList == null ? 0 : recipientList.size(),
+                    correspondenceTasks == null ? 0 : correspondenceTasks.size());
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    /**
+     * Remove a CorrespondenceTask by its persisted id. If task is not yet persisted
+     * (id == null) this method will have no effect — use removeCorrespondenceTask(ct)
+     * in that case.
+     */
+    public void removeCorrespondenceTaskById(Long correspondenceTaskId) {
+        if (correspondenceTaskId == null || correspondenceTasks == null || correspondenceTasks.isEmpty())
+            return;
+        CorrespondenceTask found = null;
+        for (CorrespondenceTask ct : new java.util.ArrayList<CorrespondenceTask>(correspondenceTasks)) {
+            if (ct != null && ct.getId() != null && ct.getId().equals(correspondenceTaskId)) {
+                found = ct;
+                break;
+            }
+        }
+        if (found != null) {
+            removeCorrespondenceTask(found);
+        }
     }
 
     public void addHtmlNote() {
