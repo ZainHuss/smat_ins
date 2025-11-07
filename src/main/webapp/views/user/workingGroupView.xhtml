@@ -12,7 +12,7 @@
 	<ui:define name="implementation">
 		<h:form id="form">
 			<div class="card crud-demo">
-				<p:growl id="messages" showDetail="true" />
+				<p:growl id="messages" showDetail="true" life="2000" sticky="false" />
 				<p:toolbar>
 					<p:toolbarGroup>
 						<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"

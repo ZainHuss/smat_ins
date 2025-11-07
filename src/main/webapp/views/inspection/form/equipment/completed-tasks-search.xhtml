@@ -1155,7 +1155,10 @@
             </div>
         </div>
 
-        <p:messages id="messages" showDetail="true" closable="true" />
+        <p:messages id="messages" showDetail="true" closable="true" widgetVar="msgs" />
+        <script type="text/javascript">
+            setTimeout(function(){ try{ if (PF &amp;&amp; PF('msgs')) PF('msgs').hide(); }catch(e){} }, 2000);
+        </script>
 
         <script>
             //<![CDATA[

@@ -1423,7 +1423,7 @@
     </ui:define>
     <ui:define name="section-content">
         <h:form id="form">
-            <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" life="5000" />
+            <p:growl id="messages" showDetail="true" showSummary="false" sticky="false" life="2000" />
 
             <div class="card main-info-card">
                 <div class="form-header">
@@ -1443,9 +1443,9 @@
                     </div>
 
                     <div class="field-group required-field">
-                        <span class="floating-label required">TS Number</span>
+                        <span class="floating-label required">Time Sheet Number</span>
                         <p:inputText value="#{empCertificationBean.empCertification.tsNumber}"
-                                     disabled="true" styleClass="block" />
+                                     styleClass="block" />
                     </div>
 
                     <div class="field-group required-field">

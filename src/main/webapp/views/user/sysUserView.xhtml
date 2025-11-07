@@ -22,7 +22,7 @@
 		<h:form id="form">
 
 			<div class="card">
-				<p:growl id="messages" showDetail="true" />
+				<p:growl id="messages" showDetail="true" life="2000" sticky="false" />
 				<div class="row">
 					<div class="col-lg-9 col-xl-8 col-xxl-7">
 					<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
@@ -192,7 +192,7 @@
 }
 </style>
 			<h:form id="form_sysUserResetPassword">
-				<p:growl id="growl" showDetail="true" />
+				<p:growl id="growl" showDetail="true" life="2000" sticky="false" />
 				<p:divider />
 				<p:outputPanel id="outputPanel-content" class="ui-fluid">
 					<p:outputPanel rendered="#{not empty sysUserBean.sysUser}">

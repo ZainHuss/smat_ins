@@ -239,7 +239,7 @@ span.ui-chip-remove-icon {
 	<ui:define name="mail-template-content">
 		<h:form id="form">		   		  
 		    <p:tooltip />
-			<p:growl id="messages" showDetail="true" showSummary="false" />
+			<p:growl id="messages" showDetail="true" showSummary="false" life="2000" sticky="false" />
 			<div style="width:90%;margin-left:5%;margin-right:5%;border-radius: 7px;background-color: #F8F9FA;display: flex;margin-bottom: 7px;align-content: center;align-items: center;">
 			  <p:avatar icon="pi pi-user" styleClass="mr-2" size="xlarge" shape="circle" />
 			  <p:outputLabel value="#{interfaceLabel.ownerUser}:" style="font-size: 0.9rem; color: black;font-weight: bolder;margin-left:1%;margin-right:1%"></p:outputLabel>

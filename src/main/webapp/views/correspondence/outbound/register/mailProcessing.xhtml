@@ -240,7 +240,7 @@ span.ui-chip-remove-icon {
 				<pe:assignableParam name="htmlSubject"
 					assignTo="#{registerOutboundMailBean.htmlSubject}" />
 			</pe:remoteCommand>
-			<p:growl id="messages" showDetail="true" showSummary="false" />
+			<p:growl id="messages" showDetail="true" showSummary="false" life="2000" sticky="false" />
             <p:sticky id="sticky_events" target="toolbar_events" ></p:sticky>
 			<p:panelGrid id="panelGrid_mail_processing" columns="1" layout="flex"
 				columnClasses="col-12 md:col-12 xl:col-12"

@@ -729,7 +729,7 @@ template="/WEB-INF/template.xhtml">
 <ui:define name="section-content">
     <div class="search-container">
         <h:form id="searchForm" dir="#{app.locale.locale eq 'ar' ? 'rtl' : 'ltr'}">
-            <p:growl id="messages" showDetail="true" showSummary="false" sticky="true" />
+            <p:growl id="messages" showDetail="true" showSummary="false" life="2000" sticky="false" />
             
             <div class="search-card animate__animated animate__fadeIn">
                 <div class="floating-icons">
