@@ -1,90 +1,100 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:jsf="http://xmlns.jcp.org/jsf"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:pe="http://primefaces.org/ui/extensions"
-    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-    xmlns:o="http://omnifaces.org/ui"
-    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:of="http://omnifaces.org/functions"
-    template="/views/mail/mail-template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:of="http://omnifaces.org/functions"
+                template="/views/mail/mail-template.xhtml"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
     <ui:define name="head">
         <h:outputStylesheet library="#{appSetting.resourceLib}"
-            name="css/material-theme.css"></h:outputStylesheet>
-        
+                            name="css/material-theme.css"></h:outputStylesheet>
+
         <!-- استيراد خطوط Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
-        
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
         <style>
             /* تحسين الخطوط العامة */
             body {
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
                 line-height: 1.6;
+                color: #333;
+                background-color: #f5f7fa;
             }
-            
+
             h1, h2, h3, h4, h5, h6 {
                 font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
                 font-weight: 600;
+                color: #2c3e50;
             }
-            
+
             /* Vibrant CSS Variables - محسّنة */
             :root {
-                --primary-color: #4361ee;
-                --primary-hover: #3a56d4;
-                --primary-active: #2f46b9;
-                --secondary-color: #06d6a0;
-                --accent-color: #ff9e00;
-                --danger-color: #ef476f;
-                --info-color: #118ab2;
-                --light-color: #f8f9fa;
-                --dark-color: #212529;
+                --primary-color: #6366f1;
+                --primary-hover: #4f46e5;
+                --primary-active: #4338ca;
+                --secondary-color: #06b6d4;
+                --accent-color: #f97316;
+                --danger-color: #ef4444;
+                --info-color: #06b6d4;
+                --light-color: #f8fafc;
+                --dark-color: #1e293b;
                 --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 --task-header-bg: var(--primary-color);
-                --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
-                --box-shadow-medium: 0 10px 25px rgba(0, 0, 0, 0.1);
-                --box-shadow-dark: 0 20px 40px rgba(0, 0, 0, 0.15);
-                --text-color: #4a5568;
-                --text-dark: #2d3748;
+                --box-shadow-light: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+                --box-shadow-medium: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+                --box-shadow-dark: 0 20px 40px rgba(50, 50, 93, 0.15), 0 10px 20px rgba(0, 0, 0, 0.05);
+                --text-color: #64748b;
+                --text-dark: #1e293b;
                 --border-color: #e2e8f0;
-                --success-color: #06d6a0;
-                --warning-color: #ffd166;
+                --success-color: #10b981;
+                --warning-color: #f59e0b;
                 --card-radius: 16px;
-                --element-radius: 10px;
+                --element-radius: 12px;
                 --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             }
-            
+
             /* Animation Styles - محسّنة */
             @keyframes fadeInUp {
                 from { opacity: 0; transform: translateY(30px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-            
+
             @keyframes fadeIn {
                 from { opacity: 0; }
                 to { opacity: 1; }
             }
-            
+
             @keyframes pulse {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.05); }
                 100% { transform: scale(1); }
             }
-            
+
             @keyframes float {
                 0% { transform: translateY(0px); }
                 50% { transform: translateY(-5px); }
                 100% { transform: translateY(0px); }
             }
-            
+
+            @keyframes shimmer {
+                0% { background-position: -200px 0; }
+                100% { background-position: 200px 0; }
+            }
+
             /* Task Container */
             .task-container {
                 animation: fadeInUp 0.6s ease-out;
             }
-            
+
             /* Task Card - تصميم محسّن ومصغّر */
             .task-card {
                 transition: var(--transition-smooth);
@@ -97,13 +107,13 @@
                 position: relative;
                 border-left: 4px solid var(--task-header-bg);
             }
-            
+
             .task-card:hover {
                 transform: translateY(-5px);
                 box-shadow: var(--box-shadow-medium);
                 border-left: 4px solid var(--accent-color);
             }
-            
+
             /* Task Header - تصميم محسّن ومصغّر */
             .task-header {
                 padding: 1rem 1.5rem;
@@ -114,15 +124,15 @@
                 background: var(--task-header-bg);
                 color: white;
                 position: relative;
-                background: linear-gradient(105deg, var(--task-header-bg) 0%, #5f6ef7 100%);
+                background: linear-gradient(105deg, var(--task-header-bg) 0%, #7c3aed 100%);
             }
-            
+
             /* Task Content - تصميم محسّن ومصغّر */
             .task-content {
                 padding: 1.5rem;
                 background: white;
             }
-            
+
             /* Task Footer - تصميم محسّن ومصغّر */
             .task-footer {
                 padding: 1rem 1.5rem;
@@ -133,7 +143,7 @@
                 align-items: center;
                 border-radius: 0 0 var(--card-radius) var(--card-radius);
             }
-            
+
             /* Badges - تصميم محسّن ومصغّر */
             .task-badge {
                 background: rgba(255, 255, 255, 0.25);
@@ -147,7 +157,7 @@
                 border: 1px solid rgba(255, 255, 255, 0.18);
                 font-family: 'Inter', sans-serif;
             }
-            
+
             .task-type-badge {
                 background-color: rgba(255, 255, 255, 0.3);
                 color: white;
@@ -159,7 +169,7 @@
                 border: 1px solid rgba(255, 255, 255, 0.18);
                 font-family: 'Inter', sans-serif;
             }
-            
+
             /* Empty State - تصميم محسّن */
             .empty-state {
                 text-align: center;
@@ -172,7 +182,7 @@
                 border: 1px solid var(--border-color);
                 font-family: 'Inter', sans-serif;
             }
-            
+
             .empty-state img {
                 max-width: 200px;
                 opacity: 0.9;
@@ -180,7 +190,7 @@
                 filter: drop-shadow(0 8px 15px rgba(0,0,0,0.1));
                 animation: float 4s ease-in-out infinite;
             }
-            
+
             /* Task Info - تصميم محسّن ومصغّر */
             .task-info-item {
                 display: flex;
@@ -190,14 +200,14 @@
                 font-size: 0.95rem;
                 font-family: 'Inter', sans-serif;
             }
-            
+
             .task-info-item i {
                 margin-right: 0.8rem;
                 color: var(--primary-color);
                 font-size: 1.1rem;
                 min-width: 24px;
                 text-align: center;
-                background: rgba(67, 97, 238, 0.1);
+                background: rgba(99, 102, 241, 0.1);
                 width: 36px;
                 height: 36px;
                 border-radius: 50%;
@@ -205,14 +215,14 @@
                 align-items: center;
                 justify-content: center;
             }
-            
+
             .task-info-item strong {
                 margin-right: 0.4rem;
                 color: var(--text-dark);
                 font-weight: 600;
                 font-family: 'Inter', sans-serif;
             }
-            
+
             /* Description - تصميم محسّن ومصغّر */
             .task-description {
                 color: var(--text-color);
@@ -226,8 +236,8 @@
                 box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
                 font-family: 'Inter', sans-serif;
             }
-            
-            /* Quick Actions - تصميم محسّن */
+
+            /* Quick Actions Panel - تصميم محسّن */
             .quick-actions-panel {
                 margin-top: 3rem;
                 padding: 2rem;
@@ -238,7 +248,7 @@
                 background: linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%);
                 font-family: 'Inter', sans-serif;
             }
-            
+
             /* Delay Indicator Styles - تصميم محسّن ومصغّر */
             .delay-indicator {
                 display: inline-flex;
@@ -252,33 +262,33 @@
                 border: 1px solid rgba(255, 255, 255, 0.18);
                 font-family: 'Inter', sans-serif;
             }
-            
+
             .delay-normal {
-                background: rgba(6, 214, 160, 0.15);
+                background: rgba(16, 185, 129, 0.15);
                 color: var(--success-color);
             }
-            
+
             .delay-warning {
-                background: rgba(255, 209, 102, 0.15);
+                background: rgba(245, 158, 11, 0.15);
                 color: var(--warning-color);
             }
-            
+
             .delay-high {
-                background: rgba(239, 71, 111, 0.15);
+                background: rgba(239, 68, 68, 0.15);
                 color: var(--danger-color);
             }
-            
+
             .delay-critical {
-                background: rgba(239, 71, 111, 0.25);
+                background: rgba(239, 68, 68, 0.25);
                 color: white;
-                background: linear-gradient(90deg, #ef476f 0%, #ff6b6b 100%);
+                background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
             }
-            
+
             .delay-icon {
                 margin-right: 0.4rem;
                 font-size: 1rem;
             }
-            
+
             /* Progress Bar - تصميم محسّن ومصغّر */
             .task-progress-bar {
                 height: 8px;
@@ -288,29 +298,29 @@
                 margin: 1rem 0 1.5rem;
                 box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
             }
-            
+
             .task-progress {
                 height: 100%;
                 transition: width 0.6s ease;
                 border-radius: 8px;
             }
-            
+
             .progress-normal {
-                background: linear-gradient(90deg, var(--success-color), #48cae4);
+                background: linear-gradient(90deg, var(--success-color), #34d399);
             }
-            
+
             .progress-warning {
-                background: linear-gradient(90deg, var(--warning-color), #ff9e00);
+                background: linear-gradient(90deg, var(--warning-color), #fbbf24);
             }
-            
+
             .progress-high {
-                background: linear-gradient(90deg, #ff9e00, #ff6d00);
+                background: linear-gradient(90deg, #fbbf24, #f59e0b);
             }
-            
+
             .progress-critical {
-                background: linear-gradient(90deg, var(--danger-color), #ff2d75);
+                background: linear-gradient(90deg, var(--danger-color), #f87171);
             }
-            
+
             /* Due Date Badge - تصميم محسّن ومصغّر */
             .due-date-badge {
                 position: absolute;
@@ -326,7 +336,7 @@
                 border: 1px solid rgba(255, 255, 255, 0.18);
                 font-family: 'Inter', sans-serif;
             }
-            
+
             /* Header Styles - تصميم محسّن ومصغّر */
             .section-header {
                 display: flex;
@@ -336,7 +346,7 @@
                 padding-bottom: 1.2rem;
                 border-bottom: 1px solid var(--border-color);
             }
-            
+
             .section-title {
                 font-size: 1.8rem;
                 font-weight: 700;
@@ -346,12 +356,12 @@
                 align-items: center;
                 font-family: 'Plus Jakarta Sans', sans-serif;
             }
-            
+
             .section-title i {
                 margin-right: 0.8rem;
                 color: var(--primary-color);
                 font-size: 1.6rem;
-                background: rgba(67, 97, 238, 0.1);
+                background: rgba(99, 102, 241, 0.1);
                 width: 45px;
                 height: 45px;
                 border-radius: 12px;
@@ -359,7 +369,7 @@
                 align-items: center;
                 justify-content: center;
             }
-            
+
             /* Button Styles - تصميم محسّن ومتناسق */
             .refresh-button-icon {
                 background: white !important;
@@ -373,18 +383,18 @@
                 justify-content: center !important;
                 transition: var(--transition-smooth) !important;
                 font-family: 'Inter', sans-serif !important;
-                box-shadow: 0 4px 6px rgba(67, 97, 238, 0.1) !important;
+                box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1) !important;
                 font-size: 1rem !important;
                 padding: 0 !important;
             }
-            
+
             .refresh-button-icon:hover {
                 background: var(--primary-color) !important;
                 color: white !important;
                 transform: translateY(-2px) rotate(90deg) !important;
-                box-shadow: 0 6px 15px rgba(67, 97, 238, 0.25) !important;
+                box-shadow: 0 6px 15px rgba(99, 102, 241, 0.25) !important;
             }
-            
+
             .refresh-button {
                 background: white !important;
                 color: var(--primary-color) !important;
@@ -394,44 +404,44 @@
                 font-weight: 600 !important;
                 transition: var(--transition-smooth) !important;
                 font-family: 'Inter', sans-serif !important;
-                box-shadow: 0 4px 6px rgba(67, 97, 238, 0.1) !important;
+                box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1) !important;
                 font-size: 0.9rem !important;
             }
-            
+
             .refresh-button:hover {
                 background: var(--primary-color) !important;
                 color: white !important;
                 transform: translateY(-2px) !important;
-                box-shadow: 0 6px 15px rgba(67, 97, 238, 0.25) !important;
+                box-shadow: 0 6px 15px rgba(99, 102, 241, 0.25) !important;
             }
-            
+
             /* زر Deactivated Tasks - تصميم جديد */
             .deactivated-tasks-button {
                 background: white !important;
-                color: #6c757d !important;
-                border: 2px solid #6c757d !important;
+                color: #64748b !important;
+                border: 2px solid #64748b !important;
                 border-radius: 100px !important;
                 padding: 0.6rem 1.2rem !important;
                 font-weight: 600 !important;
                 transition: var(--transition-smooth) !important;
                 font-family: 'Inter', sans-serif !important;
-                box-shadow: 0 4px 6px rgba(108, 117, 125, 0.1) !important;
+                box-shadow: 0 4px 6px rgba(100, 116, 139, 0.1) !important;
                 font-size: 0.9rem !important;
             }
-            
+
             .deactivated-tasks-button:hover {
-                background: #6c757d !important;
+                background: #64748b !important;
                 color: white !important;
                 transform: translateY(-2px) !important;
-                box-shadow: 0 6px 15px rgba(108, 117, 125, 0.25) !important;
+                box-shadow: 0 6px 15px rgba(100, 116, 139, 0.25) !important;
             }
-            
+
             .deactivated-tasks-button.active {
-                background: #6c757d !important;
+                background: #64748b !important;
                 color: white !important;
-                border-color: #5a6268 !important;
+                border-color: #475569 !important;
             }
-            
+
             .quick-action-button {
                 background: white !important;
                 color: var(--text-dark) !important;
@@ -444,16 +454,16 @@
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
                 font-size: 0.9rem !important;
             }
-            
+
             .quick-action-button:hover {
                 border-color: var(--primary-color) !important;
                 color: var(--primary-color) !important;
                 transform: translateY(-2px) !important;
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1) !important;
             }
-            
+
             .view-button {
-                background: linear-gradient(135deg, var(--accent-color) 0%, #ff9e00 100%) !important;
+                background: linear-gradient(135deg, var(--accent-color) 0%, #fbbf24 100%) !important;
                 color: white !important;
                 border-radius: 12px !important;
                 width: 42px !important;
@@ -462,31 +472,31 @@
                 align-items: center !important;
                 justify-content: center !important;
                 border: none !important;
-                box-shadow: 0 5px 10px rgba(255, 158, 0, 0.2) !important;
+                box-shadow: 0 5px 10px rgba(249, 115, 22, 0.2) !important;
                 transition: var(--transition-smooth) !important;
                 cursor: pointer !important;
                 padding: 0 !important;
             }
-            
+
             .view-button:hover {
                 transform: scale(1.08) translateY(-2px) !important;
-                box-shadow: 0 8px 15px rgba(255, 158, 0, 0.3) !important;
+                box-shadow: 0 8px 15px rgba(249, 115, 22, 0.3) !important;
                 animation: pulse 1s infinite !important;
-                background: linear-gradient(135deg, #ff9e00 0%, #ff7b00 100%) !important;
+                background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
             }
-            
+
             .view-button .pi {
                 font-size: 1.2rem !important;
                 transition: transform 0.3s ease !important;
             }
-            
+
             .view-button:hover .pi {
                 transform: scale(1.15) !important;
             }
-            
+
             /* زر Deactivate - تصميم محسّن ومصغّر */
             .deactivate-tag {
-                background: linear-gradient(135deg, var(--danger-color) 0%, #ff6b6b 100%) !important;
+                background: linear-gradient(135deg, var(--danger-color) 0%, #f87171 100%) !important;
                 color: white !important;
                 border-radius: 100px !important;
                 padding: 0.3rem 0.8rem !important;
@@ -500,21 +510,21 @@
                 transition: var(--transition-smooth) !important;
                 margin-left: 0.8rem !important;
                 font-family: 'Inter', sans-serif !important;
-                box-shadow: 0 3px 6px rgba(239, 71, 111, 0.2) !important;
+                box-shadow: 0 3px 6px rgba(239, 68, 68, 0.2) !important;
                 height: 28px !important;
             }
-        
+
             .deactivate-tag:hover {
                 transform: translateY(-2px) !important;
-                box-shadow: 0 5px 10px rgba(239, 71, 111, 0.3) !important;
-                background: linear-gradient(135deg, #ff6b6b 0%, var(--danger-color) 100%) !important;
+                box-shadow: 0 5px 10px rgba(239, 68, 68, 0.3) !important;
+                background: linear-gradient(135deg, #f87171 0%, var(--danger-color) 100%) !important;
             }
-        
+
             .deactivate-tag .pi {
                 margin-right: 0.3rem !important;
                 font-size: 0.75rem !important;
             }
-            
+
             /* Select Menu - تصميم محسّن */
             .ui-selectonemenu {
                 border-radius: 100px !important;
@@ -527,12 +537,12 @@
                 font-size: 0.9rem !important;
                 min-width: 220px;
             }
-            
+
             .ui-selectonemenu:hover {
                 border-color: var(--primary-color) !important;
-                box-shadow: 0 6px 12px rgba(67, 97, 238, 0.1) !important;
+                box-shadow: 0 6px 12px rgba(99, 102, 241, 0.1) !important;
             }
-            
+
             /* Tag Styles - تصميم محسّن */
             .ui-tag {
                 border-radius: 100px !important;
@@ -541,7 +551,276 @@
                 font-size: 0.85rem !important;
                 font-family: 'Inter', sans-serif !important;
             }
-            
+
+            /* Correspondence ID Badge - تصميم محسّن وجميل جداً */
+            .corr-id-top {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                top: -14px;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                padding: 8px 18px;
+                border-radius: 999px;
+                box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+                font-weight: 700;
+                color: white;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                z-index: 10;
+                font-family: 'Inter', sans-serif;
+                font-size: 0.85rem;
+                letter-spacing: 0.3px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                backdrop-filter: blur(4px);
+                transition: var(--transition-smooth);
+                animation: fadeInUp 0.5s ease-out;
+            }
+
+            .corr-id-top:hover {
+                transform: translateX(-50%) translateY(-2px);
+                box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            }
+
+            .corr-id-top::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+                border-radius: 999px;
+                z-index: -1;
+            }
+
+            .corr-id-icon {
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+
+            .corr-id-label {
+                font-weight: 600;
+                font-size: 0.8rem;
+                opacity: 0.9;
+                letter-spacing: 0.5px;
+            }
+
+            .corr-id-value {
+                font-weight: 700;
+                font-size: 0.9rem;
+                letter-spacing: 0.5px;
+            }
+
+            /* Task Card Enhancements - تحسينات إضافية لرقاقة المهمة */
+            .task-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, var(--task-header-bg), var(--accent-color));
+                border-radius: 4px 4px 0 0;
+                z-index: 2;
+            }
+
+            .task-card::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(249, 115, 22, 0.02) 100%);
+                opacity: 0;
+                transition: var(--transition-smooth);
+                z-index: -1;
+                border-radius: var(--card-radius);
+            }
+
+            .task-card:hover::after {
+                opacity: 1;
+            }
+
+            /* Panel Styles - تحسينات للوحة المجموعة */
+            .ui-panel {
+                border-radius: var(--card-radius) !important;
+                box-shadow: var(--box-shadow-medium) !important;
+                border: none !important;
+                overflow: hidden !important;
+                margin-bottom: 2rem !important;
+                background: white !important;
+                transition: var(--transition-smooth) !important;
+            }
+
+            .ui-panel:hover {
+                box-shadow: var(--box-shadow-dark) !important;
+                transform: translateY(-3px) !important;
+            }
+
+            .ui-panel .ui-panel-titlebar {
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+                color: white !important;
+                border: none !important;
+                padding: 1.8rem 2rem !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                font-weight: 600 !important;
+                position: relative !important;
+                overflow: hidden !important;
+            }
+
+            .ui-panel .ui-panel-titlebar::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+                z-index: 0;
+            }
+
+            .ui-panel .ui-panel-titlebar .ui-panel-title {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .ui-panel .ui-panel-content {
+                padding: 2rem !important;
+                background: #f8fafc !important;
+            }
+
+            .ui-panel .ui-panel-titlebar-icon {
+                color: white !important;
+                background: rgba(255, 255, 255, 0.15) !important;
+                border-radius: 50% !important;
+                width: 40px !important;
+                height: 40px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: var(--transition-smooth) !important;
+                position: relative !important;
+                z-index: 1 !important;
+            }
+
+            .ui-panel .ui-panel-titlebar-icon:hover {
+                background: rgba(255, 255, 255, 0.25) !important;
+                transform: scale(1.1) !important;
+            }
+
+            /* Group Date Badge - تصميم جديد */
+            .group-date-badge {
+                display: inline-flex;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.25);
+                border-radius: 100px;
+                padding: 0.5rem 1.2rem;
+                color: white;
+                font-weight: 600;
+                font-size: 0.85rem;
+                backdrop-filter: blur(4px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                font-family: 'Inter', sans-serif;
+                margin-left: 1rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .group-date-badge i {
+                margin-right: 0.5rem;
+                font-size: 1rem;
+            }
+
+            /* إزالة علامة الطرح من أيقونة التوسيع/الطي */
+            .ui-panel .ui-panel-titlebar-icon.ui-icon-minus {
+                display: none !important;
+            }
+
+            .ui-panel .ui-panel-titlebar-icon.ui-icon-plus {
+                display: none !important;
+            }
+
+            /* إزالة زر الطرح السفلي */
+            .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon:last-child {
+                display: none !important;
+            }
+
+            /* تحسينات للوحة المجموعة */
+            .group-panel {
+                border-radius: var(--card-radius) !important;
+                box-shadow: var(--box-shadow-medium) !important;
+                border: none !important;
+                overflow: hidden !important;
+                margin-bottom: 2.5rem !important;
+                background: white !important;
+                transition: var(--transition-smooth) !important;
+            }
+
+            .group-panel:hover {
+                box-shadow: var(--box-shadow-dark) !important;
+                transform: translateY(-3px) !important;
+            }
+
+            .group-panel .ui-panel-titlebar {
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+                color: white !important;
+                border: none !important;
+                padding: 2rem 2.2rem !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                font-weight: 600 !important;
+                position: relative !important;
+                overflow: hidden !important;
+            }
+
+            .group-panel .ui-panel-titlebar::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+                z-index: 0;
+            }
+
+            .group-panel .ui-panel-titlebar .ui-panel-title {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .group-panel .ui-panel-content {
+                padding: 2rem !important;
+                background: #f8fafc !important;
+            }
+
+            .group-panel .ui-panel-titlebar-icon {
+                color: white !important;
+                background: rgba(255, 255, 255, 0.15) !important;
+                border-radius: 50% !important;
+                width: 40px !important;
+                height: 40px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: var(--transition-smooth) !important;
+                position: relative !important;
+                z-index: 1 !important;
+            }
+
+            .group-panel .ui-panel-titlebar-icon:hover {
+                background: rgba(255, 255, 255, 0.25) !important;
+                transform: scale(1.1) !important;
+            }
+
             /* Responsive Adjustments - تصميم محسّن */
             @media (max-width: 768px) {
                 .task-header {
@@ -549,138 +828,375 @@
                     align-items: flex-start;
                     gap: 1rem;
                 }
-            
+
                 .task-footer {
                     flex-direction: column;
                     gap: 1rem;
                     align-items: flex-start;
                 }
-                
+
                 .section-header {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 1rem;
                 }
-                
+
                 .due-date-badge {
                     position: static;
                     margin-top: 0.8rem;
                     display: inline-block;
                 }
-                
+
                 .task-controls {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 0.6rem;
                 }
-                
+
                 .deactivate-tag {
                     margin-left: 0 !important;
                     margin-top: 0.6rem !important;
                 }
-                
+
                 .section-title {
                     font-size: 1.6rem;
                 }
-                
+
                 .section-title i {
                     width: 40px;
                     height: 40px;
                     font-size: 1.4rem;
                 }
-                
+
                 .task-content, .task-header, .task-footer {
                     padding: 1.2rem;
                 }
-                
+
                 .quick-actions-panel {
                     padding: 1.5rem;
                 }
-                
+
                 .button-group {
                     flex-direction: column;
                     gap: 0.6rem;
                 }
-                
+
                 .task-id-container {
                     flex-direction: column;
                     align-items: flex-start !important;
                     gap: 0.5rem;
                 }
+
+                .corr-id-top {
+                    padding: 6px 14px;
+                    font-size: 0.8rem;
+                    top: -12px;
+                }
+
+                .corr-id-label {
+                    font-size: 0.75rem;
+                }
+
+                .corr-id-value {
+                    font-size: 0.85rem;
+                }
+
+                .ui-panel .ui-panel-titlebar {
+                    padding: 1.5rem 1.8rem !important;
+                }
+
+                .ui-panel .ui-panel-content {
+                    padding: 1.5rem !important;
+                }
+
+                .group-panel .ui-panel-titlebar {
+                    padding: 1.5rem 1.8rem !important;
+                }
+
+                .group-panel .ui-panel-content {
+                    padding: 1.5rem !important;
+                }
+
+                .group-date-badge {
+                    margin-left: 0.5rem;
+                    margin-top: 0.5rem;
+                }
             }
-            
+
             /* تأثيرات إضافية للتحسين البصري */
             .gradient-bg {
-                background: linear-gradient(135deg, #f6f9fc 0%, #edf2f7 100%);
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
                 min-height: 100vh;
-                padding: 1.5rem 0;
+                padding: 2rem 0;
             }
-            
+
             .task-management-form {
                 max-width: 1200px;
                 margin: 0 auto;
-                padding: 0 1.2rem;
+                padding: 0 1.5rem;
             }
-            
+
             .ml-3 {
                 margin-left: 1rem !important;
             }
-            
+
             .mr-2 {
                 margin-right: 0.6rem !important;
             }
-            
+
             .d-flex {
                 display: flex !important;
             }
-            
+
             .align-items-center {
                 align-items: center !important;
             }
-            
+
             .justify-content-between {
                 justify-content: space-between !important;
             }
-            
+
             .flex-wrap {
                 flex-wrap: wrap !important;
             }
-            
+
             .gap-2 {
                 gap: 0.6rem !important;
             }
-            
+
             .text-center {
                 text-align: center !important;
             }
-            
+
             .mt-3 {
                 margin-top: 1.5rem !important;
             }
-            
+
             .mt-2 {
                 margin-top: 1rem !important;
             }
-            
+
             .mb-2 {
                 margin-bottom: 1rem !important;
             }
-            
+
             .p-4 {
                 padding: 1.5rem !important;
             }
-            
+
             .button-group {
                 display: flex;
                 gap: 0.8rem;
                 align-items: center;
             }
-            
+
             .task-id-container {
                 display: flex;
                 align-items: center;
                 flex-wrap: wrap;
             }
+
+            /* تحسينات إضافية للواجهة */
+            .ui-panel {
+                border-radius: var(--card-radius) !important;
+                box-shadow: var(--box-shadow-light) !important;
+                border: none !important;
+                overflow: hidden !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .ui-panel .ui-panel-titlebar {
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+                color: white !important;
+                border: none !important;
+                padding: 1rem 1.5rem !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                font-weight: 600 !important;
+            }
+
+            .ui-panel .ui-panel-content {
+                padding: 1.5rem !important;
+                background: #f8fafc !important;
+            }
+
+            .ui-panel .ui-panel-titlebar-icon {
+                color: white !important;
+            }
+
+            .ui-panel .ui-panel-titlebar-icon:hover {
+                background: rgba(255, 255, 255, 0.1) !important;
+            }
+
+            /* تحسينات للنموذج الرئيسي */
+            .card {
+                border-radius: var(--card-radius) !important;
+                box-shadow: var(--box-shadow-light) !important;
+                border: none !important;
+                background: white !important;
+                margin-bottom: 2rem !important;
+            }
+
+            /* تحسينات للحوارات */
+            .ui-dialog {
+                border-radius: var(--card-radius) !important;
+                box-shadow: var(--box-shadow-dark) !important;
+                overflow: hidden !important;
+            }
+
+            .ui-dialog .ui-dialog-titlebar {
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+                color: white !important;
+                border: none !important;
+                padding: 1rem 1.5rem !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                font-weight: 600 !important;
+            }
+
+            .ui-dialog .ui-dialog-content {
+                padding: 1.5rem !important;
+            }
+
+            /* تحسينات للأزرار في الحوارات */
+            .ui-dialog .ui-dialog-footer {
+                padding: 1rem 1.5rem !important;
+                background: #f8fafc !important;
+                border-top: 1px solid var(--border-color) !important;
+            }
+
+            /* تحسينات للقوائم المنسدلة */
+            .ui-selectonemenu-panel {
+                border-radius: var(--element-radius) !important;
+                box-shadow: var(--box-shadow-medium) !important;
+                border: none !important;
+                padding: 0.5rem 0 !important;
+            }
+
+            .ui-selectonemenu-item {
+                padding: 0.6rem 1.2rem !important;
+                transition: var(--transition-smooth) !important;
+            }
+
+            .ui-selectonemenu-item:hover {
+                background: rgba(99, 102, 241, 0.1) !important;
+            }
+
+            .ui-selectonemenu-item.ui-state-highlight {
+                background: var(--primary-color) !important;
+                color: white !important;
+            }
+
+            /* تحسينات للشارات */
+            .ui-tag {
+                border-radius: 100px !important;
+                padding: 0.4rem 1rem !important;
+                font-weight: 600 !important;
+                font-size: 0.85rem !important;
+                font-family: 'Inter', sans-serif !important;
+            }
+
+            /* تحسينات للأيقونات */
+            .material-icons {
+                vertical-align: middle !important;
+                margin-right: 0.3rem !important;
+            }
+
+            /* تحسينات للبطاقات الفارغة */
+            .empty-state {
+                text-align: center;
+                padding: 4rem 2rem;
+                animation: fadeIn 0.8s ease-out;
+                background: white;
+                border-radius: var(--card-radius);
+                margin: 2rem 0;
+                box-shadow: var(--box-shadow-light);
+                border: 1px solid var(--border-color);
+                font-family: 'Inter', sans-serif;
+            }
+
+            .empty-state img {
+                max-width: 200px;
+                opacity: 0.9;
+                margin-bottom: 1.5rem;
+                filter: drop-shadow(0 8px 15px rgba(0,0,0,0.1));
+                animation: float 4s ease-in-out infinite;
+            }
+
+            /* تحسينات للرسائل */
+            .ui-growl {
+                top: 20px !important;
+                right: 20px !important;
+            }
+
+            .ui-growl-item {
+                border-radius: var(--element-radius) !important;
+                box-shadow: var(--box-shadow-medium) !important;
+            }
+
+            /* تحسينات للنص */
+            p {
+                line-height: 1.6 !important;
+                margin-bottom: 1rem !important;
+            }
+
+            /* تحسينات للعناوين */
+            h1, h2, h3, h4, h5, h6 {
+                margin-top: 0 !important;
+                margin-bottom: 1rem !important;
+                line-height: 1.3 !important;
+            }
+
+            /* تحسينات للجداول */
+            .ui-datatable {
+                border-radius: var(--card-radius) !important;
+                overflow: hidden !important;
+                box-shadow: var(--box-shadow-light) !important;
+            }
+
+            .ui-datatable .ui-datatable-header {
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+                color: white !important;
+                border: none !important;
+                padding: 1rem 1.5rem !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                font-weight: 600 !important;
+            }
+
+            .ui-datatable .ui-datatable-data tr {
+                transition: var(--transition-smooth) !important;
+            }
+
+            .ui-datatable .ui-datatable-data tr:hover {
+                background: rgba(99, 102, 241, 0.05) !important;
+            }
+
+            /* تحسينات للنماذج */
+            .ui-inputfield {
+                border-radius: var(--element-radius) !important;
+                border: 1px solid var(--border-color) !important;
+                padding: 0.6rem 1rem !important;
+                transition: var(--transition-smooth) !important;
+                font-family: 'Inter', sans-serif !important;
+            }
+
+            .ui-inputfield:focus {
+                border-color: var(--primary-color) !important;
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+            }
+
+            /* تحسينات للأزرار */
+            .ui-button {
+                border-radius: var(--element-radius) !important;
+                padding: 0.6rem 1.2rem !important;
+                font-weight: 600 !important;
+                transition: var(--transition-smooth) !important;
+                font-family: 'Inter', sans-serif !important;
+            }
+
+            .ui-button.ui-state-hover {
+                transform: translateY(-2px) !important;
+                box-shadow: var(--box-shadow-medium) !important;
+            }
+
         </style>
     </ui:define>
 
@@ -689,32 +1205,32 @@
             <h:form id="taskForm" styleClass="task-management-form">
                 <div class="card" style="border: none; box-shadow: none; background: transparent;">
                     <!-- Debug Info -->
-                    <h:outputText value="Debug: Tasks loaded: #{taskManagementBean.activeTasks.size()}" 
-                        style="display:none;" id="debugInfo"/>
+                    <h:outputText value="Debug: Tasks loaded: #{taskManagementBean.activeTasks.size()}"
+                                  style="display:none;" id="debugInfo"/>
 
                     <!-- Empty State for Active Tasks -->
                     <h:panelGroup rendered="#{empty taskManagementBean.activeTasks and not taskManagementBean.showDeactivatedTasks}">
                         <div class="empty-state">
                             <p:graphicImage library="#{appSetting.resourceLib}"
-                                name="images/empty-tasks.svg" />
+                                            name="images/empty-tasks.svg" />
                             <h3 style="color: var(--text-dark); margin: 1.5rem 0 0.8rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;">
                                 #{interfaceLabel.allYourTasksHaveBeenCompleted}</h3>
                             <p style="color: var(--text-color); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; line-height: 1.6;">
                                 You're all caught up with your tasks. Well done!</p>
-                            
+
                             <!-- عرض زر عرض التاسكات المعطلة إذا كان هناك تاسكات معطلة -->
                             <h:panelGroup rendered="#{not empty taskManagementBean.deactivatedTasks}">
                                 <p style="color: var(--text-color); margin: 1rem 0 1.5rem; font-size: 0.95rem;">
                                     You have #{taskManagementBean.deactivatedTasks.size()} deactivated task(s).
                                 </p>
                                 <p:commandButton value="View Deactivated Tasks" icon="pi pi-history"
-                                    action="#{taskManagementBean.showDeactivatedTasks()}" update="taskForm"
-                                    styleClass="deactivated-tasks-button"/>
+                                                 action="#{taskManagementBean.showDeactivatedTasks()}" update="taskForm"
+                                                 styleClass="deactivated-tasks-button"/>
                             </h:panelGroup>
-                            
+
                             <p:commandButton icon="pi pi-refresh"
-                                action="#{taskManagementBean.init()}" update="taskForm"
-                                styleClass="refresh-button-icon" title="Refresh"/>
+                                             action="#{taskManagementBean.init()}" update="taskForm"
+                                             styleClass="refresh-button-icon" title="Refresh"/>
                         </div>
                     </h:panelGroup>
 
@@ -722,20 +1238,20 @@
                     <h:panelGroup rendered="#{empty taskManagementBean.deactivatedTasks and taskManagementBean.showDeactivatedTasks}">
                         <div class="empty-state">
                             <p:graphicImage library="#{appSetting.resourceLib}"
-                                name="images/empty-tasks.svg" />
+                                            name="images/empty-tasks.svg" />
                             <h3 style="color: var(--text-dark); margin: 1.5rem 0 0.8rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif;">
                                 No Deactivated Tasks</h3>
                             <p style="color: var(--text-color); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem; line-height: 1.6;">
                                 You don't have any deactivated tasks at the moment.</p>
                             <p:commandButton value="Return to Active Tasks" icon="pi pi-arrow-left"
-                                action="#{taskManagementBean.hideDeactivatedTasks()}" update="taskForm"
-                                styleClass="refresh-button"/>
+                                             action="#{taskManagementBean.hideDeactivatedTasks()}" update="taskForm"
+                                             styleClass="refresh-button"/>
                         </div>
                     </h:panelGroup>
 
                     <!-- Tasks Display -->
                     <h:panelGroup rendered="#{(not empty taskManagementBean.activeTasks and not taskManagementBean.showDeactivatedTasks) or (not empty taskManagementBean.deactivatedTasks and taskManagementBean.showDeactivatedTasks)}"
-                        styleClass="task-container">
+                                  styleClass="task-container">
 
                         <!-- Header Section -->
                         <div class="section-header">
@@ -744,159 +1260,198 @@
                                     <i class="pi #{taskManagementBean.showDeactivatedTasks ? 'pi-history' : 'pi-check-circle'}"></i>
                                     #{taskManagementBean.showDeactivatedTasks ? 'Deactivated Tasks' : 'My Tasks'}
                                 </h2>
-                                <span class="task-badge ml-3" style="background: #{taskManagementBean.showDeactivatedTasks ? '#6c757d' : 'var(--primary-color)'};">
-                                    #{taskManagementBean.showDeactivatedTasks ? taskManagementBean.deactivatedTasks.size() : taskManagementBean.activeTasks.size()} 
+                                <span class="task-badge ml-3" style="background: #{taskManagementBean.showDeactivatedTasks ? '#64748b' : 'var(--primary-color)'};">
+                                    #{taskManagementBean.showDeactivatedTasks ? taskManagementBean.deactivatedTasks.size() : taskManagementBean.activeTasks.size()}
                                     #{taskManagementBean.showDeactivatedTasks ? 'Deactivated Task(s)' : 'Active Task(s)'}
                                 </span>
                             </div>
-                            
+
                             <div class="d-flex align-items-center">
-								<p:selectOneMenu value="#{taskManagementBean.sortBy}" style="width: 240px"
-								    styleClass="mr-2">
-								    <f:selectItem itemLabel="Sort by Task ID" itemValue="id" />
-								    <f:selectItem itemLabel="Sort by Date (Newest First)" itemValue="date" />
-								    <f:selectItem itemLabel="Sort by Assigner" itemValue="assigner" />
-								    <f:selectItem itemLabel="Sort by Type" itemValue="type" />
-								    <f:selectItem itemLabel="Sort by Priority" itemValue="priority" />
-								    <p:ajax listener="#{taskManagementBean.handleSortChange()}" 
-								            update="@form"
-								            process="@this"/>
-								</p:selectOneMenu>
-                                
+                                <p:selectOneMenu value="#{taskManagementBean.sortBy}" style="width: 240px"
+                                                 styleClass="mr-2">
+                                    <f:selectItem itemLabel="Sort by Task ID" itemValue="id" />
+                                    <f:selectItem itemLabel="Sort by Date (Newest First)" itemValue="date" />
+                                    <f:selectItem itemLabel="Sort by Assigner" itemValue="assigner" />
+                                    <f:selectItem itemLabel="Sort by Type" itemValue="type" />
+                                    <f:selectItem itemLabel="Sort by Correspondence ID" itemValue="correspondence" />
+                                    <f:selectItem itemLabel="Sort by Priority" itemValue="priority" />
+                                    <p:ajax listener="#{taskManagementBean.handleSortChange()}"
+                                            update="@form"
+                                            process="@this"/>
+                                </p:selectOneMenu>
+
                                 <div class="button-group">
                                     <p:commandButton icon="pi pi-refresh"
-                                        action="#{taskManagementBean.init()}" update="taskForm"
-                                        styleClass="refresh-button-icon" title="Refresh"
-                                        rendered="#{not taskManagementBean.showDeactivatedTasks}"/>
-                                        
+                                                     action="#{taskManagementBean.init()}" update="taskForm"
+                                                     styleClass="refresh-button-icon" title="Refresh"
+                                                     rendered="#{not taskManagementBean.showDeactivatedTasks}"/>
+
                                     <p:commandButton value="Deactivated Tasks" icon="pi pi-history"
-                                        action="#{taskManagementBean.showDeactivatedTasks()}" update="taskForm"
-                                        styleClass="deactivated-tasks-button #{taskManagementBean.showDeactivatedTasks ? 'active' : ''}"
-                                        rendered="#{not taskManagementBean.showDeactivatedTasks and not empty taskManagementBean.deactivatedTasks}"/>
-                                        
+                                                     action="#{taskManagementBean.showDeactivatedTasks()}" update="taskForm"
+                                                     styleClass="deactivated-tasks-button #{taskManagementBean.showDeactivatedTasks ? 'active' : ''}"
+                                                     rendered="#{not taskManagementBean.showDeactivatedTasks and not empty taskManagementBean.deactivatedTasks}"/>
+
                                     <p:commandButton value="Return" icon="pi pi-arrow-left"
-                                        action="#{taskManagementBean.hideDeactivatedTasks()}" update="taskForm"
-                                        styleClass="refresh-button"
-                                        rendered="#{taskManagementBean.showDeactivatedTasks}"/>
+                                                     action="#{taskManagementBean.hideDeactivatedTasks()}" update="taskForm"
+                                                     styleClass="refresh-button"
+                                                     rendered="#{taskManagementBean.showDeactivatedTasks}"/>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Tasks List -->
+                        <!-- Tasks List (Grouped by Correspondence) -->
                         <div class="task-list">
-                            <ui:repeat value="#{taskManagementBean.showDeactivatedTasks ? taskManagementBean.deactivatedTasks : taskManagementBean.activeTasks}" var="task" varStatus="status">
-                                <div class="task-card" style="--task-header-bg: #{task.equipmentCategory != null ? '#06d6a0' : '#ff9e00'}; #{taskManagementBean.showDeactivatedTasks ? 'opacity: 0.85;' : ''}">
-                                    <!-- Due Date Badge -->
-                                    <span class="due-date-badge">
-                                        <i class="pi pi-calendar"></i>
-                                        #{task.createdDate}
-                                    </span>
-                                    
-                                    <!-- Task Header -->
-                                    <div class="task-header">
-                                        <div class="d-flex align-items-center">
-                                            <span class="task-type-badge">
-                                                #{task.serviceType.name}
-                                            </span>
-                                            
-                                            <!-- Delay Indicator -->
-                                            <h:panelGroup rendered="#{taskManagementBean.calculateTaskDelay(task.createdDate) != 0}">
-                                                <span class="delay-indicator #{taskManagementBean.getDelaySeverity(task.createdDate)}">
-                                                    <i class="pi #{taskManagementBean.calculateTaskDelay(task.createdDate) gt 0 ? 'pi-clock' : 'pi-calendar-plus'} delay-icon"></i>
-                                                    #{taskManagementBean.getDelayDescription(task.createdDate)}
+                            <ui:repeat value="#{taskManagementBean.groupedTasksByCorrespondence.keySet().toArray()}" var="groupKey" varStatus="gstatus">
+                                <!-- Using p:panel to enable collapse/expand per group -->
+                                <p:panel widgetVar="grpPanel#{gstatus.index}"
+                                         toggleable="true"
+                                         toggleSpeed="300"
+                                         styleClass="group-panel"
+                                         style="margin-bottom:2.5rem; border-radius:16px; overflow:hidden; box-shadow:var(--box-shadow-medium);"
+                                         header="#{groupKey} (#{fn:length(taskManagementBean.groupedTasksByCorrespondence[groupKey])} tasks)">
+                                    <f:facet name="header">
+                                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                            <div style="display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;">
+                                                <i class="pi pi-id-card" style="font-size:1.3rem; color: white;"></i>
+                                                <div style="line-height:1;">
+                                                    <div style="font-weight:700; font-family:'Plus Jakarta Sans'; color: white; font-size:1.2rem;">
+                                                        <!-- عرض Work Order number : <id> إن كان هناك id، وإلا عرض النص الافتراضي -->
+                                                        <h:panelGroup>
+                                                            <h:outputText value="Work Order number : " rendered="#{groupKey ne 'No Correspondence'}" />
+                                                            <h:outputText value="#{groupKey}" />
+                                                        </h:panelGroup>
+                                                    </div>
+                                                    <div style="font-size:0.95rem; opacity:0.9; color: white; margin-top:0.3rem;">
+                                                        #{fn:length(taskManagementBean.groupedTasksByCorrespondence[groupKey])} task(s)
+                                                    </div>
+                                                </div>
+
+                                                <!-- إضافة تاريخ المجموعة بدون وقت -->
+                                                <h:panelGroup rendered="#{not empty taskManagementBean.groupedTasksByCorrespondence[groupKey]}">
+                                                    <div class="group-date-badge">
+                                                        <i class="pi pi-calendar"></i>
+                                                        <h:outputText value="#{taskManagementBean.groupedTasksByCorrespondence[groupKey][0].createdDate}">
+                                                            <f:convertDateTime pattern="MMM dd, yyyy" />
+                                                        </h:outputText>
+                                                    </div>
+                                                </h:panelGroup>
+                                            </div>
+
+                                            <div style="display:flex; align-items:center; gap:0.6rem;">
+                                                <button type="button" onclick="(function(k){ if(k &amp;&amp; k !== 'No Correspondence'){ navigator.clipboard.writeText(k).then(()=>{ PF('growl').show([{severity:'info', summary:'Copied', detail:'Copied '+k}]); }); } })( '#{groupKey}' )"
+                                                        class="refresh-button-icon" title="Copy group key" style="background:transparent; border:1px solid rgba(255,255,255,0.12); color:white; width:40px; height:40px;">
+                                                    <i class="pi pi-copy"></i>
+                                                </button>
+                                                <button type="button"
+                                                        onclick="PF('grpPanel#{gstatus.index}').toggle();"
+                                                        class="refresh-button-icon"
+                                                        title="Collapse/Expand"
+                                                        style="background:transparent; border:1px solid rgba(255,255,255,0.12); color:white; width:40px; height:40px;">
+                                                    <i class="pi pi-chevron-down"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </f:facet>
+
+
+                                    <!-- Group Body: list of tasks inside this correspondence -->
+                                    <div style="padding:1rem; display:flex; flex-direction:column; gap:1.2rem; background: #ffffff;">
+                                        <ui:repeat value="#{taskManagementBean.groupedTasksByCorrespondence[groupKey]}" var="task" varStatus="status">
+                                            <!-- compact task card -->
+                                            <div class="task-card" style="--task-header-bg: #{task.equipmentCategory != null ? '#10b981' : '#f97316'}; margin:0;">
+                                                <span class="due-date-badge" style="right:1rem; top:0.8rem;">
+                                                    <i class="pi pi-calendar"></i>
+                                                    <h:outputText value="#{task.createdDate}">
+                                                        <f:convertDateTime pattern="MMM dd, yyyy" />
+                                                    </h:outputText>
                                                 </span>
-                                            </h:panelGroup>
-                                            
-                                            <!-- Deactivated Badge -->
-                                            <h:panelGroup rendered="#{taskManagementBean.showDeactivatedTasks}">
-                                                <span class="delay-indicator delay-critical">
-                                                    <i class="pi pi-ban delay-icon"></i>
-                                                    Deactivated
-                                                </span>
-                                            </h:panelGroup>
-                                        </div>
-                                        
-                                        <!-- Task Controls -->
-                                        <div class="task-controls" style="display: flex; align-items: center; gap: 10px;">
-                                            <p:commandButton icon="pi pi-eye"
-                                                rendered="#{task.equipmentCategory != null and not taskManagementBean.showDeactivatedTasks}"
-                                                actionListener="#{inspectionFormBean.defineEquipmentCategoryByCode(task.id, task.equipmentCategory.code)}"
-                                                action="pretty:inspection/equipment/form" process="@this"
-                                                title="View Details"
-                                                styleClass="view-button"/>
-                                            
-                                            <p:commandButton icon="pi pi-eye"
-                                                rendered="#{task.equipmentCategory == null and not taskManagementBean.showDeactivatedTasks}"
-                                                actionListener="#{empCertificationBean.assignCert(task.id)}"
-                                                action="pretty:employee/training" process="@this"
-                                                title="View Details"
-                                                styleClass="view-button"/>
-                                                
-                                            <!-- Reactivate Button for Deactivated Tasks -->
-                                            <p:commandButton value="Reactivate" icon="pi pi-refresh"
-                                                action="#{taskManagementBean.updateTaskStatus(task.id, 1)}"
-                                                update="taskForm"
-                                                title="Reactivate Task"
-                                                styleClass="refresh-button"
-                                                rendered="#{taskManagementBean.showDeactivatedTasks}"/>
-                                        </div>
-                                    </div>
 
-                                    <!-- Task Content -->
-                                    <div class="task-content">
-                                        <!-- Progress Bar -->
-                                        <div class="task-progress-bar">
-                                            <div class="task-progress #{taskManagementBean.getDelaySeverity(task.createdDate).replace('delay', 'progress')}" 
-                                                 style="width: #{taskManagementBean.getProgressPercentage(task.createdDate)}"></div>
-                                        </div>
-                                        
-                                        <div class="task-info-item">
-                                            <i class="pi pi-user"></i>
-                                            <strong>Assigned by:</strong> 
-                                            #{task.userAliasByAssigner.sysUserBySysUser.fullName}
-                                        </div>
-                                        
-                                        <div class="task-info-item">
-                                            <i class="pi pi-calendar"></i>
-                                            <strong>Date:</strong> 
-                                            #{taskManagementBean.getFormattedTaskDate(task.createdDate)}
-                                        </div>
-                                        
-                                        <div class="task-info-item">
-                                            <i class="pi pi-building"></i>
-                                            <strong>Company:</strong> 
-                                            #{task.company.name}
-                                        </div>
+                                                <div class="task-header" style="padding:1rem 1.2rem;">
+                                                    <div class="d-flex align-items-center" style="gap:0.8rem;">
+                                                        <span class="task-type-badge">#{task.serviceType.name}</span>
 
-                                        <div class="task-description">
-                                            <i class="pi pi-file" style="margin-right: 0.6rem;"></i>
-                                            #{task.taskDescription}
-                                        </div>
-                                    </div>
+                                                        <h:panelGroup rendered="#{taskManagementBean.calculateTaskDelay(task.createdDate) != 0}">
+                                                            <span class="delay-indicator #{taskManagementBean.getDelaySeverity(task.createdDate)}">
+                                                                <i class="pi #{taskManagementBean.calculateTaskDelay(task.createdDate) gt 0 ? 'pi-clock' : 'pi-calendar-plus'} delay-icon"></i>
+                                                                #{taskManagementBean.getDelayDescription(task.createdDate)}
+                                                            </span>
+                                                        </h:panelGroup>
 
-                                    <!-- Task Footer -->
-                                    <div class="task-footer">
-                                        <div class="task-id-container">
-                                            <small style="color: var(--text-color); font-size: 0.9rem;">
-                                                <i class="pi pi-id-card" style="margin-right: 0.6rem; color: var(--primary-color);"></i>
-                                                Task ID: #{task.id}
-                                            </small>
-                                            
-                                            <!-- زر Deactivate -->
-                                            <p:commandButton value="Deactivate" icon="pi pi-times-circle"
-                                                action="#{taskManagementBean.updateTaskStatus(task.id, 0)}"
-                                                update="taskForm"
-                                                title="Deactivate Task"
-                                                styleClass="deactivate-tag"
-                                                oncomplete="PF('taskDeactivatedDialog').show()"
-                                                rendered="#{not taskManagementBean.showDeactivatedTasks}"/>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <p:tag value="#{task.equipmentCategory != null ? 'Equipment Inspection' : 'Training Certification'}"
-                                                severity="#{task.equipmentCategory != null ? 'success' : 'warning'}" />
-                                        </div>
+                                                        <h:panelGroup rendered="#{taskManagementBean.showDeactivatedTasks}">
+                                                            <span class="delay-indicator delay-critical">
+                                                                <i class="pi pi-ban delay-icon"></i> Deactivated
+                                                            </span>
+                                                        </h:panelGroup>
+                                                    </div>
+
+                                                    <div class="task-controls" style="display:flex; align-items:center; gap:12px;">
+                                                        <p:commandButton icon="pi pi-eye" rendered="#{task.equipmentCategory != null and not taskManagementBean.showDeactivatedTasks}"
+                                                                         actionListener="#{inspectionFormBean.defineEquipmentCategoryByCode(task.id, task.equipmentCategory.code)}"
+                                                                         action="pretty:inspection/equipment/form" process="@this"
+                                                                         title="View Details" styleClass="view-button"/>
+                                                        <p:commandButton icon="pi pi-eye" rendered="#{task.equipmentCategory == null and not taskManagementBean.showDeactivatedTasks}"
+                                                                         actionListener="#{empCertificationBean.assignCert(task.id)}"
+                                                                         action="pretty:employee/training" process="@this"
+                                                                         title="View Details" styleClass="view-button"/>
+                                                        <p:commandButton value="Reactivate" icon="pi pi-refresh" action="#{taskManagementBean.updateTaskStatus(task.id, 1)}"
+                                                                         update="taskForm" title="Reactivate Task" styleClass="refresh-button"
+                                                                         rendered="#{taskManagementBean.showDeactivatedTasks}"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="task-content" style="padding:1.2rem;">
+                                                    <div class="task-progress-bar">
+                                                        <div class="task-progress #{taskManagementBean.getDelaySeverity(task.createdDate).replace('delay','progress')}"
+                                                             style="width: #{taskManagementBean.getProgressPercentage(task.createdDate)}"></div>
+                                                    </div>
+
+                                                    <div class="task-info-item">
+                                                        <i class="pi pi-user"></i>
+                                                        <strong>Assigned by:</strong>
+                                                        #{task.userAliasByAssigner.sysUserBySysUser.fullName}
+                                                    </div>
+
+                                                    <div class="task-info-item">
+                                                        <i class="pi pi-calendar"></i>
+                                                        <strong>Date:</strong>
+                                                        <h:outputText value="#{task.createdDate}">
+                                                            <f:convertDateTime pattern="MMM dd, yyyy" />
+                                                        </h:outputText>
+                                                    </div>
+
+                                                    <div class="task-info-item">
+                                                        <i class="pi pi-building"></i>
+                                                        <strong>Company:</strong>
+                                                        #{task.company.name}
+                                                    </div>
+
+                                                    <div class="task-description">
+                                                        <i class="pi pi-file" style="margin-right:0.6rem;"></i>
+                                                        #{task.taskDescription}
+                                                    </div>
+                                                </div>
+
+                                                <div class="task-footer" style="padding:1rem 1.2rem;">
+                                                    <div class="task-id-container">
+                                                        <small style="color:var(--text-color); font-size:0.9rem;">
+                                                            <i class="pi pi-id-card" style="margin-right:0.6rem; color:var(--primary-color);"></i>
+                                                            Task ID: #{task.id}
+                                                        </small>
+
+                                                        <p:commandButton value="Deactivate" icon="pi pi-times-circle"
+                                                                         action="#{taskManagementBean.updateTaskStatus(task.id, 0)}"
+                                                                         update="taskForm" title="Deactivate Task" styleClass="deactivate-tag"
+                                                                         oncomplete="PF('taskDeactivatedDialog').show()" rendered="#{not taskManagementBean.showDeactivatedTasks}"/>
+                                                    </div>
+                                                    <div class="d-flex align-items-center">
+                                                        <p:tag value="#{task.equipmentCategory != null ? 'Equipment Inspection' : 'Training Certification'}"
+                                                               severity="#{task.equipmentCategory != null ? 'success' : 'warning'}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ui:repeat>
                                     </div>
-                                </div>
+                                </p:panel>
                             </ui:repeat>
                         </div>
 
@@ -906,22 +1461,17 @@
                                 <i class="pi pi-bolt mr-2" style="color: var(--accent-color);"></i> Quick Actions
                             </h4>
                             <div class="d-flex flex-wrap gap-2">
-								
-							
                                 <p:commandButton value="Export Tasks" icon="pi pi-download"
-                                    action="#{taskManagementBean.exportToExcel}" ajax="false"
-                                    styleClass="quick-action-button"/>
-
-
-
+                                                 action="#{taskManagementBean.exportToExcel}" ajax="false"
+                                                 styleClass="quick-action-button"/>
                             </div>
                         </div>
                     </h:panelGroup>
                 </div>
-                
+
                 <!-- Dialog لتأكيد إلغاء التاسك -->
                 <p:dialog widgetVar="taskDeactivatedDialog" header="Task Deactivated" modal="true" draggable="false" resizable="false"
-                    style="border-radius: 16px; overflow: hidden; font-family: 'Inter', sans-serif;">
+                          style="border-radius: 16px; overflow: hidden; font-family: 'Inter', sans-serif;">
                     <div class="p-4 text-center">
                         <i class="pi pi-check-circle" style="font-size: 3rem; color: var(--success-color);"></i>
                         <h3 class="mt-3" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;">Task has been deactivated successfully</h3>

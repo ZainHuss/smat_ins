@@ -46,6 +46,9 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Named
@@ -60,6 +63,8 @@ public class TaskManagementBean implements Serializable {
     private String sortBy = "id";
     private boolean showOnlyDelayedTasks = false;
     private boolean showDeactivatedTasks = false; // لعرض المهام المعطلة بدلاً من النشطة
+    // filter by correspondence id (optional)
+    private Long correspondenceIdFilter;
 
     @Inject
     private LoginBean loginBean;
@@ -77,7 +82,7 @@ public class TaskManagementBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
-        	
+
             System.out.println("=== TASK MANAGEMENT BEAN INIT ===");
             this.sortBy = "id";
             loadAndSortTasks();
@@ -104,20 +109,28 @@ public class TaskManagementBean implements Serializable {
         System.out.println("Current user ID: " + loginBean.getUser().getId());
         System.out.println("User permissions - 010: " + loginBean.hasSysPermission("010"));
         System.out.println("User permissions - 011: " + loginBean.hasSysPermission("011"));
-        
+
         List<UserAlias> myUserAliases = userAliasService.getBySysUser(loginBean.getUser());
         System.out.println("User aliases found: " + myUserAliases.size());
-        
+
         for (UserAlias userAlias : myUserAliases) {
             System.out.println("Processing alias ID: " + userAlias.getId());
-            
+
             if (loginBean.hasSysPermission("010")) {
-                List<Task> initialTasks = taskService.getListIntialTaskByRecepient(userAlias.getId());
-                List<Task> initialEmpTasks = taskService.getListIntialEmpTaskByRecepient(userAlias.getId());
-                
+                List<Task> initialTasks;
+                List<Task> initialEmpTasks;
+                if (correspondenceIdFilter != null) {
+                    // use the correspondence-scoped retrieval
+                    initialTasks = taskService.getListInitialTaskByCorrespondence(correspondenceIdFilter, userAlias.getId());
+                    initialEmpTasks = taskService.getListInitialEmpTaskByCorrespondence(correspondenceIdFilter, userAlias.getId());
+                } else {
+                    initialTasks = taskService.getListIntialTaskByRecepient(userAlias.getId());
+                    initialEmpTasks = taskService.getListIntialEmpTaskByRecepient(userAlias.getId());
+                }
+
                 System.out.println("Initial tasks: " + initialTasks.size());
                 System.out.println("Initial emp tasks: " + initialEmpTasks.size());
-                
+
                 // تحقق من حالة is_active لكل مهمة
                 for (Task task : initialTasks) {
                     System.out.println("Initial Task ID: " + task.getId() + ", Active: " + task.getIs_active());
@@ -125,32 +138,61 @@ public class TaskManagementBean implements Serializable {
                 for (Task task : initialEmpTasks) {
                     System.out.println("Initial Emp Task ID: " + task.getId() + ", Active: " + task.getIs_active());
                 }
-                
+
                 tasks.addAll(initialTasks);
                 tasks.addAll(initialEmpTasks);
             }
-            
+
             if (loginBean.hasSysPermission("011")) {
-                List<Task> reviewedTasks = taskService.getListReviewedTask(loginBean.getUser().getId());
-                List<Task> reviewedEmpTasks = taskService.getListReviewedEmpTask(loginBean.getUser().getId());
-                
+                List<Task> reviewedTasks;
+                List<Task> reviewedEmpTasks;
+                if (correspondenceIdFilter != null) {
+                    reviewedTasks = taskService.getListReviewdTaskByCorrespondence(correspondenceIdFilter, loginBean.getUser().getId());
+                    reviewedEmpTasks = taskService.getListReviewdEmpTaskByCorrespondence(correspondenceIdFilter, loginBean.getUser().getId());
+                } else {
+                    reviewedTasks = taskService.getListReviewedTask(loginBean.getUser().getId());
+                    reviewedEmpTasks = taskService.getListReviewedEmpTask(loginBean.getUser().getId());
+                }
+
                 System.out.println("Reviewed tasks: " + reviewedTasks.size());
                 System.out.println("Reviewed emp tasks: " + reviewedEmpTasks.size());
-                
+
                 for (Task task : reviewedTasks) {
                     System.out.println("Reviewed Task ID: " + task.getId() + ", Active: " + task.getIs_active());
                 }
                 for (Task task : reviewedEmpTasks) {
                     System.out.println("Reviewed Emp Task ID: " + task.getId() + ", Active: " + task.getIs_active());
                 }
-                
+
                 tasks.addAll(reviewedTasks);
                 tasks.addAll(reviewedEmpTasks);
             }
         }
-        
+
         System.out.println("Total tasks loaded: " + tasks.size());
         System.out.println("=== END LOADING TASKS ===");
+    }
+
+    // apply correspondence filter and reload tasks
+    public void applyCorrespondenceFilter() {
+        try {
+            System.out.println("Applying correspondence filter: " + correspondenceIdFilter);
+            loadAndSortTasks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Clear the correspondence filter and reload tasks
+     */
+    public void clearCorrespondenceFilter() {
+        this.correspondenceIdFilter = null;
+        try {
+            loadAndSortTasks();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -159,15 +201,15 @@ public class TaskManagementBean implements Serializable {
     private void filterActiveTasks() {
         System.out.println("=== FILTERING ACTIVE TASKS ===");
         System.out.println("Total tasks before filter: " + tasks.size());
-        
+
         activeTasks = tasks.stream()
-                          .filter(task -> {
-                              boolean isActive = task.getIs_active() != null && task.getIs_active();
-                              System.out.println("Task ID: " + task.getId() + ", isActive: " + isActive);
-                              return isActive;
-                          })
-                          .collect(Collectors.toList());
-        
+                .filter(task -> {
+                    boolean isActive = task.getIs_active() != null && task.getIs_active();
+                    System.out.println("Task ID: " + task.getId() + ", isActive: " + isActive);
+                    return isActive;
+                })
+                .collect(Collectors.toList());
+
         System.out.println("Active tasks after filter: " + activeTasks.size());
         System.out.println("=== END FILTERING ===");
     }
@@ -178,15 +220,15 @@ public class TaskManagementBean implements Serializable {
     private void filterDeactivatedTasks() {
         System.out.println("=== FILTERING DEACTIVATED TASKS ===");
         System.out.println("Total tasks before filter: " + tasks.size());
-        
+
         deactivatedTasks = tasks.stream()
-                               .filter(task -> {
-                                   boolean isDeactivated = task.getIs_active() != null && !task.getIs_active();
-                                   System.out.println("Task ID: " + task.getId() + ", isDeactivated: " + isDeactivated);
-                                   return isDeactivated;
-                               })
-                               .collect(Collectors.toList());
-        
+                .filter(task -> {
+                    boolean isDeactivated = task.getIs_active() != null && !task.getIs_active();
+                    System.out.println("Task ID: " + task.getId() + ", isDeactivated: " + isDeactivated);
+                    return isDeactivated;
+                })
+                .collect(Collectors.toList());
+
         System.out.println("Deactivated tasks after filter: " + deactivatedTasks.size());
         System.out.println("=== END FILTERING ===");
     }
@@ -196,25 +238,30 @@ public class TaskManagementBean implements Serializable {
         if (tasksToSort == null || tasksToSort.isEmpty()) return;
 
         switch (sortBy) {
-           case "id": 
-               tasksToSort.sort(Comparator.comparingInt(Task::getId).reversed());
-               break;
+            case "id":
+                tasksToSort.sort(Comparator.comparingInt(Task::getId).reversed());
+                break;
+            case "correspondence":
+                // sort by first associated correspondence id (descending). Nulls last.
+                tasksToSort.sort(Comparator.comparing((Task t) -> getFirstCorrespondenceId(t),
+                        Comparator.nullsLast(Long::compareTo)).reversed());
+                break;
             case "date":
                 tasksToSort.sort(Comparator.comparing(Task::getCreatedDate).reversed());
                 break;
             case "assigner":
                 tasksToSort.sort(Comparator.comparing(
-                    task -> task.getUserAliasByAssigner().getSysUserBySysUser().getFullName()));
+                        task -> task.getUserAliasByAssigner().getSysUserBySysUser().getFullName()));
                 break;
             case "type":
                 tasksToSort.sort(Comparator.comparing(
-                    task -> task.getServiceType().getName()));
+                        task -> task.getServiceType().getName()));
                 break;
             case "priority":
                 tasksToSort.sort(Comparator
-                    .comparingInt((Task task) -> calculateTaskDelay(task.getCreatedDate()))
-                    .reversed()
-                    .thenComparing(Task::getCreatedDate).reversed());
+                        .comparingInt((Task task) -> calculateTaskDelay(task.getCreatedDate()))
+                        .reversed()
+                        .thenComparing(Task::getCreatedDate).reversed());
                 break;
         }
     }
@@ -225,18 +272,43 @@ public class TaskManagementBean implements Serializable {
     }
 
     /**
+     * Return the id of the first linked Correspondence for a Task, or null if none.
+     */
+    private Long getFirstCorrespondenceId(Task t) {
+        if (t == null) return null;
+        try {
+            if (t.getCorrespondenceTasks() != null && !t.getCorrespondenceTasks().isEmpty()) {
+                // correspondenceTasks may be a Set - pick first entry
+                for (Object o : t.getCorrespondenceTasks()) {
+                    try {
+                        com.smat.ins.model.entity.CorrespondenceTask ct = (com.smat.ins.model.entity.CorrespondenceTask) o;
+                        if (ct != null && ct.getCorrespondence() != null && ct.getCorrespondence().getId() != null) {
+                            return ct.getCorrespondence().getId();
+                        }
+                    } catch (Exception ignore) {
+                        // continue
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore lazy-loading issues here
+        }
+        return null;
+    }
+
+    /**
      * Calculates the delay in days for a task
      * @param taskDate The creation date of the task
      * @return Number of days delayed (positive if delayed, 0 if on time, negative if still has time)
      */
     public int calculateTaskDelay(Date taskDate) {
         if (taskDate == null) return 0;
-        
+
         LocalDate createdDate = taskDate.toInstant()
-                                  .atZone(ZoneId.systemDefault())
-                                  .toLocalDate();
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
         LocalDate currentDate = LocalDate.now();
-        
+
         return (int) ChronoUnit.DAYS.between(createdDate, currentDate);
     }
 
@@ -247,10 +319,10 @@ public class TaskManagementBean implements Serializable {
      */
     public String getProgressPercentage(Timestamp timestamp) {
         if (timestamp == null) return "0%";
-        
+
         Date taskDate = new Date(timestamp.getTime());
         int delayDays = calculateTaskDelay(taskDate);
-        
+
         // Example calculation - adjust according to your business logic
         int progress = 100 - Math.min(Math.max(delayDays, 0), 100);
         return progress + "%";
@@ -263,7 +335,7 @@ public class TaskManagementBean implements Serializable {
      */
     public String getDelaySeverity(Date taskDate) {
         int delayDays = calculateTaskDelay(taskDate);
-        
+
         if (delayDays <= 0) {
             return "delay-normal";
         } else if (delayDays <= 2) {
@@ -282,7 +354,7 @@ public class TaskManagementBean implements Serializable {
      */
     public String getDelayDescription(Date taskDate) {
         int delayDays = calculateTaskDelay(taskDate);
-        
+
         if (delayDays < 0) {
             return Math.abs(delayDays) + " day" + (Math.abs(delayDays) == 1 ? "" : "s") + " remaining";
         } else if (delayDays == 0) {
@@ -311,7 +383,7 @@ public class TaskManagementBean implements Serializable {
             e.printStackTrace();
         }
     }
-    
+
     public void hideDeactivatedTasks() {
         this.showDeactivatedTasks = false;
         try {
@@ -320,16 +392,16 @@ public class TaskManagementBean implements Serializable {
             e.printStackTrace();
         }
     }
-    
+
     public void updateTaskStatus(int taskId, int status) {
         try {
             taskService.updateTaskStatus(taskId, status);
             init(); // إعادة تحميل المهام
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Task status updated successfully"));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Task status updated successfully"));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, 
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to update task status: " + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to update task status: " + e.getMessage()));
         }
     }
     public void exportToExcel() {
@@ -342,7 +414,7 @@ public class TaskManagementBean implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Export Error", "Failed to export Excel: " + e.getMessage()));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Export Error", "Failed to export Excel: " + e.getMessage()));
         }
     }
     private byte[] buildExcel(List<Task> tasksList) throws IOException {
@@ -476,4 +548,45 @@ public class TaskManagementBean implements Serializable {
         System.out.println("handleSortChange called - sortBy: " + sortBy);
         sortTasks();
     }
+
+    // getter/setter for correspondence filter
+    public Long getCorrespondenceIdFilter() {
+        return correspondenceIdFilter;
+    }
+
+    public void setCorrespondenceIdFilter(Long correspondenceIdFilter) {
+        this.correspondenceIdFilter = correspondenceIdFilter;
+    }
+    /**
+     * Groups current visible tasks (active or deactivated based on showDeactivatedTasks)
+     * by Correspondence ID. Returns a LinkedHashMap to preserve insertion order.
+     * Keys are human-readable (e.g. "Correspondence #123" or "No Correspondence").
+     */
+    public Map<String, List<Task>> getGroupedTasksByCorrespondence() {
+        List<Task> source = showDeactivatedTasks ? deactivatedTasks : activeTasks;
+        if (source == null) return new LinkedHashMap<>();
+
+        Map<Long, List<Task>> rawGroups = source.stream()
+                .collect(Collectors.groupingBy(t -> getFirstCorrespondenceId(t), LinkedHashMap::new, Collectors.toList()));
+
+        LinkedHashMap<String, List<Task>> result = new LinkedHashMap<>();
+        List<Map.Entry<Long, List<Task>>> ordered = rawGroups.entrySet().stream()
+                .sorted((e1, e2) -> {
+                    if (e1.getKey() == null && e2.getKey() == null) return 0;
+                    if (e1.getKey() == null) return 1;
+                    if (e2.getKey() == null) return -1;
+                    return e2.getKey().compareTo(e1.getKey());
+                })
+                .collect(Collectors.toList());
+
+        for (Map.Entry<Long, List<Task>> e : ordered) {
+            Long cid = e.getKey();
+            // هنا نعرض الرقم فقط؛ للمهام بدون correspondence نترك تسمية "No Correspondence"
+            String key = (cid == null) ? "No Correspondence" : String.valueOf(cid);
+            result.put(key, e.getValue());
+        }
+
+        return result;
+    }
+
 } 
