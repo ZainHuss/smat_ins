@@ -2371,7 +2371,8 @@
                                      pt:data-tooltip="#{inspectionFormBean.disabled ? 'Done' : interfaceLabel.save}"
                                      process="@form" action="#{inspectionFormBean.doSave()}"
                                      update="@form" disabled="#{inspectionFormBean.step.equals('03')}"
-                                     styleClass="btn-primary rounded-btn" />
+                                     styleClass="btn-primary rounded-btn"
+                                     outcome="pretty:inspection/my-tasks"/>
 
                     <!-- Return Button - Hazel -->
                     <p:commandButton id="commandButton_return"

@@ -5,11 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -102,6 +98,18 @@ public class CompletedTaskSearchBean implements Serializable {
     private TaskService taskService;
     private OrganizationService organizationService;
 
+    // new field for filtering by Work Order (job number)
+    private String workOrderFilter;
+
+    public String getWorkOrderFilter() {
+        return workOrderFilter;
+    }
+
+    public void setWorkOrderFilter(String workOrderFilter) {
+        this.workOrderFilter = workOrderFilter;
+    }
+
+
     @Inject
     private LoginBean loginBean;
 
@@ -117,7 +125,7 @@ public class CompletedTaskSearchBean implements Serializable {
             empCertificationService=(EmpCertificationService) BeanUtility.getBean("empCertificationService");
             taskService=(TaskService) BeanUtility.getBean("taskService");
             organizationService = (OrganizationService) BeanUtility.getBean("organizationService");
-            
+
             // Build local map for SMAT/usercode -> display name
             buildUserMap();
 
@@ -283,7 +291,6 @@ public class CompletedTaskSearchBean implements Serializable {
                 // This will update tasks (equipment & employee) whose workflow is at '03' and completed_date is NULL
                 completedTaskService.backfillMissingCompletedDates(fromDate, toDate, companyId, equipmentCategoryId);
             } catch (Exception bfEx) {
-                // Log and continue — do not block the search due to backfill error
                 bfEx.printStackTrace();
                 addWarningMessage("Warning: failed to backfill completed dates. Search will proceed but some items may show empty completed date.");
             }
@@ -292,7 +299,6 @@ public class CompletedTaskSearchBean implements Serializable {
             // Perform search (original)
             List<Map<String, Object>> rawResults = completedTaskService.getCompletedTasks(
                     taskTypeFilter, fromDate, toDate, companyId, equipmentCategoryId);
-
 
             // ---- Robust local filtering by Cert Number (if user provided certNumberSearch) ----
             if (certNumberSearch != null && !certNumberSearch.trim().isEmpty() && rawResults != null) {
@@ -303,13 +309,13 @@ public class CompletedTaskSearchBean implements Serializable {
                     if (r == null) continue;
                     boolean match = false;
 
-                    // 1) Direct exact key "Cert Num" (case-sensitive as map keys may be exact)
+                    // 1) Direct exact key "Cert Num"
                     Object v = r.get("Cert Num");
                     if (!match && v != null && String.valueOf(v).toLowerCase().contains(q)) {
                         match = true;
                     }
 
-                    // 2) Try common alternate keys (lower-cased comparison)
+                    // 2) Try common alternate keys
                     if (!match) {
                         String[] altKeys = {"certNumber", "certNo", "cert_num", "certnum", "cert", "reportNo", "report_no", "reportno", "reference", "stickerNo", "stickerno", "sticker"};
                         for (String k : altKeys) {
@@ -321,7 +327,7 @@ public class CompletedTaskSearchBean implements Serializable {
                         }
                     }
 
-                    // 3) Fallback: try to find any key whose name contains "cert" / "report" / "reference" / "sticker"
+                    // 3) Fallback: any key name containing "cert"/"report"/"reference"/"sticker"
                     if (!match) {
                         for (Map.Entry<String, Object> e : r.entrySet()) {
                             String keyName = e.getKey() == null ? "" : String.valueOf(e.getKey()).toLowerCase();
@@ -340,10 +346,6 @@ public class CompletedTaskSearchBean implements Serializable {
                 rawResults = filtered;
             }
             // ---- end certNumber filtering ----
-
-
-
-            // ---- end organization filtering ----
 
             // Prepare the final modifiable list
             searchResults = new ArrayList<>();
@@ -367,7 +369,7 @@ public class CompletedTaskSearchBean implements Serializable {
                             }
                         } catch (Exception ignore) {}
 
-                        // 2) إذا الخريطة تحتوي على SysUser كائن تحت مفتاح متوقع
+                        // 2) SysUser object path
                         if ((organizationName == null || organizationName.isEmpty())) {
                             try {
                                 Object suObj = row.get("sysUser");
@@ -381,7 +383,7 @@ public class CompletedTaskSearchBean implements Serializable {
                             } catch (Exception ignore) {}
                         }
 
-                        // 3) محاولات لاحقة: إن لم ينجح، نستخدم taskId للحصول على النموذج/الشهادة ثم نأخذ org من الـ SysUser المرتبط
+                        // 3) Try to use taskId to find forms/certs for organization
                         if ((organizationName == null || organizationName.isEmpty())) {
                             try {
                                 Object idObj = row.get("taskId");
@@ -424,7 +426,7 @@ public class CompletedTaskSearchBean implements Serializable {
                             } catch (Exception ignore) {}
                         }
 
-                        // 4) أخيراً: استخدم companyName كبديل إن لم نجد organization
+                        // 4) Fallback to companyName
                         if (organizationName == null || organizationName.isEmpty()) {
                             try {
                                 Object comp = row.get("companyName");
@@ -434,7 +436,7 @@ public class CompletedTaskSearchBean implements Serializable {
                             } catch (Exception ignore) {}
                         }
 
-                        // 5) وضع القيمة النهائية (أو '-' إذا لا شيء)
+                        // 5) Put final value
                         row.put("organizationName", (organizationName != null && !organizationName.trim().isEmpty()) ? organizationName : "-");
                         // ---- END: populate organizationName fallback logic ----
 
@@ -451,9 +453,11 @@ public class CompletedTaskSearchBean implements Serializable {
                             }
                         }
 
-                        // ------------------- استدعاء المطابقة/الملء هنا -------------------
+                        // Ensure jobNo / timeSheetNo etc are populated (this will set 'jobNo' key)
                         populateJobAndTimesheet(row, tid);
-                        // --------------------------------------------------------------
+
+                        populateWorkOrder(row, tid);
+
 
                         String inspector = "Not assigned";
                         String reviewer = "Not assigned";
@@ -494,13 +498,11 @@ public class CompletedTaskSearchBean implements Serializable {
                         e.printStackTrace();
                     }
 
-
                     searchResults.add(row);
                     idx++;
                 }
             }
 
-            // Get statistics
             // ---------- Post-process organization filter (apply AFTER we populated organizationName etc) ----------
             if (organizationId != null && searchResults != null && !searchResults.isEmpty()) {
                 String targetOrgName = null;
@@ -524,7 +526,7 @@ public class CompletedTaskSearchBean implements Serializable {
                         keep = true;
                     }
 
-                    // try organizationName (populated earlier while building rows)
+                    // try organizationName
                     if (!keep && targetOrgName != null) {
                         Object orgNameObj = row.get("organizationName");
                         String orgName = orgNameObj == null ? null : String.valueOf(orgNameObj).trim();
@@ -547,9 +549,33 @@ public class CompletedTaskSearchBean implements Serializable {
                 searchResults = filteredResults;
             }
             // ---------- end org post-filter ----------
+
+            // ---- NEW: Apply workOrderFilter AFTER we populated 'jobNo' (and possibly after organization filter) ----
+            if (workOrderFilter != null && !workOrderFilter.trim().isEmpty() && searchResults != null && !searchResults.isEmpty()) {
+                String q = workOrderFilter.trim().toLowerCase();
+                List<Map<String, Object>> wf = new ArrayList<>();
+                    // Prefer an explicit 'workOrder' value (populated from Task->Correspondence or explicit workOrder fields)
+                    // Fall back to jobNo only if workOrder is not present.
+                String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
+                for (Map<String,Object> row : searchResults) {
+                    if (row == null) continue;
+                    String value = "";
+                    for (String k : workOrderKeys) {
+                        Object vv = row.get(k);
+                        if (vv != null && !String.valueOf(vv).trim().isEmpty()) {
+                            value = String.valueOf(vv).trim();
+                            break;
+                        }
+                    }
+                    if (value.toLowerCase().contains(q)) {
+                        wf.add(row);
+                    }
+                }
+                searchResults = wf;
+            }
+            // ---- end workOrder filter ----
+
             statistics = completedTaskService.getTaskCompletionStatistics(fromDate, toDate, companyId);
-
-
 
             searchPerformed = true;
 
@@ -568,53 +594,235 @@ public class CompletedTaskSearchBean implements Serializable {
         }
     }
 
-	
-	/**
-	 * Try to extract organization id from a result row map.
-	 * Looks for numeric keys or Organization instance under common keys.
-	 */
-	@SuppressWarnings("unchecked")
-	private Long extractOrganizationIdFromRow(Map<String, Object> row) {
-	    if (row == null) return null;
-	    // شيفرة مفاتيح شائعة
-	    String[] idKeys = {"organizationId", "organization_id", "orgId", "org_id", "organizationIdLong", "organization", "org"};
-	    for (String k : idKeys) {
-	        try {
-	            Object v = row.get(k);
-	            if (v == null) continue;
-	            if (v instanceof Organization) {
-	                Organization o = (Organization) v;
-	                if (o.getId() != null) return o.getId().longValue();
-	            }
-	            if (v instanceof Number) {
-	                return ((Number) v).longValue();
-	            }
-	            String s = String.valueOf(v).trim();
-	            if (s.matches("^\\d+$")) {
-	                return Long.valueOf(s);
-	            }
-	        } catch (Exception ignore) {}
-	    }
+    /**
+     * Group current searchResults by Work Order (jobNo or alternate keys).
+     * Returns a LinkedHashMap ordered with numeric/alphanumeric work orders first (descending),
+     * and "No Work Order" last.
+     */
+    public Map<String, List<Map<String, Object>>> getGroupedResultsByWorkOrder() {
+        LinkedHashMap<String, List<Map<String, Object>>> groups = new LinkedHashMap<>();
+        if (searchResults == null || searchResults.isEmpty()) return groups;
 
-	    // فحص احتياطي: أي حقل اسمه يحتوي "org" أو "organization"
-	    for (Map.Entry<String, Object> e : row.entrySet()) {
-	        try {
-	            String key = e.getKey() == null ? "" : e.getKey().toLowerCase();
-	            if (key.contains("org") || key.contains("organization") || key.contains("org_id")) {
-	                Object v = e.getValue();
-	                if (v instanceof Number) return ((Number) v).longValue();
-	                String s = String.valueOf(v).trim();
-	                if (s.matches("^\\d+$")) return Long.valueOf(s);
-	            }
-	        } catch (Exception ignore) {}
-	    }
+    // Prefer 'workOrder' (may contain correspondence id set earlier) before falling back to jobNo
+    String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
 
-	    return null;
-	}
+        // collect groups (unsorted)
+        for (Map<String, Object> row : searchResults) {
+            if (row == null) continue;
+            String wo = null;
+            for (String k : workOrderKeys) {
+                Object v = row.get(k);
+                if (v != null && !String.valueOf(v).trim().isEmpty()) {
+                    wo = String.valueOf(v).trim();
+                    break;
+                }
+            }
+            if (wo == null || wo.isEmpty()) wo = "No Work Order";
+
+            List<Map<String, Object>> list = groups.get(wo);
+            if (list == null) {
+                list = new ArrayList<>();
+                groups.put(wo, list);
+            }
+            list.add(row);
+        }
+
+        // sort groups: put non-"No Work Order" first (attempt numeric desc where possible), "No Work Order" last
+        List<Map.Entry<String, List<Map<String, Object>>>> entries = new ArrayList<>(groups.entrySet());
+        entries.sort((e1, e2) -> {
+            String k1 = e1.getKey();
+            String k2 = e2.getKey();
+            // keep "No Work Order" last
+            if ("No Work Order".equals(k1) && "No Work Order".equals(k2)) return 0;
+            if ("No Work Order".equals(k1)) return 1;
+            if ("No Work Order".equals(k2)) return -1;
+
+            // try numeric compare
+            try {
+                long n1 = Long.parseLong(k1.replaceAll("[^0-9]", ""));
+                long n2 = Long.parseLong(k2.replaceAll("[^0-9]", ""));
+                return Long.compare(n2, n1); // descending
+            } catch (Exception ex) {
+                // fallback to string compare descending
+                return k2.compareTo(k1);
+            }
+        });
+
+        LinkedHashMap<String, List<Map<String, Object>>> sorted = new LinkedHashMap<>();
+        for (Map.Entry<String, List<Map<String, Object>>> e : entries) {
+            sorted.put(e.getKey(), e.getValue());
+        }
+        return sorted;
+    }
+    /**
+     * Try to extract a String value by trying several getter method names via reflection.
+     * Returns null if no getter found or invocation fails / returns null/empty.
+     */
+    private String extractStringUsingReflection(Object obj, String[] candidateGetters) {
+        if (obj == null) return null;
+        for (String getter : candidateGetters) {
+            try {
+                java.lang.reflect.Method m = null;
+                try {
+                    m = obj.getClass().getMethod(getter);
+                } catch (NoSuchMethodException nsme) {
+                    // try property-style "get" + capitalized field if not exact provided
+                    // but we assume candidateGetters already are method names like "getWorkOrderNumber"
+                }
+                if (m != null) {
+                    Object val = m.invoke(obj);
+                    if (val != null) {
+                        String s = String.valueOf(val).trim();
+                        if (!s.isEmpty()) return s;
+                    }
+                }
+            } catch (Exception e) {
+                // ignore and try next candidate
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Ensure the result row contains a normalized 'workOrder' key.
+     * Search order:
+     *  1) existing keys in the row (common names)
+     *  2) try Task entity via taskService
+     *  3) try EquipmentInspectionForm via equipmentInspectionFormService
+     *  4) try EmpCertification via empCertificationService
+     * If nothing found, put "No Work Order".
+     */
+    private void populateWorkOrder(Map<String, Object> row, Integer taskId) {
+        if (row == null) return;
+
+    // 1) try common keys already present in the row
+    // Note: do NOT treat jobNo as a direct synonym for workOrder here - keep jobNo as a separate field.
+    // This avoids showing job number when an explicit work order value exists or should be shown.
+    String[] candidateKeys = {"workOrder", "workOrderNo", "workOrderNumber", "work_order_no", "work_order", "woNumber", "wo_no"};
+        for (String k : candidateKeys) {
+            try {
+                Object v = row.get(k);
+                if (v != null && !String.valueOf(v).trim().isEmpty()) {
+                    row.put("workOrder", String.valueOf(v).trim());
+                    return;
+                }
+            } catch (Exception ignore) {}
+        }
+
+        // 2) if still missing, try to extract from Task entity, EquipmentInspectionForm, EmpCertification using reflection
+        String[] getters = new String[] {
+                "getWorkOrderNumber", "getWorkOrderNo", "getWorkOrder", "getWoNumber", "getWoNo", "getWorkOrderNum"
+        };
+
+        // try Task
+        try {
+            if (taskId != null) {
+                Task t = null;
+                try { t = taskService.findById(taskId); } catch (Exception ignore) {}
+                if (t != null) {
+                    String val = extractStringUsingReflection(t, getters);
+                    if (val != null) { row.put("workOrder", val); return; }
+                    // If Task does not expose a workOrder property, try to use its first related Correspondence id
+                    try {
+                        if (t.getCorrespondenceTasks() != null && !t.getCorrespondenceTasks().isEmpty()) {
+                            for (Object o : t.getCorrespondenceTasks()) {
+                                try {
+                                    com.smat.ins.model.entity.CorrespondenceTask ct = (com.smat.ins.model.entity.CorrespondenceTask) o;
+                                    if (ct != null && ct.getCorrespondence() != null && ct.getCorrespondence().getId() != null) {
+                                        // Use correspondence id as the displayed "workOrder" (matches TaskManagementBean behavior)
+                                        row.put("workOrder", String.valueOf(ct.getCorrespondence().getId()));
+                                        return;
+                                    }
+                                } catch (Exception ignoreCt) {
+                                    // continue to next
+                                }
+                            }
+                        }
+                    } catch (Exception ignoreAll) {}
+                }
+            }
+        } catch (Exception ignore) {}
+
+        // try EquipmentInspectionForm
+        try {
+            if (taskId != null) {
+                EquipmentInspectionForm form = null;
+                try { form = equipmentInspectionFormService.getBy(taskId); } catch (Exception ignore) {}
+                if (form != null) {
+                    String val = extractStringUsingReflection(form, getters);
+                    if (val != null) { row.put("workOrder", val); return; }
+                }
+            }
+        } catch (Exception ignore) {}
+
+        // try EmpCertification
+        try {
+            if (taskId != null) {
+                EmpCertification cert = null;
+                try { cert = empCertificationService.getBy(taskId); } catch (Exception ignore) {}
+                if (cert != null) {
+                    String val = extractStringUsingReflection(cert, getters);
+                    if (val != null) { row.put("workOrder", val); return; }
+                }
+            }
+        } catch (Exception ignore) {}
+
+        // final fallback
+        row.put("workOrder", "No Work Order");
+    }
 
 
 
-    
+
+
+
+    /**
+     * Try to extract organization id from a result row map.
+     * Looks for numeric keys or Organization instance under common keys.
+     */
+    @SuppressWarnings("unchecked")
+    private Long extractOrganizationIdFromRow(Map<String, Object> row) {
+        if (row == null) return null;
+        // شيفرة مفاتيح شائعة
+        String[] idKeys = {"organizationId", "organization_id", "orgId", "org_id", "organizationIdLong", "organization", "org"};
+        for (String k : idKeys) {
+            try {
+                Object v = row.get(k);
+                if (v == null) continue;
+                if (v instanceof Organization) {
+                    Organization o = (Organization) v;
+                    if (o.getId() != null) return o.getId().longValue();
+                }
+                if (v instanceof Number) {
+                    return ((Number) v).longValue();
+                }
+                String s = String.valueOf(v).trim();
+                if (s.matches("^\\d+$")) {
+                    return Long.valueOf(s);
+                }
+            } catch (Exception ignore) {}
+        }
+
+        // فحص احتياطي: أي حقل اسمه يحتوي "org" أو "organization"
+        for (Map.Entry<String, Object> e : row.entrySet()) {
+            try {
+                String key = e.getKey() == null ? "" : e.getKey().toLowerCase();
+                if (key.contains("org") || key.contains("organization") || key.contains("org_id")) {
+                    Object v = e.getValue();
+                    if (v instanceof Number) return ((Number) v).longValue();
+                    String s = String.valueOf(v).trim();
+                    if (s.matches("^\\d+$")) return Long.valueOf(s);
+                }
+            } catch (Exception ignore) {}
+        }
+
+        return null;
+    }
+
+
+
+
     public String getReviewerTask(Integer taskId) {
         try {
             if (taskId == null) return "Not assigned";
@@ -677,7 +885,7 @@ public class CompletedTaskSearchBean implements Serializable {
             return "Not assigned";
         }
     }
-	
+
 
 
     public void doPrint(Integer certId) {
@@ -758,30 +966,30 @@ public class CompletedTaskSearchBean implements Serializable {
 
 
 
-	 // helper (إذا ليس موجود مسبقاً في هذا الكلاس)
-	 private String safeString(Object o) {
-	     return o == null ? "" : String.valueOf(o);
-	 }
+    // helper (إذا ليس موجود مسبقاً في هذا الكلاس)
+    private String safeString(Object o) {
+        return o == null ? "" : String.valueOf(o);
+    }
 
 
-	 private String getServletContextPath(String relativePath) {
-	        return ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(relativePath);
-	    }
+    private String getServletContextPath(String relativePath) {
+        return ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getRealPath(relativePath);
+    }
 
-	    private void exportReport(JasperPrint jasperPrint, String reportName) throws IOException, JRException {
-	        FacesContext facesContext = FacesContext.getCurrentInstance();
-	        ExternalContext externalContext = facesContext.getExternalContext();
-	        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-	        try (ServletOutputStream servletOutputStream = response.getOutputStream()) {
-	            response.setContentType("application/pdf");
-	            response.setHeader("Content-disposition", "inline; filename=" + reportName + "_" + System.currentTimeMillis() + ".pdf");
-	            JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
-	            facesContext.responseComplete();
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            throw e;
-	        }
-	    }
+    private void exportReport(JasperPrint jasperPrint, String reportName) throws IOException, JRException {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+        try (ServletOutputStream servletOutputStream = response.getOutputStream()) {
+            response.setContentType("application/pdf");
+            response.setHeader("Content-disposition", "inline; filename=" + reportName + "_" + System.currentTimeMillis() + ".pdf");
+            JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
+            facesContext.responseComplete();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
     /**
      * Try to translate a value (SMAT id, username, or numeric id) into a display name.
@@ -838,12 +1046,12 @@ public class CompletedTaskSearchBean implements Serializable {
      */
     public void clearSearch() {
         // إعادة تهيئة المعايير
-        taskType = "";                     
+        taskType = "";
         fromDate = null;
         toDate = null;
         company = null;
         equipmentCategory = null;
-        certNumberSearch = null;         
+        certNumberSearch = null;
         organizationSearch = null;    // optional keep
         organizationId = null;        // NEW: reset id
         searchResults.clear();
@@ -861,110 +1069,110 @@ public class CompletedTaskSearchBean implements Serializable {
      * Format completed date for display: returns "-" when null/empty/"null",
      * otherwise returns formatted date "dd/MM/yyyy" or string representation.
      */
- public String formatCompletedDate(Object dateObj) {
-     if (dateObj == null) return "-";
-     String s = dateObj.toString();
-     if (s.trim().isEmpty() || "null".equalsIgnoreCase(s.trim())) return "-";
-     try {
-         if (dateObj instanceof java.util.Date) {
-             SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-             return df.format((java.util.Date) dateObj);
-         }
-         if (dateObj instanceof Number) {
-             long ts = ((Number) dateObj).longValue();
-             SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-             return df.format(new java.util.Date(ts));
-         }
-         try {
-             long possibleMillis = Long.parseLong(s);
-             SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-             return df.format(new java.util.Date(possibleMillis));
-         } catch (NumberFormatException nfe) { }
-         if (s.length() >= 10) {
-             String first10 = s.substring(0, 10);
-             if (first10.matches("\\d{4}[-/]\\d{2}[-/]\\d{2}")) {
-                 String[] parts = first10.split("[-/]");
-                 return parts[2] + "/" + parts[1] + "/" + parts[0];
-             }
-         }
-         return s.trim();
-     } catch (Exception e) {
-         return "-";
-     }
- }
+    public String formatCompletedDate(Object dateObj) {
+        if (dateObj == null) return "-";
+        String s = dateObj.toString();
+        if (s.trim().isEmpty() || "null".equalsIgnoreCase(s.trim())) return "-";
+        try {
+            if (dateObj instanceof java.util.Date) {
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                return df.format((java.util.Date) dateObj);
+            }
+            if (dateObj instanceof Number) {
+                long ts = ((Number) dateObj).longValue();
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                return df.format(new java.util.Date(ts));
+            }
+            try {
+                long possibleMillis = Long.parseLong(s);
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                return df.format(new java.util.Date(possibleMillis));
+            } catch (NumberFormatException nfe) { }
+            if (s.length() >= 10) {
+                String first10 = s.substring(0, 10);
+                if (first10.matches("\\d{4}[-/]\\d{2}[-/]\\d{2}")) {
+                    String[] parts = first10.split("[-/]");
+                    return parts[2] + "/" + parts[1] + "/" + parts[0];
+                }
+            }
+            return s.trim();
+        } catch (Exception e) {
+            return "-";
+        }
+    }
 
 
 
     /**
      * Export search results to Excel (placeholder method)
      */
- public void exportToExcel() {
-	    FacesContext facesContext = FacesContext.getCurrentInstance();
-	    try {
-	        if (searchResults == null || searchResults.isEmpty()) {
-	            addWarningMessage("No data to export. Please perform a search first.");
-	            return;
-	        }
+    public void exportToExcel() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        try {
+            if (searchResults == null || searchResults.isEmpty()) {
+                addWarningMessage("No data to export. Please perform a search first.");
+                return;
+            }
 
-	        org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
-	        org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Completed Tasks");
+            org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+            org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Completed Tasks");
 
-	        String[] headers = {"Task ID", "Task Type", "Description", "Company", "Sticker No","Cert Number", "Created Date", "Completed Date", "Inspector", "Reviewer"};
-	        org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
+            String[] headers = {"Task ID", "Task Type", "Description", "Company", "Sticker No","Cert Number", "Created Date", "Completed Date", "Inspector", "Reviewer"};
+            org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
 
-	        // Style للهيدر (خلفية رمادية + Bold)
-	        org.apache.poi.ss.usermodel.CellStyle headerStyle = workbook.createCellStyle();
-	        org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
-	        headerFont.setBold(true);
-	        headerStyle.setFont(headerFont);
-	        headerStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.GREY_25_PERCENT.getIndex());
-	        headerStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+            // Style للهيدر (خلفية رمادية + Bold)
+            org.apache.poi.ss.usermodel.CellStyle headerStyle = workbook.createCellStyle();
+            org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.GREY_25_PERCENT.getIndex());
+            headerStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
 
-	        for (int i = 0; i < headers.length; i++) {
-	            org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-	            cell.setCellValue(headers[i]);
-	            cell.setCellStyle(headerStyle);
-	        }
+            for (int i = 0; i < headers.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
 
-	        int rowIdx = 1;
-	        for (Map<String, Object> rowMap : searchResults) {
-	            org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
-	            row.createCell(0).setCellValue(safeString(rowMap.get("taskId")));
-	            row.createCell(1).setCellValue(safeString(rowMap.get("taskType")));
-	            row.createCell(2).setCellValue(safeString(rowMap.get("taskDescription")));
-	            row.createCell(3).setCellValue(safeString(rowMap.get("companyName")));
-	            row.createCell(4).setCellValue(safeString(rowMap.get("stickerNo")));
-	            row.createCell(5).setCellValue(safeString(rowMap.get("certNumber")));
-	            row.createCell(6).setCellValue(safeString(rowMap.get("createdDate")));
-	            row.createCell(7).setCellValue(safeString(rowMap.get("completedDate")));
-	            row.createCell(8).setCellValue(safeString(rowMap.get("inspectorName")));
-	            row.createCell(9).setCellValue(safeString(rowMap.get("reviewerName")));
-	        }
+            int rowIdx = 1;
+            for (Map<String, Object> rowMap : searchResults) {
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(safeString(rowMap.get("taskId")));
+                row.createCell(1).setCellValue(safeString(rowMap.get("taskType")));
+                row.createCell(2).setCellValue(safeString(rowMap.get("taskDescription")));
+                row.createCell(3).setCellValue(safeString(rowMap.get("companyName")));
+                row.createCell(4).setCellValue(safeString(rowMap.get("stickerNo")));
+                row.createCell(5).setCellValue(safeString(rowMap.get("certNumber")));
+                row.createCell(6).setCellValue(safeString(rowMap.get("createdDate")));
+                row.createCell(7).setCellValue(safeString(rowMap.get("completedDate")));
+                row.createCell(8).setCellValue(safeString(rowMap.get("inspectorName")));
+                row.createCell(9).setCellValue(safeString(rowMap.get("reviewerName")));
+            }
 
-	        // === ضبط عرض الأعمدة أوتوماتيكياً ===
-	        for (int i = 0; i < headers.length; i++) {
-	            sheet.autoSizeColumn(i);
-	        }
+            // === ضبط عرض الأعمدة أوتوماتيكياً ===
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
 
-	        ExternalContext externalContext = facesContext.getExternalContext();
-	        HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-	        response.reset();
-	        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-	        response.setHeader("Content-Disposition", "attachment; filename=\"completed_tasks.xlsx\"");
+            ExternalContext externalContext = facesContext.getExternalContext();
+            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
+            response.reset();
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition", "attachment; filename=\"completed_tasks.xlsx\"");
 
-	        try (ServletOutputStream out = response.getOutputStream()) {
-	            workbook.write(out);
-	            out.flush();
-	        }
-	        workbook.close();
+            try (ServletOutputStream out = response.getOutputStream()) {
+                workbook.write(out);
+                out.flush();
+            }
+            workbook.close();
 
-	        facesContext.responseComplete();
+            facesContext.responseComplete();
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        addErrorMessage("Error exporting to Excel: " + e.getMessage());
-	    }
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            addErrorMessage("Error exporting to Excel: " + e.getMessage());
+        }
+    }
 
 
 
@@ -1009,23 +1217,23 @@ public class CompletedTaskSearchBean implements Serializable {
 
         // try common key names already present in the row
         Object job = firstNonNull(
-            row.get("jobNo"),
-            row.get("job_number"),
-            row.get("job_no"),
-            row.get("jobNum"),
-            row.get("jobNumber"),
-            row.get("JobNo")
+                row.get("jobNo"),
+                row.get("job_number"),
+                row.get("job_no"),
+                row.get("jobNum"),
+                row.get("jobNumber"),
+                row.get("JobNo")
         );
 
         Object ts = firstNonNull(
-            row.get("timeSheetNo"),
-            row.get("time_sheet_no"),
-            row.get("time_sheet"),
-            row.get("timesheet"),
-            row.get("timeSheet"),
-            row.get("tsNumber"),
-            row.get("ts_no"),
-            row.get("ts")
+                row.get("timeSheetNo"),
+                row.get("time_sheet_no"),
+                row.get("time_sheet"),
+                row.get("timesheet"),
+                row.get("timeSheet"),
+                row.get("tsNumber"),
+                row.get("ts_no"),
+                row.get("ts")
         );
 
         // if missing, try to fetch from EquipmentInspectionForm (only if we have a taskId)

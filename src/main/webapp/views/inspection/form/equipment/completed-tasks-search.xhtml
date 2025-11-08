@@ -30,6 +30,19 @@
                 --text-dark: #2d3748;
                 --text-muted: #718096;
                 --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+                /* ألوان Work Order الجديدة */
+                --wo-color-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --wo-color-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                --wo-color-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                --wo-color-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                --wo-color-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+                --wo-color-6: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+                --wo-color-7: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+                --wo-color-8: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+                --wo-color-9: linear-gradient(135deg, #fd746c 0%, #ff9068 100%);
+                --wo-color-10: linear-gradient(135deg, #2af598 0%, #009efd 100%);
+                --wo-no-order: linear-gradient(135deg, #a3bded 0%, #6991c7 100%);
             }
 
             .lux-badge {
@@ -804,6 +817,197 @@
                 animation: luxFadeOut 0.4s ease-in forwards;
             }
 
+            /* تصاميم جديدة للـ Work Order Groups */
+            .work-order-group {
+                margin-bottom: 2.5rem;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                background: white;
+            }
+
+            .work-order-group:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.18);
+            }
+
+            .work-order-header {
+                padding: 1.5rem 2rem;
+                color: white;
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                min-height: 100px;
+            }
+
+            .work-order-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: inherit;
+                z-index: 1;
+            }
+
+            .work-order-header::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 150px;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2));
+                transform: skewX(-20deg);
+            }
+
+            .work-order-content {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+                flex: 1;
+            }
+
+            .work-order-title {
+                font-size: 1.8rem;
+                font-weight: 900;
+                margin: 0;
+                font-family: var(--font-secondary);
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                letter-spacing: 0.5px;
+            }
+
+            .work-order-subtitle {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                font-weight: 600;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .work-order-badge {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(10px);
+                border-radius: 50px;
+                padding: 0.5rem 1.2rem;
+                font-weight: 700;
+                font-size: 0.9rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .work-order-actions {
+                display: flex;
+                gap: 0.8rem;
+                align-items: center;
+                z-index: 3;
+            }
+
+            .work-order-button {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(10px);
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                transition: all 0.3s ease;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .work-order-button:hover {
+                background: rgba(255, 255, 255, 0.4);
+                transform: scale(1.1) rotate(5deg);
+            }
+
+            .work-order-body {
+                padding: 2rem;
+                background: #f8fafc;
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .task-card {
+                background: white;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+                border: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .task-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+            }
+
+            .task-header {
+                padding: 1.2rem 1.5rem;
+                background: linear-gradient(90deg, rgba(102,126,234,0.08), rgba(246,246,246,0.04));
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .task-type-badge {
+                padding: 0.5rem 1rem;
+                border-radius: 10px;
+                font-weight: 800;
+                font-size: 0.85rem;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+            }
+
+            .task-content {
+                padding: 1.5rem;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+                align-items: start;
+            }
+
+            .task-footer {
+                padding: 1rem 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #f8fafc;
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            /* ألوان مختلفة لمجموعات Work Order */
+            .wo-color-1 .work-order-header { background: var(--wo-color-1); }
+            .wo-color-2 .work-order-header { background: var(--wo-color-2); }
+            .wo-color-3 .work-order-header { background: var(--wo-color-3); }
+            .wo-color-4 .work-order-header { background: var(--wo-color-4); }
+            .wo-color-5 .work-order-header { background: var(--wo-color-5); }
+            .wo-color-6 .work-order-header { background: var(--wo-color-6); }
+            .wo-color-7 .work-order-header { background: var(--wo-color-7); }
+            .wo-color-8 .work-order-header { background: var(--wo-color-8); }
+            .wo-color-9 .work-order-header { background: var(--wo-color-9); }
+            .wo-color-10 .work-order-header { background: var(--wo-color-10); }
+            .wo-no-order .work-order-header { background: var(--wo-no-order); }
+
+            /* تصميم متجاوب */
             @media (max-width: 1400px) {
                 .lux-search-container {
                     max-width: 1200px;
@@ -823,6 +1027,18 @@
                 .ui-datatable .ui-datatable-data>tr>td {
                     max-width: 140px;
                 }
+                .work-order-header {
+                    padding: 1.2rem 1.5rem;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+                .work-order-actions {
+                    align-self: flex-end;
+                }
+                .task-content {
+                    grid-template-columns: repeat(2, 1fr);
+                }
             }
             @media (max-width: 800px) {
                 .lux-stats-grid {
@@ -840,6 +1056,15 @@
                 .lux-loader-container {
                     padding: 1.5rem;
                     margin: 1rem;
+                }
+                .work-order-title {
+                    font-size: 1.4rem;
+                }
+                .task-content {
+                    grid-template-columns: 1fr;
+                }
+                .work-order-body {
+                    padding: 1rem;
                 }
             }
         </style>
@@ -866,6 +1091,7 @@
                                 <p:ajax update="@([id$=equipmentCategoryGroup])" />
                             </p:selectOneMenu>
                         </div>
+
                         <!-- Company -->
                         <div class="lux-field-group">
                             <label class="lux-field-label">Company</label>
@@ -879,6 +1105,7 @@
                                                itemValue="#{company}" />
                             </p:selectOneMenu>
                         </div>
+
                         <!-- Equipment Category (conditional) -->
                         <h:panelGroup id="equipmentCategoryGroup" layout="block" styleClass="lux-field-group">
                             <label class="lux-field-label">Equipment Category</label>
@@ -894,6 +1121,7 @@
                             </p:selectOneMenu>
                             <h:outputText value=" " rendered="#{not completedTaskSearchBean.equipmentCategoryFilterVisible}" />
                         </h:panelGroup>
+
                         <!-- From Date -->
                         <div class="lux-field-group">
                             <label class="lux-field-label">From Date</label>
@@ -902,6 +1130,7 @@
                                         navigator="true"
                                         yearRange="c-10:c+10" />
                         </div>
+
                         <!-- To Date -->
                         <div class="lux-field-group">
                             <label class="lux-field-label">To Date</label>
@@ -919,6 +1148,13 @@
                                          placeholder="Enter Cert Number" />
                         </div>
 
+                        <!-- Work Order (NEW main field) -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">Work Order</label>
+                            <p:inputText id="workOrderFilter" value="#{completedTaskSearchBean.workOrderFilter}"
+                                         styleClass="ui-inputtext" placeholder="Enter Work Order #" />
+                        </div>
+
                         <!-- Organization (use id as itemValue to avoid converter/instance issues) -->
                         <div class="lux-field-group">
                             <label class="lux-field-label">Branch</label>
@@ -926,7 +1162,6 @@
                                 <f:selectItem itemLabel="All Branches" itemValue="#{null}" />
                                 <f:selectItems value="#{completedTaskSearchBean.organizationList}" var="org" itemLabel="#{org.name}" itemValue="#{org.id}" />
                             </p:selectOneMenu>
-
                         </div>
 
                     </div>
@@ -955,7 +1190,6 @@
                                          action="#{completedTaskSearchBean.exportToExcel}"
                                          ajax="false"
                                          disabled="#{not completedTaskSearchBean.searchPerformed or empty completedTaskSearchBean.searchResults}" />
-
                     </div>
                 </h:form>
             </div>
@@ -984,147 +1218,191 @@
                 </div>
             </h:panelGroup>
 
-            <!-- Results Panel -->
+            <!-- Results Panel (grouped by Work Order) -->
             <h:panelGroup id="resultsPanel">
-                <h:panelGroup layout="block" styleClass="lux-results-table animate-fadeInUp" style="animation-delay: 0.4s"
-                              rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.searchResults}">
-                    <p:dataTable value="#{completedTaskSearchBean.searchResults}"
-                                 var="task"
-                                 paginator="true"
-                                 rows="20"
-                                 paginatorPosition="bottom"
-                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="10,20,50,100"
-                                 emptyMessage="No completed tasks found"
-                                 styleClass="compact-table">
-                        <f:facet name="header">
-                            Completed Tasks (#{completedTaskSearchBean.searchResults.size()} results)
-                        </f:facet>
-                        <!-- Task ID -->
-                        <p:column headerText="Task ID" sortBy="#{task['taskId']}" style="width: 80px;">
-                            <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
-                            <h:outputText value="#{task['taskId']}" />
-                        </p:column>
+                <h:form id="resultsForm" prependId="false">
 
-                        <!-- Type -->
-                        <p:column headerText="Type" sortBy="#{task['taskType']}" style="width: 120px;">
-                        <span class="lux-badge"
-                              style="#{fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'equipment')
-                                           ? 'background: linear-gradient(135deg, #667eea, #764ba2); color:#fff; border:none;'
-                                           : (fn:contains(fn:toLowerCase(fn:trim(task['taskType'])), 'employee')
-                                              ? 'background: linear-gradient(135deg, #f093fb, #f5576c); color:#fff; border:none;'
-                                              : 'background: linear-gradient(135deg, #a8edea, #fed6e3);color:#21343b;border:none;')}">
-                            #{completedTaskSearchBean.getTaskTypeDisplayText(task['taskType'])}
-                        </span>
-                        </p:column>
+                    <h:panelGroup layout="block" styleClass="lux-results-table animate-fadeInUp" style="animation-delay: 0.4s"
+                                  rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.groupedResultsByWorkOrder}">
 
-                        <!-- Description -->
-                        <p:column headerText="Description" sortBy="#{task['taskDescription']}" style="width: 180px;">
-                            <h:outputText value="#{task['taskDescription']}" styleClass="lux-description-full" />
-                        </p:column>
-                        <p:column headerText="Job no"  style="width: 180px;">
-                            <h:outputText value="#{task['jobNo']}" styleClass="lux-description-full" />
-                        </p:column>
-                        <p:column headerText="Time sheet no"  style="width: 180px;">
-                            <h:outputText value="#{task['timeSheetNo']}" styleClass="lux-description-full" />
-                        </p:column>
-                        <!-- Reference -->
-                        <p:column headerText="Cert Num" style="width: 100px;">
-                            <span class="lux-table-icon"><i class="fas fa-file-alt"></i></span>
-                            <h:outputText value="#{task['reportNo']}" rendered="#{not empty task['reportNo']}" styleClass="lux-description-full" />
-                            <h:outputText value="#{task['certNumber']}" rendered="#{not empty task['certNumber']}" styleClass="lux-description-full"/>
-                            <h:outputText value="-" rendered="#{empty task['reportNo'] and empty task['certNumber']}" styleClass="lux-description-full"/>
-                        </p:column>
+                        <!-- Iterate groups (Work Order keys) -->
+                        <ui:repeat value="#{completedTaskSearchBean.groupedResultsByWorkOrder.keySet().toArray()}" var="groupKey" varStatus="gstatus">
+                            <!-- تحديد فئة اللون بناءً على الفهرس -->
+                            <c:set var="woColorClass" value="wo-color-#{(gstatus.index mod 10) + 1}" />
+                            <c:if test="#{groupKey eq 'No Work Order'}">
+                                <c:set var="woColorClass" value="wo-no-order" />
+                            </c:if>
 
-
-                        <!-- Company -->
-                        <p:column headerText="Company" sortBy="#{task['companyName']}" style="width: 140px;">
-                            <span class="lux-table-icon"><i class="fas fa-building"></i></span>
-                            <h:outputText value="#{task['companyName']}" styleClass="lux-description-full" />
-                        </p:column>
-                        <!-- Sticker Number -->
-                        <p:column headerText="Sticker Number" sortBy="#{task['stickerNo']}" filterBy="#{task['stickerNo']}" style="width: 120px;">
-                            <span class="lux-table-icon"><i class="fas fa-hashtag"></i></span>
-                            <h:outputText value="#{task['stickerNo']}" />
-                        </p:column>
-
-                        <!-- Created Date -->
-                        <p:column headerText="Created Date" sortBy="#{task['createdDate']}" style="width: 100px;">
-                            <span class="lux-table-icon"><i class="fas fa-calendar-plus"></i></span>
-                            <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
-                        </p:column>
-                        <!-- Completed Date -->
-                        <p:column headerText="Completed Date" sortBy="#{task['completedDate']}" style="width: 100px;">
-                            <span class="lux-table-icon"><i class="fas fa-calendar-check"></i></span>
-                            <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}" />
-                        </p:column>
-                        <!-- Assigner -->
-                        <p:column headerText="Assigner" sortBy="#{task['assignerUserDisplayName']}" style="width:110px;">
-                            <span class="lux-table-icon"><i class="fas fa-user"></i></span>
-                            <h:outputText value="#{task['assignerUserDisplayName']}" />
-                        </p:column>
-                        <!-- Inspector -->
-                        <p:column headerText="Inspector" style="width: 110px;">
-                            <span class="lux-table-icon"><i class="fas fa-user-check"></i></span>
-                            <h:outputText value="#{task['inspectorName']}" />
-                        </p:column>
-                        <!-- Reviewer -->
-                        <p:column headerText="Reviewer" style="width: 110px;">
-                            <span class="lux-table-icon"><i class="fas fa-user-edit"></i></span>
-                            <h:outputText value="#{task['reviewerName']}" />
-                        </p:column>
-                        <!-- Organization Column - Modified to ensure visibility -->
-                        <p:column headerText="Branch" style="width: 180px;"
-                                  sortBy="#{task['organizationName']}"
-                                  filterBy="#{task['organizationName']}"
-                                  filterMatchMode="contains">
-                            <span class="lux-table-icon"><i class="fas fa-sitemap"></i></span>
-                            <h:outputText value="#{not empty task['organizationName'] ? task['organizationName'] : '-'}"
-                                          styleClass="lux-org-column" />
-                        </p:column>
-
-                        <!-- Actions -->
-                        <p:column headerText="Actions" style="width: 90px; text-align: center;">
-                            <h:form prependId="false">
-                                <div class="lux-action-buttons">
-
-                                    <!-- Download PDF: Equipment Inspection -->
-                                    <p:commandLink styleClass="lux-action-btn" title="Download PDF"
-                                                   rendered="#{task['taskType'] eq 'Equipment Inspection'}"
-                                                   action="#{inspectionFormBean.downloadCert(task['taskId'])}"
-                                                   process="@this" ajax="false">
-                                        <i class="fas fa-eye"></i>
-                                    </p:commandLink>
-
-                                    <!-- Download PDF: Other -->
-                                    <p:commandLink styleClass="lux-action-btn" title="Download PDF"
-                                                   rendered="#{task['taskType'] ne 'Equipment Inspection'}"
-                                                   action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}"
-                                                   process="@this" ajax="false">
-                                        <i class="fas fa-eye"></i>
-                                    </p:commandLink>
-
+                            <div class="work-order-group #{woColorClass}">
+                                <div class="work-order-header">
+                                    <div class="work-order-content">
+                                        <h3 class="work-order-title">
+                                            <h:panelGroup>
+                                                <h:outputText value="#{groupKey eq 'No Work Order' ? 'No Work Order' : 'Work Order #: '}" />
+                                                <h:outputText value="#{groupKey}" rendered="#{groupKey ne 'No Work Order'}" />
+                                            </h:panelGroup>
+                                        </h3>
+                                        <div class="work-order-subtitle">
+                                        <span class="work-order-badge">
+                                            <i class="fas fa-tasks"></i>
+                                            #{fn:length(completedTaskSearchBean.groupedResultsByWorkOrder[groupKey])} task(s)
+                                        </span>
+                                            <h:panelGroup rendered="#{not empty completedTaskSearchBean.groupedResultsByWorkOrder[groupKey]}">
+                                            <span class="work-order-badge">
+                                                <i class="fas fa-calendar"></i>
+                                                <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(completedTaskSearchBean.groupedResultsByWorkOrder[groupKey][0]['createdDate'])}" />
+                                            </span>
+                                            </h:panelGroup>
+                                        </div>
+                                    </div>
+                                    <div class="work-order-actions">
+                                        <button type="button" onclick="(function(k){ if(k &amp;&amp; k !== 'No Work Order'){ navigator.clipboard.writeText(k).then(()=>{ PF('msgs').show([{severity:'info', summary:'Copied', detail:'Copied '+k}]); }); } })( '#{groupKey}' )"
+                                                class="work-order-button" title="Copy Work Order">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <button type="button" onclick="toggleGroup(this)" class="work-order-button" title="Expand/Collapse">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                    </div>
                                 </div>
+                                <div class="work-order-body">
+                                    <ui:repeat value="#{completedTaskSearchBean.groupedResultsByWorkOrder[groupKey]}" var="task" varStatus="status">
+                                        <div class="task-card">
+                                            <div class="task-header">
+                                                <div style="display:flex; align-items:center; gap:0.8rem;">
+                                                <span class="task-type-badge">
+                                                    #{completedTaskSearchBean.getTaskTypeDisplayText(task['taskType'])}
+                                                </span>
+                                                    <div style="display:flex; flex-direction:column;">
+                                                        <div style="font-weight:700; font-family:'Plus Jakarta Sans'; color:var(--text-dark);">
+                                                            <h:panelGroup>
+                                                                <h:outputText value="#{not empty task['taskDescription'] ? (fn:length(task['taskDescription']) gt 80 ? fn:substring(task['taskDescription'], 0, 77) : task['taskDescription']) : '-'}" />
+                                                                <h:outputText value="..." rendered="#{not empty task['taskDescription'] and fn:length(task['taskDescription']) gt 80}" />
+                                                            </h:panelGroup>
+                                                        </div>
+                                                        <div style="font-size:0.9rem; color:var(--text-muted); margin-top:0.25rem;">
+                                                            <span>Company: #{task['companyName'] != null ? task['companyName'] : '-'}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                            </h:form>
-                        </p:column>
+                                                <div style="display:flex; gap:0.6rem; align-items:center;">
+                                                    <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
+                                                    <!-- REPLACED: conditional action -> two separate links -->
+                                                    <p:commandLink styleClass="lux-action-btn" title="View / Download"
+                                                                   rendered="#{task['taskType'] eq 'Equipment Inspection'}"
+                                                                   action="#{inspectionFormBean.downloadCert(task['taskId'])}"
+                                                                   process="@this" ajax="false">
+                                                        <i class="fas fa-eye"></i>
+                                                    </p:commandLink>
 
-                    </p:dataTable>
-                </h:panelGroup>
-                <!-- No Results Message -->
-                <h:panelGroup layout="block" styleClass="lux-no-results animate-fadeInUp" style="animation-delay: 0.2s"
-                              rendered="#{completedTaskSearchBean.searchPerformed and empty completedTaskSearchBean.searchResults}">
-                    <i class="fas fa-search"></i>
-                    <h3>No completed tasks found</h3>
-                    <p>Try adjusting your search criteria to find more results.</p>
-                </h:panelGroup>
-                <!-- Initial State Message -->
-                <h:panelGroup layout="block" styleClass="lux-initial-msg animate-fadeInUp"
-                              rendered="#{not completedTaskSearchBean.searchPerformed}">
-                    <i class="fas fa-info-circle"></i>
-                    <h3>Welcome to Luxury Completed Tasks Search</h3>
-                    <p>Use the search form above to find completed equipment inspection and employee certification tasks.</p>
-                </h:panelGroup>
+                                                    <p:commandLink styleClass="lux-action-btn" title="View / Download"
+                                                                   rendered="#{task['taskType'] ne 'Equipment Inspection'}"
+                                                                   action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}"
+                                                                   process="@this" ajax="false">
+                                                        <i class="fas fa-eye"></i>
+                                                    </p:commandLink>
+                                                </div>
+                                            </div>
+
+                                            <div class="task-content">
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Task ID</small>
+                                                    <div style="font-weight:700;">#{task['taskId']}</div>
+                                                </div>
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Job no</small>
+                                                    <div>#{not empty task['jobNo'] ? task['jobNo'] : '-'}</div>
+                                                </div>
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Time sheet no</small>
+                                                    <div>#{not empty task['timeSheetNo'] ? task['timeSheetNo'] : '-'}</div>
+                                                </div>
+
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Cert / Report</small>
+                                                    <div>
+                                                        <h:outputText value="#{task['reportNo']}" rendered="#{not empty task['reportNo']}" />
+                                                        <h:outputText value="#{task['certNumber']}" rendered="#{empty task['reportNo'] and not empty task['certNumber']}" />
+                                                        <h:outputText value="-" rendered="#{empty task['reportNo'] and empty task['certNumber']}" />
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Sticker No</small>
+                                                    <div>#{not empty task['stickerNo'] ? task['stickerNo'] : '-'}</div>
+                                                </div>
+
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Work Order</small>
+                                                    <div>#{not empty task['workOrder'] ? task['workOrder'] : (not empty task['jobNo'] ? task['jobNo'] : '-')}</div>
+                                                </div>
+
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Created</small>
+                                                    <div>#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}</div>
+                                                </div>
+
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Completed</small>
+                                                    <div>#{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}</div>
+                                                </div>
+
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Inspector</small>
+                                                    <div>#{task['inspectorName']}</div>
+                                                </div>
+
+                                                <div>
+                                                    <small style="color:var(--text-muted);">Reviewer</small>
+                                                    <div>#{task['reviewerName']}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="task-footer">
+                                                <div style="display:flex; gap:0.8rem; align-items:center;">
+                                                    <small style="color:var(--text-muted);">Branch</small>
+                                                    <div style="font-weight:700;">#{not empty task['organizationName'] ? task['organizationName'] : '-'}</div>
+                                                </div>
+
+                                                <div style="display:flex; gap:0.6rem; align-items:center;">
+                                                    <p:commandLink styleClass="lux-action-btn" title="Download/Print"
+                                                                   rendered="#{task['taskType'] eq 'Equipment Inspection'}"
+                                                                   action="#{inspectionFormBean.downloadCert(task['taskId'])}" ajax="false" process="@this">
+                                                        <i class="fas fa-download"></i>
+                                                    </p:commandLink>
+
+                                                    <p:commandLink styleClass="lux-action-btn" title="View PDF"
+                                                                   rendered="#{task['taskType'] ne 'Equipment Inspection'}"
+                                                                   action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}" ajax="false" process="@this">
+                                                        <i class="fas fa-file-pdf"></i>
+                                                    </p:commandLink>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+                        </ui:repeat>
+
+                    </h:panelGroup>
+
+                    <!-- No Results Message -->
+                    <h:panelGroup layout="block" styleClass="lux-no-results animate-fadeInUp" style="animation-delay: 0.2s"
+                                  rendered="#{completedTaskSearchBean.searchPerformed and empty completedTaskSearchBean.groupedResultsByWorkOrder}">
+                        <i class="fas fa-search"></i>
+                        <h3>No completed tasks found</h3>
+                        <p>Try adjusting your search criteria to find more results.</p>
+                    </h:panelGroup>
+
+                    <!-- Initial State Message -->
+                    <h:panelGroup layout="block" styleClass="lux-initial-msg animate-fadeInUp"
+                                  rendered="#{not completedTaskSearchBean.searchPerformed}">
+                        <i class="fas fa-info-circle"></i>
+                        <h3>Welcome to Luxury Completed Tasks Search</h3>
+                        <p>Use the search form above to find completed equipment inspection and employee certification tasks.</p>
+                    </h:panelGroup>
+                </h:form>
             </h:panelGroup>
         </div>
 
@@ -1184,11 +1462,11 @@
                 // إضافة تأثيرات CSS للجسيمات
                 const style = document.createElement('style');
                 style.textContent = `
-            @keyframes float {
-                0% { transform: translateY(0) rotate(0deg); }
-                100% { transform: translateY(-100vh) rotate(360deg); }
-            }
-        `;
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+    `;
                 document.head.appendChild(style);
             });
 
@@ -1248,7 +1526,24 @@
                     }
                 }, 400);
             }
+
+            // وظيفة تبديل عرض/إخفاء المجموعات
+            function toggleGroup(button) {
+                const group = button.closest('.work-order-group');
+                const body = group.querySelector('.work-order-body');
+                const icon = button.querySelector('i');
+
+                if (body.style.display === 'none') {
+                    body.style.display = 'block';
+                    icon.className = 'fas fa-chevron-down';
+                } else {
+                    body.style.display = 'none';
+                    icon.className = 'fas fa-chevron-up';
+                }
+            }
             //]]>
         </script>
     </ui:define>
+
+
 </ui:composition>

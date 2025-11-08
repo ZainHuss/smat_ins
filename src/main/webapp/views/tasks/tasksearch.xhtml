@@ -1,15 +1,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:jsf="http://xmlns.jcp.org/jsf"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:pe="http://primefaces.org/ui/extensions"
-    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-    xmlns:o="http://omnifaces.org/ui"
-    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:of="http://omnifaces.org/functions"
-    template="/views/mail/mail-template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:of="http://omnifaces.org/functions"
+                template="/views/mail/mail-template.xhtml">
 
     <ui:define name="section-head">
         <div class="section-header">
@@ -19,6 +19,7 @@
                 </div>
                 <div class="header-text">
                     <h1>Active Tasks</h1>
+                    <p class="section-subtitle">Find and manage your inspection tasks</p>
                 </div>
             </div>
         </div>
@@ -26,8 +27,8 @@
 
     <ui:define name="head">
         <h:outputStylesheet library="#{appSetting.resourceLib}"
-            name="css/material-theme.css"></h:outputStylesheet>
-        
+                            name="css/material-theme.css"></h:outputStylesheet>
+
         <!-- Premium CSS Design -->
         <style>
             /* Modern Color Palette */
@@ -81,7 +82,7 @@
                 padding-bottom: 12px;
                 border-bottom: 1px solid rgba(0,0,0,0.05);
             }
-            
+
             .header-content {
                 display: flex;
                 align-items: center;
@@ -99,12 +100,12 @@
                 box-shadow: 0 4px 12px rgba(74, 107, 255, 0.3);
                 flex-shrink: 0;
             }
-            
+
             .header-icon i {
                 font-size: 24px;
                 color: white;
             }
-            
+
             .header-text {
                 flex: 1;
             }
@@ -134,19 +135,19 @@
                 font-weight: 500;
                 letter-spacing: 0.2px;
             }
-            
+
             @media (max-width: 768px) {
                 .header-content {
                     flex-direction: column;
                     align-items: flex-start;
                     gap: 12px;
                 }
-                
+
                 .header-icon {
                     width: 48px;
                     height: 48px;
                 }
-                
+
                 .section-header h1 {
                     font-size: 1.6rem;
                 }
@@ -161,6 +162,81 @@
                 overflow: hidden;
                 margin-bottom: 28px;
                 border: none;
+            }
+
+            /* Enhanced Work Order Design */
+            .workorder-frame {
+                border: 1px solid rgba(0,0,0,0.06);
+                padding: 10px 14px;
+                border-radius: 10px;
+                background: linear-gradient(135deg, #f8f9ff, #ffffff);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+                position: relative;
+                overflow: hidden;
+                transition: var(--transition);
+                box-shadow: 0 2px 8px rgba(74,107,255,0.08);
+            }
+
+            .workorder-frame::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
+            }
+
+            .workorder-frame:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(74,107,255,0.15);
+            }
+
+            .workorder-key {
+                font-weight: 700;
+                font-size: 1rem;
+                color: var(--primary-dark);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .workorder-key::before {
+                content: '';
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+                border-radius: 50%;
+                position: relative;
+            }
+
+            .workorder-key::after {
+                content: '';
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                background: white;
+                border-radius: 50%;
+                left: 4px;
+                top: 4px;
+            }
+
+            .workorder-tasks { display:block; }
+
+            .wo-task-pill {
+                display: inline-block;
+                margin-right: 6px;
+                margin-bottom: 4px;
+                padding: 4px 8px;
+                border-radius: 999px;
+                background: rgba(74,107,255,0.07);
+                color: var(--primary-dark);
+                font-size: 0.82rem;
+                border: 1px solid rgba(74,107,255,0.12);
             }
 
             .premium-card:hover {
@@ -348,7 +424,7 @@
                 margin-left: 2px;
             }
 
-            .ui-inputfield, 
+            .ui-inputfield,
             .ui-selectonemenu {
                 width: 100% !important;
                 padding: 10px 14px !important;
@@ -362,7 +438,7 @@
                 box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
             }
 
-            .ui-inputfield:focus, 
+            .ui-inputfield:focus,
             .ui-selectonemenu:focus {
                 border-color: var(--primary) !important;
                 box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2) !important;
@@ -478,29 +554,29 @@
             .btn-search:hover .ui-button-icon-left {
                 animation: pulse 1s infinite;
             }
-            
-			.btn-export {
-			    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
-			    color: white !important;
-			    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3) !important;
-			    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
-			}
-			
-			.btn-export:hover {
-			    background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
-			    transform: translateY(-2px) !important;
-			    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4) !important;
-			}
-			
-			.btn-export .ui-button-icon-left {
-			    color: rgba(255,255,255,0.9) !important;
-			    transition: var(--transition) !important;
-			}
-			
-			.btn-export:hover .ui-button-icon-left {
-			    animation: pulse 1s infinite;
-			}
-            
+
+            .btn-export {
+                background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+                color: white !important;
+                box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3) !important;
+                text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            }
+
+            .btn-export:hover {
+                background: linear-gradient(135deg, #27ae60, #2ecc71) !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4) !important;
+            }
+
+            .btn-export .ui-button-icon-left {
+                color: rgba(255,255,255,0.9) !important;
+                transition: var(--transition) !important;
+            }
+
+            .btn-export:hover .ui-button-icon-left {
+                animation: pulse 1s infinite;
+            }
+
 
             /* Small Buttons */
             .btn-sm {
@@ -510,7 +586,7 @@
                 font-size: 0.8rem !important;
                 border-radius: var(--border-radius-sm) !important;
             }
-            
+
             /* ========== ENHANCED SEARCH RESULTS ========== */
             /* DataTable Styles */
             .premium-table {
@@ -520,10 +596,10 @@
                 border: none !important;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
             }
-            .company-cell, 
-            .equipment-cell, 
-            .service-cell, 
-            .description-cell, 
+            .company-cell,
+            .equipment-cell,
+            .service-cell,
+            .description-cell,
             .assignee-cell,
             .date-cell {
                 display: flex;
@@ -545,9 +621,9 @@
                 transition: var(--transition) !important;
             }
 
-            .premium-table td:nth-child(2) {
-                min-width: 220px !important;
-                max-width: 380px !important;
+            .premium-table td:first-child {
+                min-width: 180px !important;
+                max-width: 220px !important;
             }
 
             .premium-table .ui-cell-data {
@@ -567,6 +643,11 @@
                 border-bottom: 2px solid rgba(0,0,0,0.05) !important;
             }
 
+            .premium-table thead th:first-child {
+                background: linear-gradient(90deg, rgba(74, 107, 255, 0.1), rgba(74, 107, 255, 0.05)) !important;
+                color: var(--primary-dark) !important;
+            }
+
             .premium-table tbody tr {
                 transition: var(--transition) !important;
             }
@@ -574,6 +655,11 @@
             .premium-table tbody tr:hover td {
                 background: rgba(74, 107, 255, 0.03) !important;
                 transform: translateX(4px);
+            }
+
+            .premium-table tbody tr:hover td:first-child .workorder-frame {
+                box-shadow: 0 6px 16px rgba(74,107,255,0.2);
+                transform: translateY(-2px);
             }
 
             /* Badges */
@@ -594,7 +680,7 @@
             .badge i {
                 font-size: 0.7rem;
             }
-            
+
             /* ========== ENHANCED STATUS BADGES ========== */
             .status-badge {
                 display: inline-flex;
@@ -830,14 +916,14 @@
                 border: 1px solid var(--light-gray) !important;
                 background: white !important;
             }
-            
+
             .ui-paginator .ui-paginator-page.ui-state-active {
                 background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
                 color: white !important;
                 border-color: var(--primary-dark) !important;
                 font-weight: 600 !important;
             }
-            
+
             .ui-paginator .ui-paginator-page:hover,
             .ui-paginator .ui-paginator-prev:hover,
             .ui-paginator .ui-paginator-next:hover,
@@ -847,13 +933,13 @@
                 transform: translateY(-2px) !important;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
             }
-            
+
             .ui-paginator .ui-paginator-current {
                 color: var(--medium-gray) !important;
                 font-size: 0.85rem !important;
                 font-weight: 500 !important;
             }
-            
+
             /* Rows per page dropdown */
             .ui-paginator .ui-paginator-rpp-options {
                 border-radius: 8px !important;
@@ -908,7 +994,7 @@
                 color: var(--primary-light);
                 margin-bottom: 16px;
             }
-            
+
             .empty-state h3 {
                 color: var(--dark);
                 font-size: 1.3rem;
@@ -938,7 +1024,7 @@
                 gap: 6px !important;
                 backdrop-filter: blur(5px);
             }
-            
+
             .result-count-badge i {
                 font-size: 0.9rem !important;
             }
@@ -972,12 +1058,12 @@
                     grid-template-columns: repeat(2, 1fr);
                     gap: 20px;
                 }
-                
+
                 .filter-group-header {
                     padding: 12px 16px;
                     font-size: 0.95rem;
                 }
-                
+
                 .form-group {
                     padding: 16px;
                 }
@@ -988,39 +1074,39 @@
                     grid-template-columns: 1fr;
                     gap: 16px;
                 }
-                
+
                 .filter-group-header {
                     margin: 20px 0 10px;
                     padding: 12px 16px;
                 }
-                
+
                 .card-header {
                     padding: 14px 18px;
                 }
-                
+
                 .btn-group-left {
                     flex-direction: column;
                     gap: 10px;
                 }
-                
+
                 .section-header h1 {
                     font-size: 1.5rem;
                 }
-                
+
                 .card-body {
                     padding: 18px;
                 }
-                
+
                 .btn {
                     width: 100%;
                 }
-                
+
                 .status-badge {
                     padding: 6px 10px;
                     font-size: 0.7rem;
                 }
             }
-            
+
         </style>
     </ui:define>
     <ui:define name="section-content">
@@ -1034,8 +1120,23 @@
                             Search Filters
                         </h3>
                     </div>
-                    
+
                     <div class="card-body">
+                        <!-- Grouped summary by work order (computed by bean) -->
+                        <div class="grouped-summary" style="margin-bottom:16px;">
+                            <h4 style="margin:0 0 8px 0;">Grouped by Work Order</h4>
+                            <ui:repeat value="#{taskSearchBean.groupedResultsByWorkOrder.entrySet()}" var="entry">
+                                <div style="padding:6px 10px; border-radius:6px; background:#fafafa; margin-bottom:6px;">
+                                    <strong>Work Order: #{entry.key}</strong>
+                                    <span style="color:var(--medium-gray); margin-left:8px;">(#{entry.value.size()} tasks)</span>
+                                    <div style="margin-top:6px; font-size:0.95rem; color:var(--text-dark);">
+                                        <ui:repeat value="#{entry.value}" var="t">
+                                            <span style="margin-right:8px;">##{t.id}</span>
+                                        </ui:repeat>
+                                    </div>
+                                </div>
+                            </ui:repeat>
+                        </div>
                         <div class="form-grid">
                             <!-- ========== TASK INFORMATION SECTION ========== -->
                             <div class="task-info-section">
@@ -1043,14 +1144,14 @@
                                     <i class="pi pi-info-circle"></i>
                                     Task Information
                                 </div>
-                                
+
                                 <div class="section-container">
                                     <!-- Task Status -->
                                     <div class="form-group">
                                         <label for="taskStatus" class="form-label">Status</label>
                                         <div class="input-container">
                                             <p:selectOneMenu id="taskStatus" value="#{taskSearchBean.taskStatus}"
-                                                styleClass="ui-inputfield">
+                                                             styleClass="ui-inputfield">
                                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItem itemLabel="Pending" itemValue="pending" />
                                                 <f:selectItem itemLabel="In Progress" itemValue="in_progress" />
@@ -1059,34 +1160,40 @@
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Company -->
                                     <div class="form-group">
                                         <label for="company" class="form-label">Company</label>
                                         <div class="input-container">
                                             <p:selectOneMenu id="company" value="#{taskSearchBean.company}"
-                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
                                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems
-                                                    itemLabel="#{company.name}"
-                                                    itemValue="#{company}" var="company"
-                                                    value="#{taskSearchBean.companyList}" />
+                                                        itemLabel="#{company.name}"
+                                                        itemValue="#{company}" var="company"
+                                                        value="#{taskSearchBean.companyList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Empty cell for alignment -->
-                                    <div></div>
+
+                                    <!-- Work Order (search) -->
+                                    <div class="form-group">
+                                        <label for="workOrder" class="form-label">Work Order</label>
+                                        <div class="input-container">
+                                            <p:inputText id="workOrder" value="#{taskSearchBean.workOrderFilter}"
+                                                         styleClass="ui-inputfield" placeholder="Work order number" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            
+
                             <!-- ========== DATE RANGES SECTION ========== -->
                             <div class="date-range-section">
                                 <div class="filter-group-header">
                                     <i class="pi pi-calendar"></i>
                                     Date Ranges
                                 </div>
-                                
+
                                 <div class="section-container">
                                     <!-- Creation Date Range -->
                                     <div class="form-group">
@@ -1094,268 +1201,275 @@
                                         <div class="date-range-container">
                                             <div class="date-input-wrapper">
                                                 <p:calendar id="fromDate" value="#{taskSearchBean.fromDate}"
-                                                    pattern="yyyy-MM-dd" styleClass="date-input-field" 
-                                                    placeholder="Start date" />
+                                                            pattern="yyyy-MM-dd" styleClass="date-input-field"
+                                                            placeholder="Start date" />
                                             </div>
                                             <span class="date-range-separator">to</span>
                                             <div class="date-input-wrapper">
                                                 <p:calendar id="toDate" value="#{taskSearchBean.toDate}"
-                                                    pattern="yyyy-MM-dd" styleClass="date-input-field"
-                                                    placeholder="End date" />
+                                                            pattern="yyyy-MM-dd" styleClass="date-input-field"
+                                                            placeholder="End date" />
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Completion Date Range -->
                                     <div class="form-group">
                                         <label class="form-label">Completion Date Range</label>
                                         <div class="date-range-container">
                                             <div class="date-input-wrapper">
                                                 <p:calendar id="completedFromDate" value="#{taskSearchBean.completedFromDate}"
-                                                    pattern="yyyy-MM-dd" styleClass="date-input-field"
-                                                    placeholder="Start date" />
+                                                            pattern="yyyy-MM-dd" styleClass="date-input-field"
+                                                            placeholder="Start date" />
                                             </div>
                                             <span class="date-range-separator">to</span>
                                             <div class="date-input-wrapper">
                                                 <p:calendar id="completedToDate" value="#{taskSearchBean.completedToDate}"
-                                                    pattern="yyyy-MM-dd" styleClass="date-input-field"
-                                                    placeholder="End date" />
+                                                            pattern="yyyy-MM-dd" styleClass="date-input-field"
+                                                            placeholder="End date" />
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Empty cell for alignment -->
                                     <div></div>
                                 </div>
                             </div>
-                            
+
                             <!-- ========== PEOPLE SECTION ========== -->
                             <div class="people-section">
                                 <div class="filter-group-header">
                                     <i class="pi pi-users"></i>
                                     People Involved
                                 </div>
-                                
+
                                 <div class="section-container">
                                     <!-- Assignee -->
                                     <div class="form-group">
                                         <label for="assignee" class="form-label">Assignee</label>
                                         <div class="input-container">
                                             <p:selectOneMenu id="assignee" value="#{taskSearchBean.assignee}"
-                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
                                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems
-                                                    itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
-                                                    itemValue="#{userAlias}" var="userAlias"
-                                                    value="#{taskSearchBean.userAliasList}" />
+                                                        itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                                        itemValue="#{userAlias}" var="userAlias"
+                                                        value="#{taskSearchBean.userAliasList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Assigner -->
                                     <div class="form-group">
                                         <label for="assigner" class="form-label">Assigner</label>
                                         <div class="input-container">
                                             <p:selectOneMenu id="assigner" value="#{taskSearchBean.assigner}"
-                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
                                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems
-                                                    itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
-                                                    itemValue="#{userAlias}" var="userAlias"
-                                                    value="#{taskSearchBean.userAliasList}" />
+                                                        itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                                        itemValue="#{userAlias}" var="userAlias"
+                                                        value="#{taskSearchBean.userAliasList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Empty cell for alignment -->
                                     <div></div>
                                 </div>
                             </div>
-                           
+
                             <!-- ========== EQUIPMENT SECTION ========== -->
                             <div class="equipment-section">
                                 <div class="filter-group-header">
                                     <i class="pi pi-cog"></i>
                                     Equipment Details
                                 </div>
-                                
+
                                 <div class="section-container">
                                     <!-- Equipment Category -->
                                     <div class="form-group">
                                         <label for="equipmentCategory" class="form-label">Category</label>
                                         <div class="input-container">
                                             <p:selectOneMenu id="equipmentCategory" value="#{taskSearchBean.equipmentCategory}"
-                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
                                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems
-                                                    itemLabel="#{equipmentCategory.name}"
-                                                    itemValue="#{equipmentCategory}" var="equipmentCategory"
-                                                    value="#{taskSearchBean.equipmentCategoryList}" />
+                                                        itemLabel="#{equipmentCategory.name}"
+                                                        itemValue="#{equipmentCategory}" var="equipmentCategory"
+                                                        value="#{taskSearchBean.equipmentCategoryList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Service Type -->
                                     <div class="form-group">
                                         <label for="serviceType" class="form-label">Service Type</label>
                                         <div class="input-container">
                                             <p:selectOneMenu id="serviceType" value="#{taskSearchBean.serviceType}"
-                                                converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
                                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems
-                                                    itemLabel="#{serviceType.name}"
-                                                    itemValue="#{serviceType}" var="serviceType"
-                                                    value="#{taskSearchBean.serviceTypeList}" />
+                                                        itemLabel="#{serviceType.name}"
+                                                        itemValue="#{serviceType}" var="serviceType"
+                                                        value="#{taskSearchBean.serviceTypeList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Empty cell for alignment -->
                                     <div></div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Action Buttons -->
                         <div class="btn-group-left">
                             <!-- Search Button -->
                             <p:commandButton id="searchBtn" value="Search"
-                                action="#{taskSearchBean.searchTasks}"
-                                styleClass="btn btn-search btn-sm"
-                                icon="pi pi-search"
-                                title="Search tasks"
-                                update="@([id$=resultsTable])" />
-                                
+                                             action="#{taskSearchBean.searchTasks}"
+                                             styleClass="btn btn-search btn-sm"
+                                             icon="pi pi-search"
+                                             title="Search tasks"
+                                             update="@([id$=resultsTable])" />
+
                             <!-- Clear Button -->
                             <p:commandButton value="Clear"
-                                action="#{taskSearchBean.clearSearch}"
-                                styleClass="btn btn-clear btn-sm"
-                                icon="pi pi-eraser" 
-                                title="Clear all filters"
-                                update="@form"/>
-							<p:commandButton value="Export Excel"
-							    action="#{taskSearchBean.exportToExcel}"
-							    styleClass="btn btn-export btn-sm"
-							    icon="pi pi-file-excel"
-							    title="Export to Excel"
-							    ajax="false" />
-                                
+                                             action="#{taskSearchBean.clearSearch}"
+                                             styleClass="btn btn-clear btn-sm"
+                                             icon="pi pi-eraser"
+                                             title="Clear all filters"
+                                             update="@form"/>
+                            <p:commandButton value="Export Excel"
+                                             action="#{taskSearchBean.exportToExcel}"
+                                             styleClass="btn btn-export btn-sm"
+                                             icon="pi pi-file-excel"
+                                             title="Export to Excel"
+                                             ajax="false" />
+
                         </div>
                     </div>
                 </div>
-                
 
-<!-- ========== SEARCH RESULTS SECTION ========== -->
-<div class="premium-card">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="pi pi-table"></i>
-            Search Results
-        </h3>
-        <span class="result-count-badge">
+
+                <!-- ========== SEARCH RESULTS SECTION ========== -->
+                <div class="premium-card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="pi pi-table"></i>
+                            Search Results
+                        </h3>
+                        <span class="result-count-badge">
             <i class="pi pi-bell"></i>
-            #{taskSearchBean.searchResults != null ? taskSearchBean.searchResults.size() : 0} tasks found
+                            #{taskSearchBean.searchResults != null ? taskSearchBean.searchResults.size() : 0} tasks found
         </span>
-    </div>
-    
-    <div class="card-body">
-        <p:dataTable id="resultsTable" widgetVar="resultsTable"
-                var="task" 
-                value="#{taskSearchBean.searchResults}" 
-                styleClass="premium-table"
-                rowKey="#{task.id}" paginator="true" lazy="true"
-                rows="10" emptyMessage="No tasks found matching your criteria"
-                paginatorPosition="bottom"
-                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                rowsPerPageTemplate="5,10,15,20,50">
+                    </div>
 
-            <f:facet name="empty">
-                <div class="empty-state">
-                    <i class="pi pi-search"></i>
-                    <h3>No Tasks Found</h3>
-                    <p>Try adjusting your search filters to find what you're looking for.</p>
-                </div>
-            </f:facet>
+                    <div class="card-body">
+                        <p:dataTable id="resultsTable" widgetVar="resultsTable"
+                                     var="task"
+                                     value="#{taskSearchBean.searchResults}"
+                                     styleClass="premium-table"
+                                     rowKey="#{task.id}" paginator="true" lazy="true"
+                                     rows="10" emptyMessage="No tasks found matching your criteria"
+                                     paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,20,50">
 
-            <!-- Task ID Column -->
-            <p:column headerText="Task ID" style="width: 90px;">
+                            <f:facet name="empty">
+                                <div class="empty-state">
+                                    <i class="pi pi-search"></i>
+                                    <h3>No Tasks Found</h3>
+                                    <p>Try adjusting your search filters to find what you're looking for.</p>
+                                </div>
+                            </f:facet>
+
+                            <!-- Work Order Column - Now First -->
+                            <p:column headerText="Work Order" style="min-width: 180px;">
+                                <div class="workorder-frame">
+                                    <div class="workorder-key">#{taskSearchBean.getWorkOrderKey(task)}</div>
+                                </div>
+                            </p:column>
+
+                            <!-- Task ID Column -->
+                            <p:column headerText="Task ID" style="width: 90px;">
                 <span class="badge badge-primary">
                     <i class="pi pi-tag"></i> #{task.id}
                 </span>
-            </p:column>
+                            </p:column>
 
-            <!-- Company Column -->
-            <p:column headerText="Company" style="min-width: 160px;">
-                <div class="company-cell">
-                    <i class="pi pi-building" style="color: var(--purple); margin-right: 8px;"></i>
-                    <h:outputText value="#{task.company.name}" style="font-weight: 500;"/>
-                </div>
-            </p:column>
+                            <!-- Company Column -->
+                            <p:column headerText="Company" style="min-width: 160px;">
+                                <div class="company-cell">
+                                    <i class="pi pi-building" style="color: var(--purple); margin-right: 8px;"></i>
+                                    <h:outputText value="#{task.company.name}" style="font-weight: 500;"/>
+                                </div>
+                            </p:column>
 
-            <!-- Equipment Column -->
-            <p:column headerText="Equipment" style="min-width: 150px;">
-                <div class="equipment-cell">
-                    <i class="pi pi-cog" style="color: var(--info); margin-right: 8px;"></i>
-                    <h:outputText value="#{task.equipmentCategory.name}" style="font-weight: 500;"/>
-                </div>
-            </p:column>
+                            <!-- Equipment Column -->
+                            <p:column headerText="Equipment" style="min-width: 150px;">
+                                <div class="equipment-cell">
+                                    <i class="pi pi-cog" style="color: var(--info); margin-right: 8px;"></i>
+                                    <h:outputText value="#{task.equipmentCategory.name}" style="font-weight: 500;"/>
+                                </div>
+                            </p:column>
 
-            <!-- Service Column -->
-            <p:column headerText="Service" style="min-width: 140px;">
-                <div class="service-cell">
-                    <i class="pi pi-wrench" style="color: var(--secondary); margin-right: 8px;"></i>
-                    <h:outputText value="#{task.serviceType.name}" style="font-weight: 500;"/>
-                </div>
-            </p:column>
-            
-            <!-- Assignee Column -->
-            <p:column headerText="Assigner" style="min-width: 160px;">
-                <div class="assignee-cell">
-                    <i class="pi pi-user" style="color: var(--accent); margin-right: 8px;"></i>
-                    <h:outputText value="#{task.userAliasByAssigner.sysUserBySysUser.displayName}" style="font-weight: 500;"/>
-                </div>
-            </p:column>
-            
-            <!-- Inspector Column -->
-            <p:column headerText="Inspector" style="min-width: 160px;">
-                <div class="assignee-cell">
-                    <i class="pi pi-user-edit" style="color: var(--warning); margin-right: 8px;"></i>
-                    <h:outputText value="#{taskSearchBean.getInspectorTask(task)}" 
-                                 style="font-weight: 500; color: var(--medium-gray);"
-                                 />
-                </div>
-            </p:column>
-            
-            <!-- Reviewer Column -->
-            <p:column headerText="Reviewer" style="min-width: 160px;">
-                <div class="assignee-cell">
-                    <i class="pi pi-eye" style="color: var(--success); margin-right: 8px;"></i>
-                    <h:outputText value="#{taskSearchBean.getReviewerTask(task)}" 
-                                 style="font-weight: 500; color: var(--medium-gray);"
-                                 />
-                </div>
-            </p:column>
+                            <!-- Service Column -->
+                            <p:column headerText="Service" style="min-width: 140px;">
+                                <div class="service-cell">
+                                    <i class="pi pi-wrench" style="color: var(--secondary); margin-right: 8px;"></i>
+                                    <h:outputText value="#{task.serviceType.name}" style="font-weight: 500;"/>
+                                </div>
+                            </p:column>
 
-            <!-- Status Column -->
-			<p:column headerText="Status" style="width: 180px;">
-			    <div class="status-badge #{taskSearchBean.getStatusCssClass(taskSearchBean.getInspectionFormWorkflowStatus(task))}">
-			        <i class="pi #{taskSearchBean.getIconForStatusLabel(taskSearchBean.getInspectionFormWorkflowStatus(task))}"></i>
-			        #{taskSearchBean.getInspectionFormWorkflowStatus(task)}
-			    </div>
-			</p:column>
+                            <!-- Assignee Column -->
+                            <p:column headerText="Assigner" style="min-width: 160px;">
+                                <div class="assignee-cell">
+                                    <i class="pi pi-user" style="color: var(--accent); margin-right: 8px;"></i>
+                                    <h:outputText value="#{task.userAliasByAssigner.sysUserBySysUser.displayName}" style="font-weight: 500;"/>
+                                </div>
+                            </p:column>
 
-            <!-- Created Date Column -->
-            <p:column headerText="Created" style="width: 120px;">
-                <div class="date-cell">
-                    <i class="pi pi-calendar" style="color: var(--primary); margin-right: 8px;"></i>
-                    <h:outputText value="#{task.createdDate}" style="font-weight: 500;">
-                        <f:convertDateTime pattern="yyyy-MM-dd" />
-                    </h:outputText>
+                            <!-- Inspector Column -->
+                            <p:column headerText="Inspector" style="min-width: 160px;">
+                                <div class="assignee-cell">
+                                    <i class="pi pi-user-edit" style="color: var(--warning); margin-right: 8px;"></i>
+                                    <h:outputText value="#{taskSearchBean.getInspectorTask(task)}"
+                                                  style="font-weight: 500; color: var(--medium-gray);"
+                                    />
+                                </div>
+                            </p:column>
+
+                            <!-- Reviewer Column -->
+                            <p:column headerText="Reviewer" style="min-width: 160px;">
+                                <div class="assignee-cell">
+                                    <i class="pi pi-eye" style="color: var(--success); margin-right: 8px;"></i>
+                                    <h:outputText value="#{taskSearchBean.getReviewerTask(task)}"
+                                                  style="font-weight: 500; color: var(--medium-gray);"
+                                    />
+                                </div>
+                            </p:column>
+
+                            <!-- Status Column -->
+                            <p:column headerText="Status" style="width: 180px;">
+                                <div class="status-badge #{taskSearchBean.getStatusCssClass(taskSearchBean.getInspectionFormWorkflowStatus(task))}">
+                                    <i class="pi #{taskSearchBean.getIconForStatusLabel(taskSearchBean.getInspectionFormWorkflowStatus(task))}"></i>
+                                    #{taskSearchBean.getInspectionFormWorkflowStatus(task)}
+                                </div>
+                            </p:column>
+
+                            <!-- Created Date Column -->
+                            <p:column headerText="Created" style="width: 120px;">
+                                <div class="date-cell">
+                                    <i class="pi pi-calendar" style="color: var(--primary); margin-right: 8px;"></i>
+                                    <h:outputText value="#{task.createdDate}" style="font-weight: 500;">
+                                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                                    </h:outputText>
+                                </div>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
                 </div>
-            </p:column>
-        </p:dataTable>
-    </div>
-</div>
             </h:form>
         </div>
     </ui:define>
