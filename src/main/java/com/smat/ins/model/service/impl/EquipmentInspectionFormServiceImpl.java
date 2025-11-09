@@ -52,6 +52,12 @@ public class EquipmentInspectionFormServiceImpl extends
     }
 
     @Override
+    public Integer getNextReportSeqByEquipmentCat(String code) {
+        return dao.getNextReportSeqByEquipmentCat(code);
+    }
+
+
+    @Override
     public Integer getMaxJobNoCodeByEquipmentCat(String code) {
         // TODO Auto-generated method stub
         return dao.getMaxJobNoCodeByEquipmentCat(code);

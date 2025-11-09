@@ -663,11 +663,22 @@ public class InspectionFormBean implements Serializable {
                 task = taskService.findById(taskId);
             }
 
+            // ensure we have an equipment category code when task provides one
+            try {
+                if ((equipmentCatCode == null || equipmentCatCode.trim().isEmpty()) && task != null && task.getEquipmentCategory() != null) {
+                    EquipmentCategory tc = task.getEquipmentCategory();
+                    if (tc != null && tc.getCode() != null) {
+                        equipmentCatCode = tc.getCode();
+                        equipmentCategory = equipmentCategoryService.findByUniqueField("code", equipmentCatCode);
+                    }
+                }
+            } catch (Exception ignore) {}
+
             if (equipmentCatStr != null) {
                 equipmentCatCode = UtilityHelper.decipher(equipmentCatStr);
                 equipmentCategory = equipmentCategoryService.findByUniqueField("code", equipmentCatCode);
 
-                if (!disabled && persistentMode.equals("insert")) {
+                if (!disabled && "insert".equals(persistentMode)) { // استخدام equals للسلامة من NPE
                     if (equipmentCategory != null) {
                         formTemplate = formTemplateService.getBy(equipmentCategory.getCode());
                         if (formTemplate != null) {
@@ -683,30 +694,86 @@ public class InspectionFormBean implements Serializable {
                             PrimeFaces.current().ajax().update("form:panelGridDaynamicContent");
                         }
                     }
-                    equipmentInspectionForm = new EquipmentInspectionForm();
 
-                    Integer maxReportNo = equipmentInspectionFormService
-                            .getMaxReportNoCodeByEquipmentCat(equipmentCatCode);
-                    if (maxReportNo != null) {
-                        equipmentInspectionForm.setReportNo("A0247" + String.format("%0" + 5 + "d", maxReportNo + 1));
+                    // If a form already exists for this task, reuse it (prevents duplicate/new=1 issues)
+                    if (task != null) {
+                        try {
+                            EquipmentInspectionForm existing = equipmentInspectionFormService.getBy(task.getId());
+                            if (existing != null) {
+                                equipmentInspectionForm = existing;
+                                // make sure equipmentCategory is populated for UI
+                                if (equipmentInspectionForm.getEquipmentCategory() != null && equipmentInspectionForm.getEquipmentCategory().getCode() != null) {
+                                    equipmentCatCode = equipmentInspectionForm.getEquipmentCategory().getCode();
+                                }
+                            }
+                        } catch (Exception ex) {
+                            // ignore and continue to create new
+                            ex.printStackTrace();
+                        }
                     }
 
-                    Integer maxTimeSheetNo = equipmentInspectionFormService
-                            .getMaxTimeSheetNoCodeByEquipmentCat(equipmentCatCode);
-                    if (maxTimeSheetNo != null) {
-                        equipmentInspectionForm
-                                .setTimeSheetNo("TS" + String.format("%0" + 5 + "d", maxTimeSheetNo + 1));
+                    if (equipmentInspectionForm == null) {
+                        equipmentInspectionForm = new EquipmentInspectionForm();
                     }
 
-                    Integer maxJobNo = equipmentInspectionFormService.getMaxJobNoCodeByEquipmentCat(equipmentCatCode);
-                    if (maxJobNo != null) {
-                        equipmentInspectionForm.setJobNo("JO" + String.format("%0" + 5 + "d", maxJobNo + 1));
+                    // ====== NEW: try to reserve reportNo bound to task when available ======
+                    Integer nextSeq = null;
+                    try {
+                        try {
+                            com.smat.ins.model.service.SeqReservationService seqReservationService = (com.smat.ins.model.service.SeqReservationService) BeanUtility.getBean("seqReservationService");
+                            if (task != null && seqReservationService != null) {
+                                Integer reserved = seqReservationService.getReservedReportNoForTask(task.getId());
+                                if (reserved == null) {
+                                    Long reservedBy = null; try { if (loginBean != null && loginBean.getUser() != null) reservedBy = loginBean.getUser().getId(); } catch (Exception ignore) {}
+                                    reserved = seqReservationService.reserveReportNoForTask(task.getId(), equipmentCatCode, reservedBy);
+                                }
+                                if (reserved != null) nextSeq = reserved;
+                            }
+                        } catch (Exception ex) {
+                            // ignore reservation failures and fallback to existing behavior
+                            ex.printStackTrace();
+                        }
+
+                        if (nextSeq == null) {
+                            // default behavior: use existing service sequence method (transactional)
+                            nextSeq = equipmentInspectionFormService.getNextReportSeqByEquipmentCat(equipmentCatCode);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
 
-                    Integer maxStickerNo = equipmentInspectionFormService
-                            .getMaxStickerNoCodeByEquipmentCat(equipmentCatCode);
-                    if (maxStickerNo != null) {
-                        equipmentInspectionForm.setStickerNo("SK" + String.format("%0" + 5 + "d", maxStickerNo + 1));
+                    if (equipmentInspectionForm.getReportNo() == null || equipmentInspectionForm.getReportNo().trim().isEmpty()) {
+                        if (nextSeq != null) {
+                            equipmentInspectionForm.setReportNo("A0247" + String.format("%05d", nextSeq));
+                        } else {
+                            Integer maxReportNo = equipmentInspectionFormService.getMaxReportNoCodeByEquipmentCat(equipmentCatCode);
+                            int fallback = (maxReportNo == null) ? 1 : (maxReportNo + 1);
+                            equipmentInspectionForm.setReportNo("A0247" + String.format("%05d", fallback));
+                        }
+                    }
+                    // =================================================================
+
+                    // Timesheet, Job, Sticker كما كانت سابقاً
+                    try {
+                        Integer maxTimeSheetNo = equipmentInspectionFormService
+                                .getMaxTimeSheetNoCodeByEquipmentCat(equipmentCatCode);
+                        if (maxTimeSheetNo != null) {
+                            equipmentInspectionForm
+                                    .setTimeSheetNo("TS" + String.format("%05d", maxTimeSheetNo + 1));
+                        }
+
+                        Integer maxJobNo = equipmentInspectionFormService.getMaxJobNoCodeByEquipmentCat(equipmentCatCode);
+                        if (maxJobNo != null) {
+                            equipmentInspectionForm.setJobNo("JO" + String.format("%05d", maxJobNo + 1));
+                        }
+
+                        Integer maxStickerNo = equipmentInspectionFormService
+                                .getMaxStickerNoCodeByEquipmentCat(equipmentCatCode);
+                        if (maxStickerNo != null) {
+                            equipmentInspectionForm.setStickerNo("SK" + String.format("%05d", maxStickerNo + 1));
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
 
                     equipmentInspectionForm.setDateOfThoroughExamination(Calendar.getInstance().getTime());
@@ -718,6 +785,7 @@ public class InspectionFormBean implements Serializable {
                         equipmentInspectionForm.setCompany(task.getCompany());
 
                 } else {
+                    // حالة العرض أو التعديل (كما كانت سابقًا)
                     if (taskIdStr != null) {
                         equipmentInspectionForm = equipmentInspectionFormService.getBy(taskId);
                         if (equipmentInspectionForm != null) {
@@ -728,8 +796,8 @@ public class InspectionFormBean implements Serializable {
                             if (this.inspectionFormWorkflowStep != null)
                                 stepComment = this.inspectionFormWorkflowStep.getSysUserComment();
                             step = this.inspectionFormWorkflow.getWorkflowDefinition().getStep().getCode();
-                            if(step.equals("01"))
-                                disableSticker=true;
+                            if (step.equals("01"))
+                                disableSticker = true;
                         }
                         List<EquipmentInspectionFormItem> equipmentInspectionFormItems = new ArrayList<EquipmentInspectionFormItem>(
                                 equipmentInspectionForm.getEquipmentInspectionFormItems());
@@ -768,11 +836,11 @@ public class InspectionFormBean implements Serializable {
             criteria.put("isUsed", false);
             stickers = stickerService.findByCriteria(criteria);
 
-
-        } catch (Exception e) { // TODO Auto-generated catch block
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     public void defineEquipmentCategoryByCode(Integer taskId, String code) {
         try {
@@ -1013,10 +1081,7 @@ public class InspectionFormBean implements Serializable {
 
     public boolean doValidate() {
         try {
-            if (comment == null || comment.isEmpty()) {
-                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldEnterComment"));
-                return false;
-            }
+
 
             if(equipmentInspectionForm.getSticker()==null) {
                 UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldChooseSticker"));
@@ -1155,6 +1220,15 @@ public class InspectionFormBean implements Serializable {
                 equipmentInspectionForm.setInspectionFormWorkflowSteps(inspectionFormWorkflowSteps);
 
                 equipmentInspectionFormService.saveOrUpdate(equipmentInspectionForm);
+                // confirm reservation if applicable
+                try {
+                    if (task != null) {
+                        com.smat.ins.model.service.SeqReservationService seqReservationService = (com.smat.ins.model.service.SeqReservationService) BeanUtility.getBean("seqReservationService");
+                        if (seqReservationService != null) {
+                            try { seqReservationService.confirmReservedReportNoForTask(task.getId()); } catch (Exception ignore) {}
+                        }
+                    }
+                } catch (Exception ignore) {}
                 Sticker sticker = stickerService.findByUniqueField("stickerNo", equipmentInspectionForm.getStickerNo());
                 sticker.setIsUsed(true);
                 sticker.setIsPrinted(true);
@@ -2191,7 +2265,7 @@ public class InspectionFormBean implements Serializable {
             }
 
             if (payload.containsKey("stepComment")) {
-                this.stepComment = payload.get("stepComment") != null ? payload.get("stepComment").toString() : null;
+                this.stepComment = (payload.get("stepComment") != null) ? payload.get("stepComment").toString() : null;
             }
             if (payload.containsKey("persistentMode")) {
                 this.persistentMode = payload.get("persistentMode") != null ? payload.get("persistentMode").toString() : null;

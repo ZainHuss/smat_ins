@@ -22,6 +22,8 @@ public interface EmpCertificationService extends GenericService<EmpCertification
 
     public Boolean saveToStep(EmpCertification empCertification,Employee employee,EmpCertificationWorkflow empCertificationWorkflow,
                               EmpCertificationWorkflowStep empCertificationWorkflowStep) throws Exception;
+    Integer getNextCertSeq();
+
 
     public Boolean merge(EmpCertification empCertification,Employee employee)throws Exception;
 

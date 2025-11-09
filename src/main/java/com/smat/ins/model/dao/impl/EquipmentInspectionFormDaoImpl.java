@@ -46,6 +46,71 @@ public class EquipmentInspectionFormDaoImpl extends
     }
 
     @Override
+    public Integer getNextReportSeqByEquipmentCat(String code) {
+        Session session = null;
+        try {
+            session = sessionFactory.getCurrentSession();
+
+            // نقرأ صف التسلسل مع قفل FOR UPDATE داخل المعاملة
+            @SuppressWarnings("unchecked")
+            java.util.List<Object> seqList = session.createNativeQuery(
+                            "SELECT last_val FROM equipment_inspection_seq WHERE equipment_cat_code = ? FOR UPDATE")
+                    .setParameter(1, code)
+                    .getResultList();
+
+            Integer nextVal = null;
+
+            if (seqList == null || seqList.isEmpty()) {
+                // لا يوجد صف بعد: نقرأ MAX من الجدول لإيجاد نقطة البداية
+                Object maxObj = session.createNativeQuery(
+                                "SELECT COALESCE(MAX(CAST(SUBSTR(eif.report_no,-5) AS UNSIGNED)),0) " +
+                                        "FROM equipment_inspection_form eif " +
+                                        "INNER JOIN equipment_category ec ON eif.equipment_category = ec.id " +
+                                        "WHERE ec.code = ?")
+                        .setParameter(1, code)
+                        .getSingleResult();
+
+                int maxVal = 0;
+                if (maxObj instanceof Number) {
+                    maxVal = ((Number) maxObj).intValue();
+                } else if (maxObj != null) {
+                    maxVal = Integer.parseInt(maxObj.toString());
+                }
+                nextVal = maxVal + 1;
+
+                // ندرج صف البداية
+                session.createNativeQuery(
+                                "INSERT INTO equipment_inspection_seq (equipment_cat_code, last_val) VALUES (?, ?)")
+                        .setParameter(1, code)
+                        .setParameter(2, nextVal)
+                        .executeUpdate();
+            } else {
+                Object curObj = seqList.get(0);
+                int cur = 0;
+                if (curObj instanceof Number) {
+                    cur = ((Number) curObj).intValue();
+                } else if (curObj != null) {
+                    cur = Integer.parseInt(curObj.toString());
+                }
+                nextVal = cur + 1;
+
+                session.createNativeQuery(
+                                "UPDATE equipment_inspection_seq SET last_val = ? WHERE equipment_cat_code = ?")
+                        .setParameter(1, nextVal)
+                        .setParameter(2, code)
+                        .executeUpdate();
+            }
+
+            return nextVal;
+
+        } catch (Exception e) {
+            log.error("getNextReportSeqByEquipmentCat failed for code=" + code + " - " + e.getMessage(), e);
+            throw e;
+        }
+    }
+
+
+    @Override
     public Integer getMaxTimeSheetNoCodeByEquipmentCat(String code) {
         Session session = null;
         Integer maxTimeSheetNoCode = null;

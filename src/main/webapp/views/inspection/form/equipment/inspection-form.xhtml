@@ -2110,19 +2110,7 @@
                             </p:selectOneMenu>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-xl-6 col-xxl-6">
-                        <div class="field field-required">
-                            <h:outputText value="#{interfaceLabel.equipmentType}" styleClass="smat-label" />
-                            <p:selectOneMenu
-                                             style="width:100%;"
-                                             value="#{inspectionFormBean.equipmentType}"
-                                             converter="omnifaces.SelectItemsIndexConverter">
-                                <f:selectItems itemLabel="#{equipmentType.englishName} "
-                                               itemValue="#{equipmentType}" var="equipmentType"
-                                               value="#{inspectionFormBean.equipmentTypes}" />
-                            </p:selectOneMenu>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
@@ -2238,8 +2226,7 @@
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label" />
                             <p:inputTextarea id="comment" value="#{inspectionFormBean.comment}" rows="3"
-                                             styleClass="block" required="#{!inspectionFormBean.savingDraft}"
-                                             requiredMessage="Comment is required"
+                                             styleClass="block"
                                              placeholder="Enter your approval comments here..." />
                             <p:message for="comment" display="icon" />
                         </div>

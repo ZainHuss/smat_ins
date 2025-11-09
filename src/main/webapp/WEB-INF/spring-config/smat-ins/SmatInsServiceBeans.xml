@@ -215,6 +215,13 @@
 		<property name="empCertificationWorkflowDao" ref="empCertificationWorkflowDao"></property>
 		<property name="empCertificationWorkflowStepDao" ref="empCertificationWorkflowStepDao"></property>
 	</bean>
+
+	<!-- Seq reservation service: reserves report/cert numbers bound to tasks -->
+	<bean name="seqReservationService"
+		class="com.smat.ins.model.service.impl.SeqReservationServiceImpl">
+		<!-- SessionFactory is defined in SmatInsHibernateConfiguration -->
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 	
 	<bean name="employeeService"
 		class="com.smat.ins.model.service.impl.EmployeeServiceImpl">

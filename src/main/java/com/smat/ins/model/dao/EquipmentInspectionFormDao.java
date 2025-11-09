@@ -8,8 +8,10 @@ import com.smat.ins.model.entity.EquipmentInspectionForm;
 
 public interface EquipmentInspectionFormDao extends GenericDao<EquipmentInspectionForm, Long> {
 	public Integer getMaxReportNoCodeByEquipmentCat(String code);
+    Integer getNextReportSeqByEquipmentCat(String code);
 
-	public Integer getMaxTimeSheetNoCodeByEquipmentCat(String code);
+
+    public Integer getMaxTimeSheetNoCodeByEquipmentCat(String code);
 
 	public Integer getMaxJobNoCodeByEquipmentCat(String code);
 

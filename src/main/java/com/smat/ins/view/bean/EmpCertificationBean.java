@@ -115,7 +115,6 @@ public class EmpCertificationBean implements Serializable {
             sysUserService = (SysUserService) BeanUtility.getBean("sysUserService");
             taskDraftService = (TaskDraftService) BeanUtility.getBean("taskDraftService");
 
-
             String mode = UtilityHelper.getRequestParameter("mode");
             if ("view".equals(mode)) {
                 viewOnly = true; // يجعل كل الحقول للعرض فقط
@@ -127,51 +126,151 @@ public class EmpCertificationBean implements Serializable {
             permission = UtilityHelper.getRequestParameter("p");
             persistentMode = UtilityHelper.getRequestParameter("m");
 
+            // decode permission safely
             if (permission != null) {
-                permission = UtilityHelper.decipher(permission);
-                disabled = permission.equalsIgnoreCase("readOnly");
+                try {
+                    permission = UtilityHelper.decipher(permission);
+                    disabled = permission.equalsIgnoreCase("readOnly");
+                } catch (Exception ex) {
+                    // إذا فشلت عملية فك التشفير فاترك القيمة كما هي
+                    ex.printStackTrace();
+                }
             }
 
             if (taskIdStr != null) {
-                task = taskService.findById(Integer.valueOf(UtilityHelper.decipher(taskIdStr)));
-                if (task != null && task.getCompany() != null)
-                    company = task.getCompany();
+                try {
+                    task = taskService.findById(Integer.valueOf(UtilityHelper.decipher(taskIdStr)));
+                    if (task != null && task.getCompany() != null)
+                        company = task.getCompany();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            // decode persistent mode once for safety
+            String decodedPersistentMode = null;
+            if (persistentMode != null) {
+                try {
+                    decodedPersistentMode = UtilityHelper.decipher(persistentMode);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
 
             if (certIdStr != null) {
-                Integer certId = Integer.valueOf(UtilityHelper.decipher(certIdStr));
-                empCertification = empCertificationService.findBy(certId);
-                employee = empCertification.getEmployee();
-                empCertificationType = empCertification.getEmpCertificationType();
-                if (empCertification != null) {
-                    this.empCertificationWorkflow = empCertificationWorkflowService.getCurrentInspectionFormWorkFlow(empCertification.getId());
-                    this.empCertificationWorkflowStep = empCertificationWorkflowStepService.getLastStep(empCertification.getId());
-                    if (this.empCertificationWorkflowStep != null) {
-                        stepComment = this.empCertificationWorkflowStep.getSysUserComment();
+                // عرض/تعديل شهادة موجودة
+                try {
+                    Integer certId = Integer.valueOf(UtilityHelper.decipher(certIdStr));
+                    empCertification = empCertificationService.findBy(certId);
+                    if (empCertification != null) {
+                        employee = empCertification.getEmployee();
+                        empCertificationType = empCertification.getEmpCertificationType();
+                        this.empCertificationWorkflow = empCertificationWorkflowService.getCurrentInspectionFormWorkFlow(empCertification.getId());
+                        this.empCertificationWorkflowStep = empCertificationWorkflowStepService.getLastStep(empCertification.getId());
+                        if (this.empCertificationWorkflowStep != null) {
+                            stepComment = this.empCertificationWorkflowStep.getSysUserComment();
+                        }
+                        if (this.empCertificationWorkflow != null) {
+                            step = this.empCertificationWorkflow.getWorkflowDefinition().getStep().getCode();
+                        }
+                        // normalize dates immediately after load to avoid timezone shifts when reviewer views them
+                        normalizeDatesAfterLoad();
+                    } else {
+                        // create empty employee to avoid NPE in view
+                        employee = new Employee();
                     }
-                    step = this.empCertificationWorkflow.getWorkflowDefinition().getStep().getCode();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    UtilityHelper.addErrorMessage("Error loading certification record");
                 }
-                // normalize dates immediately after load to avoid timezone shifts when reviewer views them
-                normalizeDatesAfterLoad();
-            } else if (persistentMode != null && UtilityHelper.decipher(persistentMode).equals("insert")) {
+            } else if ("insert".equals(decodedPersistentMode)) {
+                // إنشاء شهادة جديدة - يجب توليد certNumber بطريقة آمنة
                 empCertification = new EmpCertification();
                 employee = new Employee();
-                Integer maxCertNo = empCertificationService.getMaxCertNo();
-                Integer tsNo = empCertificationService.getMaxTimeSheetNo();
-                empCertification.setCertNumber("SMI/24RDIID/" + String.format("%07d", maxCertNo + 1));
-                empCertification.setTsNumber("TS" + String.format("%05d", tsNo + 1));
-                empCertification.setIssueDate(toNoon(Calendar.getInstance().getTime()));
 
+                Integer nextSeq = null;
+                try {
+                    // If this page is opened for a task, try to reserve a cert number bound to the task
+                    try {
+                        com.smat.ins.model.service.SeqReservationService seqReservationService = (com.smat.ins.model.service.SeqReservationService) BeanUtility.getBean("seqReservationService");
+                        if (task != null && seqReservationService != null) {
+                            Integer reserved = seqReservationService.getReservedCertNoForTask(task.getId());
+                            if (reserved == null) {
+                                Long reservedBy = null;
+                                try { if (loginBean != null && loginBean.getUser() != null) reservedBy = loginBean.getUser().getId(); } catch (Exception ignore) {}
+                                reserved = seqReservationService.reserveCertNoForTask(task.getId(), reservedBy);
+                            }
+                            if (reserved != null) {
+                                nextSeq = reserved;
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // reservation service not available or failed - fallback below
+                        ex.printStackTrace();
+                    }
+
+                    if (nextSeq == null) {
+                        // هذا النداء يجب أن يتم داخل معاملة DB (@Transactional على الـ Service أو الميثود)
+                        nextSeq = empCertificationService.getNextCertSeq();
+                    }
+                } catch (Exception ex) {
+                    // لو فشلت لأي سبب (مثلاً عدم تفعيل المعاملات) سنستخدم fallback الآمن بالـ MAX
+                    ex.printStackTrace();
+                }
+
+                if (nextSeq != null) {
+                    empCertification.setCertNumber("SMI/24RDIID/" + String.format("%07d", nextSeq));
+                } else {
+                    // fallback: الطريقة القديمة بالـ MAX
+                    try {
+                        Integer maxCertNo = empCertificationService.getMaxCertNo();
+                        int fallback = (maxCertNo == null) ? 1 : (maxCertNo + 1);
+                        empCertification.setCertNumber("SMI/24RDIID/" + String.format("%07d", fallback));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        // كآخر حل: استخدم 1
+                        empCertification.setCertNumber("SMI/24RDIID/" + String.format("%07d", 1));
+                    }
+                }
+
+                // Timesheet number (كما كان)
+                try {
+                    Integer tsNo = empCertificationService.getMaxTimeSheetNo();
+                    int tsVal = (tsNo == null) ? 1 : (tsNo + 1);
+                    empCertification.setTsNumber("TS" + String.format("%05d", tsVal));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    empCertification.setTsNumber("TS" + String.format("%05d", 1));
+                }
+
+                // Issue date default
+                empCertification.setIssueDate(toNoon(Calendar.getInstance().getTime()));
+            } // end create new
+
+            // تحميل القوائم العامة
+            try {
+                companies = companyService.findAll();
+            } catch (Exception ex) {
+                companies = new ArrayList<>();
+                ex.printStackTrace();
+            }
+            try {
+                employees = employeeService.findAll();
+            } catch (Exception ex) {
+                employees = new ArrayList<>();
+                ex.printStackTrace();
+            }
+            try {
+                empCertificationTypes = empCertificationTypeService.findAll();
+            } catch (Exception ex) {
+                empCertificationTypes = new ArrayList<>();
+                ex.printStackTrace();
             }
 
-            companies = companyService.findAll();
-            employees = employeeService.findAll();
-            empCertificationTypes = empCertificationTypeService.findAll();
-
+            // إعداد قائمة المستقبلين (user aliases) كما في السابق
             userAliasRecipientList = new ArrayList<>();
             selectedUserAliasRecipient = new UserAlias();
             SysUser sysUserLogin = (SysUser) UtilityHelper.getSessionAttr("user");
-            // Populate reviewer list from all SysUsers who have permission '011'
             try {
                 java.util.List<com.smat.ins.model.entity.SysUser> reviewers = sysUserService
                         .listUserHasPersmission("011");
@@ -189,21 +288,27 @@ public class EmpCertificationBean implements Serializable {
                 }
             } catch (Exception e) {
                 // fallback to previous behavior (organization-based recipients filtered by permission)
-                List<UserAlias> myUserAliasList = userAliasService.getBySysUser(sysUserLogin);
-                if (myUserAliasList != null && !myUserAliasList.isEmpty()) {
-                    UserAlias userAliasOwner = myUserAliasList.get(0);
-                    List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
-                    for (UserAlias userAlias : userAliasRecipientListDb) {
-                        if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "011"))
-                            userAliasRecipientList.add(userAlias);
+                try {
+                    List<UserAlias> myUserAliasList = userAliasService.getBySysUser(sysUserLogin);
+                    if (myUserAliasList != null && !myUserAliasList.isEmpty()) {
+                        UserAlias userAliasOwner = myUserAliasList.get(0);
+                        List<UserAlias> userAliasRecipientListDb = userAliasService.getListRecipients(userAliasOwner);
+                        for (UserAlias userAlias : userAliasRecipientListDb) {
+                            if (sysUserService.isUserHasPermission(userAlias.getSysUserBySysUser().getId(), "011"))
+                                userAliasRecipientList.add(userAlias);
+                        }
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
+
         } catch (Exception e) {
             UtilityHelper.addErrorMessage("Error initializing certification form");
             e.printStackTrace();
         }
     }
+
 
     public void assignCert(Integer taskId) {
         try {
@@ -532,6 +637,15 @@ public class EmpCertificationBean implements Serializable {
 
                 empCertification.setEmpCertificationWorkflowSteps(empCertificationWorkflowSteps);
                 empCertificationService.saveOrUpdate(empCertification, employee);
+                // confirm reservation if we reserved a cert for this task
+                try {
+                    if (task != null) {
+                        com.smat.ins.model.service.SeqReservationService seqReservationService = (com.smat.ins.model.service.SeqReservationService) BeanUtility.getBean("seqReservationService");
+                        if (seqReservationService != null) {
+                            try { seqReservationService.confirmReservedCertNoForTask(task.getId()); } catch (Exception ignore) { }
+                        }
+                    }
+                } catch (Exception ignore) {}
                 UtilityHelper.addInfoMessage("Operation successful");
                 return "pretty:inspection/my-tasks";
             }

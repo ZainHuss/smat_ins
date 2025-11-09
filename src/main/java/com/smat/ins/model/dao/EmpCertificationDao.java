@@ -9,8 +9,10 @@ import com.smat.ins.model.entity.EmpCertification;
 public interface EmpCertificationDao extends GenericDao<EmpCertification, Integer> {
 	
 	public Integer getMaxCertNo();
+    Integer getNextCertSeq();
 
-	public Integer getMaxTimeSheetNo();
+
+    public Integer getMaxTimeSheetNo();
 	
 	public List<EmpCertification> getForReview();
 	
