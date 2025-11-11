@@ -2038,24 +2038,24 @@
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.dateOfThoroughExamination}" styleClass="smat-label" />
                             <p:calendar
-                                        value="#{inspectionFormBean.equipmentInspectionForm.dateOfThoroughExamination}"
-                                        styleClass="block" showIcon="true" />
+                                    value="#{inspectionFormBean.equipmentInspectionForm.dateOfThoroughExamination}"
+                                    styleClass="block" showIcon="true" />
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-3 col-xxl-3">
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.nextExaminationDate}" styleClass="smat-label" />
                             <p:calendar
-                                        value="#{inspectionFormBean.equipmentInspectionForm.nextExaminationDate}"
-                                        styleClass="block" showIcon="true" />
+                                    value="#{inspectionFormBean.equipmentInspectionForm.nextExaminationDate}"
+                                    styleClass="block" showIcon="true" />
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-3 col-xxl-3">
                         <div class="field">
                             <h:outputText value="#{interfaceLabel.previousExaminationDate}" styleClass="smat-label" />
                             <p:calendar
-                                        value="#{inspectionFormBean.equipmentInspectionForm.previousExaminationDate}"
-                                        styleClass="block" showIcon="true" />
+                                    value="#{inspectionFormBean.equipmentInspectionForm.previousExaminationDate}"
+                                    styleClass="block" showIcon="true" />
                         </div>
                     </div>
                 </div>
@@ -2101,9 +2101,9 @@
                         <div class="field field-required">
                             <h:outputText value="#{interfaceLabel.examinationType}" styleClass="smat-label" />
                             <p:selectOneMenu
-                                             style="width:100%;"
-                                             value="#{inspectionFormBean.examinationType}"
-                                             converter="omnifaces.SelectItemsIndexConverter">
+                                    style="width:100%;"
+                                    value="#{inspectionFormBean.examinationType}"
+                                    converter="omnifaces.SelectItemsIndexConverter">
                                 <f:selectItems itemLabel="#{examinationType.englishName} "
                                                itemValue="#{examinationType}" var="examinationType"
                                                value="#{inspectionFormBean.examinationTypes}" />
@@ -2223,7 +2223,7 @@
 
                 <div class="row">
                     <div class="col-lg-12 col-xl-12 col-xxl-12">
-                        <div class="field field-required">
+                        <div class="field">
                             <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label" />
                             <p:inputTextarea id="comment" value="#{inspectionFormBean.comment}" rows="3"
                                              styleClass="block"

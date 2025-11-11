@@ -47,6 +47,9 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import java.text.SimpleDateFormat;
+import java.net.URLEncoder;
+
+import org.primefaces.PrimeFaces;
 
 
 /**
@@ -961,6 +964,97 @@ public class CompletedTaskSearchBean implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
             UtilityHelper.addErrorMessage("Failed to generate report: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Download all attachments for an equipment inspection task as a ZIP.
+     * This will try to reuse InspectionFormBean.prepareAttachmentsZipDownload()
+     * to populate any expected session attributes then open the /attachments/zip URL.
+     */
+    public void downloadAttachmentsForEquipment(Integer taskId, Object reportNoObj) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            EquipmentInspectionForm form = null;
+            if (taskId != null) {
+                try { form = equipmentInspectionFormService.getBy(taskId); } catch (Exception ignore) { }
+            }
+
+            // Try to reuse InspectionFormBean to prepare session attributes (best-effort)
+            try {
+                com.smat.ins.view.bean.InspectionFormBean inspectionFormBean = (com.smat.ins.view.bean.InspectionFormBean) BeanUtility.getBean("inspectionFormBean");
+                if (inspectionFormBean != null) {
+                    if (form != null) inspectionFormBean.setEquipmentInspectionForm(form);
+                    try { inspectionFormBean.prepareAttachmentsZipDownload(); } catch (Exception ignore) {}
+                }
+            } catch (Exception ignore) {}
+
+            // determine folder name: prefer provided reportNo parameter, else use form data
+            String folderName = null;
+            if (reportNoObj != null && String.valueOf(reportNoObj).trim().length() > 0) {
+                folderName = String.valueOf(reportNoObj).trim();
+            } else if (form != null) {
+                if (form.getReportNo() != null && !form.getReportNo().trim().isEmpty()) folderName = form.getReportNo().trim();
+                else if (form.getId() != null) folderName = "form_" + form.getId();
+            }
+
+            if (folderName != null) {
+                String ctx = fc.getExternalContext().getRequestContextPath();
+                String url = ctx + "/attachments/zip?type=ins&reportNo=" + URLEncoder.encode(folderName, "UTF-8");
+                PrimeFaces.current().executeScript("window.open('" + url + "', '_blank');");
+            } else {
+                UtilityHelper.addErrorMessage("No report/folder available for attachments download.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Failed to prepare attachments download: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Download all attachments for an employee certification task as a ZIP.
+     * Reuses EmpCertificationBean.prepareAttachmentsZipDownload() when possible.
+     */
+    public void downloadAttachmentsForEmployee(Integer certId, Object certNumberObj) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        try {
+            EmpCertification cert = null;
+            if (certId != null) {
+                try { cert = empCertificationService.getBy(certId); } catch (Exception ignore) { }
+            }
+
+            // Try to reuse EmpCertificationBean to prepare session attributes (best-effort)
+            try {
+                com.smat.ins.view.bean.EmpCertificationBean empBean = (com.smat.ins.view.bean.EmpCertificationBean) BeanUtility.getBean("empCertificationBean");
+                if (empBean != null) {
+                    if (cert != null) {
+                        empBean.setEmpCertification(cert);
+                        if (cert.getEmployee() != null) empBean.setEmployee(cert.getEmployee());
+                    }
+                    try { empBean.prepareAttachmentsZipDownload(); } catch (Exception ignore) {}
+                }
+            } catch (Exception ignore) {}
+
+            String folderName = null;
+            if (certNumberObj != null && String.valueOf(certNumberObj).trim().length() > 0) {
+                folderName = String.valueOf(certNumberObj).trim();
+            } else if (cert != null) {
+                if (cert.getCertNumber() != null && !cert.getCertNumber().trim().isEmpty()) folderName = cert.getCertNumber().trim();
+                else if (cert.getId() != null) folderName = "emp_" + cert.getId();
+                else if (cert.getEmployee() != null && cert.getEmployee().getId() != null) folderName = "emp_" + cert.getEmployee().getId();
+            }
+
+            if (folderName != null) {
+                String ctx = fc.getExternalContext().getRequestContextPath();
+                String url = ctx + "/attachments/zip?type=emp&certNo=" + URLEncoder.encode(folderName, "UTF-8");
+                PrimeFaces.current().executeScript("window.open('" + url + "', '_blank');");
+            } else {
+                UtilityHelper.addErrorMessage("No certificate/folder available for attachments download.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Failed to prepare attachments download: " + e.getMessage());
         }
     }
 

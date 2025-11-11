@@ -1649,16 +1649,14 @@
                             <p:message for="selectoneMenu_UserAliasRecpient" display="icon" />
                         </div>
 
-                        <!-- Approval Comments Field -->
-                        <div class="field-group required-field form-col-2">
-                            <span class="floating-label required">Approval Comments</span>
+                        <!-- Approval Comments Field (now optional) -->
+                        <div class="field-group form-col-2">
+                            <span class="floating-label">Approval Comments</span>
                             <p:inputTextarea id="approvalComment"
                                              value="#{empCertificationBean.comment}"
                                              rows="3"
                                              styleClass="block"
                                              style="width:100%;"
-                                             required="true"
-                                             requiredMessage="Approval comments are required"
                                              placeholder="Enter your approval comments here..."/>
                             <p:message for="approvalComment" display="icon" />
                         </div>

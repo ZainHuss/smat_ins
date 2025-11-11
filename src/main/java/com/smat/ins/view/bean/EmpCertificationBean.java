@@ -411,7 +411,7 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStep.setEmpCertification(empCertification);
                 empCertificationWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
                 empCertificationWorkflowStep.setSysUser(loginBean.getUser());
-                empCertificationWorkflowStep.setSysUserComment(comment);
+                empCertificationWorkflowStep.setSysUserComment(comment != null ? comment : "");
                 empCertificationWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
                 empCertificationWorkflowStep.setWorkflowDefinition(workflowDefinitionFinal);
 
@@ -592,7 +592,7 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStepTwo.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
                 empCertificationWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
                 empCertificationWorkflowStepTwo.setSysUser(loginBean.getUser());
-                empCertificationWorkflowStepTwo.setSysUserComment(comment);
+                empCertificationWorkflowStepTwo.setSysUserComment(comment != null ? comment : "");
                 empCertificationWorkflowStepTwo.setStepSeq((short) (maxStepSeq + 1));
                 empCertification.getEmpCertificationWorkflowSteps().add(empCertificationWorkflowStepTwo);
 
@@ -622,7 +622,7 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStepOne.setWorkflowDefinition(workflowDefinitionInit);
                 empCertificationWorkflowStepOne.setProcessDate(Calendar.getInstance().getTime());
                 empCertificationWorkflowStepOne.setSysUser(loginBean.getUser());
-                empCertificationWorkflowStepOne.setSysUserComment(comment);
+                empCertificationWorkflowStepOne.setSysUserComment(comment != null ? comment : "");
                 empCertificationWorkflowStepOne.setStepSeq((short) (maxStepSeq + 1));
                 empCertificationWorkflowSteps.add(empCertificationWorkflowStepOne);
 
@@ -631,7 +631,7 @@ public class EmpCertificationBean implements Serializable {
                 empCertificationWorkflowStepTwo.setWorkflowDefinition(workflowDefinitionInit.getWorkflowDefinitionByNext());
                 empCertificationWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
                 empCertificationWorkflowStepTwo.setSysUser(loginBean.getUser());
-                empCertificationWorkflowStepTwo.setSysUserComment(comment);
+                empCertificationWorkflowStepTwo.setSysUserComment(comment != null ? comment : "");
                 empCertificationWorkflowStepTwo.setStepSeq((short) (empCertificationWorkflowStepOne.getStepSeq() + 1));
                 empCertificationWorkflowSteps.add(empCertificationWorkflowStepTwo);
 
@@ -677,7 +677,7 @@ public class EmpCertificationBean implements Serializable {
             workflowStep.setEmpCertification(empCertification);
             workflowStep.setProcessDate(new Date());
             workflowStep.setSysUser(loginBean.getUser());
-            workflowStep.setSysUserComment(comment);
+            workflowStep.setSysUserComment(comment != null ? comment : "");
             workflowStep.setStepSeq((short) (maxStepSeq + 1));
             workflowStep.setWorkflowDefinition(getInitWorkflowDefinition());
             empCertificationService.saveToStep(empCertification, employee, empCertificationWorkflow, workflowStep);
@@ -1091,10 +1091,7 @@ public class EmpCertificationBean implements Serializable {
 
     private boolean doValidate() {
         try {
-            if (comment == null || comment.isEmpty()) {
-                UtilityHelper.addErrorMessage("Please enter a comment");
-                return false;
-            }
+            // Comment is optional now; do not enforce non-empty comment here.
             if (UtilityHelper.decipher(persistentMode).equals("insert")) {
                 if (selectedUserAliasRecipient == null || selectedUserAliasRecipient.getSysUserBySysUser() == null) {
                     UtilityHelper.addErrorMessage("Please select a reviewer.");

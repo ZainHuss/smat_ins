@@ -1288,20 +1288,6 @@
 
                                                 <div style="display:flex; gap:0.6rem; align-items:center;">
                                                     <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
-                                                    <!-- REPLACED: conditional action -> two separate links -->
-                                                    <p:commandLink styleClass="lux-action-btn" title="View / Download"
-                                                                   rendered="#{task['taskType'] eq 'Equipment Inspection'}"
-                                                                   action="#{inspectionFormBean.downloadCert(task['taskId'])}"
-                                                                   process="@this" ajax="false">
-                                                        <i class="fas fa-eye"></i>
-                                                    </p:commandLink>
-
-                                                    <p:commandLink styleClass="lux-action-btn" title="View / Download"
-                                                                   rendered="#{task['taskType'] ne 'Equipment Inspection'}"
-                                                                   action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}"
-                                                                   process="@this" ajax="false">
-                                                        <i class="fas fa-eye"></i>
-                                                    </p:commandLink>
                                                 </div>
                                             </div>
 
@@ -1366,16 +1352,24 @@
                                                 </div>
 
                                                 <div style="display:flex; gap:0.6rem; align-items:center;">
-                                                    <p:commandLink styleClass="lux-action-btn" title="Download/Print"
+
+
+                                                    <!-- Download Attachments (ZIP) for equipment -->
+                                                    <p:commandLink styleClass="lux-action-btn" title="Download Attachments"
                                                                    rendered="#{task['taskType'] eq 'Equipment Inspection'}"
-                                                                   action="#{inspectionFormBean.downloadCert(task['taskId'])}" ajax="false" process="@this">
-                                                        <i class="fas fa-download"></i>
+                                                                   action="#{completedTaskSearchBean.downloadAttachmentsForEquipment(task['taskId'], task['reportNo'])}"
+                                                                   process="@this" ajax="true">
+                                                        <i class="fas fa-paperclip"></i>
                                                     </p:commandLink>
 
-                                                    <p:commandLink styleClass="lux-action-btn" title="View PDF"
+
+
+                                                    <!-- Download Attachments (ZIP) for employee -->
+                                                    <p:commandLink styleClass="lux-action-btn" title="Download Attachments"
                                                                    rendered="#{task['taskType'] ne 'Equipment Inspection'}"
-                                                                   action="#{completedTaskSearchBean.doPrint(task['empCertificateId'])}" ajax="false" process="@this">
-                                                        <i class="fas fa-file-pdf"></i>
+                                                                   action="#{completedTaskSearchBean.downloadAttachmentsForEmployee(task['empCertificateId'], task['certNumber'])}"
+                                                                   process="@this" ajax="true">
+                                                        <i class="fas fa-paperclip"></i>
                                                     </p:commandLink>
                                                 </div>
                                             </div>

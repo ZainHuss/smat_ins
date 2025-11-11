@@ -1130,7 +1130,7 @@ public class InspectionFormBean implements Serializable {
                 inspectionFormWorkflowStep.setInspectionFormDocument("document-final".getBytes());
                 inspectionFormWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
                 inspectionFormWorkflowStep.setSysUser(loginBean.getUser());
-                inspectionFormWorkflowStep.setSysUserComment(comment);
+                inspectionFormWorkflowStep.setSysUserComment(comment != null ? comment : "");
                 inspectionFormWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
                 inspectionFormWorkflowStep.setWorkflowDefinition(workflowDefinitionFinal);
 
@@ -1173,7 +1173,7 @@ public class InspectionFormBean implements Serializable {
                 inspectionFormWorkflowStepTwo.setInspectionFormDocument("doc".getBytes());
                 inspectionFormWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
                 inspectionFormWorkflowStepTwo.setSysUser(loginBean.getUser());
-                inspectionFormWorkflowStepTwo.setSysUserComment(comment);
+                inspectionFormWorkflowStepTwo.setSysUserComment(comment != null ? comment : "");
                 inspectionFormWorkflowStepTwo.setStepSeq((short) (maxStepSeq + 1));
 
                 equipmentInspectionForm.getInspectionFormWorkflowSteps().add(inspectionFormWorkflowStepTwo);
@@ -1203,7 +1203,7 @@ public class InspectionFormBean implements Serializable {
                 inspectionFormWorkflowStepOne.setInspectionFormDocument("doc".getBytes());
                 inspectionFormWorkflowStepOne.setProcessDate(Calendar.getInstance().getTime());
                 inspectionFormWorkflowStepOne.setSysUser(loginBean.getUser());
-                inspectionFormWorkflowStepOne.setSysUserComment(comment);
+                inspectionFormWorkflowStepOne.setSysUserComment(comment != null ? comment : "");
                 inspectionFormWorkflowStepOne.setStepSeq((short) (maxStepSeq + 1));
                 inspectionFormWorkflowSteps.add(inspectionFormWorkflowStepOne);
                 InspectionFormWorkflowStep inspectionFormWorkflowStepTwo = new InspectionFormWorkflowStep();
@@ -1213,7 +1213,7 @@ public class InspectionFormBean implements Serializable {
                 inspectionFormWorkflowStepTwo.setInspectionFormDocument("doc".getBytes());
                 inspectionFormWorkflowStepTwo.setProcessDate(Calendar.getInstance().getTime());
                 inspectionFormWorkflowStepTwo.setSysUser(loginBean.getUser());
-                inspectionFormWorkflowStepTwo.setSysUserComment(comment);
+                inspectionFormWorkflowStepTwo.setSysUserComment(comment != null ? comment : "");
                 inspectionFormWorkflowStepTwo.setStepSeq((short) (inspectionFormWorkflowStepOne.getStepSeq() + 1));
 
                 inspectionFormWorkflowSteps.add(inspectionFormWorkflowStepTwo);
@@ -1271,7 +1271,7 @@ public class InspectionFormBean implements Serializable {
                 inspectionFormWorkflowStep.setInspectionFormDocument("document-final".getBytes());
                 inspectionFormWorkflowStep.setProcessDate(Calendar.getInstance().getTime());
                 inspectionFormWorkflowStep.setSysUser(loginBean.getUser());
-                inspectionFormWorkflowStep.setSysUserComment(comment);
+                inspectionFormWorkflowStep.setSysUserComment(comment != null ? comment : "");
                 inspectionFormWorkflowStep.setStepSeq((short) (maxStepSeq + 1));
                 inspectionFormWorkflowStep.setWorkflowDefinition(workflowDefinitionInit);
 
