@@ -1,2 +1,2 @@
 INSERT INTO smat_ins_db.service_type (arabic_name, english_name, code, arabic_description, english_description)VALUES 
-('تدريب الموظفين', 'Employee training', '002', 'تدريب الموظفين', 'Employee training');
+('تدريب الموظفين', 'Training & Assessment', '002', 'تدريب الموظفين', 'Employee training');
