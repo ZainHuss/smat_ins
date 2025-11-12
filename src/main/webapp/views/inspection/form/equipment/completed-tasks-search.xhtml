@@ -11,7 +11,7 @@
 
     <ui:define name="head">
         <h:outputStylesheet library="#{appSetting.resourceLib}" name="css/rtl-support.css" />
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Exo+2:wght@400;700&amp;family=Rajdhani:wght@400;700&amp;display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Exo+2:wght@400;700&amp;family=Rajdhani:wght@400;700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
         <style>
             :root {
@@ -21,17 +21,17 @@
                 --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
                 --card-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
                 --light-bg: #f8f9fa;
-                --card-bg: rgba(255, 255, 255, 0.9);
-                --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-                --card-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+                --card-bg: rgba(255, 255, 255, 0.95);
+                --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+                --card-shadow-hover: 0 12px 35px rgba(0, 0, 0, 0.15);
                 --border-radius: 16px;
-                --font-primary: 'Cairo', 'Montserrat', 'Exo 2', sans-serif;
-                --font-secondary: 'Montserrat', sans-serif;
-                --text-dark: #2d3748;
-                --text-muted: #718096;
-                --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                --font-primary: 'Plus Jakarta Sans', 'Cairo', 'Montserrat', sans-serif;
+                --font-secondary: 'Plus Jakarta Sans', 'Montserrat', sans-serif;
+                --text-dark: #1e293b;
+                --text-muted: #64748b;
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-                /* ألوان Work Order الجديدة */
+                /* ألوان Work Order الجديدة - أكثر أناقة */
                 --wo-color-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 --wo-color-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
                 --wo-color-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -42,33 +42,10 @@
                 --wo-color-8: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
                 --wo-color-9: linear-gradient(135deg, #fd746c 0%, #ff9068 100%);
                 --wo-color-10: linear-gradient(135deg, #2af598 0%, #009efd 100%);
-                --wo-no-order: linear-gradient(135deg, #a3bded 0%, #6991c7 100%);
+                --wo-no-order: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
             }
 
-            .lux-badge {
-                padding: 0.3rem 0.8rem;
-                border-radius: 50px;
-                font-size: 0.85rem;
-                font-weight: 800;
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                text-align: center;
-                min-width: 70px;
-                justify-content: center;
-                font-family: var(--font-secondary);
-                letter-spacing: 0.5px;
-                background: var(--primary-gradient);
-                color: white;
-                border: none;
-                box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
-                transition: var(--transition);
-            }
-            .lux-badge:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
-            }
-
+            /* تحسينات عامة */
             body {
                 font-family: var(--font-primary);
                 background: var(--light-bg);
@@ -86,7 +63,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
                 z-index: -1;
             }
 
@@ -98,33 +75,35 @@
                 height: 100%;
                 pointer-events: none;
                 z-index: -1;
-                opacity: 0.6;
+                opacity: 0.4;
             }
 
+            /* حاوية البحث الرئيسية */
             .lux-search-container {
                 max-width: 1400px;
-                margin: 2rem auto 1rem auto;
-                padding: 1.5rem 1rem;
+                margin: 1.5rem auto 1rem auto;
+                padding: 1rem;
                 position: relative;
                 z-index: 1;
             }
 
+            /* بطاقة البحث */
             .lux-search-card {
                 border-radius: var(--border-radius);
                 box-shadow: var(--card-shadow);
-                padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+                padding: 1.5rem;
                 background: var(--card-bg);
-                backdrop-filter: blur(10px);
-                border: none;
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.8);
                 position: relative;
                 overflow: hidden;
                 transition: var(--transition);
-                margin-bottom: 1.2rem;
-                background-image: var(--card-gradient);
+                margin-bottom: 1.5rem;
             }
+
             .lux-search-card:hover {
                 box-shadow: var(--card-shadow-hover);
-                transform: translateY(-5px);
+                transform: translateY(-3px);
             }
 
             .lux-search-card::before {
@@ -133,39 +112,32 @@
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 5px;
+                height: 4px;
                 background: var(--primary-gradient);
             }
 
             .lux-search-header {
-                font-size: 1.5rem;
-                font-weight: 900;
+                font-size: 1.4rem;
+                font-weight: 800;
                 font-family: var(--font-secondary);
                 color: var(--text-dark);
-                letter-spacing: 1.2px;
-                margin-bottom: 1.1rem;
+                margin-bottom: 1.5rem;
                 display: flex;
                 align-items: center;
                 gap: 0.7rem;
-                background: var(--primary-gradient);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-            .lux-search-header i {
-                font-size: 1.5rem;
-                background: var(--primary-gradient);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-right: 0.2rem;
             }
 
+            .lux-search-header i {
+                font-size: 1.3rem;
+                color: #667eea;
+            }
+
+            /* شبكة الحقول */
             .lux-fields-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 1.1rem;
-                margin-top: 1rem;
+                gap: 1rem;
+                margin-top: 0.5rem;
                 align-items: end;
                 width: 100%;
             }
@@ -173,162 +145,134 @@
             .lux-field-group {
                 display: flex;
                 flex-direction: column;
-                gap: 0.35rem;
+                gap: 0.5rem;
                 position: relative;
             }
+
             .lux-field-label {
-                font-size: 0.97rem;
-                font-weight: 700;
+                font-size: 0.9rem;
+                font-weight: 600;
                 color: var(--text-dark);
                 font-family: var(--font-secondary);
-                letter-spacing: 0.5px;
-                margin-bottom: 0.2rem;
+                margin-bottom: 0.3rem;
                 padding-left: 0.5rem;
                 border-left: 3px solid;
                 border-image: var(--primary-gradient);
                 border-image-slice: 1;
             }
 
+            /* تحسينات عناصر الإدخال */
             .ui-selectonemenu, .ui-inputtext, .ui-calendar input {
-                height: 45px !important;
+                height: 42px !important;
                 border-radius: 12px !important;
-                border: 1.5px solid transparent !important;
-                background: rgba(255, 255, 255, 0.8) !important;
+                border: 1.5px solid #e2e8f0 !important;
+                background: rgba(255, 255, 255, 0.9) !important;
                 color: var(--text-dark) !important;
-                font-size: 1.01rem !important;
+                font-size: 0.95rem !important;
                 font-family: var(--font-primary) !important;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
                 transition: var(--transition) !important;
                 padding: 0.5rem 0.9rem !important;
             }
+
             .ui-selectonemenu:focus, .ui-inputtext:focus, .ui-calendar input:focus {
-                border-color: transparent !important;
+                border-color: #667eea !important;
                 background: rgba(255, 255, 255, 0.95) !important;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2), 0 6px 15px rgba(0, 0, 0, 0.1) !important;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
                 outline: none !important;
-                transform: translateY(-2px);
+                transform: translateY(-1px);
             }
 
+            /* مجموعة الأزرار */
             .lux-btn-group {
                 display: flex;
                 justify-content: flex-end;
                 gap: 0.7rem;
                 margin-top: 1.5rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                padding-top: 1.2rem;
+                border-top: 1px solid rgba(0, 0, 0, 0.06);
             }
+
             .ui-button {
                 border-radius: 12px !important;
                 font-family: var(--font-secondary) !important;
-                font-weight: 700 !important;
-                font-size: 0.98rem !important;
-                min-height: 42px;
-                padding: 0.5rem 1.5rem !important;
-                letter-spacing: 0.5px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+                font-weight: 600 !important;
+                font-size: 0.92rem !important;
+                min-height: 40px;
+                padding: 0.5rem 1.3rem !important;
+                letter-spacing: 0.3px;
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08) !important;
                 border: none !important;
                 transition: var(--transition) !important;
                 position: relative;
                 overflow: hidden;
-                z-index: 1;
             }
-            .ui-button::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-                transition: all 0.6s;
-                z-index: -1;
-            }
-            .ui-button:hover::before {
-                left: 100%;
-            }
+
             .ui-button-primary {
                 background: var(--primary-gradient) !important;
                 color: white !important;
             }
+
             .ui-button-primary:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4) !important;
-            }
-            .ui-button-secondary {
-                background: var(--secondary-gradient) !important;
-                color: white !important;
-            }
-            .ui-button-secondary:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(245, 87, 108, 0.4) !important;
-            }
-            .ui-button-success {
-                background: var(--success-gradient) !important;
-                color: white !important;
-            }
-            .ui-button-success:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3) !important;
             }
 
+            /* بطاقة الإحصائيات */
             .lux-stats-card {
                 background: var(--card-bg);
                 border-radius: var(--border-radius);
-                padding: 1.2rem 1rem;
-                margin-bottom: 1.2rem;
+                padding: 1.2rem;
+                margin-bottom: 1.5rem;
                 box-shadow: var(--card-shadow);
-                border: none;
+                border: 1px solid rgba(255, 255, 255, 0.8);
                 position: relative;
                 overflow: hidden;
-                background-image: var(--card-gradient);
                 transition: var(--transition);
             }
+
             .lux-stats-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-3px);
                 box-shadow: var(--card-shadow-hover);
             }
+
             .lux-stats-card::before {
                 content: '';
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 5px;
+                height: 4px;
                 background: var(--warning-gradient);
             }
+
             .lux-stats-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 1.1rem;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 1rem;
             }
+
             .lux-stat-item {
                 text-align: center;
-                padding: 1.2rem 0.5rem;
+                padding: 1rem 0.5rem;
                 background: rgba(255, 255, 255, 0.7);
                 border-radius: 12px;
-                border: none;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
                 position: relative;
                 overflow: hidden;
                 transition: var(--transition);
             }
+
             .lux-stat-item:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                transform: translateY(-3px);
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
                 background: rgba(255, 255, 255, 0.9);
             }
-            .lux-stat-item::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 4px;
-                background: var(--primary-gradient);
-            }
+
             .lux-stat-number {
-                font-size: 1.8rem;
-                font-weight: 900;
+                font-size: 1.6rem;
+                font-weight: 800;
                 background: var(--primary-gradient);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -336,512 +280,33 @@
                 font-family: var(--font-secondary);
                 margin-bottom: 0.3rem;
             }
-            .lux-stat-label {
-                font-size: 0.98rem;
-                color: var(--text-dark);
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.7px;
-            }
 
-            .lux-results-table {
-                border-radius: var(--border-radius);
-                overflow: auto;
-                box-shadow: var(--card-shadow);
-                background: var(--card-bg);
-                border: none;
-                margin-top: 1.1rem;
-                position: relative;
-                background-image: var(--card-gradient);
-                transition: var(--transition);
-            }
-            .lux-results-table:hover {
-                box-shadow: var(--card-shadow-hover);
-            }
-
-            .ui-datatable {
-                background: transparent !important;
-                border: none !important;
-                width: 100% !important;
-                font-size: 0.97rem !important;
-                min-width: 1400px;
-            }
-            .ui-datatable .ui-datatable-header {
-                background: var(--primary-gradient) !important;
-                color: white !important;
-                font-weight: 900;
-                font-size: 1.1rem;
-                font-family: var(--font-secondary);
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                border: none !important;
-                padding: 1rem !important;
-                text-shadow: none;
-                border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
-            }
-            .ui-datatable .ui-paginator {
-                background: rgba(255, 255, 255, 0.8) !important;
-                border: none !important;
-                padding: 0.7rem !important;
-                border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
-                color: var(--text-dark) !important;
-                border-radius: 0 0 var(--border-radius) var(--border-radius) !important;
-            }
-            .ui-datatable .ui-datatable-data tr {
-                background: rgba(255, 255, 255, 0.7) !important;
-                transition: var(--transition);
-            }
-            .ui-datatable .ui-datatable-data tr.ui-state-hover {
-                background: rgba(255, 255, 255, 0.9) !important;
-                transform: scale(1.01);
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            }
-            .ui-datatable .ui-datatable-data>tr>td {
-                padding: 0.7rem 0.8rem !important;
-                border: none !important;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-                font-size: 0.97rem;
-                font-weight: 500;
-                color: var(--text-dark);
-                font-family: var(--font-primary);
-                vertical-align: middle;
-                word-wrap: break-word;
-                max-width: 180px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                transition: var(--transition);
-            }
-            .ui-datatable .ui-datatable-data>tr>td:hover {
-                background: rgba(255, 255, 255, 0.5);
-            }
-            .ui-datatable .ui-datatable-data>tr>td.lux-org-column {
-                max-width: 200px !important;
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-            }
-            .ui-datatable .ui-datatable-thead>tr>th {
-                background: rgba(255, 255, 255, 0.9) !important;
-                color: var(--text-dark) !important;
-                border: none !important;
-                padding: 0.8rem 0.8rem !important;
-                font-weight: 900;
-                font-size: 0.97rem;
-                font-family: var(--font-secondary);
-                text-transform: uppercase;
-                letter-spacing: 0.8px;
-                border-bottom: 2px solid !important;
-                border-image: var(--primary-gradient);
-                border-image-slice: 1;
-                text-shadow: none;
-                transition: var(--transition);
-            }
-            .ui-datatable .ui-datatable-thead>tr>th:hover {
-                background: rgba(255, 255, 255, 1) !important;
-            }
-            .lux-table-icon {
-                font-size: 1rem;
-                width: 24px;
-                height: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                background: var(--primary-gradient);
-                color: white;
-                margin-left: 0.2rem;
-            }
-            .lux-action-buttons {
-                display: flex;
-                gap: 0.4rem;
-                justify-content: center;
-            }
-            .lux-action-btn {
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--primary-gradient);
-                color: white;
-                border: none;
-                transition: var(--transition);
-                font-size: 1rem;
-                box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
-            }
-            .lux-action-btn:hover {
-                background: var(--secondary-gradient);
-                transform: scale(1.15) rotate(5deg);
-                box-shadow: 0 6px 12px rgba(245, 87, 108, 0.4);
-            }
-            .lux-no-results, .lux-initial-msg {
-                text-align: center;
-                padding: 3rem 1rem;
-                color: var(--text-dark);
-                font-style: italic;
-                background: var(--card-bg);
-                border-radius: var(--border-radius);
-                border: none;
-                margin-top: 1rem;
-                box-shadow: var(--card-shadow);
-                background-image: var(--card-gradient);
-                transition: var(--transition);
-            }
-            .lux-no-results:hover, .lux-initial-msg:hover {
-                transform: translateY(-5px);
-                box-shadow: var(--card-shadow-hover);
-            }
-            .lux-no-results i, .lux-initial-msg i {
-                font-size: 3rem;
-                background: var(--primary-gradient);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-bottom: 0.7rem;
-                text-shadow: none;
-            }
-
-            /* وصف كامل مع التفاف */
-            .lux-description-full {
-                white-space: pre-line !important;
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
-                max-width: 100% !important;
-                display: block !important;
-                font-size: 0.97rem;
-                font-family: var(--font-primary);
-                color: var(--text-dark);
-                padding: 0.2rem 0;
-            }
-            .ui-datatable .ui-datatable-data>tr>td.lux-description-full {
-                max-width: none !important;
-                white-space: pre-line !important;
-                word-break: break-word !important;
-                overflow-wrap: break-word !important;
-            }
-
-            /* تأثيرات الأنميشن */
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            @keyframes pulse {
-                0% {
-                    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
-                }
-                70% {
-                    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-                }
-                100% {
-                    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-                }
-            }
-
-            .animate-pulse {
-                animation: pulse 2s infinite;
-            }
-
-            .animate-fadeInUp {
-                animation: fadeInUp 0.6s ease-out;
-            }
-
-            .animate-bounceIn {
-                animation: bounceIn 0.8s;
-            }
-
-            @keyframes bounceIn {
-                0% {
-                    opacity: 0;
-                    transform: scale(0.3);
-                }
-                50% {
-                    opacity: 1;
-                    transform: scale(1.05);
-                }
-                70% {
-                    transform: scale(0.9);
-                }
-                100% {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-            }
-
-            /* تأثيرات التحميل */
-            .lux-loading {
-                position: relative;
-                overflow: hidden;
-            }
-
-            .lux-loading::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-                animation: loading 1.5s infinite;
-            }
-
-            @keyframes loading {
-                0% {
-                    left: -100%;
-                }
-                100% {
-                    left: 100%;
-                }
-            }
-
-            /* تصميم جديد لمؤشر التحميل */
-            .lux-loading-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.7);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-                backdrop-filter: blur(5px);
-            }
-
-            .lux-loader-container {
-                background: var(--card-bg);
-                border-radius: 20px;
-                padding: 2.5rem;
-                text-align: center;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                max-width: 400px;
-                width: 90%;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .lux-loader-container::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: var(--primary-gradient);
-            }
-
-            .lux-loader-title {
-                font-size: 1.5rem;
-                font-weight: 700;
-                margin-bottom: 1.5rem;
-                background: var(--primary-gradient);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                font-family: var(--font-secondary);
-            }
-
-            /* تصميم دائرة التحميل المتقدمة */
-            .lux-loader {
-                width: 80px;
-                height: 80px;
-                margin: 0 auto 1.5rem;
-                position: relative;
-            }
-
-            .lux-loader-circle {
-                width: 100%;
-                height: 100%;
-                border: 3px solid transparent;
-                border-top: 3px solid #667eea;
-                border-right: 3px solid #764ba2;
-                border-radius: 50%;
-                animation: luxSpin 1.5s linear infinite;
-                position: relative;
-            }
-
-            .lux-loader-circle::before {
-                content: '';
-                position: absolute;
-                top: 5px;
-                left: 5px;
-                right: 5px;
-                bottom: 5px;
-                border: 3px solid transparent;
-                border-top: 3px solid #f093fb;
-                border-right: 3px solid #f5576c;
-                border-radius: 50%;
-                animation: luxSpin 2s linear infinite reverse;
-            }
-
-            .lux-loader-circle::after {
-                content: '';
-                position: absolute;
-                top: 15px;
-                left: 15px;
-                right: 15px;
-                bottom: 15px;
-                border: 3px solid transparent;
-                border-top: 3px solid #4facfe;
-                border-right: 3px solid #00f2fe;
-                border-radius: 50%;
-                animation: luxSpin 1s linear infinite;
-            }
-
-            @keyframes luxSpin {
-                0% {
-                    transform: rotate(0deg);
-                }
-                100% {
-                    transform: rotate(360deg);
-                }
-            }
-
-            /* تأثيرات النقاط المتحركة */
-            .lux-dots-container {
-                display: flex;
-                justify-content: center;
-                gap: 8px;
-                margin-bottom: 1.5rem;
-            }
-
-            .lux-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background: var(--primary-gradient);
-                animation: luxDotPulse 1.5s ease-in-out infinite;
-            }
-
-            .lux-dot:nth-child(2) {
-                animation-delay: 0.2s;
-            }
-
-            .lux-dot:nth-child(3) {
-                animation-delay: 0.4s;
-            }
-
-            @keyframes luxDotPulse {
-                0%, 60%, 100% {
-                    transform: scale(1);
-                    opacity: 0.7;
-                }
-                30% {
-                    transform: scale(1.5);
-                    opacity: 1;
-                }
-            }
-
-            /* شريط التقدم المتحرك */
-            .lux-progress-container {
-                width: 100%;
-                height: 6px;
-                background: rgba(102, 126, 234, 0.2);
-                border-radius: 3px;
-                overflow: hidden;
-                margin-bottom: 1rem;
-            }
-
-            .lux-progress-bar {
-                height: 100%;
-                width: 30%;
-                background: var(--primary-gradient);
-                border-radius: 3px;
-                animation: luxProgress 2s ease-in-out infinite;
-            }
-
-            @keyframes luxProgress {
-                0% {
-                    transform: translateX(-100%);
-                }
-                50% {
-                    transform: translateX(200%);
-                }
-                100% {
-                    transform: translateX(400%);
-                }
-            }
-
-            .lux-loading-text {
-                font-size: 1rem;
-                color: var(--text-dark);
-                font-weight: 500;
-                margin-top: 1rem;
-            }
-
-            .lux-loading-subtext {
-                font-size: 0.85rem;
-                color: var(--text-muted);
-                margin-top: 0.5rem;
-                font-style: italic;
-            }
-
-            /* تأثيرات دخول وخروج مؤشر التحميل */
-            @keyframes luxFadeIn {
-                from {
-                    opacity: 0;
-                    transform: scale(0.9);
-                }
-                to {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-            }
-
-            @keyframes luxFadeOut {
-                from {
-                    opacity: 1;
-                    transform: scale(1);
-                }
-                to {
-                    opacity: 0;
-                    transform: scale(1.1);
-                }
-            }
-
-            .lux-loader-enter {
-                animation: luxFadeIn 0.5s ease-out forwards;
-            }
-
-            .lux-loader-exit {
-                animation: luxFadeOut 0.4s ease-in forwards;
-            }
-
-            /* تصاميم جديدة للـ Work Order Groups */
+            /* تصميم جديد مضغوط لبطاقات Work Order */
             .work-order-group {
-                margin-bottom: 2.5rem;
-                border-radius: 20px;
+                margin-bottom: 1.5rem;
+                border-radius: 16px;
                 overflow: hidden;
-                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                box-shadow: var(--card-shadow);
+                transition: var(--transition);
                 position: relative;
                 background: white;
+                border: 1px solid rgba(255, 255, 255, 0.8);
             }
 
             .work-order-group:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.18);
+                transform: translateY(-4px);
+                box-shadow: var(--card-shadow-hover);
             }
 
             .work-order-header {
-                padding: 1.5rem 2rem;
+                padding: 1rem 1.2rem;
                 color: white;
                 position: relative;
                 overflow: hidden;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                min-height: 100px;
+                min-height: 70px;
             }
 
             .work-order-header::before {
@@ -860,9 +325,9 @@
                 position: absolute;
                 top: 0;
                 right: 0;
-                width: 150px;
+                width: 120px;
                 height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2));
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15));
                 transform: skewX(-20deg);
             }
 
@@ -871,127 +336,180 @@
                 z-index: 2;
                 display: flex;
                 flex-direction: column;
-                gap: 0.8rem;
+                gap: 0.5rem;
                 flex: 1;
             }
 
             .work-order-title {
-                font-size: 1.8rem;
-                font-weight: 900;
+                font-size: 1.3rem;
+                font-weight: 800;
                 margin: 0;
                 font-family: var(--font-secondary);
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-                letter-spacing: 0.5px;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                letter-spacing: 0.3px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
             }
 
             .work-order-subtitle {
-                font-size: 1.1rem;
-                opacity: 0.9;
-                font-weight: 600;
+                font-size: 0.9rem;
+                opacity: 0.95;
+                font-weight: 500;
                 margin: 0;
                 display: flex;
                 align-items: center;
-                gap: 0.8rem;
+                gap: 0.7rem;
+                flex-wrap: wrap;
             }
 
             .work-order-badge {
-                background: rgba(255, 255, 255, 0.25);
+                background: rgba(255, 255, 255, 0.2);
                 backdrop-filter: blur(10px);
-                border-radius: 50px;
-                padding: 0.5rem 1.2rem;
-                font-weight: 700;
-                font-size: 0.9rem;
+                border-radius: 20px;
+                padding: 0.3rem 0.8rem;
+                font-weight: 600;
+                font-size: 0.8rem;
                 display: inline-flex;
                 align-items: center;
-                gap: 0.5rem;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                gap: 0.4rem;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             }
 
             .work-order-actions {
                 display: flex;
-                gap: 0.8rem;
+                gap: 0.5rem;
                 align-items: center;
                 z-index: 3;
             }
 
             .work-order-button {
-                width: 44px;
-                height: 44px;
+                width: 36px;
+                height: 36px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: rgba(255, 255, 255, 0.25);
+                background: rgba(255, 255, 255, 0.2);
                 backdrop-filter: blur(10px);
                 color: white;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                transition: all 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                transition: var(--transition);
                 cursor: pointer;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                font-size: 0.85rem;
             }
 
             .work-order-button:hover {
-                background: rgba(255, 255, 255, 0.4);
-                transform: scale(1.1) rotate(5deg);
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(1.08);
             }
 
             .work-order-body {
-                padding: 2rem;
+                padding: 1.2rem;
                 background: #f8fafc;
                 display: flex;
                 flex-direction: column;
-                gap: 1.5rem;
+                gap: 1rem;
             }
 
+            /* بطاقات المهام - تصميم مضغوط */
             .task-card {
                 background: white;
-                border-radius: 16px;
+                border-radius: 12px;
                 overflow: hidden;
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-                transition: all 0.3s ease;
-                border: 1px solid rgba(0, 0, 0, 0.05);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+                transition: var(--transition);
+                border: 1px solid rgba(0, 0, 0, 0.04);
             }
 
             .task-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
             }
 
             .task-header {
-                padding: 1.2rem 1.5rem;
-                background: linear-gradient(90deg, rgba(102,126,234,0.08), rgba(246,246,246,0.04));
+                padding: 1rem 1.2rem;
+                background: linear-gradient(90deg, rgba(102,126,234,0.05), rgba(246,246,246,0.02));
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.04);
             }
 
             .task-type-badge {
-                padding: 0.5rem 1rem;
-                border-radius: 10px;
-                font-weight: 800;
-                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+                border-radius: 8px;
+                font-weight: 700;
+                font-size: 0.8rem;
                 background: linear-gradient(135deg, #667eea, #764ba2);
                 color: white;
-                box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
             }
 
             .task-content {
-                padding: 1.5rem;
+                padding: 1.2rem;
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
+                gap: 0.8rem;
                 align-items: start;
             }
 
             .task-footer {
-                padding: 1rem 1.5rem;
+                padding: 0.8rem 1.2rem;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 background: #f8fafc;
-                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                border-top: 1px solid rgba(0, 0, 0, 0.04);
+            }
+
+            /* تحسينات العناصر الداخلية */
+            .task-content > div {
+                display: flex;
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+
+            .task-content small {
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+
+            .task-content div:not(small) {
+                font-size: 0.85rem;
+                font-weight: 500;
+                color: var(--text-dark);
+            }
+
+            /* أزرار الإجراءات المصغرة */
+            .lux-action-buttons {
+                display: flex;
+                gap: 0.3rem;
+                justify-content: center;
+            }
+
+            .lux-action-btn {
+                width: 30px;
+                height: 30px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--primary-gradient);
+                color: white;
+                border: none;
+                transition: var(--transition);
+                font-size: 0.85rem;
+                box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+            }
+
+            .lux-action-btn:hover {
+                background: var(--secondary-gradient);
+                transform: scale(1.1);
+                box-shadow: 0 4px 10px rgba(245, 87, 108, 0.3);
             }
 
             /* ألوان مختلفة لمجموعات Work Order */
@@ -1007,6 +525,65 @@
             .wo-color-10 .work-order-header { background: var(--wo-color-10); }
             .wo-no-order .work-order-header { background: var(--wo-no-order); }
 
+            /* رسائل الحالة */
+            .lux-no-results, .lux-initial-msg {
+                text-align: center;
+                padding: 2.5rem 1rem;
+                color: var(--text-dark);
+                font-style: italic;
+                background: var(--card-bg);
+                border-radius: var(--border-radius);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                margin-top: 1rem;
+                box-shadow: var(--card-shadow);
+                transition: var(--transition);
+            }
+
+            .lux-no-results:hover, .lux-initial-msg:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--card-shadow-hover);
+            }
+
+            .lux-no-results i, .lux-initial-msg i {
+                font-size: 2.5rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 0.7rem;
+            }
+
+            /* تأثيرات الأنيميشن المحسنة */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes slideInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .animate-fadeInUp {
+                animation: fadeInUp 0.5s ease-out;
+            }
+
+            .animate-slideInLeft {
+                animation: slideInLeft 0.5s ease-out;
+            }
+
             /* تصميم متجاوب */
             @media (max-width: 1400px) {
                 .lux-search-container {
@@ -1015,7 +592,11 @@
                 .lux-fields-grid {
                     grid-template-columns: repeat(2, 1fr);
                 }
+                .task-content {
+                    grid-template-columns: repeat(2, 1fr);
+                }
             }
+
             @media (max-width: 1200px) {
                 .lux-search-container {
                     max-width: 100%;
@@ -1024,47 +605,76 @@
                 .lux-fields-grid {
                     grid-template-columns: 1fr;
                 }
-                .ui-datatable .ui-datatable-data>tr>td {
-                    max-width: 140px;
-                }
                 .work-order-header {
-                    padding: 1.2rem 1.5rem;
+                    padding: 0.8rem 1rem;
                     flex-direction: column;
                     align-items: flex-start;
-                    gap: 1rem;
+                    gap: 0.7rem;
+                    min-height: 60px;
                 }
                 .work-order-actions {
                     align-self: flex-end;
+                    margin-top: -2.5rem;
                 }
                 .task-content {
-                    grid-template-columns: repeat(2, 1fr);
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
                 }
             }
-            @media (max-width: 800px) {
+
+            @media (max-width: 768px) {
                 .lux-stats-grid {
-                    grid-template-columns: 1fr;
+                    grid-template-columns: repeat(2, 1fr);
                 }
                 .lux-search-card {
-                    padding: 0.7rem;
+                    padding: 1rem;
                 }
                 .lux-search-header {
-                    font-size: 1.05rem;
-                }
-                .ui-datatable {
-                    min-width: 1200px;
-                }
-                .lux-loader-container {
-                    padding: 1.5rem;
-                    margin: 1rem;
+                    font-size: 1.2rem;
                 }
                 .work-order-title {
-                    font-size: 1.4rem;
+                    font-size: 1.1rem;
                 }
-                .task-content {
-                    grid-template-columns: 1fr;
+                .work-order-subtitle {
+                    font-size: 0.85rem;
                 }
                 .work-order-body {
                     padding: 1rem;
+                }
+                .task-header {
+                    padding: 0.8rem 1rem;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.7rem;
+                }
+                .task-content {
+                    padding: 1rem;
+                }
+                .task-footer {
+                    padding: 0.7rem 1rem;
+                    flex-direction: column;
+                    gap: 0.7rem;
+                    align-items: flex-start;
+                }
+                .lux-btn-group {
+                    flex-direction: column;
+                }
+                .ui-button {
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .lux-stats-grid {
+                    grid-template-columns: 1fr;
+                }
+                .work-order-header {
+                    min-height: auto;
+                }
+                .work-order-actions {
+                    margin-top: 0;
+                    align-self: stretch;
+                    justify-content: flex-end;
                 }
             }
         </style>
@@ -1168,12 +778,10 @@
                     <div class="lux-btn-group">
                         <p:commandButton value="Search"
                                          icon="fas fa-search"
-                                         styleClass="ui-button-primary animate-pulse"
+                                         styleClass="ui-button-primary"
                                          action="#{completedTaskSearchBean.searchCompletedTasks}"
                                          process="@form"
-                                         update="@([id$=resultsPanel] @([id$=statisticsPanel]) @([id$=messages]))"
-                                         onstart="showLuxLoader()"
-                                         oncomplete="hideLuxLoader()" />
+                                         update="@([id$=resultsPanel] @([id$=statisticsPanel]) @([id$=messages]))" />
 
                         <p:commandButton value="Clear"
                                          icon="fas fa-eraser"
@@ -1196,7 +804,7 @@
 
             <!-- Statistics Panel -->
             <h:panelGroup id="statisticsPanel" rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.statistics}">
-                <div class="lux-stats-card animate-fadeInUp" style="animation-delay: 0.2s">
+                <div class="lux-stats-card animate-fadeInUp" style="animation-delay: 0.1s">
                     <div class="lux-stats-grid">
                         <div class="lux-stat-item">
                             <div class="lux-stat-number">#{completedTaskSearchBean.statistics['totalTasksCount']}</div>
@@ -1222,7 +830,7 @@
             <h:panelGroup id="resultsPanel">
                 <h:form id="resultsForm" prependId="false">
 
-                    <h:panelGroup layout="block" styleClass="lux-results-table animate-fadeInUp" style="animation-delay: 0.4s"
+                    <h:panelGroup layout="block" styleClass="animate-fadeInUp" style="animation-delay: 0.2s"
                                   rendered="#{completedTaskSearchBean.searchPerformed and not empty completedTaskSearchBean.groupedResultsByWorkOrder}">
 
                         <!-- Iterate groups (Work Order keys) -->
@@ -1237,6 +845,7 @@
                                 <div class="work-order-header">
                                     <div class="work-order-content">
                                         <h3 class="work-order-title">
+                                            <i class="fas fa-list-check"></i>
                                             <h:panelGroup>
                                                 <h:outputText value="#{groupKey eq 'No Work Order' ? 'No Work Order' : 'Work Order #: '}" />
                                                 <h:outputText value="#{groupKey}" rendered="#{groupKey ne 'No Work Order'}" />
@@ -1256,7 +865,7 @@
                                         </div>
                                     </div>
                                     <div class="work-order-actions">
-                                        <button type="button" onclick="(function(k){ if(k &amp;&amp; k !== 'No Work Order'){ navigator.clipboard.writeText(k).then(()=>{ PF('msgs').show([{severity:'info', summary:'Copied', detail:'Copied '+k}]); }); } })( '#{groupKey}' )"
+                                        <button type="button" onclick="copyToClipboard('#{groupKey}')"
                                                 class="work-order-button" title="Copy Work Order">
                                             <i class="fas fa-copy"></i>
                                         </button>
@@ -1269,44 +878,44 @@
                                     <ui:repeat value="#{completedTaskSearchBean.groupedResultsByWorkOrder[groupKey]}" var="task" varStatus="status">
                                         <div class="task-card">
                                             <div class="task-header">
-                                                <div style="display:flex; align-items:center; gap:0.8rem;">
+                                                <div style="display:flex; align-items:center; gap:0.7rem;">
                                                 <span class="task-type-badge">
                                                     #{completedTaskSearchBean.getTaskTypeDisplayText(task['taskType'])}
                                                 </span>
                                                     <div style="display:flex; flex-direction:column;">
-                                                        <div style="font-weight:700; font-family:'Plus Jakarta Sans'; color:var(--text-dark);">
+                                                        <div style="font-weight:600; font-family:var(--font-secondary); color:var(--text-dark); font-size:0.9rem;">
                                                             <h:panelGroup>
-                                                                <h:outputText value="#{not empty task['taskDescription'] ? (fn:length(task['taskDescription']) gt 80 ? fn:substring(task['taskDescription'], 0, 77) : task['taskDescription']) : '-'}" />
-                                                                <h:outputText value="..." rendered="#{not empty task['taskDescription'] and fn:length(task['taskDescription']) gt 80}" />
+                                                                <h:outputText value="#{not empty task['taskDescription'] ? (fn:length(task['taskDescription']) gt 60 ? fn:substring(task['taskDescription'], 0, 57) : task['taskDescription']) : '-'}" />
+                                                                <h:outputText value="..." rendered="#{not empty task['taskDescription'] and fn:length(task['taskDescription']) gt 60}" />
                                                             </h:panelGroup>
                                                         </div>
-                                                        <div style="font-size:0.9rem; color:var(--text-muted); margin-top:0.25rem;">
+                                                        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.2rem;">
                                                             <span>Company: #{task['companyName'] != null ? task['companyName'] : '-'}</span>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div style="display:flex; gap:0.6rem; align-items:center;">
+                                                <div style="display:flex; gap:0.5rem; align-items:center; font-size:0.85rem; color:var(--text-muted);">
                                                     <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
                                                 </div>
                                             </div>
 
                                             <div class="task-content">
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Task ID</small>
-                                                    <div style="font-weight:700;">#{task['taskId']}</div>
+                                                    <small>Task ID</small>
+                                                    <div>#{task['taskId']}</div>
                                                 </div>
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Job no</small>
+                                                    <small>Job no</small>
                                                     <div>#{not empty task['jobNo'] ? task['jobNo'] : '-'}</div>
                                                 </div>
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Time sheet no</small>
+                                                    <small>Time sheet no</small>
                                                     <div>#{not empty task['timeSheetNo'] ? task['timeSheetNo'] : '-'}</div>
                                                 </div>
 
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Cert / Report</small>
+                                                    <small>Cert / Report</small>
                                                     <div>
                                                         <h:outputText value="#{task['reportNo']}" rendered="#{not empty task['reportNo']}" />
                                                         <h:outputText value="#{task['certNumber']}" rendered="#{empty task['reportNo'] and not empty task['certNumber']}" />
@@ -1315,45 +924,43 @@
                                                 </div>
 
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Sticker No</small>
+                                                    <small>Sticker No</small>
                                                     <div>#{not empty task['stickerNo'] ? task['stickerNo'] : '-'}</div>
                                                 </div>
 
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Work Order</small>
+                                                    <small>Work Order</small>
                                                     <div>#{not empty task['workOrder'] ? task['workOrder'] : (not empty task['jobNo'] ? task['jobNo'] : '-')}</div>
                                                 </div>
 
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Created</small>
+                                                    <small>Created</small>
                                                     <div>#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}</div>
                                                 </div>
 
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Completed</small>
+                                                    <small>Completed</small>
                                                     <div>#{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}</div>
                                                 </div>
 
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Inspector</small>
+                                                    <small>Inspector</small>
                                                     <div>#{task['inspectorName']}</div>
                                                 </div>
 
                                                 <div>
-                                                    <small style="color:var(--text-muted);">Reviewer</small>
+                                                    <small>Reviewer</small>
                                                     <div>#{task['reviewerName']}</div>
                                                 </div>
                                             </div>
 
                                             <div class="task-footer">
-                                                <div style="display:flex; gap:0.8rem; align-items:center;">
+                                                <div style="display:flex; gap:0.7rem; align-items:center;">
                                                     <small style="color:var(--text-muted);">Branch</small>
-                                                    <div style="font-weight:700;">#{not empty task['organizationName'] ? task['organizationName'] : '-'}</div>
+                                                    <div style="font-weight:600; font-size:0.85rem;">#{not empty task['organizationName'] ? task['organizationName'] : '-'}</div>
                                                 </div>
 
-                                                <div style="display:flex; gap:0.6rem; align-items:center;">
-
-
+                                                <div style="display:flex; gap:0.5rem; align-items:center;">
                                                     <!-- Download Attachments (ZIP) for equipment -->
                                                     <p:commandLink styleClass="lux-action-btn" title="Download Attachments"
                                                                    rendered="#{task['taskType'] eq 'Equipment Inspection'}"
@@ -1361,8 +968,6 @@
                                                                    process="@this" ajax="true">
                                                         <i class="fas fa-paperclip"></i>
                                                     </p:commandLink>
-
-
 
                                                     <!-- Download Attachments (ZIP) for employee -->
                                                     <p:commandLink styleClass="lux-action-btn" title="Download Attachments"
@@ -1382,7 +987,7 @@
                     </h:panelGroup>
 
                     <!-- No Results Message -->
-                    <h:panelGroup layout="block" styleClass="lux-no-results animate-fadeInUp" style="animation-delay: 0.2s"
+                    <h:panelGroup layout="block" styleClass="lux-no-results animate-fadeInUp" style="animation-delay: 0.1s"
                                   rendered="#{completedTaskSearchBean.searchPerformed and empty completedTaskSearchBean.groupedResultsByWorkOrder}">
                         <i class="fas fa-search"></i>
                         <h3>No completed tasks found</h3>
@@ -1393,38 +998,11 @@
                     <h:panelGroup layout="block" styleClass="lux-initial-msg animate-fadeInUp"
                                   rendered="#{not completedTaskSearchBean.searchPerformed}">
                         <i class="fas fa-info-circle"></i>
-                        <h3>Welcome to Luxury Completed Tasks Search</h3>
+                        <h3>Welcome to Completed Tasks Search</h3>
                         <p>Use the search form above to find completed equipment inspection and employee certification tasks.</p>
                     </h:panelGroup>
                 </h:form>
             </h:panelGroup>
-        </div>
-
-        <!-- Loading Overlay - تصميم جديد متقدم -->
-        <div id="luxLoadingOverlay" class="lux-loading-overlay" style="display: none;">
-            <div class="lux-loader-container lux-loader-enter">
-                <h3 class="lux-loader-title">Searching Tasks</h3>
-
-                <!-- دائرة التحميل المتعددة -->
-                <div class="lux-loader">
-                    <div class="lux-loader-circle"></div>
-                </div>
-
-                <!-- النقاط المتحركة -->
-                <div class="lux-dots-container">
-                    <div class="lux-dot"></div>
-                    <div class="lux-dot"></div>
-                    <div class="lux-dot"></div>
-                </div>
-
-                <!-- شريط التقدم المتحرك -->
-                <div class="lux-progress-container">
-                    <div class="lux-progress-bar"></div>
-                </div>
-
-                <p class="lux-loading-text">Please wait while we search for completed tasks</p>
-                <p class="lux-loading-subtext">This may take a few moments...</p>
-            </div>
         </div>
 
         <p:messages id="messages" showDetail="true" closable="true" widgetVar="msgs" />
@@ -1438,17 +1016,17 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const glitter = document.querySelector('.lux-glitter');
                 if (glitter) {
-                    for (let i = 0; i < 30; i++) {
+                    for (let i = 0; i < 25; i++) {
                         const particle = document.createElement('div');
                         particle.style.position = 'absolute';
-                        particle.style.width = Math.random() * 5 + 2 + 'px';
+                        particle.style.width = Math.random() * 4 + 1 + 'px';
                         particle.style.height = particle.style.width;
                         particle.style.background = `hsl(${Math.random() * 360}, 70%, 70%)`;
                         particle.style.borderRadius = '50%';
                         particle.style.left = Math.random() * 100 + '%';
                         particle.style.top = Math.random() * 100 + '%';
-                        particle.style.opacity = Math.random() * 0.5 + 0.1;
-                        particle.style.animation = `float ${Math.random() * 10 + 10}s infinite linear`;
+                        particle.style.opacity = Math.random() * 0.3 + 0.1;
+                        particle.style.animation = `float ${Math.random() * 8 + 8}s infinite linear`;
                         glitter.appendChild(particle);
                     }
                 }
@@ -1464,61 +1042,15 @@
                 document.head.appendChild(style);
             });
 
-            // وظائف إظهار وإخفاء مؤشر التحميل المتقدم
-            function showLuxLoader() {
-                const overlay = document.getElementById('luxLoadingOverlay');
-                const container = overlay.querySelector('.lux-loader-container');
-
-                // إعادة تعيين الأنيميشن
-                container.classList.remove('lux-loader-enter', 'lux-loader-exit');
-                void container.offsetWidth; // إعادة التدفق
-
-                // إظهار المؤشر مع أنيميشن الدخول
-                overlay.style.display = 'flex';
-                container.classList.add('lux-loader-enter');
-
-                // تغيير النص بشكل دوري لمحاكاة التقدم
-                let progressTexts = [
-                    "Searching database...",
-                    "Filtering results...",
-                    "Preparing data...",
-                    "Almost done..."
-                ];
-                let currentText = 0;
-
-                window.loadingInterval = setInterval(() => {
-                    const textElement = document.querySelector('.lux-loading-text');
-                    if (textElement && currentText < progressTexts.length) {
-                        textElement.textContent = progressTexts[currentText];
-                        currentText++;
-                    }
-                }, 1500);
-            }
-
-            function hideLuxLoader() {
-                const overlay = document.getElementById('luxLoadingOverlay');
-                const container = overlay.querySelector('.lux-loader-container');
-
-                // إيقاف تغيير النص
-                if (window.loadingInterval) {
-                    clearInterval(window.loadingInterval);
+            // وظيفة نسخ Work Order
+            function copyToClipboard(text) {
+                if (text && text !== 'No Work Order') {
+                    navigator.clipboard.writeText(text).then(() => {
+                        if (PF('msgs')) {
+                            PF('msgs').show([{severity:'info', summary:'Copied', detail:'Work Order copied: ' + text}]);
+                        }
+                    });
                 }
-
-                // تطبيق أنيميشن الخروج
-                container.classList.remove('lux-loader-enter');
-                container.classList.add('lux-loader-exit');
-
-                // إخفاء المؤشر بعد انتهاء الأنيميشن
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    container.classList.remove('lux-loader-exit');
-
-                    // إعادة تعيين النص الأصلي
-                    const textElement = document.querySelector('.lux-loading-text');
-                    if (textElement) {
-                        textElement.textContent = "Please wait while we search for completed tasks";
-                    }
-                }, 400);
             }
 
             // وظيفة تبديل عرض/إخفاء المجموعات
@@ -1530,14 +1062,30 @@
                 if (body.style.display === 'none') {
                     body.style.display = 'block';
                     icon.className = 'fas fa-chevron-down';
+                    group.style.marginBottom = '1.5rem';
                 } else {
                     body.style.display = 'none';
                     icon.className = 'fas fa-chevron-up';
+                    group.style.marginBottom = '0.5rem';
                 }
             }
+
+            // إغلاق جميع المجموعات افتراضيًا
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(() => {
+                    const groups = document.querySelectorAll('.work-order-group');
+                    groups.forEach(group => {
+                        const body = group.querySelector('.work-order-body');
+                        const button = group.querySelector('.work-order-button:last-child');
+                        if (body && button) {
+                            body.style.display = 'none';
+                            button.querySelector('i').className = 'fas fa-chevron-up';
+                            group.style.marginBottom = '0.5rem';
+                        }
+                    });
+                }, 100);
+            });
             //]]>
         </script>
     </ui:define>
-
-
 </ui:composition>

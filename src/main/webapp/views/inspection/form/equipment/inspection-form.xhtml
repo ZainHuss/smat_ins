@@ -1811,6 +1811,52 @@
             .template-scroll-container [style*="margin-left:2px;margin-right:2px;"] {
                 margin: 2px !important;
             }
+
+            /* توسيع حقل التعليق - الأنماط المضافة والمصححة */
+            .comment-field-expanded {
+                width: 100% !important;
+                min-height: 120px !important;
+                resize: vertical;
+                font-family: 'Inter', sans-serif;
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                padding: 1rem !important;
+            }
+
+            .comment-field-expanded:focus {
+                border-color: var(--primary-500) !important;
+                box-shadow: 0 0 0 3px var(--primary-100), var(--shadow-lg) !important;
+                background-color: var(--primary-50) !important;
+            }
+
+            .comment-field-expanded:hover {
+                border-color: var(--primary-400) !important;
+                background-color: var(--surface-50) !important;
+            }
+
+            /* توسيع حاوية التعليق في البطاقة */
+            .comment-section-expanded {
+                grid-column: 1 / -1;
+                margin-bottom: 2rem;
+                padding: 1.5rem;
+                background: linear-gradient(135deg, var(--primary-50) 0%, var(--mint-50) 100%);
+                border-radius: var(--radius-lg);
+                border: 1px solid var(--primary-200);
+            }
+
+            /* تحسين تسمية حقل التعليق */
+            .comment-label-expanded {
+                font-size: 1.1rem !important;
+                font-weight: 700 !important;
+                color: var(--primary-800) !important;
+                margin-bottom: 1rem !important;
+                display: block;
+                font-family: 'Poppins', sans-serif;
+                background: var(--gradient-primary);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
         </style>
     </ui:define>
 
@@ -1968,16 +2014,19 @@
                     <p:badge value="INSPECTION FORM" severity="info" styleClass="badge-lg" />
                 </div>
 
-                <!-- Comment Section -->
-                <div class="row">
+                <!-- Comment Section - موسع -->
+                <div class="row comment-section-expanded">
                     <div class="col-lg-12 col-xl-12 col-xxl-12">
                         <div class="field">
-                            <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label" />
-                            <div class="ui-chip">
-                                <span class="ui-chip-icon pi pi-comment"></span>
+                            <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label comment-label-expanded" />
+                            <div class="ui-chip" style="width: 100%; max-width: 100%; padding: 1rem;">
+                                <span class="ui-chip-icon pi pi-comment" style="font-size: 1.2rem;"></span>
                                 <div class="ui-chip-text"
-                                     style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding: 4px; max-width: 250px; width: auto;"
-                                     title="#{inspectionFormBean.stepComment}">#{inspectionFormBean.stepComment}</div>
+                                     style="text-overflow: ellipsis; overflow: hidden; white-space: normal;
+                                            padding: 8px; width: 100%; line-height: 1.5; min-height: 60px;"
+                                     title="#{inspectionFormBean.stepComment}">
+                                    #{inspectionFormBean.stepComment}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2221,14 +2270,20 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <!-- حقل التعليق الموسع في قسم الموافقة -->
+                <div class="row comment-section-expanded">
                     <div class="col-lg-12 col-xl-12 col-xxl-12">
                         <div class="field">
-                            <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label" />
-                            <p:inputTextarea id="comment" value="#{inspectionFormBean.comment}" rows="3"
-                                             styleClass="block"
-                                             placeholder="Enter your approval comments here..." />
-                            <p:message for="comment" display="icon" />
+                            <h:outputText value="Approval Comments" styleClass="smat-label comment-label-expanded" />
+                            <p:inputTextarea id="approvalComment" value="#{inspectionFormBean.comment}" rows="6"
+                                             styleClass="block comment-field-expanded"
+                                             placeholder="Enter your detailed approval comments, feedback, or recommendations here..."
+                                             autoResize="true"
+                                             maxlength="1000" />
+                            <p:message for="approvalComment" display="icon" />
+                            <small style="color: var(--surface-500); display: block; margin-top: 0.5rem; font-style: italic;">
+                                <i class="pi pi-info-circle"></i> Maximum 1000 characters - Your comments will be included in the approval report
+                            </small>
                         </div>
                     </div>
                 </div>
