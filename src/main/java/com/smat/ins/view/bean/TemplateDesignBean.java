@@ -797,29 +797,14 @@ public class TemplateDesignBean implements Serializable {
     }
 
     private String calcPrefix(String eCat) {
-        // Defensive: handle null/empty and multiple whitespace. Extract first char of each word.
-        if (eCat == null) {
-            return "";
+        String initials = "";
+        for (String s : eCat.split(" ")) {
+            initials += s.charAt(0);
         }
-        String trimmed = eCat.trim();
-        if (trimmed.isEmpty()) {
-            return "";
-        }
-        StringBuilder initials = new StringBuilder();
-        String[] parts = trimmed.split("\\s+");
-        for (String s : parts) {
-            if (s != null && !s.isEmpty()) {
-                initials.append(s.charAt(0));
-            }
-        }
-        return initials.toString().toLowerCase();
+        return initials.toLowerCase();
     }
 
     public void applyPrefix() {
-        if (formTemplate.getEquipmentCategory() == null) {
-            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("equipmentCatReq"));
-            return;
-        }
         FormTemplate isExist = formTemplateService.getBy(formTemplate.getEquipmentCategory().getCode());
         if (isExist != null) {
             UtilityHelper
@@ -827,8 +812,8 @@ public class TemplateDesignBean implements Serializable {
             formTemplate.setEquipmentCategory(null);
             return;
         }
-        String engName = formTemplate.getEquipmentCategory().getEnglishName();
-        String prefix = calcPrefix(engName);
+
+        String prefix = calcPrefix(formTemplate.getEquipmentCategory().getEnglishName());
         formTemplate.setPrefix(prefix);
     }
 
@@ -997,10 +982,6 @@ public class TemplateDesignBean implements Serializable {
     }
 
     public void applyCopyPrefix() {
-        if (copyTemplate == null || copyTemplate.getEquipmentCategory() == null) {
-            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("equipmentCatReq"));
-            return;
-        }
         FormTemplate isExist = formTemplateService.getBy(copyTemplate.getEquipmentCategory().getCode());
         if (isExist != null) {
             UtilityHelper
@@ -1008,15 +989,13 @@ public class TemplateDesignBean implements Serializable {
             copyTemplate.setEquipmentCategory(null);
             return;
         }
-        String engName = copyTemplate.getEquipmentCategory().getEnglishName();
-        String prefix = calcPrefix(engName);
+
+        String prefix = calcPrefix(copyTemplate.getEquipmentCategory().getEnglishName());
         copyTemplate.setPrefix(prefix);
 
         Integer contentILoop = 0;
-        if (this.copyColumnContents != null) {
-            for (ColumnContent columnContent : this.copyColumnContents) {
-                columnContent.setAliasName(copyTemplate.getPrefix() + "." + String.format("%0" + 3 + "d", ++contentILoop));
-            }
+        for (ColumnContent columnContent : this.copyColumnContents) {
+            columnContent.setAliasName(copyTemplate.getPrefix() + "." + String.format("%0" + 3 + "d", ++contentILoop));
         }
 
     }
