@@ -57,8 +57,6 @@ INSERT INTO smat_ins_db.workflow(arabic_name, english_name, code) VALUES
 
 
 
-INSERT INTO smat_ins_db.service_type (arabic_name, english_name, code, arabic_description, english_description)VALUES 
-('فحص آلة', 'Equipment Inspection', '001', 'فحص آلة ومنح شهادة', 'Equipment Inspection then grant certificate to it');
 
 INSERT INTO smat_ins_db.equipment_type(arabic_name, english_name, code) VALUES
 ('Articulating boom crane truck mounted, Diesel type', 'Articulating boom crane truck mounted, Diesel type', '001');
