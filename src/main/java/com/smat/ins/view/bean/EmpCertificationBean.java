@@ -534,18 +534,22 @@ public class EmpCertificationBean implements Serializable {
                                         Long maxCode = archiveDocumentFileService.getMaxArchiveDocumentFileCode(archiveDocument);
                                         int codeLength = 9; String fileCode = String.format("%0" + codeLength + "d", (maxCode == null ? 0L : maxCode) + 1L);
                                         docFile.setCode(fileCode);
-                                        String storedName = fileCode + "." + ext;
+                                        // store generated certificate with a friendly fixed filename so the
+                                        // zip download contains `employee_certificate.pdf` inside the archive
+                                        String storedName = "employee_certificate." + ext;
                                         java.nio.file.Path target = folderPath.resolve(storedName);
                                         Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
                                         String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
-                                        docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
+                                        docFile.setLogicalPath(logical);
+                                        docFile.setServerPath(target.toString());
                                     } catch (Exception ex) {
                                         int seq = 1; try { seq += (int) Files.list(folderPath).count(); } catch (Exception ignore) {}
-                                        String storedName = String.format("%03d_%s", seq, safe);
+                                        String storedName = String.format("%03d_employee_certificate.%s", seq, ext);
                                         java.nio.file.Path target = folderPath.resolve(storedName);
                                         Files.write(target, pdfBytes, StandardOpenOption.CREATE_NEW);
                                         String logical = targetCabinet.getCode() + "/" + def.getCode() + "/" + cabinetFolder.getCode() + "/" + storedName;
-                                        docFile.setLogicalPath(logical); docFile.setServerPath(target.toString());
+                                        docFile.setLogicalPath(logical);
+                                        docFile.setServerPath(target.toString());
                                     }
                                     archiveDocumentFileService.saveOrUpdate(docFile);
                                     com.smat.ins.model.entity.CabinetFolderDocument cfd = new com.smat.ins.model.entity.CabinetFolderDocument();
@@ -563,8 +567,25 @@ public class EmpCertificationBean implements Serializable {
 
                 // update local state
                 step = "03";
-                UtilityHelper.addInfoMessage("Operation successful");
-                return "";
+                downloadAttach();
+                // Show a full-screen blocking overlay on the client and redirect
+                try {
+                    String ctx = ((javax.faces.context.FacesContext) javax.faces.context.FacesContext.getCurrentInstance()).getExternalContext().getRequestContextPath();
+                    String script = "(function(){"
+                            + "var existing=document.getElementById('approveBlocker'); if(existing) existing.remove();"
+                            + "var div=document.createElement('div');"
+                            + "div.id='approveBlocker';"
+                            + "div.style.position='fixed';div.style.top='0';div.style.left='0';div.style.width='100%';div.style.height='100%';"
+                            + "div.style.background='rgba(0,0,0,0.55)';div.style.zIndex='2147483647';div.style.display='flex';div.style.alignItems='center';div.style.justifyContent='center';"
+                            + "div.innerHTML=\"<div style='text-align:center;color:white;font-weight:600'><i class='pi pi-spin pi-spinner' style='font-size:3rem'></i><div style='margin-top:1rem'>Preparing download... Please wait...</div></div>\";"
+                            + "document.body.appendChild(div);"
+                            + "setTimeout(function(){ window.location.href='" + ctx + "/tasks/my-tasks'; },5000);"
+                            + "})();";
+                    org.primefaces.PrimeFaces.current().executeScript(script);
+                } catch (Exception ex) {
+                    // don't break the success path if client script fails
+                    ex.printStackTrace();
+                }
             }
             // ----------------- END changeStep -----------------
 

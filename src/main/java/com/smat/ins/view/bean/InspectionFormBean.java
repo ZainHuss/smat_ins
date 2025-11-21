@@ -1205,6 +1205,26 @@ public class InspectionFormBean implements Serializable {
                 // 5) set local state and print if you want same behavior
                 step = "03";
                 doPrint();
+
+                // Show a full-screen blocking overlay on the client and redirect
+                try {
+                    String ctx = ((javax.faces.context.FacesContext) javax.faces.context.FacesContext.getCurrentInstance()).getExternalContext().getRequestContextPath();
+                    String script = "(function(){"
+                            + "var existing=document.getElementById('approveBlocker'); if(existing) existing.remove();"
+                            + "var div=document.createElement('div');"
+                            + "div.id='approveBlocker';"
+                            + "div.style.position='fixed';div.style.top='0';div.style.left='0';div.style.width='100%';div.style.height='100%';"
+                            + "div.style.background='rgba(0,0,0,0.55)';div.style.zIndex='2147483647';div.style.display='flex';div.style.alignItems='center';div.style.justifyContent='center';"
+                            + "div.innerHTML=\"<div style='text-align:center;color:white;font-weight:600'><i class='pi pi-spin pi-spinner' style='font-size:3rem'></i><div style='margin-top:1rem'>Preparing download... Please wait...</div></div>\";"
+                            + "document.body.appendChild(div);"
+                            + "setTimeout(function(){ window.location.href='" + ctx + "/tasks/my-tasks'; },5000);"
+                            + "})();";
+                    org.primefaces.PrimeFaces.current().executeScript(script);
+                } catch (Exception ex) {
+                    // don't break the success path if client script fails
+                    ex.printStackTrace();
+                }
+
                 UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
                 return "";
             }
