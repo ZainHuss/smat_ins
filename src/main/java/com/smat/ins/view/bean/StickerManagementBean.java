@@ -126,6 +126,114 @@ public class StickerManagementBean implements Serializable {
         }
     }
 
+    /**
+     * فتح تقرير PDF للستيكر المستخدم بناءً على reportNo لأول EquipmentInspectionForm
+     * سيتم استخدام الانعكاس لجلب الحقل reportNo لأن مجموعة النماذج قد تكون عامة
+     */
+    public void viewReportForSticker(Sticker sticker) {
+        try {
+            if (sticker == null || sticker.getEquipmentInspectionForms() == null || sticker.getEquipmentInspectionForms().isEmpty()) {
+                UtilityHelper.addErrorMessage("لا يوجد تقرير مرتبط بهذا الستيكر.");
+                return;
+            }
+            Object firstFormObj = sticker.getEquipmentInspectionForms().iterator().next();
+            String reportNo = null;
+            try {
+                java.lang.reflect.Method getReportNoMethod = firstFormObj.getClass().getMethod("getReportNo");
+                Object reportNoObj = getReportNoMethod.invoke(firstFormObj);
+                if (reportNoObj != null) reportNo = reportNoObj.toString();
+            } catch (Exception e) {
+                UtilityHelper.addErrorMessage("تعذر جلب رقم التقرير لهذا الستيكر.");
+                log.debug("Reflection failed while getting reportNo for sticker: {}", sticker, e);
+                return;
+            }
+            if (reportNo == null || reportNo.trim().isEmpty()) {
+                UtilityHelper.addErrorMessage("رقم التقرير غير متوفر لهذا الستيكر.");
+                return;
+            }
+            FacesContext fc = FacesContext.getCurrentInstance();
+            String ctx = fc.getExternalContext().getRequestContextPath();
+            String url = ctx + "/attachments/inspection/reports/" + java.net.URLEncoder.encode(reportNo, "UTF-8") + ".pdf";
+            org.primefaces.PrimeFaces.current().executeScript("window.open('" + url + "', '_blank');");
+        } catch (Exception e) {
+            UtilityHelper.addErrorMessage("حدث خطأ أثناء محاولة عرض التقرير: " + e.getMessage());
+            log.error("Error while opening report for sticker", e);
+        }
+    }
+
+    /**
+     * Wrapper action for use from JSF when method-parameters aren't supported by EL implementation.
+     * The UI should set `stickerManagementBean.sticker` via <f:setPropertyActionListener> and call this.
+     */
+    public void viewReport() {
+        viewReportForSticker(this.sticker);
+    }
+
+    /**
+     * يُعيد رقم التقرير الأول المرتبط بالستيكر إن وُجد، أو سلاسل فارغة خلاف ذلك.
+     * هذه الدالة مفيدة لاستعمالها في EL لتفادي استدعاء iterator().next مباشرةً.
+     */
+    public String getFirstReportNo(Sticker sticker) {
+        try {
+            if (sticker == null || sticker.getEquipmentInspectionForms() == null || sticker.getEquipmentInspectionForms().isEmpty()) {
+                return "";
+            }
+            Object firstFormObj = sticker.getEquipmentInspectionForms().iterator().next();
+            try {
+                java.lang.reflect.Method getReportNoMethod = firstFormObj.getClass().getMethod("getReportNo");
+                Object reportNoObj = getReportNoMethod.invoke(firstFormObj);
+                if (reportNoObj != null) return reportNoObj.toString();
+            } catch (Exception e) {
+                log.debug("Unable to fetch reportNo by reflection for sticker {}", sticker, e);
+            }
+        } catch (Exception e) {
+            log.debug("Error in getFirstReportNo", e);
+        }
+        return "";
+    }
+
+    /**
+     * Overloaded helper to support EL calls where the runtime type may be unknown
+     * or the argument is null. Some EL implementations attempt method resolution
+     * with a null parameter which causes a MethodNotFoundException; this overload
+     * accepts Object and delegates appropriately.
+     */
+    public String getFirstReportNo(Object stickerObj) {
+        if (stickerObj == null) return "";
+        if (stickerObj instanceof Sticker) {
+            return getFirstReportNo((Sticker) stickerObj);
+        }
+
+        // Best-effort reflection: try to find equipmentInspectionForms and extract first reportNo
+        try {
+            java.lang.reflect.Method m = null;
+            try {
+                m = stickerObj.getClass().getMethod("getEquipmentInspectionForms");
+            } catch (NoSuchMethodException nsme) {
+                // ignore
+            }
+            if (m != null) {
+                Object forms = m.invoke(stickerObj);
+                if (forms instanceof java.util.Collection) {
+                    java.util.Collection<?> col = (java.util.Collection<?>) forms;
+                    if (!col.isEmpty()) {
+                        Object first = col.iterator().next();
+                        if (first != null) {
+                            try {
+                                java.lang.reflect.Method gr = first.getClass().getMethod("getReportNo");
+                                Object reportNoObj = gr.invoke(first);
+                                if (reportNoObj != null) return reportNoObj.toString();
+                            } catch (Exception ignore) { }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore and return empty
+        }
+        return "";
+    }
+
     public void filterStickers() {
         if (stickers == null) {
             filteredStickers = new ArrayList<>();

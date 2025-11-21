@@ -1,22 +1,25 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui"
-    xmlns:pe="http://primefaces.org/ui/extensions"
-    template="/WEB-INF/template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">
 
     <ui:define name="section-head">
-        
+
     </ui:define>
 
     <ui:define name="head">
         <h:outputStylesheet library="#{appSetting.resourceLib}"
-            name="css/material-theme.css"></h:outputStylesheet>
+                            name="css/material-theme.css"></h:outputStylesheet>
         <style type="text/css">
             /* Animation Keyframes */
             @keyframes fadeInDown {
-                from { 
+                from {
                     opacity:0;
                     transform: translateY(-30px);
                 }
@@ -25,9 +28,9 @@
                     transform: translateY(0);
                 }
             }
-            
+
             @keyframes slideInLeft {
-                from { 
+                from {
                     opacity:0;
                     transform: translateX(-30px);
                 }
@@ -36,35 +39,35 @@
                     transform: translateX(0);
                 }
             }
-            
-            @keyframes pulse { 
+
+            @keyframes pulse {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.05); }
                 100% { transform: scale(1); }
             }
-            
-            @keyframes shimmer { 
+
+            @keyframes shimmer {
                 0% { background-position: -200px 0; }
                 100% { background-position: calc(200px + 100%) 0; }
             }
-            
+
             @keyframes buttonShine {
                 0% { transform: translateX(-100%) rotate(45deg); }
                 100% { transform: translateX(200%) rotate(45deg); }
             }
-            
+
             @keyframes float {
                 0% { transform: translateY(0px); }
                 50% { transform: translateY(-5px); }
                 100% { transform: translateY(0px); }
             }
-            
+
             @keyframes iconPulse {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.2); }
                 100% { transform: scale(1); }
             }
-            
+
             @keyframes rotate {
                 from { transform: rotate(0deg); }
                 to { transform: rotate(360deg); }
@@ -233,7 +236,7 @@
                 gap: 1rem;
                 flex-wrap: wrap;
             }
-            
+
             .filter-title {
                 font-weight: 600;
                 color: #4a5568;
@@ -502,7 +505,7 @@
                 width: 100% !important;
                 min-width: 900px;
             }
-            
+
             .ui-datatable .ui-datatable-header {
                 background: transparent !important;
                 border: none !important;
@@ -764,21 +767,21 @@
                 opacity: .3;
                 transition: 0s;
             }
-            
+
             /* Fix for selectOneMenu alignment */
             .ui-selectonemenu .ui-selectonemenu-label {
                 display: flex;
                 align-items: center;
                 height: 100%;
             }
-            
+
             /* Ensure table responsiveness */
             .table-responsive-container {
                 overflow-x: auto;
                 width: 100%;
                 border-radius: 8px;
             }
-            
+
             /* Improved icon styling */
             .icon-wrapper {
                 display: inline-flex;
@@ -786,15 +789,75 @@
                 justify-content: center;
                 transition: all 0.3s ease;
             }
-            
+
             .interactive-icon {
                 transition: all 0.3s ease;
                 cursor: pointer;
             }
-            
+
             .interactive-icon:hover {
                 transform: scale(1.2);
                 color: #667eea;
+            }
+
+            /* Report number link hover + tooltip */
+            .report-link {
+                position: relative;
+                color: #2d3748;
+                text-decoration: none;
+                padding: 2px 6px;
+                border-radius: 6px;
+                transition: all 0.18s ease;
+                display: inline-block;
+                font-weight: 700;
+            }
+
+            .report-link:hover {
+                color: white;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                box-shadow: 0 6px 18px rgba(102,126,234,0.25);
+                transform: translateY(-2px);
+            }
+
+            .report-link::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: 125%;
+                left: 50%;
+                transform: translateX(-50%) translateY(6px);
+                background: rgba(30,41,59,0.95);
+                color: #fff;
+                padding: 0.45rem 0.65rem;
+                border-radius: 8px;
+                box-shadow: 0 8px 20px rgba(2,6,23,0.3);
+                white-space: nowrap;
+                font-size: 0.85rem;
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.15s ease-in-out;
+                z-index: 9999;
+            }
+
+            .report-link::before {
+                content: '';
+                position: absolute;
+                bottom: 115%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 6px solid transparent;
+                border-right: 6px solid transparent;
+                border-top: 8px solid rgba(30,41,59,0.95);
+                opacity: 0;
+                transition: opacity 0.12s ease-in-out;
+                z-index: 9999;
+            }
+
+            .report-link:hover::after,
+            .report-link:hover::before {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
             }
         </style>
     </ui:define>
@@ -807,7 +870,7 @@
                 <!-- Header Section -->
                 <div class="header-section">
                     <h2 class="header-title">
-                        <i class="pi pi-qrcode header-icon"></i> 
+                        <i class="pi pi-qrcode header-icon"></i>
                         Sticker Search
                     </h2>
                 </div>
@@ -816,35 +879,35 @@
                 <div class="search-filter-section">
                     <div class="input-group">
                         <div class="input-label">
-                            <i class="pi pi-user input-icon"></i> 
+                            <i class="pi pi-user input-icon"></i>
                             Search by User:
                         </div>
                         <div class="input-field">
                             <p:selectOneMenu id="selectoneMenu_UserAlias"
-                                style="width:100%;" filter="true" filterMatchMode="contains"
-                                widgetVar="widgetVar_SelectOneMenu"
-                                converter="omnifaces.SelectItemsIndexConverter"
-                                value="#{stickerManagementBean.selectedUserAlias}">
+                                             style="width:100%;" filter="true" filterMatchMode="contains"
+                                             widgetVar="widgetVar_SelectOneMenu"
+                                             converter="omnifaces.SelectItemsIndexConverter"
+                                             value="#{stickerManagementBean.selectedUserAlias}">
                                 <f:selectItem itemLabel="Select user..." value="#{null}" noSelectionOption="true" />
                                 <f:selectItems
-                                    itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
-                                    itemValue="#{userAlias}" var="userAlias"
-                                    value="#{stickerManagementBean.userAliasList}" />
-                                <p:ajax event="change" listener="#{stickerManagementBean.searchStickersByUser()}" 
-                                    update="datatable-stickers results-counter"></p:ajax>
+                                        itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                        itemValue="#{userAlias}" var="userAlias"
+                                        value="#{stickerManagementBean.userAliasList}" />
+                                <p:ajax event="change" listener="#{stickerManagementBean.searchStickersByUser()}"
+                                        update="datatable-stickers results-counter"></p:ajax>
                             </p:selectOneMenu>
                         </div>
                     </div>
 
                     <div class="input-group">
                         <div class="input-label">
-                            <i class="pi pi-search input-icon"></i> 
+                            <i class="pi pi-search input-icon"></i>
                             Text Search:
                         </div>
                         <div class="input-field">
-                            <p:inputText id="searchText" value="#{stickerManagementBean.searchText}" 
-                                placeholder="Enter user name, serial number, or sticker number"
-                                style="width: 100%;"/>
+                            <p:inputText id="searchText" value="#{stickerManagementBean.searchText}"
+                                         placeholder="Enter user name, serial number, or sticker number"
+                                         style="width: 100%;"/>
                         </div>
                     </div>
 
@@ -856,40 +919,40 @@
                         <div class="filter-options">
                             <div class="filter-option">
                                 <p:selectBooleanCheckbox id="showAvailable" value="#{stickerManagementBean.showAvailable}">
-                                    <p:ajax event="change" listener="#{stickerManagementBean.filterStickers()}" 
-                                        update="datatable-stickers results-counter" />
+                                    <p:ajax event="change" listener="#{stickerManagementBean.filterStickers()}"
+                                            update="datatable-stickers results-counter" />
                                 </p:selectBooleanCheckbox>
                                 <label for="showAvailable">Available</label>
                             </div>
                             <div class="filter-option">
                                 <p:selectBooleanCheckbox id="showUsed" value="#{stickerManagementBean.showUsed}">
-                                    <p:ajax event="change" listener="#{stickerManagementBean.filterStickers()}" 
-                                        update="datatable-stickers results-counter" />
+                                    <p:ajax event="change" listener="#{stickerManagementBean.filterStickers()}"
+                                            update="datatable-stickers results-counter" />
                                 </p:selectBooleanCheckbox>
                                 <label for="showUsed">Used</label>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Search and Reset Buttons -->
                     <div class="button-section">
                         <p:commandButton value="Search" styleClass="enhanced-button search-btn ripple"
-                            action="#{stickerManagementBean.searchStickers()}" 
-                            update="datatable-stickers results-counter">
-                            
+                                         action="#{stickerManagementBean.searchStickers()}"
+                                         update="datatable-stickers results-counter">
+
                         </p:commandButton>
                         <p:commandButton value="Reset" styleClass="enhanced-button reset-btn ripple"
-                            onclick="resetForm()" 
-                            update="selectoneMenu_UserAlias searchText showAvailable showUsed datatable-stickers results-counter">
-                            
+                                         onclick="resetForm()"
+                                         update="selectoneMenu_UserAlias searchText showAvailable showUsed datatable-stickers results-counter">
+
                         </p:commandButton>
-                            <!-- Export button (Excel) -->
-						<p:commandButton value="Export" icon="pi pi-file-excel"
-						                 styleClass="enhanced-button ripple"
-						                 action="#{stickerManagementBean.exportToExcel}" ajax="false" />
+                        <!-- Export button (Excel) -->
+                        <p:commandButton value="Export" icon="pi pi-file-excel"
+                                         styleClass="enhanced-button ripple"
+                                         action="#{stickerManagementBean.exportToExcel}" ajax="false" />
 
                     </div>
-                    
+
                     <!-- Statistics Panel -->
                     <div class="stats-panel">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.8rem;">
@@ -928,14 +991,14 @@
 
                     <div class="table-responsive-container">
                         <p:dataTable id="datatable-stickers" widgetVar="widgetVarSticker"
-                            var="stickerVar" value="#{stickerManagementBean.filteredStickers}"
-                            reflow="true" styleClass="products-table" globalFilterOnly="true"
-                            rowKey="#{stickerVar.id}" paginator="true" rows="10"
-                            emptyMessage="No stickers found matching your criteria"
-                            paginatorPosition="bottom"
-                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                            rowsPerPageTemplate="5,10,15,20"
-                            scrollable="true" scrollWidth="100%">
+                                     var="stickerVar" value="#{stickerManagementBean.filteredStickers}"
+                                     reflow="true" styleClass="products-table" globalFilterOnly="true"
+                                     rowKey="#{stickerVar.id}" paginator="true" rows="10"
+                                     emptyMessage="No stickers found matching your criteria"
+                                     paginatorPosition="bottom"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15,20"
+                                     scrollable="true" scrollWidth="100%">
 
                             <p:column headerText="ID" width="8%" sortBy="#{stickerVar.id}" filterBy="#{stickerVar.id}">
                                 <div style="text-align: center; font-weight: 600; color: #4a5568;">
@@ -944,9 +1007,9 @@
                                 </div>
                             </p:column>
 
-                            
-                            
-                            <p:column headerText="Serial Number" width="15%" sortBy="#{stickerVar.serialNo}" filterBy="#{sticker极速Var.serialNo}">
+
+
+                            <p:column headerText="Serial Number" width="15%" sortBy="#{stickerVar.serialNo}" filterBy="#{stickerVar.serialNo}">
                                 <div style="font-family: monospace; font-weight: 600; color: #2d3748;">
                                     <i class="pi pi-key" style="margin-right: 5px; color: #667eea;"></i>
                                     #{stickerVar.serialNo}
@@ -959,7 +1022,8 @@
                                     #{stickerVar.stickerNo}
                                 </div>
                             </p:column>
-                            
+
+
                             <p:column headerText="Assigned To" width="20%" sortBy="#{stickerVar.sysUserByForUser.displayName}" filterBy="#{stickerVar.sysUserByForUser.displayName}">
                                 <div style="font-weight: 600; color: #2d3748;">
                                     <i class="pi pi-user" style="margin-right: 5px; color: #667eea;"></i>
@@ -967,32 +1031,45 @@
                                 </div>
                             </p:column>
 
-                            <p:column headerText="Status" width="12%" sortBy="#{极速stickerVar.isUsed}" filterBy="#{stickerVar.isUsed}">
+                            <p:column headerText="Report No" width="15%">
+                                <div style="font-family: monospace; font-weight: 600; color: #2d3748;">
+                                    <i class="pi pi-file" style="margin-right: 5px; color: #667eea;"></i>
+                                    <!-- Make report number clickable: open Completed Tasks Search and pass certNumber param -->
+                                    <ui:fragment>
+                                        <h:panelGroup>
+                                            <h:panelGroup rendered="#{not empty stickerManagementBean.getFirstReportNo(stickerVar)}">
+                                                <h:link outcome="pretty:completed-task" styleClass="report-link" pt:data-tooltip="Click to open Completed Tasks Search for this report">
+                                                    <f:param name="certNumber" value="#{stickerManagementBean.getFirstReportNo(stickerVar)}" />
+                                                    <h:outputText value="#{stickerManagementBean.getFirstReportNo(stickerVar)}" />
+                                                </h:link>
+                                            </h:panelGroup>
+                                            <h:panelGroup rendered="#{empty stickerManagementBean.getFirstReportNo(stickerVar)}">
+                                                <ui:repeat value="#{stickerVar.equipmentInspectionForms}" var="form" varStatus="vs">
+                                                    <h:outputText value="#{form.reportNo}" rendered="#{vs.index == 0}" />
+                                                </ui:repeat>
+                                            </h:panelGroup>
+                                        </h:panelGroup>
+                                    </ui:fragment>
+                                </div>
+                            </p:column>
+
+                            <p:column headerText="Status" width="12%" sortBy="#{stickerVar.isUsed}" filterBy="#{stickerVar.isUsed}">
                                 <span class="status-badge #{stickerVar.isUsed ? 'status-used' : 'status-available'}">
                                     <i class="pi #{stickerVar.isUsed ? 'pi-ban' : 'pi-check-circle'}" style="margin-right: 3px;"></i>
-                                    #{stickerVar.isUsed ? 'Used' : 'Available'} 
+                                    #{stickerVar.isUsed ? 'Used' : 'Available'}
                                 </span>
                             </p:column>
 
                             <p:column headerText="QR Code" width="15%">
                                 <div style="text-align: center; padding: 0.4rem;">
                                     <pe:qrCode id="qrCodeElem" renderMethod="canvas" renderMode="3"
-                                        text="#{stickerVar.serialNo.concat(stickerVar.stickerNo)}"
-                                        label="SMAT" size="80" fillColor="#667eea" fontName="Arial"
-                                        fontColor="#2d3748" ecLevel="H" radius="0.5"
-                                        title="Click to view larger" />
+                                               text="#{stickerVar.serialNo.concat(stickerVar.stickerNo)}"
+                                               label="SMAT" size="80" fillColor="#667eea" fontName="Arial"
+                                               fontColor="#2d3748" ecLevel="H" radius="0.5"
+                                               title="Click to view larger" />
                                     <div style="margin-top: 0.4rem; font-size: 0.65rem; color: #667eea;">
                                         <i class="pi pi-camera" style="margin-right: 3px;"></i> Scan QR Code
                                     </div>
-                                </div>
-                            </p:column>
-
-                            <p:column headerText="Actions" width="5%">
-                                <div class="action-buttons">
-                                    <p:commandButton icon="pi pi-eye" styleClass="action-btn view-btn ripple"
-                                        title="View Details" />
-                                    <p:commandButton icon="pi pi-print" styleClass="action-btn print-btn ripple"
-                                        title="Print Sticker" />
                                 </div>
                             </p:column>
                         </p:dataTable>
@@ -1002,44 +1079,52 @@
         </h:form>
 
         <script type="text/javascript">
+            //<![CDATA[
             // دالة لإعادة تعيين النموذج
             function resetForm() {
                 // إعادة تعيين حقل البحث النصي
                 document.getElementById('form:searchText').value = '';
-                
+
                 // إعادة تعيين خانتي الاختيار
                 document.getElementById('form:showAvailable').checked = false;
                 document.getElementById('form:showUsed').checked = false;
-                
+
                 // إعادة تعيين قائمة التحديد
                 PF('widgetVar_SelectOneMenu').clear();
-                
+
                 // إعادة تحميل الصفحة لتطبيق التغييرات
                 location.reload();
             }
-            
+
             function updateResultsCounter() {
-                var count = #{stickerManagementBean.filteredStickers.size()};
-                document.getElementById('results-counter').textContent = count + ' Results';
+                // Read rendered text from the results counter (rendered server-side like "12 Results")
+                var panel = document.querySelector('.results-counter');
+                if (!panel) return;
+                var text = panel.textContent || panel.innerText || '';
+                // Try to extract leading number
+                var m = text.match(/^(\d+)/);
+                var count = m ? parseInt(m[1], 10) : 0;
+                panel.textContent = count + ' Results';
             }
-            
+
             // استدعاء هذه الدالة بعد كل تحديث AJAX
             $(document).ajaxComplete(function() {
                 updateResultsCounter();
             });
-            
+
             // إضافة تأثيرات تفاعلية للأيقونات
             document.querySelectorAll('.interactive-icon').forEach(icon => {
                 icon.addEventListener('mouseenter', function() {
                     this.style.transform = 'scale(1.2)';
                     this.style.color = '#667eea';
                 });
-                
+
                 icon.addEventListener('mouseleave', function() {
                     this.style.transform = 'scale(1)';
                     this.style.color = '';
                 });
             });
+            //]]>
         </script>
     </ui:define>
 </ui:composition>

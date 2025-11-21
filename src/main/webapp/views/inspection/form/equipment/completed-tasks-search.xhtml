@@ -15,34 +15,57 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
         <style>
             :root {
-                --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-                --card-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-                --light-bg: #f8f9fa;
-                --card-bg: rgba(255, 255, 255, 0.95);
-                --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-                --card-shadow-hover: 0 12px 35px rgba(0, 0, 0, 0.15);
-                --border-radius: 16px;
+                /* نظام ألوان جديد أكثر أناقة وتناسقًا */
+                --primary-color: #5b21b6;
+                --primary-light: #8b5cf6;
+                --primary-dark: #4c1d95;
+                --secondary-color: #dc2626;
+                --accent-color: #f59e0b;
+                --success-color: #10b981;
+                --warning-color: #f59e0b;
+                --danger-color: #ef4444;
+                --info-color: #3b82f6;
+
+                --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+                --gradient-secondary: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+                --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                --gradient-info: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+
+                /* ألوان التاسكات - أكثر إشراقًا */
+                --task-equipment: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                --task-employee: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+
+                /* ألوان Work Order - أكثر تناسقًا */
+                --wo-color-1: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+                --wo-color-2: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+                --wo-color-3: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+                --wo-color-4: linear-gradient(135deg, #10b981 0%, #047857 100%);
+                --wo-color-5: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                --wo-color-6: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                --wo-color-7: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+                --wo-color-8: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
+                --wo-color-9: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+                --wo-color-10: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+                --wo-no-order: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+
+                --light-bg: #f8fafc;
+                --card-bg: rgba(255, 255, 255, 0.98);
+                --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+                --card-shadow-hover: 0 24px 48px rgba(0, 0, 0, 0.15);
+                --border-radius: 20px;
                 --font-primary: 'Plus Jakarta Sans', 'Cairo', 'Montserrat', sans-serif;
                 --font-secondary: 'Plus Jakarta Sans', 'Montserrat', sans-serif;
                 --text-dark: #1e293b;
                 --text-muted: #64748b;
                 --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-                /* ألوان Work Order الجديدة - أكثر أناقة */
-                --wo-color-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                --wo-color-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                --wo-color-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                --wo-color-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-                --wo-color-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-                --wo-color-6: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-                --wo-color-7: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
-                --wo-color-8: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
-                --wo-color-9: linear-gradient(135deg, #fd746c 0%, #ff9068 100%);
-                --wo-color-10: linear-gradient(135deg, #2af598 0%, #009efd 100%);
-                --wo-no-order: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+                /* ألوان الإطار الذهبي المعدلة */
+                --gold-light: #fef3c7;
+                --gold-medium: #fde68a;
+                --gold-dark: #fcd34d;
             }
 
             /* تحسينات عامة */
@@ -63,7 +86,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
                 z-index: -1;
             }
 
@@ -75,13 +98,13 @@
                 height: 100%;
                 pointer-events: none;
                 z-index: -1;
-                opacity: 0.4;
+                opacity: 0.3;
             }
 
             /* حاوية البحث الرئيسية */
             .lux-search-container {
                 max-width: 1400px;
-                margin: 1.5rem auto 1rem auto;
+                margin: 2rem auto 1rem auto;
                 padding: 1rem;
                 position: relative;
                 z-index: 1;
@@ -91,19 +114,19 @@
             .lux-search-card {
                 border-radius: var(--border-radius);
                 box-shadow: var(--card-shadow);
-                padding: 1.5rem;
+                padding: 2rem;
                 background: var(--card-bg);
                 backdrop-filter: blur(20px);
-                border: 1px solid rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.9);
                 position: relative;
                 overflow: hidden;
                 transition: var(--transition);
-                margin-bottom: 1.5rem;
+                margin-bottom: 2rem;
             }
 
             .lux-search-card:hover {
                 box-shadow: var(--card-shadow-hover);
-                transform: translateY(-3px);
+                transform: translateY(-5px);
             }
 
             .lux-search-card::before {
@@ -112,31 +135,34 @@
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 4px;
-                background: var(--primary-gradient);
+                height: 5px;
+                background: var(--gradient-primary);
             }
 
             .lux-search-header {
-                font-size: 1.4rem;
+                font-size: 1.6rem;
                 font-weight: 800;
                 font-family: var(--font-secondary);
                 color: var(--text-dark);
-                margin-bottom: 1.5rem;
+                margin-bottom: 1.8rem;
                 display: flex;
                 align-items: center;
-                gap: 0.7rem;
+                gap: 0.8rem;
+                background: var(--gradient-primary);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
             }
 
             .lux-search-header i {
-                font-size: 1.3rem;
-                color: #667eea;
+                font-size: 1.5rem;
             }
 
             /* شبكة الحقول */
             .lux-fields-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 1rem;
+                gap: 1.2rem;
                 margin-top: 0.5rem;
                 align-items: end;
                 width: 100%;
@@ -157,39 +183,39 @@
                 margin-bottom: 0.3rem;
                 padding-left: 0.5rem;
                 border-left: 3px solid;
-                border-image: var(--primary-gradient);
+                border-image: var(--gradient-primary);
                 border-image-slice: 1;
             }
 
             /* تحسينات عناصر الإدخال */
             .ui-selectonemenu, .ui-inputtext, .ui-calendar input {
-                height: 42px !important;
+                height: 46px !important;
                 border-radius: 12px !important;
                 border: 1.5px solid #e2e8f0 !important;
-                background: rgba(255, 255, 255, 0.9) !important;
+                background: rgba(255, 255, 255, 0.95) !important;
                 color: var(--text-dark) !important;
                 font-size: 0.95rem !important;
                 font-family: var(--font-primary) !important;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
                 transition: var(--transition) !important;
-                padding: 0.5rem 0.9rem !important;
+                padding: 0.5rem 1rem !important;
             }
 
             .ui-selectonemenu:focus, .ui-inputtext:focus, .ui-calendar input:focus {
-                border-color: #667eea !important;
-                background: rgba(255, 255, 255, 0.95) !important;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+                border-color: var(--primary-color) !important;
+                background: rgba(255, 255, 255, 0.98) !important;
+                box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
                 outline: none !important;
-                transform: translateY(-1px);
+                transform: translateY(-2px);
             }
 
             /* مجموعة الأزرار */
             .lux-btn-group {
                 display: flex;
                 justify-content: flex-end;
-                gap: 0.7rem;
-                margin-top: 1.5rem;
-                padding-top: 1.2rem;
+                gap: 0.8rem;
+                margin-top: 1.8rem;
+                padding-top: 1.5rem;
                 border-top: 1px solid rgba(0, 0, 0, 0.06);
             }
 
@@ -198,10 +224,10 @@
                 font-family: var(--font-secondary) !important;
                 font-weight: 600 !important;
                 font-size: 0.92rem !important;
-                min-height: 40px;
-                padding: 0.5rem 1.3rem !important;
+                min-height: 44px;
+                padding: 0.6rem 1.5rem !important;
                 letter-spacing: 0.3px;
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08) !important;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
                 border: none !important;
                 transition: var(--transition) !important;
                 position: relative;
@@ -209,23 +235,33 @@
             }
 
             .ui-button-primary {
-                background: var(--primary-gradient) !important;
+                background: var(--gradient-primary) !important;
                 color: white !important;
             }
 
             .ui-button-primary:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3) !important;
+                box-shadow: 0 8px 20px rgba(123, 97, 255, 0.3) !important;
+            }
+
+            .ui-button-secondary {
+                background: var(--gradient-info) !important;
+                color: white !important;
+            }
+
+            .ui-button-success {
+                background: var(--gradient-success) !important;
+                color: white !important;
             }
 
             /* بطاقة الإحصائيات */
             .lux-stats-card {
                 background: var(--card-bg);
                 border-radius: var(--border-radius);
-                padding: 1.2rem;
-                margin-bottom: 1.5rem;
+                padding: 1.5rem;
+                margin-bottom: 2rem;
                 box-shadow: var(--card-shadow);
-                border: 1px solid rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.9);
                 position: relative;
                 overflow: hidden;
                 transition: var(--transition);
@@ -243,22 +279,22 @@
                 left: 0;
                 width: 100%;
                 height: 4px;
-                background: var(--warning-gradient);
+                background: var(--gradient-warning);
             }
 
             .lux-stats-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-                gap: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1.2rem;
             }
 
             .lux-stat-item {
                 text-align: center;
-                padding: 1rem 0.5rem;
-                background: rgba(255, 255, 255, 0.7);
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.8);
-                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+                padding: 1.2rem 0.8rem;
+                background: rgba(255, 255, 255, 0.8);
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
                 position: relative;
                 overflow: hidden;
                 transition: var(--transition);
@@ -266,14 +302,14 @@
 
             .lux-stat-item:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-                background: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                background: rgba(255, 255, 255, 0.95);
             }
 
             .lux-stat-number {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
                 font-weight: 800;
-                background: var(--primary-gradient);
+                background: var(--gradient-primary);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
@@ -281,32 +317,39 @@
                 margin-bottom: 0.3rem;
             }
 
+            .lux-stat-label {
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                font-weight: 500;
+            }
+
             /* تصميم جديد مضغوط لبطاقات Work Order */
             .work-order-group {
-                margin-bottom: 1.5rem;
-                border-radius: 16px;
+                margin-bottom: 2rem;
+                border-radius: var(--border-radius);
                 overflow: hidden;
                 box-shadow: var(--card-shadow);
                 transition: var(--transition);
                 position: relative;
                 background: white;
-                border: 1px solid rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.9);
             }
 
             .work-order-group:hover {
-                transform: translateY(-4px);
+                transform: translateY(-5px);
                 box-shadow: var(--card-shadow-hover);
             }
 
+            /* تحسين رأس Work Order لجعله أكثر إحكاما */
             .work-order-header {
-                padding: 1rem 1.2rem;
+                padding: 1.2rem 1.8rem;
                 color: white;
                 position: relative;
                 overflow: hidden;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                min-height: 70px;
+                min-height: 80px; /* تم تقليل الارتفاع */
             }
 
             .work-order-header::before {
@@ -325,191 +368,337 @@
                 position: absolute;
                 top: 0;
                 right: 0;
-                width: 120px;
+                width: 150px;
                 height: 100%;
                 background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15));
                 transform: skewX(-20deg);
             }
 
+            /* تحسين تخطيط محتوى Work Order */
             .work-order-content {
                 position: relative;
                 z-index: 2;
                 display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
+                flex-direction: row; /* تغيير إلى أفقي */
+                align-items: center; /* محاذاة عمودية في المنتصف */
+                gap: 1.5rem;
                 flex: 1;
             }
 
             .work-order-title {
-                font-size: 1.3rem;
+                font-size: 1.4rem; /* تصغير الخط قليلا */
                 font-weight: 800;
                 margin: 0;
                 font-family: var(--font-secondary);
-                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
                 letter-spacing: 0.3px;
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
+                gap: 0.8rem;
+                color: rgba(255, 255, 255, 0.95);
+                white-space: nowrap;
             }
 
-            .work-order-subtitle {
-                font-size: 0.9rem;
-                opacity: 0.95;
-                font-weight: 500;
-                margin: 0;
+            /* نقل الرقاقات إلى جانب العنوان */
+            .work-order-badges {
                 display: flex;
+                gap: 1rem;
                 align-items: center;
-                gap: 0.7rem;
-                flex-wrap: wrap;
             }
 
             .work-order-badge {
-                background: rgba(255, 255, 255, 0.2);
+                background: rgba(255, 255, 255, 0.25);
                 backdrop-filter: blur(10px);
                 border-radius: 20px;
-                padding: 0.3rem 0.8rem;
+                padding: 0.5rem 1rem;
                 font-weight: 600;
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 display: inline-flex;
                 align-items: center;
-                gap: 0.4rem;
-                border: 1px solid rgba(255, 255, 255, 0.25);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                gap: 0.5rem;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                color: white;
+                white-space: nowrap;
+            }
+
+            /* عداد التاسكات الجديد */
+            .work-order-counter {
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                background: white;
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                z-index: 3;
+                border: 3px solid white;
+            }
+
+            .work-order-counter-inner {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 1.2rem;
+                color: white;
+                background: var(--gradient-accent);
             }
 
             .work-order-actions {
                 display: flex;
-                gap: 0.5rem;
+                gap: 0.6rem;
                 align-items: center;
                 z-index: 3;
             }
 
             .work-order-button {
-                width: 36px;
-                height: 36px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: rgba(255, 255, 255, 0.2);
+                background: rgba(255, 255, 255, 0.25);
                 backdrop-filter: blur(10px);
                 color: white;
-                border: 1px solid rgba(255, 255, 255, 0.25);
+                border: 1px solid rgba(255, 255, 255, 0.3);
                 transition: var(--transition);
                 cursor: pointer;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                font-size: 0.85rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                font-size: 0.9rem;
             }
 
             .work-order-button:hover {
-                background: rgba(255, 255, 255, 0.3);
-                transform: scale(1.08);
+                background: rgba(255, 255, 255, 0.35);
+                transform: scale(1.1);
             }
 
             .work-order-body {
-                padding: 1.2rem;
+                padding: 1.8rem;
                 background: #f8fafc;
                 display: flex;
                 flex-direction: column;
-                gap: 1rem;
+                gap: 1.5rem;
             }
 
-            /* بطاقات المهام - تصميم مضغوط */
+            /* بطاقات المهام - تصميم جديد محسّن */
             .task-card {
                 background: white;
-                border-radius: 12px;
+                border-radius: 16px;
                 overflow: hidden;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
                 transition: var(--transition);
-                border: 1px solid rgba(0, 0, 0, 0.04);
+                border: 1px solid rgba(0, 0, 0, 0.05);
+                position: relative;
             }
 
             .task-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+                transform: translateY(-4px);
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+            }
+
+            /* رقاقة نوع التاسك */
+            .task-type-indicator {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 8px;
+                height: 100%;
+            }
+
+            .task-type-equipment {
+                background: var(--task-equipment);
+            }
+
+            .task-type-employee {
+                background: var(--task-employee);
             }
 
             .task-header {
-                padding: 1rem 1.2rem;
-                background: linear-gradient(90deg, rgba(102,126,234,0.05), rgba(246,246,246,0.02));
+                padding: 1.5rem 1.8rem 1.2rem 2rem;
                 display: flex;
                 justify-content: space-between;
+                align-items: flex-start;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            }
+
+            .task-main-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+                flex: 1;
+            }
+
+            .task-title-row {
+                display: flex;
                 align-items: center;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+                gap: 1rem;
+                flex-wrap: wrap;
             }
 
             .task-type-badge {
-                padding: 0.4rem 0.8rem;
-                border-radius: 8px;
+                padding: 0.6rem 1.2rem;
+                border-radius: 12px;
                 font-weight: 700;
-                font-size: 0.8rem;
-                background: linear-gradient(135deg, #667eea, #764ba2);
+                font-size: 0.85rem;
                 color: white;
-                box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
             }
 
+            .task-type-equipment-badge {
+                background: var(--task-equipment);
+            }
+
+            .task-type-employee-badge {
+                background: var(--task-employee);
+            }
+
+            .task-description {
+                font-weight: 600;
+                font-family: var(--font-secondary);
+                color: var(--text-dark);
+                font-size: 1rem;
+                line-height: 1.5;
+                margin-top: 0.3rem;
+            }
+
+            .task-company {
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                margin-top: 0.3rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .task-date {
+                display: flex;
+                flex-direction: column;
+                gap: 0.3rem;
+                align-items: flex-end;
+                font-size: 0.85rem;
+                color: var(--text-muted);
+                white-space: nowrap;
+            }
+
+            .task-date-item {
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            /* تحسينات قسم المحتوى - تصميم جديد بدون mask */
             .task-content {
-                padding: 1.2rem;
+                padding: 1.5rem 1.8rem;
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 0.8rem;
+                gap: 1.2rem;
                 align-items: start;
             }
 
-            .task-footer {
-                padding: 0.8rem 1.2rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background: #f8fafc;
-                border-top: 1px solid rgba(0, 0, 0, 0.04);
-            }
-
-            /* تحسينات العناصر الداخلية */
-            .task-content > div {
+            .task-content-item {
                 display: flex;
                 flex-direction: column;
-                gap: 0.2rem;
+                gap: 0.4rem;
+                padding: 1rem;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 12px;
+                border: 1.5px solid transparent;
+                transition: var(--transition);
+                position: relative;
+                min-height: 70px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            /* إطار ذهبي بسيط باستخدام box-shadow */
+            .task-content-item::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border-radius: 14px;
+                background: linear-gradient(135deg, var(--gold-light), var(--gold-medium), var(--gold-dark));
+                z-index: -1;
+                opacity: 0;
+                transition: var(--transition);
+            }
+
+            .task-content-item:hover::before {
+                opacity: 0.8;
+            }
+
+            .task-content-item:hover {
+                background: rgba(255, 255, 255, 0.95);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+                border-color: var(--gold-medium);
             }
 
             .task-content small {
                 font-size: 0.75rem;
                 color: var(--text-muted);
-                font-weight: 500;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 0.2rem;
             }
 
-            .task-content div:not(small) {
-                font-size: 0.85rem;
+            .task-content-value {
+                font-size: 0.95rem;
                 font-weight: 500;
                 color: var(--text-dark);
+                line-height: 1.4;
+                word-break: break-word;
+            }
+
+            .task-footer {
+                padding: 1.2rem 1.8rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #f8fafc;
+                border-top: 1px solid rgba(0, 0, 0, 0.06);
             }
 
             /* أزرار الإجراءات المصغرة */
             .lux-action-buttons {
                 display: flex;
-                gap: 0.3rem;
+                gap: 0.5rem;
                 justify-content: center;
             }
 
             .lux-action-btn {
-                width: 30px;
-                height: 30px;
-                border-radius: 8px;
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: var(--primary-gradient);
+                background: var(--gradient-primary);
                 color: white;
                 border: none;
                 transition: var(--transition);
-                font-size: 0.85rem;
-                box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+                font-size: 0.9rem;
+                box-shadow: 0 3px 10px rgba(123, 97, 255, 0.3);
             }
 
             .lux-action-btn:hover {
-                background: var(--secondary-gradient);
+                background: var(--gradient-accent);
                 transform: scale(1.1);
-                box-shadow: 0 4px 10px rgba(245, 87, 108, 0.3);
+                box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
             }
 
             /* ألوان مختلفة لمجموعات Work Order */
@@ -528,13 +717,13 @@
             /* رسائل الحالة */
             .lux-no-results, .lux-initial-msg {
                 text-align: center;
-                padding: 2.5rem 1rem;
+                padding: 3.5rem 2rem;
                 color: var(--text-dark);
                 font-style: italic;
                 background: var(--card-bg);
                 border-radius: var(--border-radius);
-                border: 1px solid rgba(255, 255, 255, 0.8);
-                margin-top: 1rem;
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                margin-top: 1.5rem;
                 box-shadow: var(--card-shadow);
                 transition: var(--transition);
             }
@@ -545,19 +734,33 @@
             }
 
             .lux-no-results i, .lux-initial-msg i {
-                font-size: 2.5rem;
-                background: var(--primary-gradient);
+                font-size: 3.5rem;
+                background: var(--gradient-primary);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
-                margin-bottom: 0.7rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .lux-no-results h3, .lux-initial-msg h3 {
+                font-size: 1.6rem;
+                margin-bottom: 0.8rem;
+                font-weight: 700;
+            }
+
+            .lux-no-results p, .lux-initial-msg p {
+                font-size: 1.05rem;
+                color: var(--text-muted);
+                max-width: 500px;
+                margin: 0 auto;
+                line-height: 1.6;
             }
 
             /* تأثيرات الأنيميشن المحسنة */
             @keyframes fadeInUp {
                 from {
                     opacity: 0;
-                    transform: translateY(20px);
+                    transform: translateY(30px);
                 }
                 to {
                     opacity: 1;
@@ -568,7 +771,7 @@
             @keyframes slideInLeft {
                 from {
                     opacity: 0;
-                    transform: translateX(-30px);
+                    transform: translateX(-40px);
                 }
                 to {
                     opacity: 1;
@@ -577,11 +780,11 @@
             }
 
             .animate-fadeInUp {
-                animation: fadeInUp 0.5s ease-out;
+                animation: fadeInUp 0.6s ease-out;
             }
 
             .animate-slideInLeft {
-                animation: slideInLeft 0.5s ease-out;
+                animation: slideInLeft 0.6s ease-out;
             }
 
             /* تصميم متجاوب */
@@ -606,19 +809,37 @@
                     grid-template-columns: 1fr;
                 }
                 .work-order-header {
-                    padding: 0.8rem 1rem;
+                    padding: 1rem 1.5rem;
                     flex-direction: column;
                     align-items: flex-start;
-                    gap: 0.7rem;
-                    min-height: 60px;
+                    gap: 1rem;
+                    min-height: 70px;
+                }
+                .work-order-content {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.8rem;
+                }
+                .work-order-badges {
+                    width: 100%;
+                    justify-content: flex-start;
                 }
                 .work-order-actions {
                     align-self: flex-end;
-                    margin-top: -2.5rem;
+                    margin-top: -3rem;
+                }
+                .work-order-counter {
+                    top: -8px;
+                    right: -8px;
+                    width: 50px;
+                    height: 50px;
+                }
+                .work-order-counter-inner {
+                    font-size: 1rem;
                 }
                 .task-content {
                     grid-template-columns: 1fr;
-                    gap: 1rem;
+                    gap: 1.2rem;
                 }
             }
 
@@ -627,33 +848,37 @@
                     grid-template-columns: repeat(2, 1fr);
                 }
                 .lux-search-card {
-                    padding: 1rem;
+                    padding: 1.5rem;
                 }
                 .lux-search-header {
-                    font-size: 1.2rem;
+                    font-size: 1.3rem;
                 }
                 .work-order-title {
-                    font-size: 1.1rem;
+                    font-size: 1.3rem;
                 }
-                .work-order-subtitle {
-                    font-size: 0.85rem;
+                .work-order-badge {
+                    font-size: 0.8rem;
+                    padding: 0.4rem 0.8rem;
                 }
                 .work-order-body {
-                    padding: 1rem;
+                    padding: 1.5rem;
                 }
                 .task-header {
-                    padding: 0.8rem 1rem;
+                    padding: 1.2rem 1.5rem 1rem 1.8rem;
                     flex-direction: column;
                     align-items: flex-start;
-                    gap: 0.7rem;
+                    gap: 1rem;
+                }
+                .task-date {
+                    align-items: flex-start;
                 }
                 .task-content {
-                    padding: 1rem;
+                    padding: 1.2rem;
                 }
                 .task-footer {
-                    padding: 0.7rem 1rem;
+                    padding: 1rem 1.5rem;
                     flex-direction: column;
-                    gap: 0.7rem;
+                    gap: 1rem;
                     align-items: flex-start;
                 }
                 .lux-btn-group {
@@ -671,10 +896,28 @@
                 .work-order-header {
                     min-height: auto;
                 }
+                .work-order-content {
+                    gap: 0.5rem;
+                }
+                .work-order-badges {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.5rem;
+                }
                 .work-order-actions {
                     margin-top: 0;
                     align-self: stretch;
                     justify-content: flex-end;
+                }
+                .work-order-counter {
+                    position: relative;
+                    top: 0;
+                    right: 0;
+                    margin-bottom: 0.5rem;
+                }
+                .task-title-row {
+                    flex-direction: column;
+                    align-items: flex-start;
                 }
             }
         </style>
@@ -843,6 +1086,13 @@
 
                             <div class="work-order-group #{woColorClass}">
                                 <div class="work-order-header">
+                                    <!-- عداد التاسكات الجديد -->
+                                    <div class="work-order-counter">
+                                        <div class="work-order-counter-inner">
+                                            #{fn:length(completedTaskSearchBean.groupedResultsByWorkOrder[groupKey])}
+                                        </div>
+                                    </div>
+
                                     <div class="work-order-content">
                                         <h3 class="work-order-title">
                                             <i class="fas fa-list-check"></i>
@@ -851,16 +1101,17 @@
                                                 <h:outputText value="#{groupKey}" rendered="#{groupKey ne 'No Work Order'}" />
                                             </h:panelGroup>
                                         </h3>
-                                        <div class="work-order-subtitle">
-                                        <span class="work-order-badge">
-                                            <i class="fas fa-tasks"></i>
-                                            #{fn:length(completedTaskSearchBean.groupedResultsByWorkOrder[groupKey])} task(s)
-                                        </span>
-                                            <h:panelGroup rendered="#{not empty completedTaskSearchBean.groupedResultsByWorkOrder[groupKey]}">
+                                        <!-- نقل الرقاقات إلى جانب العنوان -->
+                                        <div class="work-order-badges">
                                             <span class="work-order-badge">
-                                                <i class="fas fa-calendar"></i>
-                                                <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(completedTaskSearchBean.groupedResultsByWorkOrder[groupKey][0]['createdDate'])}" />
+                                                <i class="fas fa-tasks"></i>
+                                                #{fn:length(completedTaskSearchBean.groupedResultsByWorkOrder[groupKey])} task(s)
                                             </span>
+                                            <h:panelGroup rendered="#{not empty completedTaskSearchBean.groupedResultsByWorkOrder[groupKey]}">
+                                                <span class="work-order-badge">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(completedTaskSearchBean.groupedResultsByWorkOrder[groupKey][0]['createdDate'])}" />
+                                                </span>
                                             </h:panelGroup>
                                         </div>
                                     </div>
@@ -876,88 +1127,98 @@
                                 </div>
                                 <div class="work-order-body">
                                     <ui:repeat value="#{completedTaskSearchBean.groupedResultsByWorkOrder[groupKey]}" var="task" varStatus="status">
+                                        <!-- تحديد لون التاسك بناءً على النوع -->
+                                        <c:set var="taskTypeClass" value="task-type-#{task['taskType'] eq 'Equipment Inspection' ? 'equipment' : 'employee'}" />
+                                        <c:set var="taskTypeBadgeClass" value="task-type-#{task['taskType'] eq 'Equipment Inspection' ? 'equipment' : 'employee'}-badge" />
+
                                         <div class="task-card">
+                                            <!-- رقاقة اللون الجانبية -->
+                                            <div class="task-type-indicator #{taskTypeClass}"></div>
+
                                             <div class="task-header">
-                                                <div style="display:flex; align-items:center; gap:0.7rem;">
-                                                <span class="task-type-badge">
-                                                    #{completedTaskSearchBean.getTaskTypeDisplayText(task['taskType'])}
-                                                </span>
-                                                    <div style="display:flex; flex-direction:column;">
-                                                        <div style="font-weight:600; font-family:var(--font-secondary); color:var(--text-dark); font-size:0.9rem;">
-                                                            <h:panelGroup>
-                                                                <h:outputText value="#{not empty task['taskDescription'] ? (fn:length(task['taskDescription']) gt 60 ? fn:substring(task['taskDescription'], 0, 57) : task['taskDescription']) : '-'}" />
-                                                                <h:outputText value="..." rendered="#{not empty task['taskDescription'] and fn:length(task['taskDescription']) gt 60}" />
-                                                            </h:panelGroup>
-                                                        </div>
-                                                        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.2rem;">
-                                                            <span>Company: #{task['companyName'] != null ? task['companyName'] : '-'}</span>
-                                                        </div>
+                                                <div class="task-main-info">
+                                                    <div class="task-title-row">
+                                                        <span class="task-type-badge #{taskTypeBadgeClass}">
+                                                            <i class="#{task['taskType'] eq 'Equipment Inspection' ? 'fas fa-tools' : 'fas fa-user-tie'}"></i>
+                                                            #{completedTaskSearchBean.getTaskTypeDisplayText(task['taskType'])}
+                                                        </span>
+                                                    </div>
+                                                    <div class="task-description">
+                                                        <h:panelGroup>
+                                                            <h:outputText value="#{not empty task['taskDescription'] ? (fn:length(task['taskDescription']) gt 60 ? fn:substring(task['taskDescription'], 0, 57) : task['taskDescription']) : '-'}" />
+                                                            <h:outputText value="..." rendered="#{not empty task['taskDescription'] and fn:length(task['taskDescription']) gt 60}" />
+                                                        </h:panelGroup>
+                                                    </div>
+                                                    <div class="task-company">
+                                                        <i class="fas fa-building"></i>
+                                                        <span>Company: #{task['companyName'] != null ? task['companyName'] : '-'}</span>
                                                     </div>
                                                 </div>
 
-                                                <div style="display:flex; gap:0.5rem; align-items:center; font-size:0.85rem; color:var(--text-muted);">
-                                                    <h:outputText value="#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}" />
+                                                <div class="task-date">
+                                                    <div class="task-date-item">
+                                                        <i class="fas fa-calendar-plus"></i>
+                                                        <span>Created: #{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}</span>
+                                                    </div>
+                                                    <div class="task-date-item">
+                                                        <i class="fas fa-calendar-check"></i>
+                                                        <span>Completed: #{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}</span>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="task-content">
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Task ID</small>
-                                                    <div>#{task['taskId']}</div>
+                                                    <div class="task-content-value">#{task['taskId']}</div>
                                                 </div>
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Job no</small>
-                                                    <div>#{not empty task['jobNo'] ? task['jobNo'] : '-'}</div>
+                                                    <div class="task-content-value">#{not empty task['jobNo'] ? task['jobNo'] : '-'}</div>
                                                 </div>
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Time sheet no</small>
-                                                    <div>#{not empty task['timeSheetNo'] ? task['timeSheetNo'] : '-'}</div>
+                                                    <div class="task-content-value">#{not empty task['timeSheetNo'] ? task['timeSheetNo'] : '-'}</div>
                                                 </div>
 
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Cert / Report</small>
-                                                    <div>
+                                                    <div class="task-content-value">
                                                         <h:outputText value="#{task['reportNo']}" rendered="#{not empty task['reportNo']}" />
                                                         <h:outputText value="#{task['certNumber']}" rendered="#{empty task['reportNo'] and not empty task['certNumber']}" />
                                                         <h:outputText value="-" rendered="#{empty task['reportNo'] and empty task['certNumber']}" />
                                                     </div>
                                                 </div>
 
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Sticker No</small>
-                                                    <div>#{not empty task['stickerNo'] ? task['stickerNo'] : '-'}</div>
+                                                    <div class="task-content-value">#{not empty task['stickerNo'] ? task['stickerNo'] : '-'}</div>
                                                 </div>
 
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Work Order</small>
-                                                    <div>#{not empty task['workOrder'] ? task['workOrder'] : (not empty task['jobNo'] ? task['jobNo'] : '-')}</div>
+                                                    <div class="task-content-value">#{not empty task['workOrder'] ? task['workOrder'] : (not empty task['jobNo'] ? task['jobNo'] : '-')}</div>
                                                 </div>
 
-                                                <div>
-                                                    <small>Created</small>
-                                                    <div>#{completedTaskSearchBean.formatCompletedDate(task['createdDate'])}</div>
-                                                </div>
-
-                                                <div>
-                                                    <small>Completed</small>
-                                                    <div>#{completedTaskSearchBean.formatCompletedDate(task['completedDate'])}</div>
-                                                </div>
-
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Inspector</small>
-                                                    <div>#{task['inspectorName']}</div>
+                                                    <div class="task-content-value">#{task['inspectorName']}</div>
                                                 </div>
 
-                                                <div>
+                                                <div class="task-content-item">
                                                     <small>Reviewer</small>
-                                                    <div>#{task['reviewerName']}</div>
+                                                    <div class="task-content-value">#{task['reviewerName']}</div>
+                                                </div>
+
+                                                <div class="task-content-item">
+                                                    <small>Branch</small>
+                                                    <div class="task-content-value">#{not empty task['organizationName'] ? task['organizationName'] : '-'}</div>
                                                 </div>
                                             </div>
 
                                             <div class="task-footer">
                                                 <div style="display:flex; gap:0.7rem; align-items:center;">
-                                                    <small style="color:var(--text-muted);">Branch</small>
-                                                    <div style="font-weight:600; font-size:0.85rem;">#{not empty task['organizationName'] ? task['organizationName'] : '-'}</div>
+                                                    <small style="color:var(--text-muted);">Task Actions:</small>
                                                 </div>
 
                                                 <div style="display:flex; gap:0.5rem; align-items:center;">
@@ -1016,17 +1277,17 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const glitter = document.querySelector('.lux-glitter');
                 if (glitter) {
-                    for (let i = 0; i < 25; i++) {
+                    for (let i = 0; i < 30; i++) {
                         const particle = document.createElement('div');
                         particle.style.position = 'absolute';
-                        particle.style.width = Math.random() * 4 + 1 + 'px';
+                        particle.style.width = Math.random() * 5 + 1 + 'px';
                         particle.style.height = particle.style.width;
                         particle.style.background = `hsl(${Math.random() * 360}, 70%, 70%)`;
                         particle.style.borderRadius = '50%';
                         particle.style.left = Math.random() * 100 + '%';
                         particle.style.top = Math.random() * 100 + '%';
-                        particle.style.opacity = Math.random() * 0.3 + 0.1;
-                        particle.style.animation = `float ${Math.random() * 8 + 8}s infinite linear`;
+                        particle.style.opacity = Math.random() * 0.2 + 0.1;
+                        particle.style.animation = `float ${Math.random() * 10 + 8}s infinite linear`;
                         glitter.appendChild(particle);
                     }
                 }
@@ -1062,7 +1323,7 @@
                 if (body.style.display === 'none') {
                     body.style.display = 'block';
                     icon.className = 'fas fa-chevron-down';
-                    group.style.marginBottom = '1.5rem';
+                    group.style.marginBottom = '2rem';
                 } else {
                     body.style.display = 'none';
                     icon.className = 'fas fa-chevron-up';
