@@ -228,12 +228,7 @@ INSERT INTO priority_type(id, arabic_name, english_name, code) VALUES
 (3, 'فوري', 'Immediately', '03')
 ON DUPLICATE KEY UPDATE id=VALUES(id), arabic_name=VALUES(arabic_name), english_name=VALUES(english_name), code=VALUES(code);
 
-INSERT INTO purpose_type(id, arabic_name, english_name, code) VALUES
-(1, 'للاطلاع', 'For information only', '01')
-ON DUPLICATE KEY UPDATE id=VALUES(id), arabic_name=VALUES(arabic_name), english_name=VALUES(english_name), code=VALUES(code);
-INSERT INTO purpose_type(id, arabic_name, english_name, code) VALUES
-(2, 'بحاجة اجابة', 'Need an answer', '02')
-ON DUPLICATE KEY UPDATE id=VALUES(id), arabic_name=VALUES(arabic_name), english_name=VALUES(english_name), code=VALUES(code);
+
 INSERT INTO purpose_type(id, arabic_name, english_name, code) VALUES
 (3, 'مهمة', 'Task', '03')
 ON DUPLICATE KEY UPDATE id=VALUES(id), arabic_name=VALUES(arabic_name), english_name=VALUES(english_name), code=VALUES(code);
