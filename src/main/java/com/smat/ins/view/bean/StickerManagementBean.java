@@ -303,11 +303,7 @@ public class StickerManagementBean implements Serializable {
 
     public void generateStickers() {
         try {
-            // If using multi-select recipients, require at least one
-            if ((selectedUserAliases == null || selectedUserAliases.isEmpty()) && selectedUserAlias == null) {
-                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldSelectUser"));
-                return;
-            }
+            // Generate stickers as global (not assigned to any user).
 
             if (generatedStickerNum == null || generatedStickerNum <= 0) {
                 UtilityHelper
@@ -332,29 +328,19 @@ public class StickerManagementBean implements Serializable {
             int month = now.get(Calendar.MONTH) + 1;
             int day = now.get(Calendar.DAY_OF_MONTH);
 
-            // Determine recipients: prefer selectedUserAliases if set, otherwise single selectedUserAlias
-            List<UserAlias> recipients = new ArrayList<>();
-            if (selectedUserAliases != null && !selectedUserAliases.isEmpty()) {
-                recipients.addAll(selectedUserAliases);
-            } else if (selectedUserAlias != null) {
-                recipients.add(selectedUserAlias);
-            }
-
-            for (UserAlias recipient : recipients) {
-                for (int i = 0; i < generatedStickerNum; i++) {
-                    Sticker sticker = new Sticker();
-                    sticker.setSeq(stickerService.getLastSeq());
-                    sticker.setSerialNo(
-                            String.format("%d%02d%02d%04d", year, month, day, stickerService.getLastSerialID() + 1));
-                    sticker.setStickerNo("SK" + String.format("%05d", stickerService.getLastStickerNo() + 1));
-                    sticker.setSysUserByCreatedBy(loginBean.getUser());
-                    sticker.setYear((short) year);
-                    sticker.setIsUsed(false);
-                    sticker.setIsPrinted(false);
-                    if (recipient != null && recipient.getSysUserBySysUser() != null)
-                        sticker.setSysUserByForUser(recipient.getSysUserBySysUser());
-                    stickerService.save(sticker);
-                }
+            // Create the requested number of stickers without assigning them to any user
+            for (int i = 0; i < generatedStickerNum; i++) {
+                Sticker sticker = new Sticker();
+                sticker.setSeq(stickerService.getLastSeq());
+                sticker.setSerialNo(
+                        String.format("%d%02d%02d%04d", year, month, day, stickerService.getLastSerialID() + 1));
+                sticker.setStickerNo("SK" + String.format("%05d", stickerService.getLastStickerNo() + 1));
+                sticker.setSysUserByCreatedBy(loginBean.getUser());
+                sticker.setYear((short) year);
+                sticker.setIsUsed(false);
+                sticker.setIsPrinted(false);
+                // intentionally do NOT set sysUserByForUser so stickers remain global/unassigned
+                stickerService.save(sticker);
             }
 
             // بعد الإنشاء، نقوم بالبحث مرة أخرى لتحديث النتائج

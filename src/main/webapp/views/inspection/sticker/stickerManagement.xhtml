@@ -6,191 +6,198 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/WEB-INF/template.xhtml">
 
-
     <ui:define name="head">
         <h:outputStylesheet library="#{appSetting.resourceLib}"
                             name="css/material-theme.css"></h:outputStylesheet>
         <style type="text/css">
-            /* Animation Keyframes */
-            @keyframes fadeInDown {from { opacity:0;
-                transform: translateY(-30px);
+
+            :root {
+                --primary: #7c3aed;
+                --primary-light: #8b5cf6;
+                --primary-dark: #6d28d9;
+                --secondary: #3b82f6;
+                --secondary-light: #60a5fa;
+                --accent: #a855f7;
+                --success: #10b981;
+                --warning: #f59e0b;
+                --error: #ef4444;
+                --background: #f8fafc;
+                --surface: #ffffff;
+                --text-primary: #1e293b;
+                --text-secondary: #64748b;
+                --border: #e2e8f0;
+                --shadow: rgba(124, 58, 237, 0.1);
+                --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+                --gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+                --gradient-accent: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+                --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
             }
 
+            /* Animation Keyframes */
+            @keyframes fadeInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-15px);
+                }
                 to {
                     opacity: 1;
                     transform: translateY(0);
                 }
-
-            }
-            @keyframes slideInLeft {from { opacity:0;
-                transform: translateX(-30px);
             }
 
+            @keyframes slideInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-15px);
+                }
                 to {
                     opacity: 1;
                     transform: translateX(0);
                 }
-
-            }
-            @keyframes pulse { 0% {
-                transform: scale(1);
             }
 
-                50
-                %
-                {
-                    transform
-                    :
-                            scale(
-                                    1.05
-                            );
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.03); }
+                100% { transform: scale(1); }
+            }
+
+            @keyframes shimmer {
+                0% { background-position: -200px 0; }
+                100% { background-position: calc(200px + 100%) 0; }
+            }
+
+            @keyframes ripple {
+                0% {
+                    transform: scale(0);
+                    opacity: 0.6;
                 }
-                100
-                %
-                {
-                    transform
-                    :
-                            scale(
-                                    1
-                            );
-                }
-            }
-            @keyframes shimmer { 0% {
-                background-position: -200px 0;
-            }
-
-                100
-                %
-                {
-                    background-position
-                    :
-                            calc(
-                                    200px
-                                    +
-
-                                    100%
-                            )
-                            0;
-                }
-            }
-            @keyframes ripple { 0% {
-                transform: scale(0);
-                opacity: 0.6;
-            }
-
                 100% {
                     transform: scale(4);
                     opacity: 0;
                 }
             }
-            @keyframes successPulse { 0% {
-                box-shadow: 0 0 0 0 rgba(74, 85, 104, 0.7);
+
+            @keyframes successPulse {
+                0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+                70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
             }
 
-                70% {
-                    box-shadow: 0 0 0 20px rgba(74, 85, 104, 0);
-                }
-
-                100% {
-                    box-shadow: 0 0 0 0 rgba(74, 85, 104, 0);
-                }
-            }
-            @keyframes pageSuccessPulse { 0% {
-                transform: scale(1);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-5px); }
             }
 
-                50% {
-                    transform: scale(1.02);
-                    box-shadow: 0 20px 60px rgba(160, 174, 192, 0.4);
-                }
-
-                100% {
-                    transform: scale(1);
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-                }
-            }
-            @keyframes spin { 0% {
-                transform: rotate(0deg);
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
             }
 
-                100% {
-                    transform: rotate(360deg);
-                }
-            }
-
-            /* Main Container */
+            /* Main Container - Compact */
             .sticker-container {
-                animation: fadeInDown 0.8s ease-out;
-                background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+                animation: fadeInDown 0.6s ease-out;
+                background: var(--gradient-primary);
                 border-radius: 20px;
-                padding: 2rem;
-                box-shadow: 0 20px 40px rgba(245, 255, 255, 0.61);
+                padding: 1.5rem;
+                box-shadow:
+                        0 15px 35px rgba(124, 58, 237, 0.12),
+                        0 8px 20px rgba(124, 58, 237, 0.08),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
                 position: relative;
                 overflow: hidden;
-                transition: transform 0.8s ease-out, box-shadow 0.8s ease-out;
+                transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                margin: 1rem;
             }
 
             .sticker-container::before {
                 content: '';
                 position: absolute;
                 top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgb(255, 255, 255),
-                transparent);
-                animation: shimmer 3s infinite;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0.03) 100%);
+                pointer-events: none;
             }
 
-            /* Page Success Pulse Class */
-            .sticker-container.page-success-pulse {
-                animation: pageSuccessPulse 0.8s ease-out;
-            }
-
-            /* Header Section */
+            /* Header Section - Compact */
             .header-section {
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
-                border-radius: 15px;
-                padding: 2rem;
-                margin-bottom: 2rem;
-                box-shadow: 0 8px 32px rgb(255, 255, 255);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                animation: slideInLeft 0.6s ease-out;
+                background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(248, 250, 252, 0.95) 100%);
+                backdrop-filter: blur(15px);
+                border-radius: 16px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow:
+                        0 8px 25px rgba(124, 58, 237, 0.1),
+                        0 4px 12px rgba(124, 58, 237, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                animation: slideInLeft 0.5s ease-out;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .header-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg,
+                var(--primary),
+                var(--secondary),
+                var(--accent));
+                border-radius: 16px 16px 0 0;
             }
 
             .header-title {
-                color: #1a202c;
-                font-size: 2rem;
+                color: var(--text-primary);
+                font-size: 1.5rem;
                 font-weight: 700;
-                margin-bottom: 1rem;
+                margin-bottom: 0.5rem;
                 text-align: center;
                 position: relative;
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
             }
 
             .header-title::after {
                 content: '';
                 position: absolute;
-                bottom: -10px;
+                bottom: -8px;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 80px;
-                height: 4px;
-                background: linear-gradient(90deg, #4a5568, #1a202c);
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, var(--primary), var(--secondary));
                 border-radius: 2px;
+                opacity: 0.7;
             }
 
-            /* Input Section */
+            /* Input Section - Compact */
             .input-section {
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
-                border-radius: 15px;
-                padding: 2rem;
-                margin-bottom: 2rem;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                animation: slideInLeft 0.8s ease-out;
+                background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(248, 250, 252, 0.95) 100%);
+                backdrop-filter: blur(15px);
+                border-radius: 16px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow:
+                        0 8px 25px rgba(124, 58, 237, 0.1),
+                        0 4px 12px rgba(124, 58, 237, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                animation: slideInLeft 0.6s ease-out;
+                position: relative;
             }
 
             .input-group {
@@ -203,11 +210,17 @@
 
             .input-label {
                 font-weight: 600;
-                color: #4a5568;
-                min-width: 150px;
+                color: var(--text-primary);
+                min-width: 120px;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .input-label i {
+                color: var(--primary);
+                font-size: 1em;
             }
 
             .input-field {
@@ -217,57 +230,72 @@
 
             .input-field .ui-inputtext {
                 width: 100%;
-                padding: 0.75rem 1rem;
-                border: 2px solid #e2e8f0;
+                padding: 0.8rem 1rem;
+                border: 2px solid var(--border);
                 border-radius: 10px;
-                font-size: 1rem;
-                transition: all 0.3s ease;
+                font-size: 0.9rem;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 background: rgba(255, 255, 255, 0.9);
+                color: var(--text-primary);
             }
 
             .input-field .ui-inputtext:focus {
-                border-color: #4a5568;
-                box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1);
-                transform: translateY(-2px);
+                border-color: var(--primary);
+                box-shadow:
+                        0 0 0 3px rgba(124, 58, 237, 0.1),
+                        0 4px 12px rgba(124, 58, 237, 0.08);
+                transform: translateY(-1px);
+                background: rgba(255, 255, 255, 0.95);
             }
 
-            /* Button Section */
+            /* Button Section - Compact with Better Rounded Design */
             .button-section {
                 display: flex;
                 gap: 1rem;
                 justify-content: center;
                 flex-wrap: wrap;
-                margin-bottom: 2rem;
+                margin: 1.5rem 0 1rem 0;
             }
 
             .enhanced-button {
                 position: relative;
                 overflow: hidden;
-                border-radius: 25px !important;
-                padding: 0.75rem 2rem !important;
+                border-radius: 12px !important;
+                padding: 0.8rem 1.8rem !important;
                 font-weight: 600 !important;
-                font-size: 1rem !important;
-                transition: all 0.3s ease !important;
+                font-size: 0.9rem !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
                 border: none !important;
                 min-width: 160px;
+                backdrop-filter: blur(8px);
+                box-shadow:
+                        0 6px 18px rgba(0, 0, 0, 0.12),
+                        0 3px 8px rgba(0, 0, 0, 0.08) !important;
+                letter-spacing: 0.3px;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.5rem;
             }
 
             .enhanced-button:hover {
-                transform: translateY(-3px) !important;
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
+                transform: translateY(-3px) scale(1.02) !important;
+                box-shadow:
+                        0 10px 25px rgba(0, 0, 0, 0.15),
+                        0 6px 15px rgba(0, 0, 0, 0.1) !important;
             }
 
             .enhanced-button:active {
-                transform: translateY(-1px) !important;
+                transform: translateY(-1px) scale(1.01) !important;
             }
 
             .generate-btn {
-                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%) !important;
+                background: var(--gradient-primary) !important;
                 color: white !important;
             }
 
             .export-btn {
-                background: linear-gradient(135deg, #718096 0%, #4a5568 100%) !important;
+                background: var(--gradient-secondary) !important;
                 color: white !important;
             }
 
@@ -278,7 +306,9 @@
                 left: -100%;
                 width: 100%;
                 height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2),
+                background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
                 transparent);
                 transition: left 0.5s;
             }
@@ -287,21 +317,26 @@
                 left: 100%;
             }
 
-            /* Generate Button Animation States */
+            .button-icon {
+                font-size: 1.1em;
+                transition: transform 0.2s ease;
+            }
+
+            .enhanced-button:hover .button-icon {
+                transform: scale(1.1);
+            }
+
+            /* Loading and Success States */
             .generate-btn.loading {
                 pointer-events: none;
                 opacity: 0.8;
             }
 
-            .generate-btn.loading .ui-button-text {
-                opacity: 0.7;
-            }
-
             .generate-btn.success {
-                animation: successPulse 1.5s ease-out;
+                animation: successPulse 1.2s ease-out;
+                background: var(--gradient-success) !important;
             }
 
-            /* Loading Spinner */
             .loading-spinner {
                 display: none;
                 width: 16px;
@@ -310,7 +345,6 @@
                 border-radius: 50%;
                 border-top-color: white;
                 animation: spin 1s linear infinite;
-                margin-left: 8px;
                 vertical-align: middle;
             }
 
@@ -318,46 +352,62 @@
                 display: inline-block;
             }
 
-            /* Success Icon */
             .success-icon {
                 display: none;
-                color: #48bb78;
-                margin-left: 8px;
-                font-size: 1.2em;
+                color: white;
+                font-size: 1.1em;
+                animation: float 1.5s ease-in-out infinite;
             }
 
             .generate-btn.success .success-icon {
                 display: inline-block;
-                animation: fadeInDown 0.5s ease-out;
             }
 
-            /* Data Table Section */
+            /* Table Section - Compact */
             .table-section {
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
-                border-radius: 15px;
-                padding: 2rem;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                animation: fadeInDown 1s ease-out;
+                background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(248, 250, 252, 0.95) 100%);
+                backdrop-filter: blur(15px);
+                border-radius: 16px;
+                padding: 1.5rem;
+                box-shadow:
+                        0 8px 25px rgba(124, 58, 237, 0.1),
+                        0 4px 12px rgba(124, 58, 237, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                animation: fadeInDown 0.7s ease-out;
+                position: relative;
+            }
+
+            .table-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, var(--secondary), var(--primary));
+                border-radius: 16px 16px 0 0;
             }
 
             .table-header {
-                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%);
+                background: var(--gradient-primary);
                 color: white;
-                padding: 1rem;
-                border-radius: 10px;
-                margin-bottom: 1rem;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                margin-bottom: 1.5rem;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 flex-wrap: wrap;
                 gap: 1rem;
+                box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2);
             }
 
             .table-header h3 {
                 margin: 0;
                 font-weight: 600;
+                font-size: 1.2rem;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
@@ -367,10 +417,11 @@
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.15);
                 padding: 0.5rem 1rem;
-                border-radius: 20px;
+                border-radius: 8px;
                 border: 1px solid rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(8px);
             }
 
             .search-container input {
@@ -378,7 +429,7 @@
                 border: none !important;
                 color: white !important;
                 font-size: 0.9rem !important;
-                padding: 0.25rem 0.5rem !important;
+                padding: 0.4rem !important;
                 width: 200px;
             }
 
@@ -386,261 +437,257 @@
                 color: rgba(255, 255, 255, 0.7) !important;
             }
 
-            /* QR Code Styling */
-            canvas {
-                width: 120px !important;
-                max-width: 120px !important;
-                height: 120px !important;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                transition: all 0.3s ease;
-                cursor: pointer;
-            }
-
-            canvas:hover {
-                transform: scale(1.1);
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            }
-
-            /* Table Enhancements */
-            .ui-datatable .ui-datatable-header {
-                background: transparent !important;
-                border: none !important;
-                padding: 0 !important;
-            }
-
-            .ui-datatable .ui-datatable-data tr {
-                transition: all 0.3s ease;
-            }
-
-            .ui-datatable .ui-datatable-data tr:hover {
-                background: rgba(74, 85, 104, 0.05) !important;
-                transform: translateX(5px);
-            }
-
-            .ui-datatable .ui-datatable-data tr td {
-                padding: 1rem !important;
-                border-bottom: 1px solid #e2e8f0 !important;
-            }
-
-            .ui-datatable .ui-datatable-thead tr th {
-                background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%) !important;
-                color: #4a5568 !important;
-                font-weight: 600 !important;
-                padding: 1rem !important;
-                border-bottom: 2px solid #cbd5e0 !important;
-            }
-
-            /* Status Badge */
-            .status-badge {
-                padding: 0.25rem 0.75rem;
-                border-radius: 15px;
-                font-size: 0.8rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .status-used {
-                background: #e2e8f0;
-                color: #2d3748;
-            }
-
-            .status-available {
-                background: #cbd5e0;
-                color: #4a5568;
-            }
-
-            /* Enhanced SelectCheckboxMenu Styling */
+            /* Enhanced SelectCheckboxMenu Styling - Compact */
             .enhanced-select-menu {
                 width: 100% !important;
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-trigger {
-                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%) !important;
+                background: var(--gradient-primary) !important;
                 border: none !important;
                 border-radius: 10px !important;
-                padding: 0.75rem !important;
+                padding: 0.8rem !important;
                 color: white !important;
-                transition: all 0.3s ease !important;
+                transition: all 0.2s ease !important;
+                box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-trigger:hover {
-                background: linear-gradient(135deg, #1a202c 0%, #4a5568 100%) !important;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%) !important;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 15px rgba(124, 58, 237, 0.25);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-label {
-                padding: 0.75rem 1rem !important;
-                border: 2px solid #e2e8f0 !important;
+                padding: 0.8rem 1rem !important;
+                border: 2px solid var(--border) !important;
                 border-radius: 10px !important;
-                font-size: 1rem !important;
+                font-size: 0.9rem !important;
                 background: rgba(255, 255, 255, 0.9) !important;
-                color: #4a5568 !important;
+                color: var(--text-primary) !important;
                 min-height: 48px !important;
                 display: flex !important;
                 align-items: center !important;
-                transition: all 0.3s ease !important;
+                transition: all 0.2s ease !important;
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-label:hover {
-                border-color: #4a5568 !important;
+                border-color: var(--primary) !important;
                 cursor: pointer !important;
-            }
-
-            .enhanced-select-menu .ui-selectcheckboxmenu-label-container {
-                width: 100% !important;
+                background: rgba(255, 255, 255, 0.95) !important;
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-panel {
-                background: rgba(255, 255, 255, 0.95) !important;
-                backdrop-filter: blur(10px) !important;
-                border: 1px solid rgba(255, 255, 255, 0.2) !important;
-                border-radius: 15px !important;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+                background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.98) 0%,
+                rgba(248, 250, 252, 0.98) 100%) !important;
+                backdrop-filter: blur(15px) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                border-radius: 12px !important;
+                box-shadow:
+                        0 15px 35px rgba(124, 58, 237, 0.12),
+                        0 8px 20px rgba(124, 58, 237, 0.08) !important;
                 padding: 1rem !important;
-                min-width: 500px !important;
-                max-height: 400px !important;
+                min-width: 400px !important;
+                max-height: 350px !important;
                 overflow-y: auto !important;
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-header {
-                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%) !important;
+                background: var(--gradient-primary) !important;
                 border: none !important;
                 border-radius: 10px !important;
                 padding: 1rem !important;
                 margin-bottom: 1rem !important;
-            }
-
-            .enhanced-select-menu .ui-selectcheckboxmenu-filter-container {
-                margin-bottom: 1rem !important;
-            }
-
-            .enhanced-select-menu .ui-selectcheckboxmenu-filter-container .ui-inputtext {
-                width: 100% !important;
-                padding: 0.75rem 1rem !important;
-                border: 2px solid #e2e8f0 !important;
-                border-radius: 10px !important;
-                font-size: 1rem !important;
-                background: rgba(255, 255, 255, 0.9) !important;
-            }
-
-            .enhanced-select-menu .ui-selectcheckboxmenu-filter-container .ui-inputtext:focus {
-                border-color: #4a5568 !important;
-                box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.1) !important;
-            }
-
-            .enhanced-select-menu .ui-selectcheckboxmenu-items {
-                padding: 0 !important;
-                background: transparent !important;
+                box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-item {
-                padding: 0.75rem 1rem !important;
-                margin: 0.25rem 0 !important;
-                border-radius: 10px !important;
-                background: rgba(255, 255, 255, 0.9) !important;
-                border: 1px solid rgba(255, 255, 255, 0.2) !important;
-                transition: all 0.3s ease !important;
+                padding: 0.8rem 1rem !important;
+                margin: 0.3rem 0 !important;
+                border-radius: 8px !important;
+                background: rgba(255, 255, 255, 0.85) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                transition: all 0.2s ease !important;
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-item:hover {
-                background: rgba(74, 85, 104, 0.1) !important;
+                background: rgba(124, 58, 237, 0.08) !important;
                 transform: translateX(5px);
+                border-color: var(--primary) !important;
             }
 
-            .enhanced-select-menu .ui-selectcheckboxmenu-item .ui-chkbox {
-                margin-right: 0.5rem !important;
+            /* Status Badges - Compact */
+            .status-badge {
+                padding: 0.4rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                transition: all 0.2s ease;
             }
 
-            .enhanced-select-menu .ui-chkbox-box {
-                border: 2px solid #cbd5e0 !important;
-                border-radius: 5px !important;
-                transition: all 0.3s ease !important;
+            .status-badge:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
             }
 
-            .enhanced-select-menu .ui-chkbox-box.ui-state-active {
-                background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%) !important;
-                border-color: #4a5568 !important;
+            .status-used {
+                background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                color: white;
             }
 
-            .enhanced-select-menu .ui-chkbox-box .ui-chkbox-icon {
-                color: white !important;
+            .status-available {
+                background: var(--gradient-success);
+                color: white;
             }
 
-            /* Control Buttons Styling */
-            .control-buttons {
-                display: flex;
-                gap: 0.5rem;
-                align-items: center;
-                min-width: 160px;
+            /* Statistics Panel - Compact */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 1rem;
+                margin-top: 1rem;
             }
 
-            .control-button {
+            .stat-card {
+                background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(248, 250, 252, 0.95) 100%);
+                backdrop-filter: blur(15px);
+                padding: 1.5rem;
+                border-radius: 12px;
+                text-align: center;
+                box-shadow:
+                        0 6px 18px rgba(124, 58, 237, 0.1),
+                        0 3px 8px rgba(124, 58, 237, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
                 overflow: hidden;
-                border-radius: 10px !important;
-                padding: 0.5rem 1rem !important;
-                font-weight: 600 !important;
-                font-size: 0.9rem !important;
-                transition: all 0.3s ease !important;
-                border: none !important;
-                min-width: 100px;
+                animation: fadeInDown 0.5s ease-out;
             }
 
-            .control-button:hover {
-                transform: translateY(-2px) !important;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, var(--primary), var(--secondary));
             }
 
-            .select-all-btn {
-                background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
-                color: white !important;
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow:
+                        0 12px 25px rgba(124, 58, 237, 0.15),
+                        0 6px 15px rgba(124, 58, 237, 0.1);
             }
 
-            .clear-btn {
-                background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
-                color: white !important;
+            .stat-card i {
+                font-size: 2rem;
+                margin-bottom: 0.8rem;
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                display: block;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: 0.3rem;
+                background: linear-gradient(135deg, var(--text-primary), var(--primary));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                line-height: 1;
             }
 
             /* Responsive Design */
-            @media ( max-width : 768px) {
+            @media (max-width: 768px) {
+                .sticker-container {
+                    padding: 1rem;
+                    margin: 0.5rem;
+                    border-radius: 16px;
+                }
+
+                .header-section,
+                .input-section,
+                .table-section {
+                    padding: 1rem;
+                    border-radius: 12px;
+                }
+
                 .input-group {
                     flex-direction: column;
-                    align-items: flex-start;
+                    align-items: stretch;
+                    gap: 0.8rem;
                 }
+
                 .input-label {
                     min-width: auto;
                 }
+
                 .input-field {
                     min-width: 100%;
                 }
+
                 .button-section {
                     flex-direction: column;
                     align-items: center;
+                    gap: 0.8rem;
                 }
+
                 .enhanced-button {
                     width: 100%;
                     max-width: 250px;
                 }
-                .control-buttons {
-                    width: 100%;
-                    justify-content: center;
-                    margin-top: 1rem;
+
+                .table-header {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 1rem;
                 }
-                .enhanced-select-menu .ui-selectcheckboxmenu-panel {
-                    min-width: 300px !important;
-                    max-width: 90vw !important;
-                    left: 5vw !important;
+
+                .search-container {
+                    width: 100%;
+                }
+
+                .search-container input {
+                    width: 100%;
+                }
+
+                .stats-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .header-title {
+                    font-size: 1.3rem;
                 }
             }
 
-            /* Loading Animation */
-            .loading-shimmer {
-                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                background-size: 200% 100%;
-                animation: shimmer 1.5s infinite;
+            /* Custom Scrollbar */
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(124, 58, 237, 0.08);
+                border-radius: 8px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--gradient-primary);
+                border-radius: 8px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             }
         </style>
         <script type="text/javascript">
@@ -653,33 +700,18 @@
 
             function handleGenerateComplete() {
                 var button = document.querySelector('.generate-btn');
-                var container = document.querySelector('.sticker-container');
-
-                // Handle button success state
                 button.classList.remove('loading');
                 button.classList.add('success');
 
-                // Handle page success pulse
-                container.classList.add('page-success-pulse');
-
-                // Remove success class from button after animation completes
                 setTimeout(function() {
                     button.classList.remove('success');
-                }, 1500);
-
-                // Remove pulse class from container after animation completes
-                setTimeout(function() {
-                    container.classList.remove('page-success-pulse');
-                }, 800); // Duration of the page pulse animation
+                }, 1200);
             }
 
-            // Enhanced SelectCheckboxMenu functionality
             function enhanceSelectMenu() {
-                // Make the entire label clickable
                 var selectMenus = document.querySelectorAll('.enhanced-select-menu .ui-selectcheckboxmenu-label');
                 selectMenus.forEach(function(menu) {
                     menu.addEventListener('click', function(e) {
-                        // Only trigger if not clicking on the trigger button
                         if (!e.target.closest('.ui-selectcheckboxmenu-trigger')) {
                             var widgetVar = this.closest('.ui-selectcheckboxmenu').getAttribute('id').replace(':', '\\:');
                             PF(widgetVar.replace('selectRecipients', 'widgetVar_SelectRecipients')).show();
@@ -688,9 +720,39 @@
                 });
             }
 
-            // Initialize enhancements when document is ready
             document.addEventListener('DOMContentLoaded', function() {
                 enhanceSelectMenu();
+
+                // Add ripple effect to buttons
+                var buttons = document.querySelectorAll('.enhanced-button');
+                buttons.forEach(function(button) {
+                    button.addEventListener('click', function(e) {
+                        var ripple = document.createElement('span');
+                        var rect = button.getBoundingClientRect();
+                        var size = Math.max(rect.width, rect.height);
+                        var x = e.clientX - rect.left - size / 2;
+                        var y = e.clientY - rect.top - size / 2;
+
+                        ripple.style.cssText = `
+                            position: absolute;
+                            width: ${size}px;
+                            height: ${size}px;
+                            background: rgba(255, 255, 255, 0.5);
+                            border-radius: 50%;
+                            top: ${y}px;
+                            left: ${x}px;
+                            transform: scale(0);
+                            animation: ripple 0.5s linear;
+                            pointer-events: none;
+                        `;
+
+                        button.appendChild(ripple);
+
+                        setTimeout(function() {
+                            ripple.remove();
+                        }, 500);
+                    });
+                });
             });
             //]]>
         </script>
@@ -704,20 +766,19 @@
                 <!-- Header Section -->
                 <div class="header-section">
                     <h2 class="header-title">
-                        <i class="pi pi-qrcode"
-                           style="margin-right: 0.5rem; color: #4a5568;"></i> Sticker
-                        Management System
+                        <i class="pi pi-qrcode" style="margin-right: 0.5rem;"></i>
+                        Sticker Management
                     </h2>
-                    <p style="text-align: center; color: #718096; margin: 0;">
-                        Generate, manage, and track your stickers with QR codes</p>
+                    <p style="text-align: center; color: var(--text-secondary); margin: 0; font-size: 0.9rem; line-height: 1.4;">
+                        Generate, manage, and track stickers with QR codes
+                    </p>
                 </div>
 
                 <!-- Input Section -->
                 <div class="input-section">
                     <div class="input-group">
                         <div class="input-label">
-                            <i class="pi pi-hashtag" style="color: #4a5568;"></i> Sticker
-                            Number:
+                            <i class="pi pi-hashtag"></i> Sticker Number:
                         </div>
                         <div class="input-field">
                             <p:inputText value="#{stickerManagementBean.generatedStickerNum}"
@@ -725,28 +786,7 @@
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <div class="input-label">
-                            <i class="pi pi-users" style="color: #4a5568;"></i> For Users:
-                        </div>
-                        <div class="input-field">
-                            <!-- Select multiple recipients using checkbox menu -->
-                            <p:selectCheckboxMenu id="selectRecipients"
-                                                  styleClass="enhanced-select-menu"
-                                                  filter="true" filterMatchMode="contains"
-                                                  widgetVar="widgetVar_SelectRecipients"
-                                                  converter="omnifaces.SelectItemsIndexConverter"
-                                                  value="#{stickerManagementBean.selectedUserAliases}">
-
-                                <f:selectItems
-                                        itemLabel="( #{userAlias.userCode} ) #{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
-                                        itemValue="#{userAlias}" var="userAlias"
-                                        value="#{stickerManagementBean.userAliasList}" />
-                                <p:ajax event="change" listener="#{stickerManagementBean.searchStickers}" update="@([id$=datatable-stickers])" />
-                            </p:selectCheckboxMenu>
-                        </div>
-
-                    </div>
+                    <!-- For Users selection removed: stickers are now generated as global (unassigned) -->
 
                     <div class="button-section">
                         <p:commandButton value="Generate Stickers"
@@ -755,14 +795,19 @@
                                          styleClass="enhanced-button generate-btn"
                                          update="@([id$=datatable-stickers]) @([id$=messages])"
                                          onstart="handleGenerateStart()"
-                                         oncomplete="handleGenerateComplete()" />
-                        <span class="loading-spinner"></span>
-                        <i class="pi pi-check-circle success-icon"></i>
+                                         oncomplete="handleGenerateComplete()">
 
-                        <p:commandButton value="Export Stickers" icon="pi pi-download"
+                            <span class="loading-spinner"></span>
+                            <i class="pi pi-check-circle success-icon"></i>
+                        </p:commandButton>
+
+                        <p:commandButton value="Export Stickers"
+                                         icon="pi pi-download"
                                          action="#{stickerManagementBean.exportStickers()}"
                                          styleClass="enhanced-button export-btn"
-                                         onclick="windows.open('_blank')" />
+                                         onclick="window.open('_blank')">
+
+                        </p:commandButton>
                     </div>
                 </div>
 
@@ -773,7 +818,7 @@
                             <i class="pi pi-table"></i> Stickers Overview
                         </h3>
                         <div class="search-container">
-                            <i class="pi pi-search" style="color: rgba(255, 255, 255, 0.7);"></i>
+                            <i class="pi pi-search" style="color: rgba(255, 255, 255, 0.9);"></i>
                             <p:inputText id="globalFilter"
                                          onkeyup="PF('widgetVarSticker').filter()"
                                          placeholder="Search stickers..." />
@@ -783,67 +828,68 @@
                     <p:dataTable id="datatable-stickers" widgetVar="widgetVarSticker"
                                  var="stickerVar" value="#{stickerManagementBean.stickers}"
                                  reflow="true" styleClass="products-table" globalFilterOnly="true"
-                                 rowKey="#{stickerVar.id}" paginator="true" rows="10"
+                                 rowKey="#{stickerVar.id}" paginator="true" rows="8"
                                  emptyMessage="#{interfaceLabel.noRecordsFound}"
                                  paginatorPosition="bottom"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="5,10,15,20">
+                                 rowsPerPageTemplate="5,8,10,12">
 
-                        <p:column headerText="Sequence" width="10%"
+                        <p:column headerText="Sequence" width="8%"
                                   sortBy="#{stickerVar.seq}" filterBy="#{stickerVar.seq}">
-                            <div
-                                    style="text-align: center; font-weight: 600; color: #4a5568;">
-                                ##{stickerVar.seq}</div>
-                        </p:column>
-
-                        <p:column headerText="Serial Number" width="20%"
-                                  sortBy="#{stickerVar.serialNo}" filterBy="#{stickerVar.serialNo}">
-                            <div
-                                    style="font-family: monospace; font-weight: 600; color: #2d3748;">
-                                #{stickerVar.serialNo}</div>
-                        </p:column>
-
-                        <p:column headerText="Sticker Number" width="20%"
-                                  sortBy="#{stickerVar.stickerNo}"
-                                  filterBy="#{stickerVar.stickerNo}">
-                            <div
-                                    style="font-family: monospace; font-weight: 600; color: #2d3748;">
-                                #{stickerVar.stickerNo}</div>
-                        </p:column>
-
-                        <p:column headerText="For user" width="20%"
-                                  sortBy="#{stickerVar.sysUserByForUser.displayName}"
-                                  filterBy="#{stickerVar.sysUserByForUser.displayName}">
-                            <div
-                                    style="font-family: monospace; font-weight: 600; color: #2d3748;">
-                                #{stickerVar.sysUserByForUser.displayName}</div>
-                        </p:column>
-
-                        <p:column headerText="Status" width="15%"
-                                  sortBy="#{stickerVar.isUsed}" filterBy="#{stickerVar.isUsed}">
-                            <span
-                                    class="status-badge #{stickerVar.isUsed ? 'status-used' : 'status-available'}">
-                                #{stickerVar.isUsed ? 'Used' : 'Available'} </span>
-                        </p:column>
-
-                        <p:column headerText="QR Code" width="25%">
-                            <div style="text-align: center; padding: 1rem;">
-                                <pe:qrCode id="qrCodeElem" renderMethod="canvas" renderMode="3"
-                                           text="#{stickerVar.serialNo.concat(stickerVar.stickerNo)}"
-                                           label="SMAT" size="120" fillColor="#4a5568" fontName="Arial"
-                                           fontColor="#2d3748" ecLevel="H" radius="0.5"
-                                           title="Click to view larger" />
-                                <div
-                                        style="margin-top: 0.5rem; font-size: 0.8rem; color: #718096;">
-                                    Click to enlarge</div>
+                            <div style="text-align: center; font-weight: 600; color: var(--text-primary);">
+                                ##{stickerVar.seq}
                             </div>
                         </p:column>
 
-                        <p:column headerText="Actions" width="10%">
-                            <div style="text-align: center;">
+                        <p:column headerText="Serial Number" width="18%"
+                                  sortBy="#{stickerVar.serialNo}" filterBy="#{stickerVar.serialNo}">
+                            <div style="font-family: monospace; font-weight: 600; color: var(--text-primary);">
+                                #{stickerVar.serialNo}
+                            </div>
+                        </p:column>
 
-                                <p:commandButton icon="pi pi-print" action="#{stickerManagementBean.exportStickers(stickerVar)}"
-                                                 styleClass="ui-button-rounded ui-button-secondary ui-button-outlined" onclick="windows.open('_blank')"
+                        <p:column headerText="Sticker Number" width="18%"
+                                  sortBy="#{stickerVar.stickerNo}"
+                                  filterBy="#{stickerVar.stickerNo}">
+                            <div style="font-family: monospace; font-weight: 600; color: var(--text-primary);">
+                                #{stickerVar.stickerNo}
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="For user" width="18%"
+                                  sortBy="#{stickerVar.sysUserByForUser != null ? stickerVar.sysUserByForUser.displayName : ''}"
+                                  filterBy="#{stickerVar.sysUserByForUser != null ? stickerVar.sysUserByForUser.displayName : ''}">
+                            <div style="font-weight: 500; color: var(--text-primary);">
+                                #{stickerVar.sysUserByForUser != null ? stickerVar.sysUserByForUser.displayName : ''}
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="Status" width="12%"
+                                  sortBy="#{stickerVar.isUsed}" filterBy="#{stickerVar.isUsed}">
+                            <span class="status-badge #{stickerVar.isUsed ? 'status-used' : 'status-available'}">
+                                #{stickerVar.isUsed ? 'Used' : 'Available'}
+                            </span>
+                        </p:column>
+
+                        <p:column headerText="QR Code" width="20%">
+                            <div style="text-align: center; padding: 1rem;">
+                                <pe:qrCode id="qrCodeElem" renderMethod="canvas" renderMode="3"
+                                           text="#{stickerVar.serialNo.concat(stickerVar.stickerNo)}"
+                                           label="SMAT" size="100" fillColor="#7c3aed" fontName="Arial"
+                                           fontColor="#1e293b" ecLevel="H" radius="0.4"
+                                           title="Click to view larger" />
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); font-weight: 500;">
+                                    Click to enlarge
+                                </div>
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="Actions" width="8%">
+                            <div style="text-align: center;">
+                                <p:commandButton icon="pi pi-print"
+                                                 action="#{stickerManagementBean.exportStickers(stickerVar)}"
+                                                 styleClass="ui-button-rounded ui-button-secondary ui-button-outlined"
+                                                 onclick="window.open('_blank')"
                                                  title="Print QR Code" />
                             </div>
                         </p:column>
@@ -851,34 +897,27 @@
                 </div>
 
                 <!-- Statistics Panel -->
-                <div class="input-section" style="margin-top: 2rem;">
+                <div class="input-section" style="margin-top: 1.5rem;">
                     <div class="table-header" style="margin-bottom: 1rem;">
                         <h3>
                             <i class="pi pi-chart-bar"></i> Statistics
                         </h3>
                     </div>
-                    <div
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                        <div
-                                style="background: linear-gradient(135deg, #4a5568 0%, #1a202c 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
-                            <i class="pi pi-list"
-                               style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                            <div style="font-size: 2rem; font-weight: 700;">#{stickerManagementBean.stickers.size()}</div>
-                            <div style="opacity: 0.9;">Total Stickers</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="pi pi-list"></i>
+                            <div class="stat-number">#{stickerManagementBean.stickers.size()}</div>
+                            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;">Total Stickers</div>
                         </div>
-                        <div
-                                style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
-                            <i class="pi pi-check-circle"
-                               style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                            <div style="font-size: 2rem; font-weight: 700;">#{stickerManagementBean.availableStickers}</div>
-                            <div style="opacity: 0.9;">Available</div>
+                        <div class="stat-card">
+                            <i class="pi pi-check-circle"></i>
+                            <div class="stat-number">#{stickerManagementBean.availableStickers}</div>
+                            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;">Available</div>
                         </div>
-                        <div
-                                style="background: linear-gradient(135deg, #a0aec0 0%, #718096 100%); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
-                            <i class="pi pi-times-circle"
-                               style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-                            <div style="font-size: 2rem; font-weight: 700;">#{stickerManagementBean.usedStickers}</div>
-                            <div style="opacity: 0.9;">Used</div>
+                        <div class="stat-card">
+                            <i class="pi pi-times-circle"></i>
+                            <div class="stat-number">#{stickerManagementBean.usedStickers}</div>
+                            <div style="color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;">Used</div>
                         </div>
                     </div>
                 </div>
