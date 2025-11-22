@@ -406,6 +406,7 @@ public class StickerManagementBean implements Serializable {
         selectedUserAlias = null;
     }
 
+
     public void exportStickers() {
         try {
             if (stickers == null || stickers.isEmpty()) {
