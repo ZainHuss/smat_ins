@@ -1,6 +1,7 @@
 package com.smat.ins.view.bean;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -33,15 +34,18 @@ public class LoginBean implements Serializable {
     private String userName;
     private String password;
 
-    
+    // Guard to prevent concurrent/re-entrant login requests from same session
+    private transient AtomicBoolean loginProcessing = new AtomicBoolean(false);
+
+
     // خصائص جديدة لتغيير كلمة المرور
     private String currentPassword;
     private String newPassword;
     private String confirmPassword;
-    
+
     private List<SysUserRole> userRoles;
     private List<SysPermission> sysPermissionList;
-    
+
     private SysUserService userService;
     private SysUserRoleService sysUserRoleService;
     private SysPermissionService sysPermissionService;
@@ -70,7 +74,7 @@ public class LoginBean implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     // محولات جديدة لتغيير كلمة المرور
     public String getCurrentPassword() {
         return currentPassword;
@@ -130,12 +134,13 @@ public class LoginBean implements Serializable {
     public boolean doValidate() {
         boolean result = true;
 
-        if (userName.isEmpty()) {
+        // normalize and null-safe checks
+        if (userName == null || userName.trim().isEmpty()) {
             result = false;
             UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("requiredUserName"));
         }
 
-        if (password.isEmpty()) {
+        if (password == null || password.trim().isEmpty()) {
             result = false;
             UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("requiredPassword"));
         }
@@ -144,58 +149,75 @@ public class LoginBean implements Serializable {
     }
 
     public String login() {
-        if (doValidate()) {
+        // prevent double submissions from same session/bean
+        if (!loginProcessing.compareAndSet(false, true)) {
+            return null;
+        }
+
+        // ensure inputs are normalized (trim) before validation/auth
+        userName = (userName != null) ? userName.trim() : null;
+        password = (password != null) ? password.trim() : null;
+
+        try {
+            if (!doValidate()) {
+                return null;
+            }
+
             try {
                 user = userService.auth(userName, password);
-                if (user != null) {
+            } catch (Exception e) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("userNameOrPassIncorrect"));
+                return null;
+            }
+
+            if (user != null) {
+                try {
                     userRoles = sysUserRoleService.getRoleBySysUser(user);
-                    if (userRoles.size() > 0 || !userRoles.isEmpty()) {
+                    if (userRoles != null && !userRoles.isEmpty()) {
                         sysPermissionList = sysPermissionService.getBySysUser(user.getId());
                     }
                     UtilityHelper.putSessionAttr("user", user);
                     return "pretty:index";
-                } else if (localizationService.getApplicationProperties().containsKey("username")
-                        && localizationService.getApplicationProperties().containsKey("password")) {
-                    String userNameAdmin = localizationService.getApplicationProperties().getString("username");
-                    String passwordAdmin = localizationService.getApplicationProperties().getString("password");
-                    if (userName.trim().equals(userNameAdmin) && BCrypt.checkpw(password, passwordAdmin)) {
-                        user = new SysUser();
-                        user.setUserName(userNameAdmin);
-                        user.setPassword(passwordAdmin);
-                        user.setFirstName(localizationService.getApplicationProperties().getString("firstName"));
-                        user.setLastName(localizationService.getApplicationProperties().getString("lastName"));
-                        user.setFatherName(localizationService.getApplicationProperties().getString("fatherName"));
-                        user.setPassMustChangeFirstTime(Boolean.valueOf(
-                                localizationService.getApplicationProperties().getString("passMustChangeFirstTime")));
-                        user.setDisabled(
-                                Boolean.valueOf(localizationService.getApplicationProperties().getString("disabled")));
-                        user.setEnDisplayName(
-                                localizationService.getApplicationProperties().getString("enDisplayName"));
-                        user.setArDisplayName(
-                                localizationService.getApplicationProperties().getString("arDisplayName"));
-                        user.setIsSuperAdmin(true);
-                        UtilityHelper.putSessionAttr("user", user);
-                        return "pretty:index";
-
-                    } else {
-                        UtilityHelper.addErrorMessage(
-                                localizationService.getErrorMessage().getString("userNameOrPassIncorrect"));
-                        return null;
-                    }
-                } else {
-                    UtilityHelper.addErrorMessage(
-                            localizationService.getErrorMessage().getString("userNameOrPassIncorrect"));
-                        return null;
+                } catch (Exception e) {
+                    UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("userNameOrPassIncorrect"));
+                    return null;
                 }
-            } catch (Exception e) {
-                UtilityHelper
-                        .addErrorMessage(localizationService.getErrorMessage().getString("userNameOrPassIncorrect"));
-                return null;
             }
+
+            // fallback to admin credentials from properties (exact match required)
+            if (localizationService.getApplicationProperties().containsKey("username")
+                    && localizationService.getApplicationProperties().containsKey("password")) {
+                String userNameAdmin = localizationService.getApplicationProperties().getString("username");
+                String passwordAdmin = localizationService.getApplicationProperties().getString("password");
+                if (userName != null && userName.equals(userNameAdmin) && BCrypt.checkpw(password, passwordAdmin)) {
+                    user = new SysUser();
+                    user.setUserName(userNameAdmin);
+                    user.setPassword(passwordAdmin);
+                    user.setFirstName(localizationService.getApplicationProperties().getString("firstName"));
+                    user.setLastName(localizationService.getApplicationProperties().getString("lastName"));
+                    user.setFatherName(localizationService.getApplicationProperties().getString("fatherName"));
+                    user.setPassMustChangeFirstTime(Boolean.valueOf(
+                            localizationService.getApplicationProperties().getString("passMustChangeFirstTime")));
+                    user.setDisabled(Boolean.valueOf(localizationService.getApplicationProperties().getString("disabled")));
+                    user.setEnDisplayName(localizationService.getApplicationProperties().getString("enDisplayName"));
+                    user.setArDisplayName(localizationService.getApplicationProperties().getString("arDisplayName"));
+                    user.setIsSuperAdmin(true);
+                    UtilityHelper.putSessionAttr("user", user);
+                    return "pretty:index";
+                } else {
+                    UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("userNameOrPassIncorrect"));
+                    return null;
+                }
+            }
+
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("userNameOrPassIncorrect"));
+            return null;
+        } finally {
+            // always clear the processing flag so future attempts are possible
+            loginProcessing.set(false);
         }
-        return null;
     }
-    
+
     public boolean hasSysPermission(String code) {
         if (sysPermissionList != null) {
             for (SysPermission sysPermission : sysPermissionList) {
@@ -217,28 +239,28 @@ public class LoginBean implements Serializable {
         }
         return null;
     }
-    
+
     // طريقة للتحقق من صحة كلمة المرور الحالية
     public void validateCurrentPassword(FacesContext context, javax.faces.component.UIComponent component, Object value) {
         currentPassword = (String) value;
-        
+
         if (user != null) {
             if (user.getIsSuperAdmin()) {
                 // للمستخدمين المسؤولين
                 String storedPassword = localizationService.getApplicationProperties().getString("password");
                 if (!BCrypt.checkpw(currentPassword, storedPassword)) {
                     throw new javax.faces.validator.ValidatorException(
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                        localizationService.getErrorMessage().getString("incorrectCurrentPassword"), 
-                        null));
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                    localizationService.getErrorMessage().getString("incorrectCurrentPassword"),
+                                    null));
                 }
             } else {
                 // للمستخدمين العاديين
                 if (!BCrypt.checkpw(currentPassword, user.getPassword())) {
                     throw new javax.faces.validator.ValidatorException(
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                        localizationService.getErrorMessage().getString("incorrectCurrentPassword"), 
-                        null));
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                    localizationService.getErrorMessage().getString("incorrectCurrentPassword"),
+                                    null));
                 }
             }
         }
@@ -295,7 +317,7 @@ public class LoginBean implements Serializable {
         return sb.toString();
     }
 
-    
+
     // طريقة لإعادة تعيين نموذج تغيير كلمة المرور
     public void resetPasswordForm() {
         currentPassword = null;

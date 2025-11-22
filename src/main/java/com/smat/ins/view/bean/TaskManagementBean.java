@@ -49,6 +49,49 @@ import javax.faces.context.FacesContext;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+// Java / IO / util
+import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+// JSF / Servlet
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+// Apache POI (SS + XSSF)
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.FillPatternType;
+
+// ZXing (QR generation)
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+
+// Your project classes (تعديل الحزمة إذا كانت مختلفة في مشروعك)
+import com.smat.ins.model.entity.Sticker;
+import com.smat.ins.util.UtilityHelper;
+
+// Optional: logging (إذا تستخدم logger في الـbean)
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 @Named
@@ -417,6 +460,8 @@ public class TaskManagementBean implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Export Error", "Failed to export Excel: " + e.getMessage()));
         }
     }
+
+
     private byte[] buildExcel(List<Task> tasksList) throws IOException {
         try (Workbook wb = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = wb.createSheet("Tasks");
@@ -427,9 +472,35 @@ public class TaskManagementBean implements Serializable {
             Font headerFont = wb.createFont();
             headerFont.setBold(true);
             headerStyle.setFont(headerFont);
+            headerStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
 
+            // Date style
+            CellStyle dateStyle = wb.createCellStyle();
+            CreationHelper createHelper = wb.getCreationHelper();
+            short df = createHelper.createDataFormat().getFormat("yyyy-MM-dd");
+            dateStyle.setDataFormat(df);
+
+            // Wrap style for description
+            CellStyle wrapStyle = wb.createCellStyle();
+            wrapStyle.setWrapText(true);
+
+            // Define columns to match template fields (NOTE: "Work Order" replaces "Correspondence ID")
+            String[] cols = new String[] {
+                    "Task ID",              // 0
+                    "Work Order",           // 1 (uses getFirstCorrespondenceId(t) as before)
+                    "Created Date",         // 2 (date cell)
+                    "Assigner",             // 3
+                    "Company",              // 4
+                    "Service Type",         // 5
+                    "Equipment Category",   // 6 (nullable)
+                    "Description",          // 7 (wrapped)
+                    "Status",               // 8 (Active/Deactivated)
+                    "Delay Days",           // 9 (int)
+                    "Progress (%)"          // 10 (int)
+            };
+
+            // Header row
             Row header = sheet.createRow(rownum++);
-            String[] cols = new String[] {"Task ID", "Date", "Assigner", "Company", "Type", "Description", "Status"};
             for (int i = 0; i < cols.length; i++) {
                 Cell c = header.createCell(i);
                 c.setCellValue(cols[i]);
@@ -440,25 +511,114 @@ public class TaskManagementBean implements Serializable {
                 for (Task t : tasksList) {
                     Row r = sheet.createRow(rownum++);
                     int c = 0;
-                    // assume getId() returns int
-                    r.createCell(c++).setCellValue(t.getId());
-                    r.createCell(c++).setCellValue(getFormattedTaskDate(t.getCreatedDate()));
+
+                    // Task ID
+                    if (t.getId() != null) {
+                        r.createCell(c++).setCellValue(t.getId());
+                    } else {
+                        r.createCell(c++).setCellValue("");
+                    }
+
+                    // Work Order (we keep the same retrieval method as before)
+                    Long corrId = getFirstCorrespondenceId(t);
+                    if (corrId != null) {
+                        r.createCell(c++).setCellValue(corrId);
+                    } else {
+                        r.createCell(c++).setCellValue("No Correspondence");
+                    }
+
+                    // Created Date (date cell if available)
+                    Cell dateCell = r.createCell(c++);
+                    if (t.getCreatedDate() != null) {
+                        dateCell.setCellValue(t.getCreatedDate());
+                        dateCell.setCellStyle(dateStyle);
+                    } else {
+                        dateCell.setCellValue("");
+                    }
+
+                    // Assigner
                     String assigner = safeGetAssignerName(t);
                     r.createCell(c++).setCellValue(assigner);
-                    r.createCell(c++).setCellValue(t.getCompany() != null ? safe(t.getCompany().getName()) : "");
-                    r.createCell(c++).setCellValue(t.getServiceType() != null ? safe(t.getServiceType().getName()) : "");
-                    r.createCell(c++).setCellValue(safe(t.getTaskDescription()));
+
+                    // Company
+                    String companyName = "";
+                    try {
+                        companyName = t.getCompany() != null ? safe(t.getCompany().getName()) : "";
+                    } catch (Exception ex) {
+                        companyName = "";
+                    }
+                    r.createCell(c++).setCellValue(companyName);
+
+                    // Service Type
+                    String serviceTypeName = "";
+                    try {
+                        serviceTypeName = t.getServiceType() != null ? safe(t.getServiceType().getName()) : "";
+                    } catch (Exception ex) {
+                        serviceTypeName = "";
+                    }
+                    r.createCell(c++).setCellValue(serviceTypeName);
+
+                    // Equipment Category presence / name
+                    String equipmentCategoryName = "";
+                    try {
+                        if (t.getEquipmentCategory() != null) {
+                            equipmentCategoryName = safe(t.getEquipmentCategory().getName() != null ? t.getEquipmentCategory().getName() : "Equipment Inspection");
+                        } else {
+                            equipmentCategoryName = "";
+                        }
+                    } catch (Exception ex) {
+                        equipmentCategoryName = "";
+                    }
+                    r.createCell(c++).setCellValue(equipmentCategoryName);
+
+                    // Description (wrap text)
+                    Cell descCell = r.createCell(c++);
+                    descCell.setCellValue(safe(t.getTaskDescription()));
+                    descCell.setCellStyle(wrapStyle);
+
+                    // Status (active / deactivated)
                     boolean active = t.getIs_active() != null && t.getIs_active();
                     r.createCell(c++).setCellValue(active ? "Active" : "Deactivated");
+
+                    // Delay Days (calculateTaskDelay uses Date)
+                    int delayDays = 0;
+                    try {
+                        delayDays = calculateTaskDelay(t.getCreatedDate());
+                    } catch (Exception ex) {
+                        delayDays = 0;
+                    }
+                    r.createCell(c++).setCellValue(delayDays);
+
+                    // Progress percentage (numeric)
+                    int progressPercent = 0;
+                    try {
+                        int clamped = Math.min(Math.max(delayDays, 0), 100);
+                        progressPercent = 100 - clamped;
+                    } catch (Exception ex) {
+                        progressPercent = 0;
+                    }
+                    r.createCell(c++).setCellValue(progressPercent);
                 }
             }
 
-            for (int i = 0; i < cols.length; i++) sheet.autoSizeColumn(i);
+            // Autosize columns (reasonable limit)
+            for (int i = 0; i < cols.length; i++) {
+                try {
+                    sheet.autoSizeColumn(i);
+                    int width = sheet.getColumnWidth(i);
+                    int maxWidth = 256 * 60; // ~60 characters max
+                    if (width > maxWidth) sheet.setColumnWidth(i, maxWidth);
+                } catch (Exception ex) {
+                    // ignore autosize errors
+                }
+            }
 
             wb.write(out);
             return out.toByteArray();
         }
     }
+
+
     private void sendResponse(byte[] bytes, String contentType, String filename) throws IOException {
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();

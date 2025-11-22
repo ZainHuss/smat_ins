@@ -135,7 +135,23 @@ public class CompletedTaskSearchBean implements Serializable {
             // Load dropdown data
             loadDropdownData();
 
-            // Perform initial search to show all completed tasks
+            // If the page was opened with a certNumber request parameter (from stickerSearch),
+            // populate the certNumberSearch so the subsequent search will apply this filter.
+            try {
+                FacesContext fc = FacesContext.getCurrentInstance();
+                if (fc != null) {
+                    Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
+                    String certParam = params.get("certNumber");
+                    if (certParam != null && !certParam.trim().isEmpty()) {
+                        this.certNumberSearch = certParam.trim();
+                    }
+                }
+            } catch (Exception ex) {
+                // non-fatal: continue with normal initialization
+                ex.printStackTrace();
+            }
+
+            // Perform initial search to show all completed tasks (will use certNumberSearch if provided)
             searchCompletedTasks();
 
         } catch (Exception e) {
@@ -557,8 +573,8 @@ public class CompletedTaskSearchBean implements Serializable {
             if (workOrderFilter != null && !workOrderFilter.trim().isEmpty() && searchResults != null && !searchResults.isEmpty()) {
                 String q = workOrderFilter.trim().toLowerCase();
                 List<Map<String, Object>> wf = new ArrayList<>();
-                    // Prefer an explicit 'workOrder' value (populated from Task->Correspondence or explicit workOrder fields)
-                    // Fall back to jobNo only if workOrder is not present.
+                // Prefer an explicit 'workOrder' value (populated from Task->Correspondence or explicit workOrder fields)
+                // Fall back to jobNo only if workOrder is not present.
                 String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
                 for (Map<String,Object> row : searchResults) {
                     if (row == null) continue;
@@ -606,8 +622,8 @@ public class CompletedTaskSearchBean implements Serializable {
         LinkedHashMap<String, List<Map<String, Object>>> groups = new LinkedHashMap<>();
         if (searchResults == null || searchResults.isEmpty()) return groups;
 
-    // Prefer 'workOrder' (may contain correspondence id set earlier) before falling back to jobNo
-    String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
+        // Prefer 'workOrder' (may contain correspondence id set earlier) before falling back to jobNo
+        String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
 
         // collect groups (unsorted)
         for (Map<String, Object> row : searchResults) {
@@ -699,10 +715,10 @@ public class CompletedTaskSearchBean implements Serializable {
     private void populateWorkOrder(Map<String, Object> row, Integer taskId) {
         if (row == null) return;
 
-    // 1) try common keys already present in the row
-    // Note: do NOT treat jobNo as a direct synonym for workOrder here - keep jobNo as a separate field.
-    // This avoids showing job number when an explicit work order value exists or should be shown.
-    String[] candidateKeys = {"workOrder", "workOrderNo", "workOrderNumber", "work_order_no", "work_order", "woNumber", "wo_no"};
+        // 1) try common keys already present in the row
+        // Note: do NOT treat jobNo as a direct synonym for workOrder here - keep jobNo as a separate field.
+        // This avoids showing job number when an explicit work order value exists or should be shown.
+        String[] candidateKeys = {"workOrder", "workOrderNo", "workOrderNumber", "work_order_no", "work_order", "woNumber", "wo_no"};
         for (String k : candidateKeys) {
             try {
                 Object v = row.get(k);
@@ -1198,7 +1214,7 @@ public class CompletedTaskSearchBean implements Serializable {
 
 
     /**
-     * Export search results to Excel (placeholder method)
+     * Export search results to Excel (exports all fields used in the template)
      */
     public void exportToExcel() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -1208,65 +1224,263 @@ public class CompletedTaskSearchBean implements Serializable {
                 return;
             }
 
-            org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
-            org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Completed Tasks");
+            try (org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook()) {
 
-            String[] headers = {"Task ID", "Task Type", "Description", "Company", "Sticker No","Cert Number", "Created Date", "Completed Date", "Inspector", "Reviewer"};
-            org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
+                org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Completed Tasks");
 
-            // Style للهيدر (خلفية رمادية + Bold)
-            org.apache.poi.ss.usermodel.CellStyle headerStyle = workbook.createCellStyle();
-            org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            headerStyle.setFont(headerFont);
-            headerStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.GREY_25_PERCENT.getIndex());
-            headerStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+                // Headers: include all template fields
+                String[] headers = {
+                        "Work Order", "Task ID", "Task Type", "Description", "Company",
+                        "Job No", "TimeSheet No", "Report No", "Cert Number", "Sticker No",
+                        "Created Date", "Completed Date", "Inspector", "Reviewer", "Branch",
+                        "EmpCertificateId"
+                };
 
-            for (int i = 0; i < headers.length; i++) {
-                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
-                cell.setCellValue(headers[i]);
-                cell.setCellStyle(headerStyle);
+                // Styles
+                org.apache.poi.ss.usermodel.CellStyle headerStyle = workbook.createCellStyle();
+                org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
+                headerFont.setBold(true);
+                headerStyle.setFont(headerFont);
+                headerStyle.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.GREY_25_PERCENT.getIndex());
+                headerStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+                headerStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+                headerStyle.setWrapText(true);
+
+                org.apache.poi.ss.usermodel.CellStyle dataStyle = workbook.createCellStyle();
+                dataStyle.setWrapText(true);
+
+                org.apache.poi.ss.usermodel.CreationHelper createHelper = workbook.getCreationHelper();
+                org.apache.poi.ss.usermodel.CellStyle dateStyle = workbook.createCellStyle();
+                short dateFormat = createHelper.createDataFormat().getFormat("yyyy-MM-dd");
+                dateStyle.setDataFormat(dateFormat);
+
+                // Header row
+                org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
+                for (int i = 0; i < headers.length; i++) {
+                    org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+                    cell.setCellValue(headers[i]);
+                    cell.setCellStyle(headerStyle);
+                }
+
+                // Helper for safe string (if bean already has safeString, you can keep using it)
+                // We'll implement inline conversion attempts for numbers/dates.
+                int rowIdx = 1;
+                java.text.SimpleDateFormat[] knownFormats = new java.text.SimpleDateFormat[] {
+                        new java.text.SimpleDateFormat("dd/MM/yyyy"),
+                        new java.text.SimpleDateFormat("yyyy-MM-dd"),
+                        new java.text.SimpleDateFormat("yyyy/MM/dd"),
+                        new java.text.SimpleDateFormat("yyyyMMdd"),
+                        new java.text.SimpleDateFormat("dd-MM-yyyy")
+                };
+
+                for (Object o : searchResults) {
+                    // Expect each row to be Map<String,Object>
+                    if (!(o instanceof java.util.Map)) continue;
+                    @SuppressWarnings("unchecked")
+                    java.util.Map<String, Object> rowMap = (java.util.Map<String, Object>) o;
+
+                    org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
+
+                    // Column 0: Work Order (fallback to jobNo if workOrder empty)
+                    String workOrderVal = null;
+                    Object workOrderObj = rowMap.get("workOrder");
+                    if (workOrderObj != null) workOrderVal = String.valueOf(workOrderObj);
+                    if ((workOrderVal == null || workOrderVal.trim().isEmpty())) {
+                        Object jobNoObj = rowMap.get("jobNo");
+                        if (jobNoObj != null) workOrderVal = String.valueOf(jobNoObj);
+                    }
+                    if (workOrderVal == null) workOrderVal = "No Work Order";
+                    org.apache.poi.ss.usermodel.Cell c0 = row.createCell(0);
+                    c0.setCellValue(workOrderVal);
+                    c0.setCellStyle(dataStyle);
+
+                    // Column 1: Task ID (try numeric)
+                    Object taskIdObj = rowMap.get("taskId");
+                    org.apache.poi.ss.usermodel.Cell c1 = row.createCell(1);
+                    if (taskIdObj instanceof Number) {
+                        c1.setCellValue(((Number) taskIdObj).longValue());
+                    } else if (taskIdObj != null) {
+                        String s = String.valueOf(taskIdObj);
+                        try {
+                            long v = Long.parseLong(s);
+                            c1.setCellValue(v);
+                        } catch (NumberFormatException e) {
+                            c1.setCellValue(s);
+                        }
+                    } else {
+                        c1.setCellValue("");
+                    }
+                    c1.setCellStyle(dataStyle);
+
+                    // Column 2: Task Type
+                    org.apache.poi.ss.usermodel.Cell c2 = row.createCell(2);
+                    c2.setCellValue(safeString(rowMap.get("taskType")));
+                    c2.setCellStyle(dataStyle);
+
+                    // Column 3: Description
+                    org.apache.poi.ss.usermodel.Cell c3 = row.createCell(3);
+                    c3.setCellValue(safeString(rowMap.get("taskDescription")));
+                    c3.setCellStyle(dataStyle);
+
+                    // Column 4: Company
+                    org.apache.poi.ss.usermodel.Cell c4 = row.createCell(4);
+                    c4.setCellValue(safeString(rowMap.get("companyName")));
+                    c4.setCellStyle(dataStyle);
+
+                    // Column 5: Job No
+                    org.apache.poi.ss.usermodel.Cell c5 = row.createCell(5);
+                    c5.setCellValue(safeString(rowMap.get("jobNo")));
+                    c5.setCellStyle(dataStyle);
+
+                    // Column 6: TimeSheet No
+                    org.apache.poi.ss.usermodel.Cell c6 = row.createCell(6);
+                    c6.setCellValue(safeString(rowMap.get("timeSheetNo")));
+                    c6.setCellStyle(dataStyle);
+
+                    // Column 7: Report No
+                    org.apache.poi.ss.usermodel.Cell c7 = row.createCell(7);
+                    c7.setCellValue(safeString(rowMap.get("reportNo")));
+                    c7.setCellStyle(dataStyle);
+
+                    // Column 8: Cert Number
+                    org.apache.poi.ss.usermodel.Cell c8 = row.createCell(8);
+                    c8.setCellValue(safeString(rowMap.get("certNumber")));
+                    c8.setCellStyle(dataStyle);
+
+                    // Column 9: Sticker No
+                    org.apache.poi.ss.usermodel.Cell c9 = row.createCell(9);
+                    c9.setCellValue(safeString(rowMap.get("stickerNo")));
+                    c9.setCellStyle(dataStyle);
+
+                    // Column 10: Created Date (try to write as Date cell)
+                    org.apache.poi.ss.usermodel.Cell c10 = row.createCell(10);
+                    Object createdObj = rowMap.get("createdDate");
+                    boolean createdSet = false;
+                    if (createdObj instanceof java.util.Date) {
+                        c10.setCellValue((java.util.Date) createdObj);
+                        c10.setCellStyle(dateStyle);
+                        createdSet = true;
+                    } else if (createdObj instanceof Number) {
+                        // epoch millis?
+                        long millis = ((Number) createdObj).longValue();
+                        java.util.Date dt = new java.util.Date(millis);
+                        c10.setCellValue(dt);
+                        c10.setCellStyle(dateStyle);
+                        createdSet = true;
+                    } else if (createdObj instanceof String) {
+                        String s = ((String) createdObj).trim();
+                        if (!s.isEmpty()) {
+                            // try known formats
+                            for (java.text.SimpleDateFormat fmt : knownFormats) {
+                                try {
+                                    fmt.setLenient(false);
+                                    java.util.Date dt = fmt.parse(s);
+                                    c10.setCellValue(dt);
+                                    c10.setCellStyle(dateStyle);
+                                    createdSet = true;
+                                    break;
+                                } catch (Exception ex) {
+                                    // try next
+                                }
+                            }
+                        }
+                    }
+                    if (!createdSet) {
+                        c10.setCellValue(safeString(createdObj));
+                        c10.setCellStyle(dataStyle);
+                    }
+
+                    // Column 11: Completed Date
+                    org.apache.poi.ss.usermodel.Cell c11 = row.createCell(11);
+                    Object completedObj = rowMap.get("completedDate");
+                    boolean completedSet = false;
+                    if (completedObj instanceof java.util.Date) {
+                        c11.setCellValue((java.util.Date) completedObj);
+                        c11.setCellStyle(dateStyle);
+                        completedSet = true;
+                    } else if (completedObj instanceof Number) {
+                        long millis = ((Number) completedObj).longValue();
+                        java.util.Date dt = new java.util.Date(millis);
+                        c11.setCellValue(dt);
+                        c11.setCellStyle(dateStyle);
+                        completedSet = true;
+                    } else if (completedObj instanceof String) {
+                        String s = ((String) completedObj).trim();
+                        if (!s.isEmpty()) {
+                            for (java.text.SimpleDateFormat fmt : knownFormats) {
+                                try {
+                                    fmt.setLenient(false);
+                                    java.util.Date dt = fmt.parse(s);
+                                    c11.setCellValue(dt);
+                                    c11.setCellStyle(dateStyle);
+                                    completedSet = true;
+                                    break;
+                                } catch (Exception ex) { }
+                            }
+                        }
+                    }
+                    if (!completedSet) {
+                        c11.setCellValue(safeString(completedObj));
+                        c11.setCellStyle(dataStyle);
+                    }
+
+                    // Column 12: Inspector
+                    org.apache.poi.ss.usermodel.Cell c12 = row.createCell(12);
+                    c12.setCellValue(safeString(rowMap.get("inspectorName")));
+                    c12.setCellStyle(dataStyle);
+
+                    // Column 13: Reviewer
+                    org.apache.poi.ss.usermodel.Cell c13 = row.createCell(13);
+                    c13.setCellValue(safeString(rowMap.get("reviewerName")));
+                    c13.setCellStyle(dataStyle);
+
+                    // Column 14: Branch / Organization
+                    org.apache.poi.ss.usermodel.Cell c14 = row.createCell(14);
+                    c14.setCellValue(safeString(rowMap.get("organizationName")));
+                    c14.setCellStyle(dataStyle);
+
+                    // Column 15: EmpCertificateId
+                    org.apache.poi.ss.usermodel.Cell c15 = row.createCell(15);
+                    Object empCertId = rowMap.get("empCertificateId");
+                    if (empCertId instanceof Number) {
+                        c15.setCellValue(((Number) empCertId).longValue());
+                    } else {
+                        c15.setCellValue(safeString(empCertId));
+                    }
+                    c15.setCellStyle(dataStyle);
+                }
+
+                // Auto-size columns (do this before writing response)
+                for (int i = 0; i < headers.length; i++) {
+                    try {
+                        sheet.autoSizeColumn(i);
+                    } catch (Exception ex) {
+                        // ignore autosize errors for very large sheets
+                    }
+                }
+
+                // Prepare HTTP response
+                javax.faces.context.ExternalContext externalContext = facesContext.getExternalContext();
+                javax.servlet.http.HttpServletResponse response = (javax.servlet.http.HttpServletResponse) externalContext.getResponse();
+                response.reset();
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                String fileName = "completed_tasks_" + new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date()) + ".xlsx";
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+                try (java.io.OutputStream out = response.getOutputStream()) {
+                    workbook.write(out);
+                    out.flush();
+                }
+
+                facesContext.responseComplete();
             }
-
-            int rowIdx = 1;
-            for (Map<String, Object> rowMap : searchResults) {
-                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIdx++);
-                row.createCell(0).setCellValue(safeString(rowMap.get("taskId")));
-                row.createCell(1).setCellValue(safeString(rowMap.get("taskType")));
-                row.createCell(2).setCellValue(safeString(rowMap.get("taskDescription")));
-                row.createCell(3).setCellValue(safeString(rowMap.get("companyName")));
-                row.createCell(4).setCellValue(safeString(rowMap.get("stickerNo")));
-                row.createCell(5).setCellValue(safeString(rowMap.get("certNumber")));
-                row.createCell(6).setCellValue(safeString(rowMap.get("createdDate")));
-                row.createCell(7).setCellValue(safeString(rowMap.get("completedDate")));
-                row.createCell(8).setCellValue(safeString(rowMap.get("inspectorName")));
-                row.createCell(9).setCellValue(safeString(rowMap.get("reviewerName")));
-            }
-
-            // === ضبط عرض الأعمدة أوتوماتيكياً ===
-            for (int i = 0; i < headers.length; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            ExternalContext externalContext = facesContext.getExternalContext();
-            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-            response.reset();
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            response.setHeader("Content-Disposition", "attachment; filename=\"completed_tasks.xlsx\"");
-
-            try (ServletOutputStream out = response.getOutputStream()) {
-                workbook.write(out);
-                out.flush();
-            }
-            workbook.close();
-
-            facesContext.responseComplete();
 
         } catch (Exception e) {
             e.printStackTrace();
             addErrorMessage("Error exporting to Excel: " + e.getMessage());
         }
     }
+
 
 
 

@@ -49,6 +49,49 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.ByteArrayOutputStream;
 import javax.servlet.http.HttpServletResponse;
+// Java / IO / util
+import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+// JSF / Servlet
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+// Apache POI (SS + XSSF)
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.FillPatternType;
+
+// ZXing (QR generation)
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+
+// Your project classes (تعديل الحزمة إذا كانت مختلفة في مشروعك)
+import com.smat.ins.model.entity.Sticker;
+import com.smat.ins.util.UtilityHelper;
+
+// Optional: logging (إذا تستخدم logger في الـbean)
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 @Named("stickerManagementBean")
@@ -487,70 +530,182 @@ public class StickerManagementBean implements Serializable {
         ExternalContext externalContext = facesContext.getExternalContext();
         HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
 
+        // حجم الـQR بالبيكسل (مربع)
+        final int QR_PIXEL_SIZE = 150;
+        // عمود الصورة (0-based index). هنا نستخدم العمود الأخير (index 7) كما في التصميم السابق.
+        final int QR_COLUMN_INDEX = 7;
+
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             Sheet sheet = workbook.createSheet("Stickers");
 
-            // Header row
-            Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("ID");
-            header.createCell(1).setCellValue("Serial Number");
-            header.createCell(2).setCellValue("Sticker Number");
-            header.createCell(3).setCellValue("Assigned To");
-            header.createCell(4).setCellValue("Status");
-            header.createCell(5).setCellValue("Year");
+            // Header style
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
-            // Data rows
+            // Headers: removed QR Text column, keep QR Code image column
+            String[] headers = new String[] {
+                    "ID", "Serial Number", "Sticker Number", "Assigned To",
+                    "Report No", "Status", "Year", "QR Code (Image)"
+            };
+
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                Cell hcell = headerRow.createCell(i);
+                hcell.setCellValue(headers[i]);
+                hcell.setCellStyle(headerStyle);
+            }
+
+            // Data style
+            CellStyle dataStyle = workbook.createCellStyle();
+            dataStyle.setWrapText(true);
+            dataStyle.setVerticalAlignment(VerticalAlignment.TOP);
+
+            CreationHelper creationHelper = workbook.getCreationHelper();
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
+
             int rowNum = 1;
             for (Sticker s : filteredStickers) {
-                Row row = sheet.createRow(rowNum++);
+                Row row = sheet.createRow(rowNum);
 
-                // ID
+                // ضبط ارتفاع الصف ليطابق حجم الـQR (نستخدم نقاط: تقريباً 1 نقطة ≈ 1 بكسل على شاشات عادية)
+                // نضع ارتفاع الصف مساويًا لحجم الـQR بالـpoints (تجريبي، يمكن التعديل إذا لزم)
+                row.setHeightInPoints((short) QR_PIXEL_SIZE);
+
+                // Column 0: ID
                 Object idObj = s.getId();
-                row.createCell(0).setCellValue(idObj != null ? idObj.toString() : "");
+                Cell c0 = row.createCell(0);
+                c0.setCellValue(idObj != null ? String.valueOf(idObj) : "");
+                c0.setCellStyle(dataStyle);
 
-                // Serial number
-                row.createCell(1).setCellValue(s.getSerialNo() != null ? s.getSerialNo() : "");
+                // Column 1: Serial Number
+                Cell c1 = row.createCell(1);
+                c1.setCellValue(s.getSerialNo() != null ? s.getSerialNo() : "");
+                c1.setCellStyle(dataStyle);
 
-                // Sticker number
-                row.createCell(2).setCellValue(s.getStickerNo() != null ? s.getStickerNo() : "");
+                // Column 2: Sticker Number
+                Cell c2 = row.createCell(2);
+                c2.setCellValue(s.getStickerNo() != null ? s.getStickerNo() : "");
+                c2.setCellStyle(dataStyle);
 
-                // Assigned to
+                // Column 3: Assigned To
                 String assigned = (s.getSysUserByForUser() != null && s.getSysUserByForUser().getDisplayName() != null)
                         ? s.getSysUserByForUser().getDisplayName() : "";
-                row.createCell(3).setCellValue(assigned);
+                Cell c3 = row.createCell(3);
+                c3.setCellValue(assigned);
+                c3.setCellStyle(dataStyle);
 
-                // Status
+                // Column 4: Report No
+                String reportNo = "";
+                try {
+                    String first = this.getFirstReportNo(s);
+                    if (first != null && !first.trim().isEmpty()) {
+                        reportNo = first;
+                    } else if (s.getEquipmentInspectionForms() != null && !s.getEquipmentInspectionForms().isEmpty()) {
+                        Object firstFormObj = s.getEquipmentInspectionForms().iterator().next();
+                        if (firstFormObj instanceof com.smat.ins.model.entity.EquipmentInspectionForm) {
+                            com.smat.ins.model.entity.EquipmentInspectionForm ef = (com.smat.ins.model.entity.EquipmentInspectionForm) firstFormObj;
+                            if (ef.getReportNo() != null) reportNo = ef.getReportNo();
+                        }
+                    }
+                } catch (Exception ex) {
+                    // fallback silent
+                }
+                Cell c4 = row.createCell(4);
+                c4.setCellValue(reportNo);
+                c4.setCellStyle(dataStyle);
+
+                // Column 5: Status (Used / Available)
                 Boolean used = s.getIsUsed();
-                row.createCell(4).setCellValue((used != null && used) ? "Used" : "Available");
+                Cell c5 = row.createCell(5);
+                c5.setCellValue((used != null && used) ? "Used" : "Available");
+                c5.setCellStyle(dataStyle);
 
-                // Year (إن وُجد)
-                row.createCell(5).setCellValue(s.getYear() != null ? s.getYear().toString() : "");
+                // Column 6: Year
+                Cell c6 = row.createCell(6);
+                c6.setCellValue(s.getYear() != null ? String.valueOf(s.getYear()) : "");
+                c6.setCellStyle(dataStyle);
+
+                // Column 7: QR Code image (generate PNG and embed)
+                try {
+                    String qrText = UtilityHelper.getBaseURL() + "/api/equipment-cert/" + (s.getSerialNo() != null ? s.getSerialNo() : "") + "&"
+                            + (s.getStickerNo() != null ? s.getStickerNo() : "");
+                    QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                    BitMatrix bitMatrix = qrCodeWriter.encode(qrText, BarcodeFormat.QR_CODE, QR_PIXEL_SIZE, QR_PIXEL_SIZE);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    MatrixToImageWriter.writeToStream(bitMatrix, "PNG", baos);
+                    byte[] qrBytes = baos.toByteArray();
+                    int pictureIdx = workbook.addPicture(qrBytes, Workbook.PICTURE_TYPE_PNG);
+                    ClientAnchor anchor = creationHelper.createClientAnchor();
+
+                    // place image in column QR_COLUMN_INDEX at this row
+                    anchor.setCol1(QR_COLUMN_INDEX);
+                    anchor.setRow1(rowNum);
+                    anchor.setCol2(QR_COLUMN_INDEX + 1);
+                    anchor.setRow2(rowNum + 1);
+                    // optional: adjust dx/dy if needed via anchor.setDx1/... but keep defaults for portability
+
+                    Picture pict = drawing.createPicture(anchor, pictureIdx);
+
+                    // resize to exactly fit cell (try 1.0; adjust if necessary)
+                    try {
+                        pict.resize(1.0); // try to fill the target cell area
+                    } catch (Exception ex) {
+                        // fallback: ignore resize failure
+                    }
+                } catch (Exception qrEx) {
+                    // if QR generation fails, write placeholder text in the image column
+                    Cell c7 = row.createCell(QR_COLUMN_INDEX);
+                    c7.setCellValue("[QR gen failed]");
+                    c7.setCellStyle(dataStyle);
+                }
+
+                rowNum++;
             }
 
-            // ضبط عرض الأعمدة
-            for (int i = 0; i <= 5; i++) {
-                sheet.autoSizeColumn(i);
+            // Auto-size textual columns (skip QR image column to avoid expensive ops)
+            for (int i = 0; i <= QR_COLUMN_INDEX - 1; i++) {
+                try {
+                    sheet.autoSizeColumn(i);
+                    int width = sheet.getColumnWidth(i);
+                    int maxWidth = 256 * 60; // limit to ~60 characters
+                    if (width > maxWidth) sheet.setColumnWidth(i, maxWidth);
+                } catch (Exception ex) {
+                    // ignore autosize issues for large sheets
+                }
             }
 
-            // كتابة الـ workbook إلى مصفوفة بايت
+            // Set a column width that better matches the QR_PIXEL_SIZE so the cell becomes roughly square.
+            // Approximation: columnWidthUnits = pixelWidth * 256 / 7 (Excel uses approx 7 pixels per character)
+            int colWidthUnits = QR_PIXEL_SIZE * 256 / 7;
+            sheet.setColumnWidth(QR_COLUMN_INDEX, colWidthUnits);
+
+            // Write workbook to byte array
             workbook.write(out);
             byte[] bytes = out.toByteArray();
 
-            // إعداد الاستجابة وإرساله
+            // Prepare and send response
             response.reset();
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            String fileName = "stickers_" + System.currentTimeMillis() + ".xlsx";
+            String fileName = "stickers_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".xlsx";
             response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
             response.setContentLength(bytes.length);
 
-            response.getOutputStream().write(bytes);
-            response.getOutputStream().flush();
+            try (ServletOutputStream sos = response.getOutputStream()) {
+                sos.write(bytes);
+                sos.flush();
+            }
 
             facesContext.responseComplete();
 
-            // رسالة نجاح اختيارية
+            // Optional success message
             UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
 
         } catch (Exception e) {
@@ -558,6 +713,8 @@ public class StickerManagementBean implements Serializable {
             UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
         }
     }
+
+
 
 
     // Manual getters and setters to ensure Lombok works correctly

@@ -358,7 +358,7 @@ public class TaskSearchBean implements Serializable {
         doneFromDate = null;
         doneToDate = null;
         taskStatus = null;
-    workOrderFilter = null;
+        workOrderFilter = null;
         searchResults.clear();
         groupedResultsByWorkOrder = null;
     }
@@ -482,10 +482,10 @@ public class TaskSearchBean implements Serializable {
             CreationHelper createHelper = workbook.getCreationHelper();
             dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-mm-dd"));
 
-            // Create header row
+            // Create header row (including Work Order as first column)
             Row headerRow = sheet.createRow(0);
             String[] headers = {
-                    "Task ID", "Company", "Equipment", "Service",
+                    "Work Order", "Task ID", "Company", "Equipment", "Service",
                     "Assigner", "Inspector", "Reviewer", "Status",
                     "Created Date", "Task Description"
             };
@@ -498,65 +498,83 @@ public class TaskSearchBean implements Serializable {
 
             // Populate data rows
             int rowNum = 1;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             for (Task task : searchResults) {
                 Row row = sheet.createRow(rowNum++);
 
-                // Task ID
+                // Work Order (use public wrapper to guarantee non-null label)
                 Cell cell0 = row.createCell(0);
-                cell0.setCellValue(task.getId());
+                String workOrder = getWorkOrderKey(task);
+                cell0.setCellValue(workOrder != null ? workOrder : "");
                 cell0.setCellStyle(dataStyle);
 
-                // Company
+                // Task ID
                 Cell cell1 = row.createCell(1);
-                cell1.setCellValue(task.getCompany() != null ? task.getCompany().getName() : "");
+                if (task.getId() != null) {
+                    // depending on type of id, set as numeric or string
+                    try {
+                        cell1.setCellValue(Long.parseLong(String.valueOf(task.getId())));
+                    } catch (Exception ex) {
+                        cell1.setCellValue(String.valueOf(task.getId()));
+                    }
+                } else {
+                    cell1.setCellValue("");
+                }
                 cell1.setCellStyle(dataStyle);
 
-                // Equipment
+                // Company
                 Cell cell2 = row.createCell(2);
-                cell2.setCellValue(task.getEquipmentCategory() != null ? task.getEquipmentCategory().getName() : "");
+                cell2.setCellValue(task.getCompany() != null ? task.getCompany().getName() : "");
                 cell2.setCellStyle(dataStyle);
 
-                // Service
+                // Equipment
                 Cell cell3 = row.createCell(3);
-                cell3.setCellValue(task.getServiceType() != null ? task.getServiceType().getName() : "");
+                cell3.setCellValue(task.getEquipmentCategory() != null ? task.getEquipmentCategory().getName() : "");
                 cell3.setCellStyle(dataStyle);
 
-                // Assigner
+                // Service
                 Cell cell4 = row.createCell(4);
-                cell4.setCellValue(task.getUserAliasByAssigner() != null ?
-                        task.getUserAliasByAssigner().getSysUserBySysUser().getDisplayName() : "");
+                cell4.setCellValue(task.getServiceType() != null ? task.getServiceType().getName() : "");
                 cell4.setCellStyle(dataStyle);
 
-                // Inspector
+                // Assigner
                 Cell cell5 = row.createCell(5);
-                cell5.setCellValue(getInspectorTask(task));
+                String assignerName = "";
+                if (task.getUserAliasByAssigner() != null && task.getUserAliasByAssigner().getSysUserBySysUser() != null) {
+                    assignerName = task.getUserAliasByAssigner().getSysUserBySysUser().getDisplayName();
+                }
+                cell5.setCellValue(assignerName);
                 cell5.setCellStyle(dataStyle);
 
-                // Reviewer
+                // Inspector
                 Cell cell6 = row.createCell(6);
-                cell6.setCellValue(getReviewerTask(task));
+                cell6.setCellValue(getInspectorTask(task));
                 cell6.setCellStyle(dataStyle);
 
-                // Status
+                // Reviewer
                 Cell cell7 = row.createCell(7);
-                cell7.setCellValue(getInspectionFormWorkflowStatus(task));
+                cell7.setCellValue(getReviewerTask(task));
                 cell7.setCellStyle(dataStyle);
 
-                // Created Date
+                // Status
                 Cell cell8 = row.createCell(8);
-                if (task.getCreatedDate() != null) {
-                    cell8.setCellValue(dateFormat.format(task.getCreatedDate()));
-                } else {
-                    cell8.setCellValue("");
-                }
+                cell8.setCellValue(getInspectionFormWorkflowStatus(task));
                 cell8.setCellStyle(dataStyle);
 
-                // Task Description
+                // Created Date (use proper date cell if available)
                 Cell cell9 = row.createCell(9);
-                cell9.setCellValue(task.getTaskDescription() != null ? task.getTaskDescription() : "");
-                cell9.setCellStyle(dataStyle);
+                if (task.getCreatedDate() != null) {
+                    cell9.setCellValue(task.getCreatedDate());
+                    cell9.setCellStyle(dateStyle);
+                } else {
+                    cell9.setCellValue("");
+                    cell9.setCellStyle(dataStyle);
+                }
+
+                // Task Description
+                Cell cell10 = row.createCell(10);
+                cell10.setCellValue(task.getTaskDescription() != null ? task.getTaskDescription() : "");
+                cell10.setCellStyle(dataStyle);
             }
 
             // Auto-size columns
@@ -588,6 +606,7 @@ public class TaskSearchBean implements Serializable {
             // Handle error - you might want to add FacesMessage here
         }
     }
+
 
 
     // Getters and Setters
