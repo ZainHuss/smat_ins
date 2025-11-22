@@ -358,7 +358,7 @@ public class TaskSearchBean implements Serializable {
         doneFromDate = null;
         doneToDate = null;
         taskStatus = null;
-        workOrderFilter = null;
+    workOrderFilter = null;
         searchResults.clear();
         groupedResultsByWorkOrder = null;
     }

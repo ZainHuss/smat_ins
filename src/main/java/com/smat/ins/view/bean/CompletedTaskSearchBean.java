@@ -573,8 +573,8 @@ public class CompletedTaskSearchBean implements Serializable {
             if (workOrderFilter != null && !workOrderFilter.trim().isEmpty() && searchResults != null && !searchResults.isEmpty()) {
                 String q = workOrderFilter.trim().toLowerCase();
                 List<Map<String, Object>> wf = new ArrayList<>();
-                // Prefer an explicit 'workOrder' value (populated from Task->Correspondence or explicit workOrder fields)
-                // Fall back to jobNo only if workOrder is not present.
+                    // Prefer an explicit 'workOrder' value (populated from Task->Correspondence or explicit workOrder fields)
+                    // Fall back to jobNo only if workOrder is not present.
                 String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
                 for (Map<String,Object> row : searchResults) {
                     if (row == null) continue;
@@ -622,8 +622,8 @@ public class CompletedTaskSearchBean implements Serializable {
         LinkedHashMap<String, List<Map<String, Object>>> groups = new LinkedHashMap<>();
         if (searchResults == null || searchResults.isEmpty()) return groups;
 
-        // Prefer 'workOrder' (may contain correspondence id set earlier) before falling back to jobNo
-        String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
+    // Prefer 'workOrder' (may contain correspondence id set earlier) before falling back to jobNo
+    String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
 
         // collect groups (unsorted)
         for (Map<String, Object> row : searchResults) {
@@ -715,10 +715,10 @@ public class CompletedTaskSearchBean implements Serializable {
     private void populateWorkOrder(Map<String, Object> row, Integer taskId) {
         if (row == null) return;
 
-        // 1) try common keys already present in the row
-        // Note: do NOT treat jobNo as a direct synonym for workOrder here - keep jobNo as a separate field.
-        // This avoids showing job number when an explicit work order value exists or should be shown.
-        String[] candidateKeys = {"workOrder", "workOrderNo", "workOrderNumber", "work_order_no", "work_order", "woNumber", "wo_no"};
+    // 1) try common keys already present in the row
+    // Note: do NOT treat jobNo as a direct synonym for workOrder here - keep jobNo as a separate field.
+    // This avoids showing job number when an explicit work order value exists or should be shown.
+    String[] candidateKeys = {"workOrder", "workOrderNo", "workOrderNumber", "work_order_no", "work_order", "woNumber", "wo_no"};
         for (String k : candidateKeys) {
             try {
                 Object v = row.get(k);

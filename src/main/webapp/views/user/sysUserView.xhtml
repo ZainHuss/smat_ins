@@ -1,317 +1,349 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
-	<ui:define name="section-head">
-        #{interfaceLabel.view} #{interfaceLabel.usersAll} 
-	</ui:define>
-	
-	<ui:define name="head">
-		<h:outputStylesheet library="#{appSetting.resourceLib}"
-			name="css/material-theme.css"></h:outputStylesheet>
-		<script type="text/javascript">
-		   $( document ).ready(function() {
-			
-			  $('div.ui-blockui').css('right',$('div.ui-blockui').css('left'));
-			});
-	    </script>
-	</ui:define>
-	<ui:define name="section-content">
-		<h:form id="form">
+    <ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.usersAll}
+    </ui:define>
 
-			<div class="card">
-				<p:growl id="messages" showDetail="true" life="2000" sticky="false" />
-				<div class="row">
-					<div class="col-lg-9 col-xl-8 col-xxl-7">
-					<p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
-						actionListener="#{sysUserBean.reset}" action="pretty:userAdd"
-						styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
-						style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
-					</p:commandButton>
+    <ui:define name="head">
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+                            name="css/material-theme.css"></h:outputStylesheet>
+        <script type="text/javascript">
+            $( document ).ready(function() {
 
-					<p:commandButton id="delete-sysUser-button" style="width:auto;"
-						value="#{sysUserBean.deleteButtonMessage}" icon="pi pi-trash"
-						styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
-						actionListener="#{sysUserBean.deleteSelectedSysUsers()}"
-						disabled="#{!sysUserBean.hasSelectedSysUsers()}" update="@this">
-						<p:confirm header="#{interfaceLabel.confirmation}"
-							message="#{interfaceLabel.deleteSelectedUsers}"
-							icon="pi pi-exclamation-triangle" />
-					</p:commandButton>
-				</div>
-				</div>
-				<p:divider layout="horizontal" type="dashed"></p:divider>
+                $('div.ui-blockui').css('right',$('div.ui-blockui').css('left'));
+            });
+        </script>
+    </ui:define>
+    <ui:define name="section-content">
+        <h:form id="form">
 
-				<p:dataTable id="dt-sysUsers" widgetVar="dtSysUsers"
-					var="sysUserVar" value="#{sysUserBean.lazyDataModelSysUser}"
-					reflow="true" styleClass="products-table"
-					lazy="true" selection="#{sysUserBean.selectedSysUserList}"
-					globalFilterOnly="true" rowKey="#{sysUserVar.id}" paginator="true"
-					rows="10" rowSelectMode="add"
-					emptyMessage="#{interfaceLabel.noRecordsFound}"
-					paginatorPosition="bottom">
-					<p:ajax event="rowSelect" update=":form:delete-sysUser-button" />
-					<p:ajax event="rowUnselect" update=":form:delete-sysUser-button" />
-					<p:ajax event="rowSelectCheckbox"
-						update=":form:delete-sysUser-button" />
-					<p:ajax event="rowUnselectCheckbox"
-						update=":form:delete-sysUser-button" />
-					<p:ajax event="toggleSelect" update=":form:delete-sysUser-button" />
-					<f:facet name="header">
-						<div class="flex align-items-center justify-content-between">
-							<h:outputText value="#{interfaceLabel.search} : " />
-							<p:inputText id="globalFilter"
-								onkeyup="PF('dtSysUsers').filter()" style="width:auto"
-								placeholder="#{interfaceLabel.enterKeyword}" />
-						</div>
-					</f:facet>
-					<p:column selectionMode="multiple" exportable="false"
-						style="width:30px;"></p:column>
+            <div class="card">
+                <p:growl id="messages" showDetail="true" life="2000" sticky="false" />
+                <div class="row">
+                    <div class="col-lg-9 col-xl-8 col-xxl-7">
+                        <p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+                                         actionListener="#{sysUserBean.reset}" action="pretty:userAdd"
+                                         styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+                                         style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+                        </p:commandButton>
 
-					<p:column headerText="#{interfaceLabel.fullName}" width="15%"
-						sortBy="#{sysUserVar.fullName}" filterBy="#{sysUserVar.fullName}"
-						filterMatchMode="contains">
-						<h:outputText value="#{sysUserVar.fullName}"
-							style="font-weight:bolder;font-style:italic;color:#2195F2;" />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.displayName}" width="15%"
-						sortBy="#{sysUserVar.displayName}"
-						filterBy="#{sysUserVar.displayName}" filterMatchMode="contains">
-						<h:outputText value="#{sysUserVar.displayName}" />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.rootOrganization}" width="19%"
-						sortBy="#{sysUserVar.organizationByRootOrganization.name}"
-						filterBy="#{sysUserVar.organizationByRootOrganization.name}"
-						filterMatchMode="contains">
-						<h:outputText value="#{sysUserVar.organizationByRootOrganization}" />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.organization}" width="15%"
-						sortBy="#{sysUserVar.organizationByOrganization.name}"
-						filterBy="#{sysUserVar.organizationByOrganization.name}"
-						filterMatchMode="contains">
-						<h:outputText value="#{sysUserVar.organizationByOrganization}" />
-					</p:column>
-					<p:column headerText="#{interfaceLabel.userName}" width="15%"
-						sortBy="#{sysUserVar.userName}" filterBy="#{sysUserVar.userName}">
-						<h:outputText value="#{sysUserVar.userName}"
-							style="font-weight:bolder;font-style:italic;color:green;" />
-					</p:column>
+                        <p:commandButton id="delete-sysUser-button" style="width:auto;"
+                                         value="#{sysUserBean.deleteButtonMessage}" icon="pi pi-lock"
+                                         styleClass="rounded-button ui-button-warning ui-button-raised ui-button-flat"
+                                         actionListener="#{sysUserBean.toggleSelectedSysUsers()}"
+                                         disabled="#{!sysUserBean.hasSelectedSysUsers()}" update="@this">
+                            <p:confirm header="#{interfaceLabel.confirmation}"
+                                       message="#{interfaceLabel.toggleSelectedUsers}"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </div>
+                </div>
+                <p:divider layout="horizontal" type="dashed"></p:divider>
 
-					<p:column exportable="false" width="30">
-						<p:commandButton icon="pi pi-lock-open"
-							title="#{interfaceLabel.resetPassword}"
-							styleClass="rounded-button ui-button-help ui-button-flat"
-							update=":form_sysUserResetPassword:outputPanel-content"
-							oncomplete="PF('dlSysUser').show()"
-							action="#{sysUserBean.defineSysUser(sysUserVar)}" process="@this">
+                <p:dataTable id="dt-sysUsers" widgetVar="dtSysUsers"
+                             var="sysUserVar" value="#{sysUserBean.lazyDataModelSysUser}"
+                             reflow="true" styleClass="products-table"
+                             lazy="true" selection="#{sysUserBean.selectedSysUserList}"
+                             globalFilterOnly="true" rowKey="#{sysUserVar.id}" paginator="true"
+                             rows="10" rowSelectMode="add"
+                             emptyMessage="#{interfaceLabel.noRecordsFound}"
+                             paginatorPosition="bottom">
+                    <p:ajax event="rowSelect" update=":form:delete-sysUser-button" />
+                    <p:ajax event="rowUnselect" update=":form:delete-sysUser-button" />
+                    <p:ajax event="rowSelectCheckbox"
+                            update=":form:delete-sysUser-button" />
+                    <p:ajax event="rowUnselectCheckbox"
+                            update=":form:delete-sysUser-button" />
+                    <p:ajax event="toggleSelect" update=":form:delete-sysUser-button" />
+                    <f:facet name="header">
+                        <div class="flex align-items-center justify-content-between">
+                            <h:outputText value="#{interfaceLabel.search} : " />
+                            <p:inputText id="globalFilter"
+                                         onkeyup="PF('dtSysUsers').filter()" style="width:auto"
+                                         placeholder="#{interfaceLabel.enterKeyword}" />
+                        </div>
+                    </f:facet>
+                    <p:column selectionMode="multiple" exportable="false"
+                              style="width:30px;"></p:column>
 
-							<p:resetInput
-								target=":form_sysUserResetPassword:outputPanel-content" />
-						</p:commandButton>
-					</p:column>
+                    <p:column headerText="#{interfaceLabel.fullName}" width="15%"
+                              sortBy="#{sysUserVar.fullName}" filterBy="#{sysUserVar.fullName}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{sysUserVar.fullName}"
+                                      style="font-weight:bolder;font-style:italic;color:#2195F2;" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.displayName}" width="15%"
+                              sortBy="#{sysUserVar.displayName}"
+                              filterBy="#{sysUserVar.displayName}" filterMatchMode="contains">
+                        <h:outputText value="#{sysUserVar.displayName}" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.rootOrganization}" width="19%"
+                              sortBy="#{sysUserVar.organizationByRootOrganization.name}"
+                              filterBy="#{sysUserVar.organizationByRootOrganization.name}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{sysUserVar.organizationByRootOrganization}" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.organization}" width="15%"
+                              sortBy="#{sysUserVar.organizationByOrganization.name}"
+                              filterBy="#{sysUserVar.organizationByOrganization.name}"
+                              filterMatchMode="contains">
+                        <h:outputText value="#{sysUserVar.organizationByOrganization}" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.userName}" width="15%"
+                              sortBy="#{sysUserVar.userName}" filterBy="#{sysUserVar.userName}">
+                        <h:outputText value="#{sysUserVar.userName}"
+                                      style="font-weight:bolder;font-style:italic;color:green;" />
+                    </p:column>
 
-					<p:column exportable="false" width="30">
-						<p:commandButton icon="pi pi-user-plus"
-							title="#{interfaceLabel.add} #{interfaceLabel.jobPositionTitle}"
-							styleClass="rounded-button ui-button-info ui-button-flat"
-							actionListener="#{sysUserBean.assignSysUserForUserAlias(sysUserVar)}"
-							action="pretty:defineUserAlias" process="@this">
-						</p:commandButton>
-					</p:column>
+                    <p:column exportable="false" width="30">
+                        <p:commandButton icon="pi pi-lock-open"
+                                         title="#{interfaceLabel.resetPassword}"
+                                         styleClass="rounded-button ui-button-help ui-button-flat"
+                                         update=":form_sysUserResetPassword:outputPanel-content"
+                                         oncomplete="PF('dlSysUser').show()"
+                                         action="#{sysUserBean.defineSysUser(sysUserVar)}" process="@this">
 
-					<p:column exportable="false" width="30">
-						<p:commandButton icon="pi pi-align-justify"
-							title="#{interfaceLabel.roles}"
-							styleClass="rounded-button ui-button-success ui-button-flat"
-							actionListener="#{sysUserBean.getRolesByUser(sysUserVar)}"
-							action="pretty:userRoles" process="@this">
-						</p:commandButton>
-					</p:column>
+                            <p:resetInput
+                                    target=":form_sysUserResetPassword:outputPanel-content" />
+                        </p:commandButton>
+                    </p:column>
 
-					<p:column exportable="false" width="30">
-						<p:commandButton icon="pi pi-user-edit"
-							title="#{interfaceLabel.update}"
-							styleClass="rounded-button ui-button-warning ui-button-flat"
-							actionListener="#{sysUserBean.assignSysUser(sysUserVar)}"
-							action="pretty:userAdd" process="@this">
-						</p:commandButton>
-					</p:column>
-					<p:column exportable="false" width="30">
-						<p:commandButton
-							styleClass="rounded-button ui-button-danger ui-button-flat"
-							icon="pi pi-user-minus" title="#{interfaceLabel.delete}"
-							process="@this" oncomplete="PF('deleteSysUserDialog').show()">
-							<f:setPropertyActionListener value="#{sysUserVar}"
-								target="#{sysUserBean.sysUser}" />
-						</p:commandButton>
-					</p:column>
-				</p:dataTable>
+                    <p:column exportable="false" width="30">
+                        <p:commandButton icon="pi pi-user-plus"
+                                         title="#{interfaceLabel.add} #{interfaceLabel.jobPositionTitle}"
+                                         styleClass="rounded-button ui-button-info ui-button-flat"
+                                         actionListener="#{sysUserBean.assignSysUserForUserAlias(sysUserVar)}"
+                                         action="pretty:defineUserAlias" process="@this">
+                        </p:commandButton>
+                    </p:column>
 
-				<p:blockUI id="blocker" block="dt-sysUsers" trigger="dt-sysUsers"
-					widgetVar="blockui-dt">
+                    <p:column exportable="false" width="30">
+                        <p:commandButton icon="pi pi-align-justify"
+                                         title="#{interfaceLabel.roles}"
+                                         styleClass="rounded-button ui-button-success ui-button-flat"
+                                         actionListener="#{sysUserBean.getRolesByUser(sysUserVar)}"
+                                         action="pretty:userRoles" process="@this">
+                        </p:commandButton>
+                    </p:column>
 
-					<i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
-				</p:blockUI>
+                    <p:column exportable="false" width="30">
+                        <p:commandButton icon="pi pi-user-edit"
+                                         title="#{interfaceLabel.update}"
+                                         styleClass="rounded-button ui-button-warning ui-button-flat"
+                                         actionListener="#{sysUserBean.assignSysUser(sysUserVar)}"
+                                         action="pretty:userAdd" process="@this">
+                        </p:commandButton>
+                    </p:column>
+                    <p:column exportable="false" width="30">
+                        <p:commandButton
+                                styleClass="#{sysUserVar.disabled ? 'rounded-button ui-button-danger disable-btn' : 'rounded-button ui-button-success enable-btn'}"
+                                icon="#{sysUserVar.disabled ? 'pi pi-lock' : 'pi pi-lock-open'}"
+                                title="#{sysUserVar.disabled ? interfaceLabel.disabled : interfaceLabel.isActive}"
+                                process="@this"
+                                oncomplete="PF('deleteSysUserDialog').show()">
+                            <f:setPropertyActionListener value="#{sysUserVar}"
+                                                         target="#{sysUserBean.sysUser}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
 
-				<p:confirmDialog widgetVar="deleteSysUserDialog" showEffect="fade"
-					width="300" message="#{interfaceLabel.deleteSelectedUsers}"
-					header="#{interfaceLabel.confirmation}" severity="warn">
-					<p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
-						actionListener="#{sysUserBean.deleteSysUser()}" process="@this"
-						oncomplete="PF('deleteSysUserDialog').hide()" />
-					<p:commandButton value="#{interfaceLabel.no}" type="button"
-						styleClass="ui-button-secondary" icon="pi pi-times"
-						onclick="PF('deleteSysUserDialog').hide()" />
-				</p:confirmDialog>
-			</div>
-		</h:form>
-		<p:dialog header="#{interfaceLabel.resetPassword}" closable="true"
-			closeOnEscape="true" dir="#{app.locale.rtl ? 'rtl':'ltr'}"
-			showHeader="true" dynamic="true" blockScroll="true"
-			appendTo="@(body)" widgetVar="dlSysUser" showEffect="fade"
-			modal="true" responsive="true"
-			onShow="PF('passWidgetVar').jq.val('').trigger('change');">
-			<style>
-.custom-scrolltop.ui-scrolltop {
-	width: 2rem;
-	height: 2rem;
-	border-radius: 4px;
-	outline: 0 none;
-	background-color: #B9CEF2;
-}
+                <p:blockUI id="blocker" block="dt-sysUsers" trigger="dt-sysUsers"
+                           widgetVar="blockui-dt">
 
-.custom-scrolltop.ui-scrolltop:hover {
-	background-color: #B9CEF2;
-}
+                    <i class="pi pi-spin pi-spinner" style="font-size: 3rem"></i>
+                </p:blockUI>
 
-.custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
-	font-size: 1rem;
-	color: var(- -primary-color-text);
-}
-</style>
-			<h:form id="form_sysUserResetPassword">
-				<p:growl id="growl" showDetail="true" life="2000" sticky="false" />
-				<p:divider />
-				<p:outputPanel id="outputPanel-content" class="ui-fluid">
-					<p:outputPanel rendered="#{not empty sysUserBean.sysUser}">
-						<div class="p-grid">
-							<div class="p-col-12">
-								<p:scrollPanel
-									style="border:dashed;border-color:#B9CEF2;width: auto; height: 85%"
-									mode="native">
-									<p:panelGrid id="panelGrid_sysuser" columns="4"
-										columnClasses="col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4,col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4"
-										contentStyleClass="align-items-baseline ui-fluid"
-										style="border:0px none; background-color:transparent;">
-										<p:outputLabel for="@next" value="#{interfaceLabel.firstName}"></p:outputLabel>
-										<p:inputText value="#{sysUserBean.sysUser.firstName}"
-											disabled="true" readonly="true"
-											style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+                <p:confirmDialog widgetVar="deleteSysUserDialog" showEffect="fade"
+                                 width="300" message="#{interfaceLabel.toggleSelectedUsers}"
+                                 header="#{interfaceLabel.confirmation}" severity="warn">
+                    <p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+                                     actionListener="#{sysUserBean.deleteSysUser()}" process="@this"
+                                     oncomplete="PF('deleteSysUserDialog').hide()" />
+                    <p:commandButton value="#{interfaceLabel.no}" type="button"
+                                     styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteSysUserDialog').hide()" />
+                </p:confirmDialog>
+            </div>
+        </h:form>
+        <p:dialog header="#{interfaceLabel.resetPassword}" closable="true"
+                  closeOnEscape="true" dir="#{app.locale.rtl ? 'rtl':'ltr'}"
+                  showHeader="true" dynamic="true" blockScroll="true"
+                  appendTo="@(body)" widgetVar="dlSysUser" showEffect="fade"
+                  modal="true" responsive="true"
+                  onShow="PF('passWidgetVar').jq.val('').trigger('change');">
+                        <style>
+                .custom-scrolltop.ui-scrolltop {
+                    width: 2rem;
+                    height: 2rem;
+                    border-radius: 4px;
+                    outline: 0 none;
+                    background-color: #B9CEF2;
+                }
 
+                .disable-btn {
+                    border-radius: 50% !important;
+                    width: 40px;
+                    height: 40px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    transition: all 0.3s ease;
+                }
 
-										<p:outputLabel for="@next" value="#{interfaceLabel.surname}"></p:outputLabel>
-										<p:inputText value="#{sysUserBean.sysUser.lastName}"
-											disabled="true" readonly="true"
-											style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+                .disable-btn:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                    background-color: #ffa726 !important;
+                }
 
+                .enable-btn {
+                    border-radius: 50% !important;
+                    width: 40px;
+                    height: 40px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+                    transition: all 0.3s ease;
+                    background-color: #66bb6a !important;
+                    color: white !important;
+                }
 
-										<p:outputLabel for="@next"
-											value="#{interfaceLabel.fatherName}"></p:outputLabel>
-										<p:inputText value="#{sysUserBean.sysUser.fatherName}"
-											disabled="true" readonly="true"
-											style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+                .enable-btn:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.18);
+                    background-color: #43a047 !important;
+                }
 
+                .custom-scrolltop.ui-scrolltop:hover {
+                    background-color: #B9CEF2;
+                }
 
-										<p:outputLabel for="@next"
-											value="#{interfaceLabel.motherName}"></p:outputLabel>
-										<p:inputText value="#{sysUserBean.sysUser.motherName}"
-											disabled="true" readonly="true"
-											style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
-
-
-										<p:outputLabel for="@next"
-											value="#{interfaceLabel.arDisplayName}"></p:outputLabel>
-										<p:inputText value="#{sysUserBean.sysUser.arDisplayName}"
-											disabled="true" readonly="true"
-											style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
-
-
-										<p:outputLabel for="@next"
-											value="#{interfaceLabel.enDisplayName}"></p:outputLabel>
-										<p:inputText value="#{sysUserBean.sysUser.enDisplayName}"
-											disabled="true" readonly="true"
-											style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+                .custom-scrolltop.ui-scrolltop .ui-scrolltop-icon {
+                    font-size: 1rem;
+                    color: var(- -primary-color-text);
+                }
+            </style>
+            <h:form id="form_sysUserResetPassword">
+                <p:growl id="growl" showDetail="true" life="2000" sticky="false" />
+                <p:divider />
+                <p:outputPanel id="outputPanel-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty sysUserBean.sysUser}">
+                        <div class="p-grid">
+                            <div class="p-col-12">
+                                <p:scrollPanel
+                                        style="border:dashed;border-color:#B9CEF2;width: auto; height: 85%"
+                                        mode="native">
+                                    <p:panelGrid id="panelGrid_sysuser" columns="4"
+                                                 columnClasses="col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4,col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4"
+                                                 contentStyleClass="align-items-baseline ui-fluid"
+                                                 style="border:0px none; background-color:transparent;">
+                                        <p:outputLabel for="@next" value="#{interfaceLabel.firstName}"></p:outputLabel>
+                                        <p:inputText value="#{sysUserBean.sysUser.firstName}"
+                                                     disabled="true" readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
 
 
-										<p:outputLabel for="@next" value="#{interfaceLabel.userCode}"></p:outputLabel>
-										<p:inputText id="inputText_sys_user_code"
-											value="#{sysUserBean.sysUser.sysUserCode}" disabled="true"
-											readonly="true"
-											style="color:black;font-weight:bolder;background-color:#CFEAF0;"></p:inputText>
+                                        <p:outputLabel for="@next" value="#{interfaceLabel.surname}"></p:outputLabel>
+                                        <p:inputText value="#{sysUserBean.sysUser.lastName}"
+                                                     disabled="true" readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+
+
+                                        <p:outputLabel for="@next"
+                                                       value="#{interfaceLabel.fatherName}"></p:outputLabel>
+                                        <p:inputText value="#{sysUserBean.sysUser.fatherName}"
+                                                     disabled="true" readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+
+
+                                        <p:outputLabel for="@next"
+                                                       value="#{interfaceLabel.motherName}"></p:outputLabel>
+                                        <p:inputText value="#{sysUserBean.sysUser.motherName}"
+                                                     disabled="true" readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+
+
+                                        <p:outputLabel for="@next"
+                                                       value="#{interfaceLabel.arDisplayName}"></p:outputLabel>
+                                        <p:inputText value="#{sysUserBean.sysUser.arDisplayName}"
+                                                     disabled="true" readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+
+
+                                        <p:outputLabel for="@next"
+                                                       value="#{interfaceLabel.enDisplayName}"></p:outputLabel>
+                                        <p:inputText value="#{sysUserBean.sysUser.enDisplayName}"
+                                                     disabled="true" readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#D4E6F7;"></p:inputText>
+
+
+                                        <p:outputLabel for="@next" value="#{interfaceLabel.userCode}"></p:outputLabel>
+                                        <p:inputText id="inputText_sys_user_code"
+                                                     value="#{sysUserBean.sysUser.sysUserCode}" disabled="true"
+                                                     readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#CFEAF0;"></p:inputText>
 
 
 
 
-									</p:panelGrid>
+                                    </p:panelGrid>
 
-									<p:divider align="left" layout="horizontal" type="dashed">
-										<div class="inline-flex align-items-center">
-											<i class="pi pi-user mr-2" /> <b
-												style="color: green; font-weight: bolder; font-style: italic;">#{interfaceLabel.resetPassword}</b>
-										</div>
-									</p:divider>
-									<p:panelGrid columns="4"
-										columnClasses="col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4,col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4"
-										contentStyleClass="align-items-baseline ui-fluid"
-										style="border:0px none; background-color:transparent;">
+                                    <p:divider align="left" layout="horizontal" type="dashed">
+                                        <div class="inline-flex align-items-center">
+                                            <i class="pi pi-user mr-2" /> <b
+                                                style="color: green; font-weight: bolder; font-style: italic;">#{interfaceLabel.resetPassword}</b>
+                                        </div>
+                                    </p:divider>
+                                    <p:panelGrid columns="4"
+                                                 columnClasses="col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4,col-12 md:col-2 xl:col-2, col-12 md:col-4 xl:col-4"
+                                                 contentStyleClass="align-items-baseline ui-fluid"
+                                                 style="border:0px none; background-color:transparent;">
 
-										<p:outputLabel for="@next" value="#{interfaceLabel.userName}"></p:outputLabel>
-										<p:inputText id="inputText_sys_user_name"
-											value="#{sysUserBean.sysUser.userName}" disabled="true"
-											readonly="true"
-											style="color:black;font-weight:bolder;background-color:#FFF0F5;"></p:inputText>
+                                        <p:outputLabel for="@next" value="#{interfaceLabel.userName}"></p:outputLabel>
+                                        <p:inputText id="inputText_sys_user_name"
+                                                     value="#{sysUserBean.sysUser.userName}" disabled="true"
+                                                     readonly="true"
+                                                     style="color:black;font-weight:bolder;background-color:#FFF0F5;"></p:inputText>
 
 
-										<p:outputLabel for="@next" value="#{interfaceLabel.password}"></p:outputLabel>
-										<p:password id="inputText_Password"
-										    value="#{sysUserBean.sysUser.password}" 
-										    feedback="true"
-										    inline="false" 
-										    widgetVar="passWidgetVar"
-										    promptLabel="#{interfaceLabel.promptLabel}"
-										    goodLabel="#{interfaceLabel.goodPass}"
-										    weakLabel="#{interfaceLabel.weakPass}"
-										    strongLabel="#{interfaceLabel.strongPass}"
-										    toggleMask="true" />
-									</p:panelGrid>
-									<p:panelGrid columns="2" layout="flex"
-										columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-3 xl:col-2"
-										contentStyleClass="align-items-baseline ui-fluid"
-										style="border:0px none; background-color:transparent;">
-										<p:commandButton value="#{interfaceLabel.save}"
-											action="#{sysUserBean.resetPass()}" update="growl"
-											icon="pi pi-user-edit"
-											styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
-											style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
-										</p:commandButton>
-										<p:commandButton id="delete-correspondenceState-button"
-											value="#{interfaceLabel.close}" icon="pi pi-times-circle"
-											styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
-											oncomplete="PF('dlSysUser').hide()">
+                                        <p:outputLabel for="@next" value="#{interfaceLabel.password}"></p:outputLabel>
+                                        <p:password id="inputText_Password"
+                                                    value="#{sysUserBean.sysUser.password}"
+                                                    feedback="true"
+                                                    inline="false"
+                                                    widgetVar="passWidgetVar"
+                                                    promptLabel="#{interfaceLabel.promptLabel}"
+                                                    goodLabel="#{interfaceLabel.goodPass}"
+                                                    weakLabel="#{interfaceLabel.weakPass}"
+                                                    strongLabel="#{interfaceLabel.strongPass}"
+                                                    toggleMask="true" />
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="2" layout="flex"
+                                                 columnClasses="col-12 md:col-3 xl:col-2, col-12 md:col-3 xl:col-2"
+                                                 contentStyleClass="align-items-baseline ui-fluid"
+                                                 style="border:0px none; background-color:transparent;">
+                                        <p:commandButton value="#{interfaceLabel.save}"
+                                                         action="#{sysUserBean.resetPass()}" update="growl"
+                                                         icon="pi pi-user-edit"
+                                                         styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+                                                         style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+                                        </p:commandButton>
+                                        <p:commandButton id="delete-correspondenceState-button"
+                                                         value="#{interfaceLabel.close}" icon="pi pi-times-circle"
+                                                         styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+                                                         oncomplete="PF('dlSysUser').hide()">
 
-										</p:commandButton>
-									</p:panelGrid>
-									<p:scrollTop target="parent" threshold="20"
-										styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
-								</p:scrollPanel>
+                                        </p:commandButton>
+                                    </p:panelGrid>
+                                    <p:scrollTop target="parent" threshold="20"
+                                                 styleClass="custom-scrolltop" icon="pi pi-arrow-up" />
+                                </p:scrollPanel>
 
-							</div>
-						</div>
-					</p:outputPanel>
-				</p:outputPanel>
-			</h:form>
-		</p:dialog>
-	</ui:define>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
 </ui:composition>

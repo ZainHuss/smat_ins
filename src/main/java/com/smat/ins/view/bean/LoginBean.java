@@ -37,15 +37,15 @@ public class LoginBean implements Serializable {
     // Guard to prevent concurrent/re-entrant login requests from same session
     private transient AtomicBoolean loginProcessing = new AtomicBoolean(false);
 
-
+    
     // خصائص جديدة لتغيير كلمة المرور
     private String currentPassword;
     private String newPassword;
     private String confirmPassword;
-
+    
     private List<SysUserRole> userRoles;
     private List<SysPermission> sysPermissionList;
-
+    
     private SysUserService userService;
     private SysUserRoleService sysUserRoleService;
     private SysPermissionService sysPermissionService;
@@ -74,7 +74,7 @@ public class LoginBean implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-
+    
     // محولات جديدة لتغيير كلمة المرور
     public String getCurrentPassword() {
         return currentPassword;
@@ -171,6 +171,31 @@ public class LoginBean implements Serializable {
             }
 
             if (user != null) {
+                // check if user is disabled
+                if (user.getDisabled() != null && user.getDisabled()) {
+                    String msg = localizationService.getErrorMessage().containsKey("userDisabled")
+                            ? localizationService.getErrorMessage().getString("userDisabled")
+                            : "User account is disabled.";
+                    UtilityHelper.addErrorMessage(msg);
+                    return null;
+                }
+
+                // check password validity (expired)
+                try {
+                    java.util.Date pwdValidity = user.getPasswordValidity();
+                    if (pwdValidity != null) {
+                        java.util.Date now = new java.util.Date();
+                        if (pwdValidity.before(now) || pwdValidity.equals(now)) {
+                            String msg = localizationService.getErrorMessage().containsKey("passwordExpired")
+                                    ? localizationService.getErrorMessage().getString("passwordExpired")
+                                    : "Password expired. Please contact administrator.";
+                            UtilityHelper.addErrorMessage(msg);
+                            return null;
+                        }
+                    }
+                } catch (Exception ex) {
+                    // ignore and allow login to proceed if unable to check
+                }
                 try {
                     userRoles = sysUserRoleService.getRoleBySysUser(user);
                     if (userRoles != null && !userRoles.isEmpty()) {
@@ -217,7 +242,7 @@ public class LoginBean implements Serializable {
             loginProcessing.set(false);
         }
     }
-
+    
     public boolean hasSysPermission(String code) {
         if (sysPermissionList != null) {
             for (SysPermission sysPermission : sysPermissionList) {
@@ -239,28 +264,28 @@ public class LoginBean implements Serializable {
         }
         return null;
     }
-
+    
     // طريقة للتحقق من صحة كلمة المرور الحالية
     public void validateCurrentPassword(FacesContext context, javax.faces.component.UIComponent component, Object value) {
         currentPassword = (String) value;
-
+        
         if (user != null) {
             if (user.getIsSuperAdmin()) {
                 // للمستخدمين المسؤولين
                 String storedPassword = localizationService.getApplicationProperties().getString("password");
                 if (!BCrypt.checkpw(currentPassword, storedPassword)) {
                     throw new javax.faces.validator.ValidatorException(
-                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                    localizationService.getErrorMessage().getString("incorrectCurrentPassword"),
-                                    null));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                        localizationService.getErrorMessage().getString("incorrectCurrentPassword"), 
+                        null));
                 }
             } else {
                 // للمستخدمين العاديين
                 if (!BCrypt.checkpw(currentPassword, user.getPassword())) {
                     throw new javax.faces.validator.ValidatorException(
-                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                    localizationService.getErrorMessage().getString("incorrectCurrentPassword"),
-                                    null));
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                        localizationService.getErrorMessage().getString("incorrectCurrentPassword"), 
+                        null));
                 }
             }
         }
@@ -317,7 +342,7 @@ public class LoginBean implements Serializable {
         return sb.toString();
     }
 
-
+    
     // طريقة لإعادة تعيين نموذج تغيير كلمة المرور
     public void resetPasswordForm() {
         currentPassword = null;

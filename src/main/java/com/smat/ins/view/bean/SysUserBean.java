@@ -402,10 +402,95 @@ public class SysUserBean implements Serializable {
 
 	}
 
+	/**
+	 * Disable selected users: set disabled=true and expire passwordValidity immediately
+	 */
+	public void disableSelectedSysUsers() {
+		try {
+			if (selectedSysUserList == null || selectedSysUserList.isEmpty()) {
+				return;
+			}
+			java.util.Date now = new java.util.Date();
+			for (SysUser u : selectedSysUserList) {
+				try {
+					u.setDisabled(true);
+					// set passwordValidity to now to make it expired immediately
+					u.setPasswordValidity(new java.sql.Date(now.getTime()));
+					sysUserService.merge(u);
+				} catch (Exception ex) {
+					// log and continue with others
+					ex.printStackTrace();
+				}
+			}
+
+			this.selectedSysRoleList = null;
+			lazyDataModelSysUser = new LazyUserDataModel();
+			UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+			PrimeFaces.current().ajax().update("form:messages", "form:dt-sysUsers");
+			PrimeFaces.current().executeScript("PF('dtSysUsers').clearFilters()");
+		} catch (Exception e) {
+			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+			PrimeFaces.current().ajax().update("form:messages", "form:dt-sysUsers");
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * Toggle selected users: if enabled -> disable and expire password; if disabled -> enable and clear expiry
+	 */
+	public void toggleSelectedSysUsers() {
+		try {
+			if (selectedSysUserList == null || selectedSysUserList.isEmpty()) {
+				return;
+			}
+			java.util.Date now = new java.util.Date();
+			for (SysUser u : selectedSysUserList) {
+				try {
+					boolean isDisabled = u.getDisabled() != null && u.getDisabled();
+					if (!isDisabled) {
+						// disable user
+						u.setDisabled(true);
+						u.setPasswordValidity(new java.sql.Date(now.getTime()));
+					} else {
+						// enable user
+						u.setDisabled(false);
+						u.setPasswordValidity(null);
+					}
+					sysUserService.merge(u);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			this.selectedSysRoleList = null;
+			lazyDataModelSysUser = new LazyUserDataModel();
+			UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+			PrimeFaces.current().ajax().update("form:messages", "form:dt-sysUsers");
+			PrimeFaces.current().executeScript("PF('dtSysUsers').clearFilters()");
+		} catch (Exception e) {
+			UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+			PrimeFaces.current().ajax().update("form:messages", "form:dt-sysUsers");
+			e.printStackTrace();
+		}
+
+	}
+
 	public void deleteSysUser() {
 		try {
-
-			sysUserService.delete(sysUser);
+			// toggle single user instead of physical delete: disable -> enable, enable -> disable
+			if (sysUser != null) {
+				java.util.Date now = new java.util.Date();
+				boolean isDisabled = sysUser.getDisabled() != null && sysUser.getDisabled();
+				if (!isDisabled) {
+					sysUser.setDisabled(true);
+					sysUser.setPasswordValidity(new java.sql.Date(now.getTime()));
+				} else {
+					sysUser.setDisabled(false);
+					sysUser.setPasswordValidity(null);
+				}
+				sysUserService.merge(sysUser);
+			}
 			this.sysUser = new SysUser();
 			lazyDataModelSysUser = new LazyUserDataModel();
 			UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
