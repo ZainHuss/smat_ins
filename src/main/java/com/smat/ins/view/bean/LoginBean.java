@@ -349,4 +349,17 @@ public class LoginBean implements Serializable {
         newPassword = null;
         confirmPassword = null;
     }
+    public boolean hasRole(String roleCode) {
+        if (userRoles == null || userRoles.isEmpty()) {
+            return false;
+        }
+
+        for (SysUserRole userRole : userRoles) {
+            if (userRole.getSysRole() != null &&
+                    roleCode.equals(userRole.getSysRole().getCode())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

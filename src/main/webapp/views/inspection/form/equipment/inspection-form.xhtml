@@ -2015,24 +2015,26 @@
                 </div>
 
                 <!-- Comment Section - موسع -->
-                <div class="row comment-section-expanded">
-                    <div class="col-lg-12 col-xl-12 col-xxl-12">
-                        <div class="field">
-                            <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label comment-label-expanded" />
-                            <div class="ui-chip" style="width: 100%; max-width: 100%; padding: 1rem;">
-                                <span class="ui-chip-icon pi pi-comment" style="font-size: 1.2rem;"></span>
-                                <div class="ui-chip-text"
-                                     style="text-overflow: ellipsis; overflow: hidden; white-space: normal;
-                                            padding: 8px; width: 100%; line-height: 1.5; min-height: 60px;"
-                                     title="#{inspectionFormBean.stepComment}">
-                                    #{inspectionFormBean.stepComment}
+                <h:panelGroup rendered="#{!loginBean.hasRole('001')}">
+                    <div class="row comment-section-expanded">
+                        <div class="col-lg-12 col-xl-12 col-xxl-12">
+                            <div class="field">
+                                <h:outputText value="#{interfaceLabel.comment}" styleClass="smat-label comment-label-expanded" />
+                                <div class="ui-chip" style="width: 100%; max-width: 100%; padding: 1rem;">
+                                    <span class="ui-chip-icon pi pi-comment" style="font-size: 1.2rem;"></span>
+                                    <div class="ui-chip-text"
+                                         style="text-overflow: ellipsis; overflow: hidden; white-space: normal;
+                                padding: 8px; width: 100%; line-height: 1.5; min-height: 60px;"
+                                         title="#{inspectionFormBean.stepComment}">
+                                        #{inspectionFormBean.stepComment}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
+                    <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
+                </h:panelGroup>
 
                 <!-- Basic Information Section -->
                 <div class="row">
