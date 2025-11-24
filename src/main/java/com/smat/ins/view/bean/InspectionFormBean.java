@@ -258,6 +258,8 @@ public class InspectionFormBean implements Serializable {
     private List<ExaminationType> examinationTypes;
 
     private List<Sticker> stickers;
+    // Sentinel sticker used to represent explicit "N\\A" selection in the UI
+    private Sticker naSentinel;
     private List<UserAlias> userAliasRecipientList;
     private UserAlias selectedUserAliasRecipient;
 
@@ -477,6 +479,14 @@ public class InspectionFormBean implements Serializable {
         this.stickers = stickers;
     }
 
+    public Sticker getNaSentinel() {
+        return naSentinel;
+    }
+
+    public void setNaSentinel(Sticker naSentinel) {
+        this.naSentinel = naSentinel;
+    }
+
     public List<UserAlias> getUserAliasRecipientList() {
         return userAliasRecipientList;
     }
@@ -636,6 +646,13 @@ public class InspectionFormBean implements Serializable {
 
         step = "01";
         disableSticker=false;
+        // initialize sentinel representing explicit N\A selection in the UI
+        try {
+            naSentinel = new Sticker();
+            naSentinel.setStickerNo("N\\A");
+        } catch (Exception ignore) {
+            naSentinel = new Sticker();
+        }
     }
 
     @PostConstruct
@@ -1081,11 +1098,21 @@ public class InspectionFormBean implements Serializable {
 
     public boolean doValidate() {
         try {
-
-
-            if(equipmentInspectionForm.getSticker()==null) {
-                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldChooseSticker"));
+            // Run sticker vs Pass/Fail compatibility first so user sees message immediately
+            if (!validateResultStickerCompatibility()) {
                 return false;
+            }
+
+            // Allow explicit N\A: if sticker reference is null but stickerNo == "N\A" we accept it.
+            if (equipmentInspectionForm.getSticker() == null) {
+                String sNo = null;
+                try {
+                    sNo = equipmentInspectionForm.getStickerNo();
+                } catch (Exception ignore) { }
+                if (sNo == null || !"N\\A".equalsIgnoreCase(sNo.trim())) {
+                    UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldChooseSticker"));
+                    return false;
+                }
             }
             // Add validation for selectedUserAliasRecipient if needed (e.g., must be
             // selected for certain steps)
@@ -1095,6 +1122,7 @@ public class InspectionFormBean implements Serializable {
                     return false;
                 }
             }
+            // (other validations follow)
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -1102,10 +1130,77 @@ public class InspectionFormBean implements Serializable {
         return true;
     }
 
+    /**
+     * Validate the compatibility between any dropdown/result values in the
+     * dynamic `columnContents` and the selected sticker. Rules implemented:
+     * - If any template field value equals PASS -> sticker must NOT be N\\A
+     * - If any template field value equals FAIL -> sticker MUST be N\\A
+     * - If both PASS and FAIL are present -> block and show message
+     *
+     * Messages are displayed as info messages (same style as operation messages).
+     */
+    private boolean validateResultStickerCompatibility() {
+        try {
+            if (equipmentInspectionForm == null) return true;
+
+            // determine stickerNo (prefer linked Sticker if present)
+            String stickerNo = null;
+            try {
+                if (equipmentInspectionForm.getSticker() != null && equipmentInspectionForm.getSticker().getStickerNo() != null) {
+                    stickerNo = equipmentInspectionForm.getSticker().getStickerNo();
+                } else if (equipmentInspectionForm.getStickerNo() != null) {
+                    stickerNo = equipmentInspectionForm.getStickerNo();
+                }
+            } catch (Exception ignore) { }
+            boolean stickerIsNA = stickerNo != null && "N\\A".equalsIgnoreCase(stickerNo.trim());
+
+            boolean anyPass = false;
+            boolean anyFail = false;
+            if (this.columnContents != null) {
+                for (ColumnContent cc : this.columnContents) {
+                    if (cc == null) continue;
+                    Object val = cc.getContentValue();
+                    if (val == null) continue;
+                    String s = String.valueOf(val).trim();
+                    if (s.equalsIgnoreCase("pass") || s.equalsIgnoreCase("passed")) anyPass = true;
+                    if (s.equalsIgnoreCase("fail") || s.equalsIgnoreCase("failed")) anyFail = true;
+                }
+            }
+
+            if (anyPass && anyFail) {
+                UtilityHelper.addErrorMessage("Conflicting Pass/Fail values in template — please correct before saving.");
+                try { javax.faces.context.FacesContext.getCurrentInstance().validationFailed(); } catch (Exception ignore) {}
+                return false;
+            }
+
+            if (anyPass && stickerIsNA) {
+                UtilityHelper.addErrorMessage("cant choose 'N\\A' for sticker when result is 'Pass'");
+                try { javax.faces.context.FacesContext.getCurrentInstance().validationFailed(); } catch (Exception ignore) {}
+                return false;
+            }
+
+            if (anyFail && !stickerIsNA) {
+                UtilityHelper.addErrorMessage("cant choose sticker number other than 'N\\A' when result is 'Fail'");
+                try { javax.faces.context.FacesContext.getCurrentInstance().validationFailed(); } catch (Exception ignore) {}
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            // don't block save for unexpected errors in validation; log and allow
+            e.printStackTrace();
+            return true;
+        }
+    }
+
     public String doSave() {
         if (!doValidate())
             return "";
         try {
+            // If user explicitly selected the UI sentinel for "N\\A",
+            // clear the sticker relationship (we only persist stickerNo="N\\A").
+            normalizeNaSentinelSticker();
+
             WorkflowDefinition workflowDefinitionInit = workflowDefinitionService.getInitStep((short) 1);
             WorkflowDefinition workflowDefinitionFinal = workflowDefinitionService.getFinalStep((short) 1);
             Set<InspectionFormWorkflow> inspectionFormWorkflows = new HashSet<InspectionFormWorkflow>();
@@ -1345,6 +1440,8 @@ public class InspectionFormBean implements Serializable {
         if (!doValidate())
             return "";
         try {
+            // ensure sentinel N\A does not remain as a transient Sticker reference
+            normalizeNaSentinelSticker();
             WorkflowDefinition workflowDefinitionInit = workflowDefinitionService.getInitStep((short) 1);
             Short maxStepSeq = null;
             equipmentInspectionForm.setStickerNo(equipmentInspectionForm.getSticker().getStickerNo());
@@ -1384,6 +1481,27 @@ public class InspectionFormBean implements Serializable {
     // helper: convert any object to safe string
     private String safeString(Object o) {
         return (o == null) ? "" : String.valueOf(o);
+    }
+
+    /**
+     * If the selected sticker is the UI sentinel representing explicit "N\\A",
+     * clear the sticker relationship so Hibernate won't try to persist an
+     * unsaved transient Sticker. We still keep stickerNo="N\\A" on the form.
+     */
+    private void normalizeNaSentinelSticker() {
+        try {
+            if (equipmentInspectionForm == null) return;
+            com.smat.ins.model.entity.Sticker sel = equipmentInspectionForm.getSticker();
+            if (sel == null) return;
+            String sNo = sel.getStickerNo();
+            if (sNo != null && sNo.equals("N\\A")) {
+                // clear the relationship (leave stickerNo populated)
+                equipmentInspectionForm.setSticker(null);
+                equipmentInspectionForm.setStickerNo("N\\A");
+            }
+        } catch (Exception ignore) {
+            // non-fatal — best-effort
+        }
     }
 
     // helper: format Date to date-only string (no time)

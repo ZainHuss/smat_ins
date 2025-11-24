@@ -959,6 +959,16 @@
                             </p:selectOneMenu>
                         </div>
 
+                        <!-- Result Filter -->
+                        <div class="lux-field-group">
+                            <label class="lux-field-label">Result</label>
+                            <p:selectOneMenu value="#{completedTaskSearchBean.resultFilter}" styleClass="ui-selectonemenu">
+                                <f:selectItem itemLabel="All Results" itemValue="" />
+                                <f:selectItem itemLabel="Pass" itemValue="Pass" />
+                                <f:selectItem itemLabel="Fail" itemValue="Fail" />
+                            </p:selectOneMenu>
+                        </div>
+
                         <!-- Equipment Category (conditional) -->
                         <h:panelGroup id="equipmentCategoryGroup" layout="block" styleClass="lux-field-group">
                             <label class="lux-field-label">Equipment Category</label>
@@ -1071,6 +1081,7 @@
 
             <!-- Results Panel (grouped by Work Order) -->
             <h:panelGroup id="resultsPanel">
+
                 <h:form id="resultsForm" prependId="false">
 
                     <h:panelGroup layout="block" styleClass="animate-fadeInUp" style="animation-delay: 0.2s"
@@ -1213,6 +1224,11 @@
                                                 <div class="task-content-item">
                                                     <small>Branch</small>
                                                     <div class="task-content-value">#{not empty task['organizationName'] ? task['organizationName'] : '-'}</div>
+                                                </div>
+
+                                                <div class="task-content-item">
+                                                    <small>Result</small>
+                                                    <div class="task-content-value">#{not empty task['result'] ? task['result'] : '-'}</div>
                                                 </div>
                                             </div>
 

@@ -87,6 +87,10 @@ public class CompletedTaskSearchBean implements Serializable {
     private boolean searchPerformed = false;
     private Map<String, String> smatToDisplayName = new HashMap<>();
 
+    // Result filter (Pass/Fail)
+    private String resultFilter;
+
+
     // Dropdown lists
     private List<Company> companyList = new ArrayList<>();
     private List<EquipmentCategory> equipmentCategoryList = new ArrayList<>();
@@ -509,6 +513,47 @@ public class CompletedTaskSearchBean implements Serializable {
                         row.put("inspectorName", inspector);
                         row.put("reviewerName", reviewer);
 
+                        // ---- NEW: determine result (Pass/Fail) from EquipmentInspectionForm items ----
+                        try {
+                            String result = "-";
+                            if (tid != null) {
+                                try {
+                                    EquipmentInspectionForm form = equipmentInspectionFormService.getBy(tid);
+                                    if (form != null) {
+                                        java.util.Set<?> items = form.getEquipmentInspectionFormItems();
+                                        if (items != null && !items.isEmpty()) {
+                                            boolean anyFail = false;
+                                            boolean anyPass = false;
+                                            for (Object o : items) {
+                                                try {
+                                                    if (o instanceof com.smat.ins.model.entity.EquipmentInspectionFormItem) {
+                                                        com.smat.ins.model.entity.EquipmentInspectionFormItem it = (com.smat.ins.model.entity.EquipmentInspectionFormItem) o;
+                                                        String v = it.getItemValue();
+                                                        if (v != null) {
+                                                            v = v.trim();
+                                                            if (v.equalsIgnoreCase("fail") || v.equalsIgnoreCase("failed")) anyFail = true;
+                                                            else if (v.equalsIgnoreCase("pass") || v.equalsIgnoreCase("passed")) anyPass = true;
+                                                        }
+                                                    }
+                                                } catch (Exception inner) {
+                                                    // ignore individual item parse errors
+                                                }
+                                            }
+                                            if (anyFail) result = "Fail";
+                                            else if (anyPass) result = "Pass";
+                                        }
+                                    }
+                                } catch (Exception ignore) {
+                                    // best-effort, do not break search
+                                }
+                            }
+                            row.put("result", result);
+                        } catch (Exception exRes) {
+                            // ensure we still put something
+                            row.put("result", row.getOrDefault("result", "-"));
+                        }
+                        // ---- END result logic ----
+
                     } catch (Exception e) {
                         try {
                             row.put("inspectorName", row.getOrDefault("inspectorName", "Not assigned"));
@@ -573,8 +618,8 @@ public class CompletedTaskSearchBean implements Serializable {
             if (workOrderFilter != null && !workOrderFilter.trim().isEmpty() && searchResults != null && !searchResults.isEmpty()) {
                 String q = workOrderFilter.trim().toLowerCase();
                 List<Map<String, Object>> wf = new ArrayList<>();
-                    // Prefer an explicit 'workOrder' value (populated from Task->Correspondence or explicit workOrder fields)
-                    // Fall back to jobNo only if workOrder is not present.
+                // Prefer an explicit 'workOrder' value (populated from Task->Correspondence or explicit workOrder fields)
+                // Fall back to jobNo only if workOrder is not present.
                 String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
                 for (Map<String,Object> row : searchResults) {
                     if (row == null) continue;
@@ -593,6 +638,22 @@ public class CompletedTaskSearchBean implements Serializable {
                 searchResults = wf;
             }
             // ---- end workOrder filter ----
+
+            // ---- NEW: Apply result filter (Pass/Fail) AFTER we computed 'result' values and populated searchResults ----
+            if (resultFilter != null && !resultFilter.trim().isEmpty() && searchResults != null && !searchResults.isEmpty()) {
+                String rf = resultFilter.trim();
+                List<Map<String, Object>> rfList = new ArrayList<>();
+                for (Map<String, Object> row : searchResults) {
+                    if (row == null) continue;
+                    Object rvObj = row.get("result");
+                    String rv = rvObj == null ? "" : String.valueOf(rvObj).trim();
+                    if (rv.equalsIgnoreCase(rf)) {
+                        rfList.add(row);
+                    }
+                }
+                searchResults = rfList;
+            }
+            // ---- end result filter ----
 
             statistics = completedTaskService.getTaskCompletionStatistics(fromDate, toDate, companyId);
 
@@ -622,8 +683,8 @@ public class CompletedTaskSearchBean implements Serializable {
         LinkedHashMap<String, List<Map<String, Object>>> groups = new LinkedHashMap<>();
         if (searchResults == null || searchResults.isEmpty()) return groups;
 
-    // Prefer 'workOrder' (may contain correspondence id set earlier) before falling back to jobNo
-    String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
+        // Prefer 'workOrder' (may contain correspondence id set earlier) before falling back to jobNo
+        String[] workOrderKeys = {"workOrder", "workOrderNo", "workOrderNumber", "jobNo", "job_number", "job_no", "jobNum", "jobNumber"};
 
         // collect groups (unsorted)
         for (Map<String, Object> row : searchResults) {
@@ -715,10 +776,10 @@ public class CompletedTaskSearchBean implements Serializable {
     private void populateWorkOrder(Map<String, Object> row, Integer taskId) {
         if (row == null) return;
 
-    // 1) try common keys already present in the row
-    // Note: do NOT treat jobNo as a direct synonym for workOrder here - keep jobNo as a separate field.
-    // This avoids showing job number when an explicit work order value exists or should be shown.
-    String[] candidateKeys = {"workOrder", "workOrderNo", "workOrderNumber", "work_order_no", "work_order", "woNumber", "wo_no"};
+        // 1) try common keys already present in the row
+        // Note: do NOT treat jobNo as a direct synonym for workOrder here - keep jobNo as a separate field.
+        // This avoids showing job number when an explicit work order value exists or should be shown.
+        String[] candidateKeys = {"workOrder", "workOrderNo", "workOrderNumber", "work_order_no", "work_order", "woNumber", "wo_no"};
         for (String k : candidateKeys) {
             try {
                 Object v = row.get(k);
@@ -1710,6 +1771,15 @@ public class CompletedTaskSearchBean implements Serializable {
 
     public List<Organization> getOrganizationList() {
         return organizationList;
+    }
+
+    // Getter/Setter for resultFilter
+    public String getResultFilter() {
+        return resultFilter;
+    }
+
+    public void setResultFilter(String resultFilter) {
+        this.resultFilter = resultFilter;
     }
 
     public void setOrganizationList(List<Organization> organizationList) {

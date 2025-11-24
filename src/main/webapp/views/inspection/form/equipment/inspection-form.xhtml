@@ -1862,7 +1862,7 @@
 
     <ui:define name="section-content">
         <h:form id="form">
-            <p:growl id="messages" showDetail="true" showSummary="false" sticky="false" life="2000" />
+            <p:growl id="messages" widgetVar="growlWV" showDetail="true" showSummary="false" sticky="false" life="10000" />
 
             <!-- قسم إدارة المسودات الجديد باللون الأخضر الفاتح -->
             <div class="draft-management-section">
@@ -2074,6 +2074,8 @@
                                              converter="omnifaces.SelectItemsIndexConverter"
                                              value="#{inspectionFormBean.equipmentInspectionForm.sticker}">
                                 <f:selectItem itemLabel="Select sticker:" value="#{null}" noSelectionOption="false" />
+                                <!-- explicit option to save sticker as N\\A -->
+                                <f:selectItem itemLabel="N\\A" itemValue="#{inspectionFormBean.naSentinel}" />
                                 <f:selectItems
                                         itemLabel="#{stickerVar.stickerNo}"
                                         itemValue="#{stickerVar}" var="stickerVar"
@@ -2164,6 +2166,8 @@
 
                 </div>
             </div>
+
+
 
             <p:divider layout="horizontal" type="solid" styleClass="mt-4 mb-4" />
 
