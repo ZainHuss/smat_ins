@@ -29,9 +29,9 @@ INSERT INTO smat_ins_db.checklist_detail_data_source(id, checklist_data_source, 
 INSERT INTO smat_ins_db.checklist_detail_data_source(id, checklist_data_source, item_value, item_code) VALUES
     (6, 3, 'no', '006');
 INSERT INTO smat_ins_db.checklist_detail_data_source(id, checklist_data_source, item_value, item_code) VALUES
-    (7, 4, 'pass', '007');
+    (7, 4, 'Pass', '007');
 INSERT INTO smat_ins_db.checklist_detail_data_source(id, checklist_data_source, item_value, item_code) VALUES
-    (8, 4, 'fail', '008');
+    (8, 4, 'Fail', '008');
 INSERT INTO smat_ins_db.checklist_detail_data_source(id, checklist_data_source, item_value, item_code) VALUES
     (9, 5, 'S', '009');
 INSERT INTO smat_ins_db.checklist_detail_data_source(id, checklist_data_source, item_value, item_code) VALUES
