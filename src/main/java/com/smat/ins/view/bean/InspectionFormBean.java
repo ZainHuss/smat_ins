@@ -472,7 +472,41 @@ public class InspectionFormBean implements Serializable {
     }
 
     public List<Sticker> getStickers() {
-        return stickers;
+        try {
+            if (stickers == null) return new ArrayList<Sticker>();
+            com.smat.ins.model.entity.SysUser current = null;
+            try { current = loginBean.getUser(); } catch (Exception ignore) {}
+
+            List<Sticker> result = new ArrayList<>();
+            if (current != null) {
+                for (Sticker s : stickers) {
+                    try {
+                        boolean notUsed = (s.getIsUsed() == null) || !s.getIsUsed();
+                        if (s.getSysUserByForUser() != null && s.getSysUserByForUser().getId() != null
+                                && s.getSysUserByForUser().getId().equals(current.getId()) && notUsed) {
+                            result.add(s);
+                        }
+                    } catch (Exception ignore) {}
+                }
+            }
+
+            // Ensure the currently selected sticker (if any) is present so the selectOneMenu can bind
+            try {
+                if (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null) {
+                    Sticker cur = equipmentInspectionForm.getSticker();
+                    boolean contains = false;
+                    for (Sticker s : result) {
+                        if (s != null && cur != null && s.getStickerNo() != null && s.getStickerNo().equals(cur.getStickerNo())) { contains = true; break; }
+                    }
+                    if (!contains) result.add(0, cur);
+                }
+            } catch (Exception ignore) {}
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return stickers;
+        }
     }
 
     public void setStickers(List<Sticker> stickers) {
@@ -1169,19 +1203,16 @@ public class InspectionFormBean implements Serializable {
 
             if (anyPass && anyFail) {
                 UtilityHelper.addErrorMessage("Conflicting Pass/Fail values in template — please correct before saving.");
-                try { javax.faces.context.FacesContext.getCurrentInstance().validationFailed(); } catch (Exception ignore) {}
                 return false;
             }
 
             if (anyPass && stickerIsNA) {
                 UtilityHelper.addErrorMessage("cant choose 'N\\A' for sticker when result is 'Pass'");
-                try { javax.faces.context.FacesContext.getCurrentInstance().validationFailed(); } catch (Exception ignore) {}
                 return false;
             }
 
             if (anyFail && !stickerIsNA) {
                 UtilityHelper.addErrorMessage("cant choose sticker number other than 'N\\A' when result is 'Fail'");
-                try { javax.faces.context.FacesContext.getCurrentInstance().validationFailed(); } catch (Exception ignore) {}
                 return false;
             }
 

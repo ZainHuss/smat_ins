@@ -6,6 +6,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import com.smat.ins.model.entity.Sticker;
+import com.smat.ins.model.entity.SysUser;
 import com.smat.ins.model.entity.UserAlias;
 import com.smat.ins.model.service.StickerService;
 import com.smat.ins.model.service.UserAliasService;
@@ -106,6 +107,10 @@ public class StickerManagementBean implements Serializable {
     private List<Sticker> filteredStickers;
     private Sticker sticker;
     private Integer generatedStickerNum;
+    private String assignFromStickerNo;
+    private String assignToStickerNo;
+    private Sticker exportFromSticker;
+    private Sticker exportToSticker;
     private String availableStickers;
     private String usedStickers;
     private int filteredResultsCount; // إضافة خاصية عدد النتائج المصفاة
@@ -133,7 +138,53 @@ public class StickerManagementBean implements Serializable {
     @PostConstruct
     public void init() {
         try {
-            userAliasList = userAliasService.getAllWithDetails();
+            // Load only inspector user aliases using the same approach as mail/create.xhtml
+            // That bean filters users by role code == "001" (Inspector). Prefer that method over
+            // job-position heuristics because roles are authoritative.
+            userAliasList = new ArrayList<>();
+            try {
+                List<UserAlias> allAliases = userAliasService.getAllWithDetails();
+                if (allAliases != null) {
+                    for (UserAlias ua : allAliases) {
+                        if (ua == null || ua.getSysUserBySysUser() == null)
+                            continue;
+                        if (ua.getSysUserBySysUser().getSysUserRoles() != null) {
+                            for (Object oRole : ua.getSysUserBySysUser().getSysUserRoles()) {
+                                try {
+                                    com.smat.ins.model.entity.SysUserRole sur = (com.smat.ins.model.entity.SysUserRole) oRole;
+                                    if (sur != null && sur.getSysRole() != null && "001".equals(sur.getSysRole().getCode())) {
+                                        userAliasList.add(ua);
+                                        break;
+                                    }
+                                } catch (Exception ignore) {
+                                    // ignore malformed role entries and continue
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // fallback: previous heuristic based on jobPosition containing 'inspect'
+                try {
+                    List<UserAlias> allAliases = userAliasService.getAllWithDetails();
+                    if (allAliases == null) allAliases = new ArrayList<>();
+                    userAliasList = allAliases.stream().filter(ua -> {
+                        try {
+                            if (ua == null) return false;
+                            if (ua.getJobPosition() == null) return false;
+                            String code = ua.getJobPosition().getCode() == null ? "" : ua.getJobPosition().getCode();
+                            String en = ua.getJobPosition().getEnglishName() == null ? "" : ua.getJobPosition().getEnglishName();
+                            String ar = ua.getJobPosition().getArabicName() == null ? "" : ua.getJobPosition().getArabicName();
+                            String combined = (code + " " + en + " " + ar).toLowerCase();
+                            return combined.contains("inspect");
+                        } catch (Exception ex) {
+                            return false;
+                        }
+                    }).collect(Collectors.toList());
+                } catch (Exception ignore) {
+                    userAliasList = new ArrayList<>();
+                }
+            }
             stickers = stickerService.findAll();
             // initialize multi-select recipients
             selectedUserAliases = new ArrayList<>();
@@ -371,7 +422,7 @@ public class StickerManagementBean implements Serializable {
             int month = now.get(Calendar.MONTH) + 1;
             int day = now.get(Calendar.DAY_OF_MONTH);
 
-            // Create the requested number of stickers without assigning them to any user
+            // Create the requested number of stickers, optionally assigning them to a user
             for (int i = 0; i < generatedStickerNum; i++) {
                 Sticker sticker = new Sticker();
                 sticker.setSeq(stickerService.getLastSeq());
@@ -382,7 +433,9 @@ public class StickerManagementBean implements Serializable {
                 sticker.setYear((short) year);
                 sticker.setIsUsed(false);
                 sticker.setIsPrinted(false);
-                // intentionally do NOT set sysUserByForUser so stickers remain global/unassigned
+                // NOTE: Do NOT auto-assign generated stickers to any user here.
+                // Generated stickers should remain unassigned so the operator can
+                // explicitly assign them later using the "Assign From Available" action.
                 stickerService.save(sticker);
             }
 
@@ -392,6 +445,112 @@ public class StickerManagementBean implements Serializable {
         } catch (Exception e) {
             UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
             log.error("Failed to generate stickers", e);
+        }
+    }
+
+    // Deprecated: old assign-by-count removed in favor of range-based assignment
+
+    /**
+     * Assign a specific sticker number range to the selected user.
+     * Example: from SK00001 to SK00020 will assign those sticker records (if available & unassigned).
+     * If any sticker in the requested range is already assigned to another user, the whole operation is aborted
+     * and an error message is shown listing the conflicting sticker.
+     */
+    public void assignRangeToUser() {
+        try {
+            if (selectedUserAlias == null || selectedUserAlias.getSysUserBySysUser() == null) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldSelectUser"));
+                return;
+            }
+
+            if (assignFromStickerNo == null || assignFromStickerNo.trim().isEmpty()
+                    || assignToStickerNo == null || assignToStickerNo.trim().isEmpty()) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldEnterPositiveVal"));
+                return;
+            }
+
+            // Extract numeric parts from sticker numbers (e.g., SK00012 -> 12)
+            String fromDigits = assignFromStickerNo.replaceAll("\\D", "");
+            String toDigits = assignToStickerNo.replaceAll("\\D", "");
+            if (fromDigits.isEmpty() || toDigits.isEmpty()) {
+                UtilityHelper.addErrorMessage("Invalid sticker number format. Use e.g. SK00001");
+                return;
+            }
+
+            int fromNum;
+            int toNum;
+            try {
+                fromNum = Integer.parseInt(fromDigits);
+                toNum = Integer.parseInt(toDigits);
+            } catch (NumberFormatException nfe) {
+                UtilityHelper.addErrorMessage("Invalid sticker number format. Use numeric suffix like SK00001");
+                return;
+            }
+
+            if (fromNum > toNum) {
+                UtilityHelper.addErrorMessage("From number must be less than or equal to To number");
+                return;
+            }
+
+            // Build list of stickers that fall within the requested range
+            List<Sticker> all = stickerService.findAll();
+            List<Sticker> range = all.stream()
+                    .filter(s -> s.getStickerNo() != null)
+                    .filter(s -> {
+                        String digits = s.getStickerNo().replaceAll("\\D", "");
+                        if (digits.isEmpty()) return false;
+                        try {
+                            int v = Integer.parseInt(digits);
+                            return v >= fromNum && v <= toNum;
+                        } catch (NumberFormatException ex) {
+                            return false;
+                        }
+                    })
+                    .sorted((a, b) -> {
+                        Long as = a.getSeq() == null ? 0L : a.getSeq();
+                        Long bs = b.getSeq() == null ? 0L : b.getSeq();
+                        return as.compareTo(bs);
+                    })
+                    .collect(Collectors.toList());
+
+            if (range.isEmpty()) {
+                UtilityHelper.addErrorMessage("No stickers found in the specified range");
+                return;
+            }
+
+            SysUser target = selectedUserAlias.getSysUserBySysUser();
+
+            // Check for conflicts: any sticker already assigned to a different user
+            for (Sticker s : range) {
+                if (s.getSysUserByForUser() != null && !s.getSysUserByForUser().getId().equals(target.getId())) {
+                    String msg = String.format("Sticker number %s already assigned for another user: %s",
+                            s.getStickerNo(), s.getSysUserByForUser().getDisplayName());
+                    UtilityHelper.addErrorMessage(msg);
+                    return; // abort operation
+                }
+            }
+
+            // Assign all stickers in the range (including those already assigned to same user)
+            for (Sticker s : range) {
+                s.setSysUserByForUser(target);
+                try {
+                    stickerService.update(s);
+                } catch (Exception ex) {
+                    log.error("Failed to assign sticker {}", s, ex);
+                }
+            }
+
+            // Refresh results and show success
+            searchStickers();
+            UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+
+            // Clear inputs
+            assignFromStickerNo = null;
+            assignToStickerNo = null;
+
+        } catch (Exception e) {
+            log.error("Error while assigning sticker range", e);
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
         }
     }
 
@@ -715,6 +874,96 @@ public class StickerManagementBean implements Serializable {
         }
     }
 
+    /**
+     * Export only stickers within the selected from/to range (inclusive).
+     * The dialog binds `exportFromSticker` and `exportToSticker`.
+     */
+    public void exportStickersRange() {
+        try {
+            if (exportFromSticker == null || exportToSticker == null) {
+                UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("youShouldEnterPositiveVal"));
+                return;
+            }
+
+            // Extract numeric suffixes from stickerNo values
+            int fromNum = extractNumericSuffix(exportFromSticker.getStickerNo());
+            int toNum = extractNumericSuffix(exportToSticker.getStickerNo());
+            if (fromNum < 0 || toNum < 0) {
+                UtilityHelper.addErrorMessage("Invalid sticker number format selected for export.");
+                return;
+            }
+            if (fromNum > toNum) {
+                UtilityHelper.addErrorMessage("From must be less or equal To for export range.");
+                return;
+            }
+
+            List<Sticker> all = stickerService.findAll();
+            List<Sticker> range = all.stream()
+                    .filter(s -> s.getStickerNo() != null)
+                    .filter(s -> {
+                        int v = extractNumericSuffix(s.getStickerNo());
+                        return v >= fromNum && v <= toNum;
+                    })
+                    .sorted((a, b) -> {
+                        Long as = a.getSeq() == null ? 0L : a.getSeq();
+                        Long bs = b.getSeq() == null ? 0L : b.getSeq();
+                        return as.compareTo(bs);
+                    }).collect(Collectors.toList());
+
+            if (range.isEmpty()) {
+                UtilityHelper.addErrorMessage("No stickers found in the selected range.");
+                return;
+            }
+
+            // reuse existing export/report generation by building a datasource and filling jasper
+            List<Map<String, Object>> dataSource = new ArrayList<>();
+            for (Sticker sticker : range) {
+                Map<String, Object> record = new HashMap<>();
+                record.put("stickerNo", sticker.getStickerNo());
+                String qrText = UtilityHelper.getBaseURL() + "/api/equipment-cert/" + sticker.getSerialNo() + "&"
+                        + sticker.getStickerNo();
+                QRCodeWriter qrCodeWriter = new QRCodeWriter();
+                BitMatrix bitMatrix = qrCodeWriter.encode(qrText, BarcodeFormat.QR_CODE, 100, 100);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                MatrixToImageWriter.writeToStream(bitMatrix, "PNG", baos);
+                record.put("smatQrCode", baos.toByteArray());
+                dataSource.add(record);
+            }
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("lstSticker", dataSource);
+            parameters.put("logoLeftPath", getServletContextPath("views/jasper/images/logo-left.png"));
+            parameters.put("logoRightPath", getServletContextPath("views/jasper/images/logo-right.png"));
+            parameters.put("iconMailPath", getServletContextPath("views/jasper/images/icon-mail.png"));
+            parameters.put("iconMobilePath", getServletContextPath("views/jasper/images/icon-mobile.png"));
+            parameters.put("iconSitePath", getServletContextPath("views/jasper/images/icon-site.png"));
+            parameters.put("iconWhatsPath", getServletContextPath("views/jasper/images/icon-whats.png"));
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(getServletContextPath("views/jasper/Sticker.jasper"),
+                    parameters, new JRBeanCollectionDataSource(dataSource));
+            exportReport(jasperPrint, "Stickers_Range");
+
+            UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+            // clear selection
+            exportFromSticker = null;
+            exportToSticker = null;
+        } catch (Exception e) {
+            log.error("Failed to export selected sticker range", e);
+            UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("operationFaild"));
+        }
+    }
+
+    private int extractNumericSuffix(String stickerNo) {
+        if (stickerNo == null) return -1;
+        String digits = stickerNo.replaceAll("\\D", "");
+        if (digits.isEmpty()) return -1;
+        try {
+            return Integer.parseInt(digits);
+        } catch (NumberFormatException nfe) {
+            return -1;
+        }
+    }
+
 
 
 
@@ -755,6 +1004,24 @@ public class StickerManagementBean implements Serializable {
     public void setTotalStickers(int totalStickers) {
         this.totalStickers = totalStickers;
     }
+
+    public Sticker getExportFromSticker() {
+        return exportFromSticker;
+    }
+
+    public void setExportFromSticker(Sticker exportFromSticker) {
+        this.exportFromSticker = exportFromSticker;
+    }
+
+    public Sticker getExportToSticker() {
+        return exportToSticker;
+    }
+
+    public void setExportToSticker(Sticker exportToSticker) {
+        this.exportToSticker = exportToSticker;
+    }
+
+
 
     public List<UserAlias> getUserAliasList() {
         return userAliasList;

@@ -11,6 +11,12 @@
                             name="css/material-theme.css"></h:outputStylesheet>
         <style type="text/css">
             :root {
+                --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+                --info-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+                --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
                 --silver-light: #f8f9fa;
                 --silver-medium: #e9ecef;
                 --silver-dark: #dee2e6;
@@ -43,6 +49,9 @@
                 --gradient-info: linear-gradient(135deg, #17a2b8 0%, #1fc8e3 100%);
                 --gradient-table-header: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
                 --gradient-background: linear-gradient(135deg, #fefefe 0%, #f8f9fa 100%);
+                --dialog-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+                --dialog-background: rgba(255, 255, 255, 0.95);
+                --backdrop-blur: blur(12px);
             }
 
             /* Animation Keyframes - نعومة أكثر */
@@ -124,15 +133,26 @@
                 }
             }
 
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
             /* Main Container - تصميم فضي أنيق */
             .sticker-container {
                 animation: fadeInDown 0.5s ease-out;
                 background: var(--gradient-background);
-                border-radius: 16px;
-                padding: 1.5rem;
+                border-radius: 20px;
+                padding: 2rem;
                 box-shadow:
-                        0 8px 25px var(--silver-shadow),
-                        0 4px 12px rgba(0, 0, 0, 0.05),
+                        0 12px 40px var(--silver-shadow),
+                        0 6px 20px rgba(0, 0, 0, 0.05),
                         inset 0 1px 0 rgba(255, 255, 255, 0.8);
                 position: relative;
                 overflow: hidden;
@@ -155,19 +175,17 @@
                 pointer-events: none;
             }
 
-            /* Header Section - أزرق أنيق */
-            /* Header Section - أزرق أنيق */
-
+            /* Header Section - تصميم محسّن */
             .header-section {
                 background: linear-gradient(135deg, #f8fbff 0%, #e3f2fd 100%);
                 backdrop-filter: blur(12px);
-                border-radius: 12px;
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
+                border-radius: 16px;
+                padding: 2rem;
+                margin-bottom: 2rem;
                 box-shadow:
-                        0 4px 15px rgba(0, 123, 255, 0.1),
-                        0 2px 8px rgba(0, 123, 255, 0.04);
-                border: 1px solid #b3d9ff;
+                        0 8px 25px rgba(0, 123, 255, 0.15),
+                        0 4px 12px rgba(0, 123, 255, 0.08);
+                border: 1px solid rgba(179, 217, 255, 0.5);
                 animation: slideInLeft 0.4s ease-out;
                 position: relative;
                 overflow: hidden;
@@ -180,57 +198,46 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 3px;
-                background: linear-gradient(90deg,
-                #007bff,
-                #4dabf7,
-                #007bff);
-                border-radius: 12px 12px 0 0;
-                opacity: 0.8;
+                height: 4px;
+                background: var(--primary-gradient);
+                border-radius: 16px 16px 0 0;
             }
 
             .header-title {
                 color: #0056b3;
-                font-size: 1.6rem;
-                font-weight: 600;
+                font-size: 1.8rem;
+                font-weight: 700;
                 margin-bottom: 0.5rem;
                 text-align: left;
                 position: relative;
                 display: inline-block;
-            }
-
-            .header-title::after {
-                content: '';
-                position: absolute;
-                bottom: -6px;
-                left: 0;
-                width: 50px;
-                height: 2px;
-                background: #007bff;
-                border-radius: 2px;
-                opacity: 0.8;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
             }
 
             .header-description {
                 text-align: left;
                 color: #0066cc;
                 margin: 1rem 0 0 0;
-                font-size: 1rem;
-                line-height: 1.5;
+                font-size: 1.1rem;
+                line-height: 1.6;
                 font-weight: 400;
                 max-width: 100%;
+                opacity: 0.9;
             }
 
             /* Input Section - تصميم هادئ */
             .input-section {
                 background: var(--surface);
                 backdrop-filter: blur(12px);
-                border-radius: 12px;
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
+                border-radius: 16px;
+                padding: 2rem;
+                margin-bottom: 2rem;
                 box-shadow:
-                        0 4px 15px var(--silver-shadow),
-                        0 2px 8px rgba(0, 0, 0, 0.04);
+                        0 8px 25px var(--silver-shadow),
+                        0 4px 12px rgba(0, 0, 0, 0.04);
                 border: 1px solid var(--silver-border);
                 animation: slideInLeft 0.5s ease-out;
                 position: relative;
@@ -239,49 +246,50 @@
             .input-group {
                 display: flex;
                 align-items: center;
-                gap: 1.2rem;
-                margin-bottom: 1.5rem;
+                gap: 1.5rem;
+                margin-bottom: 1.8rem;
                 flex-wrap: wrap;
             }
 
             .input-label {
-                font-weight: 500;
-                color: #0056b3 !important; /* تغيير إلى أزرق */
-                min-width: 130px;
+                font-weight: 600;
+                color: #0056b3 !important;
+                min-width: 140px;
                 display: flex;
                 align-items: center;
-                gap: 0.6rem;
+                gap: 0.8rem;
                 font-size: 1rem;
             }
 
             .input-label i {
-                color: #007bff !important; /* أيقونة زرقاء */
-                font-size: 1em;
+                color: #007bff !important;
+                font-size: 1.1em;
             }
 
             .input-field {
                 flex: 1;
-                min-width: 250px;
+                min-width: 280px;
             }
 
             .input-field .ui-inputtext {
                 width: 100%;
-                padding: 0.8rem 1.2rem;
+                padding: 1rem 1.5rem;
                 border: 1.5px solid var(--silver-border);
-                border-radius: 8px;
-                font-size: 0.95rem;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 12px;
+                font-size: 1rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 background: var(--silver-light);
                 color: var(--text-primary);
                 font-weight: 400;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
 
             .input-field .ui-inputtext:focus {
                 border-color: var(--accent-blue);
                 box-shadow:
-                        0 0 0 2px rgba(108, 117, 125, 0.1),
-                        0 2px 6px rgba(108, 117, 125, 0.08);
-                transform: translateY(-1px);
+                        0 0 0 3px rgba(0, 123, 255, 0.1),
+                        0 4px 12px rgba(0, 123, 255, 0.1);
+                transform: translateY(-2px);
                 background: var(--surface);
             }
 
@@ -290,89 +298,85 @@
                 font-weight: 400;
             }
 
-            /* Button Section - أزرار بسيطة وأنيقة */
-            /* Button Section - أزرار صغيرة على اليمين */
+            /* Button Section - أزرار محسنة */
             .button-section {
                 display: flex;
-                gap: 0.8rem;
-                justify-content: flex-end; /* تغيير من center إلى flex-end */
+                gap: 1rem;
+                justify-content: flex-end;
                 flex-wrap: wrap;
-                margin: 1.5rem 0 1rem 0;
+                margin: 2rem 0 1.5rem 0;
                 align-items: center;
             }
 
-            /* تنسيق الأزرار الصغيرة */
             .enhanced-button {
                 position: relative;
                 overflow: hidden;
-                border-radius: 9px !important; /* تصغير الزوايا */
-                padding: 0.6rem 1.2rem !important; /* تصغير الحشوة */
-                font-weight: 500 !important;
-                font-size: 4.0rem !important; /* تصغير حجم الخط */
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                border-radius: 12px !important;
+                padding: 0.8rem 1.5rem !important;
+                font-weight: 600 !important;
+                font-size: 0.95rem !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
                 border: none !important;
-                min-width: 120px; /* تصغير العرض */
+                min-width: 140px;
                 backdrop-filter: blur(8px);
-                letter-spacing: 0.1px; /* تقليل مسافة الحروف */
+                letter-spacing: 0.2px;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                gap: 0.4rem; /* تصغير المسافة بين العناصر */
+                gap: 0.5rem;
                 animation: bounceIn 0.5s ease-out;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
             }
 
             .enhanced-button:hover {
-                transform: translateY(-1px) !important;
+                transform: translateY(-3px) !important;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
             }
 
             .enhanced-button:active {
-                transform: translateY(0) !important;
+                transform: translateY(-1px) !important;
             }
-            /* ألوان الأزرار المعدلة - بسيطة وأنيقة */
+
+            /* ألوان الأزرار المعدلة - تصميم متدرج */
             .generate-btn {
-                background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+                background: var(--primary-gradient) !important;
                 color: white !important;
-                box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2) !important;
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
             }
 
             .generate-btn:hover {
-                box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3) !important;
-                background: linear-gradient(135deg, #0056b3 0%, #004085 100%) !important;
+                background: var(--secondary-gradient) !important;
+                box-shadow: 0 8px 25px rgba(245, 87, 108, 0.3) !important;
             }
+
             .export-btn {
-                background: var(--gradient-success) !important;
+                background: var(--success-gradient) !important;
                 color: white !important;
-                box-shadow:
-                        0 2px 8px rgba(40, 167, 69, 0.2) !important;
+                box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3) !important;
             }
 
             .export-btn:hover {
-                box-shadow:
-                        0 4px 12px rgba(40, 167, 69, 0.25) !important;
+                box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4) !important;
             }
 
             .print-btn {
-                background: var(--gradient-warning) !important;
+                background: var(--warning-gradient) !important;
                 color: var(--text-primary) !important;
-                box-shadow:
-                        0 2px 8px rgba(255, 193, 7, 0.2) !important;
+                box-shadow: 0 4px 15px rgba(67, 233, 123, 0.3) !important;
             }
 
             .print-btn:hover {
-                box-shadow:
-                        0 4px 12px rgba(255, 193, 7, 0.25) !important;
+                box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4) !important;
             }
 
             .refresh-btn {
-                background: var(--gradient-info) !important;
-                color: white !important;
-                box-shadow:
-                        0 2px 8px rgba(23, 162, 184, 0.2) !important;
+                background: var(--info-gradient) !important;
+                color: var(--text-primary) !important;
+                box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3) !important;
             }
 
             .refresh-btn:hover {
-                box-shadow:
-                        0 4px 12px rgba(23, 162, 184, 0.25) !important;
+                box-shadow: 0 8px 25px rgba(168, 237, 234, 0.4) !important;
             }
 
             .enhanced-button::before {
@@ -384,9 +388,9 @@
                 height: 100%;
                 background: linear-gradient(90deg,
                 transparent,
-                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.3),
                 transparent);
-                transition: left 0.4s;
+                transition: left 0.6s;
             }
 
             .enhanced-button:hover::before {
@@ -394,29 +398,29 @@
             }
 
             .button-icon {
-                font-size: 1.1em;
-                transition: all 0.2s ease;
+                font-size: 1.2em;
+                transition: all 0.3s ease;
             }
 
             .enhanced-button:hover .button-icon {
-                transform: scale(1.05);
+                transform: scale(1.1);
             }
 
             /* Loading and Success States */
             .generate-btn.loading {
                 pointer-events: none;
-                opacity: 0.7;
+                opacity: 0.8;
             }
 
             .generate-btn.success {
                 animation: successPulse 0.8s ease-out;
-                background: var(--gradient-success) !important;
+                background: var(--success-gradient) !important;
             }
 
             .loading-spinner {
                 display: none;
-                width: 16px;
-                height: 16px;
+                width: 18px;
+                height: 18px;
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 border-radius: 50%;
                 border-top-color: white;
@@ -431,7 +435,7 @@
             .success-icon {
                 display: none;
                 color: white;
-                font-size: 1.1em;
+                font-size: 1.2em;
                 animation: float 1s ease-in-out infinite;
             }
 
@@ -443,11 +447,11 @@
             .table-section {
                 background: var(--surface);
                 backdrop-filter: blur(12px);
-                border-radius: 12px;
-                padding: 1.5rem;
+                border-radius: 16px;
+                padding: 2rem;
                 box-shadow:
-                        0 4px 15px var(--silver-shadow),
-                        0 2px 8px rgba(0, 0, 0, 0.04);
+                        0 8px 25px var(--silver-shadow),
+                        0 4px 12px rgba(0, 0, 0, 0.04);
                 border: 1px solid var(--silver-border);
                 animation: fadeInDown 0.6s ease-out;
                 position: relative;
@@ -459,70 +463,75 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 3px;
-                background: linear-gradient(90deg, var(--silver-dark), var(--silver-medium));
-                border-radius: 12px 12px 0 0;
-                opacity: 0.6;
+                height: 4px;
+                background: var(--primary-gradient);
+                border-radius: 16px 16px 0 0;
             }
 
             /* Table Header أنيق */
             .table-header {
                 background: var(--gradient-table-header) !important;
-                color: #007bff !important; /* تغيير اللون إلى أزرق */
-                padding: 1rem 1.5rem;
-                border-radius: 8px;
-                margin-bottom: 1.2rem;
+                color: #007bff !important;
+                padding: 1.5rem 2rem;
+                border-radius: 12px;
+                margin-bottom: 1.5rem;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 flex-wrap: wrap;
-                gap: 1rem;
-                box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1); /* ظل أزرق */
-                border: 1px solid #b3d9ff; /* حدود زرقاء فاتحة */
+                gap: 1.5rem;
+                box-shadow: 0 4px 15px rgba(0, 123, 255, 0.1);
+                border: 1px solid rgba(179, 217, 255, 0.5);
             }
 
             .table-header h3 {
                 margin: 0;
-                font-weight: 600;
-                font-size: 1.2rem;
+                font-weight: 700;
+                font-size: 1.4rem;
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
-                color: #0056b3; /* أزرق داكن */
+                gap: 0.8rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
 
-            }
             .table-header h3 i {
-                color: #007bff !important; /* أيقونة زرقاء */
+                color: #007bff !important;
             }
+
             .search-container {
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
+                gap: 0.8rem;
                 background: var(--surface);
-                padding: 0.5rem 1rem;
-                border-radius: 8px;
+                padding: 0.8rem 1.2rem;
+                border-radius: 12px;
                 border: 1px solid var(--silver-border);
                 backdrop-filter: blur(8px);
-                transition: all 0.2s ease;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
 
             .search-container:hover {
                 background: var(--silver-light);
-                transform: translateY(-1px);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             }
 
             .search-container i {
                 color: var(--text-secondary);
-                font-size: 1em;
+                font-size: 1.1em;
             }
 
             .search-container input {
                 background: transparent !important;
                 border: none !important;
                 color: var(--text-primary) !important;
-                font-size: 0.9rem !important;
-                padding: 0.4rem !important;
-                width: 200px;
+                font-size: 1rem !important;
+                padding: 0.5rem !important;
+                width: 250px;
                 font-weight: 400;
             }
 
@@ -542,131 +551,132 @@
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-trigger {
-                background: var(--gradient-accent) !important;
+                background: var(--primary-gradient) !important;
                 border: none !important;
-                border-radius: 8px !important;
-                padding: 0.8rem !important;
+                border-radius: 12px !important;
+                padding: 1rem !important;
                 color: white !important;
-                transition: all 0.2s ease !important;
-                box-shadow: 0 2px 6px rgba(108, 117, 125, 0.2);
+                transition: all 0.3s ease !important;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-trigger:hover {
-                background: linear-gradient(135deg, var(--accent-blue-dark) 0%, var(--accent-blue) 100%) !important;
-                transform: translateY(-1px);
-                box-shadow: 0 4px 10px rgba(108, 117, 125, 0.25);
+                background: var(--secondary-gradient) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(245, 87, 108, 0.3);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-label {
-                padding: 0.8rem 1rem !important;
+                padding: 1rem 1.2rem !important;
                 border: 1.5px solid var(--silver-border) !important;
-                border-radius: 8px !important;
-                font-size: 0.9rem !important;
+                border-radius: 12px !important;
+                font-size: 1rem !important;
                 background: var(--silver-light) !important;
                 color: var(--text-primary) !important;
-                min-height: 45px !important;
+                min-height: 52px !important;
                 display: flex !important;
                 align-items: center !important;
-                transition: all 0.2s ease !important;
+                transition: all 0.3s ease !important;
                 font-weight: 400;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-label:hover {
                 border-color: var(--accent-blue) !important;
                 cursor: pointer !important;
                 background: var(--surface) !important;
-                transform: translateY(-1px);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-panel {
-                background: var(--surface) !important;
-                backdrop-filter: blur(12px) !important;
+                background: var(--dialog-background) !important;
+                backdrop-filter: var(--backdrop-blur) !important;
                 border: 1px solid var(--silver-border) !important;
-                border-radius: 8px !important;
-                box-shadow:
-                        0 8px 20px var(--silver-shadow),
-                        0 4px 12px rgba(0, 0, 0, 0.05) !important;
-                padding: 1rem !important;
-                min-width: 350px !important;
-                max-height: 300px !important;
+                border-radius: 16px !important;
+                box-shadow: var(--dialog-shadow) !important;
+                padding: 1.5rem !important;
+                min-width: 400px !important;
+                max-height: 350px !important;
                 overflow-y: auto !important;
+                animation: slideUp 0.3s ease-out;
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-header {
-                background: var(--gradient-accent) !important;
+                background: var(--primary-gradient) !important;
                 border: none !important;
-                border-radius: 6px !important;
-                padding: 0.8rem !important;
-                margin-bottom: 0.8rem !important;
-                box-shadow: 0 2px 6px rgba(108, 117, 125, 0.2);
+                border-radius: 12px !important;
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-item {
-                padding: 0.6rem 1rem !important;
-                margin: 0.2rem 0 !important;
-                border-radius: 6px !important;
+                padding: 0.8rem 1.2rem !important;
+                margin: 0.3rem 0 !important;
+                border-radius: 10px !important;
                 background: var(--silver-light) !important;
                 border: 1px solid var(--silver-border) !important;
-                transition: all 0.2s ease !important;
+                transition: all 0.3s ease !important;
                 font-weight: 400;
             }
 
             .enhanced-select-menu .ui-selectcheckboxmenu-item:hover {
-                background: rgba(108, 117, 125, 0.06) !important;
-                transform: translateX(3px);
+                background: rgba(102, 126, 234, 0.1) !important;
+                transform: translateX(5px);
                 border-color: var(--accent-blue) !important;
-                box-shadow: 0 2px 6px rgba(108, 117, 125, 0.1);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
             }
 
             /* Status Badges - أنيقة */
             .status-badge {
-                padding: 0.4rem 0.8rem;
-                border-radius: 12px;
-                font-size: 0.75rem;
-                font-weight: 500;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                font-weight: 600;
                 text-transform: uppercase;
-                letter-spacing: 0.2px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                transition: all 0.2s ease;
+                letter-spacing: 0.3px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
                 display: inline-block;
-                min-width: 80px;
+                min-width: 90px;
                 text-align: center;
             }
 
             .status-badge:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
 
             .status-used {
-                background: linear-gradient(135deg, #dc3545 0%, #e35d6a 100%);
+                background: var(--secondary-gradient);
                 color: white;
             }
 
             .status-available {
-                background: var(--gradient-success);
+                background: var(--success-gradient);
                 color: white;
             }
 
             /* Statistics Panel - أنيق */
             .stats-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 1rem;
-                margin-top: 1rem;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+                margin-top: 1.5rem;
             }
 
             .stat-card {
                 background: var(--surface);
                 backdrop-filter: blur(12px);
-                padding: 1.2rem;
-                border-radius: 12px;
+                padding: 1.8rem;
+                border-radius: 16px;
                 text-align: center;
                 box-shadow:
-                        0 3px 10px var(--silver-shadow),
-                        0 2px 6px rgba(0, 0, 0, 0.04);
+                        0 6px 20px var(--silver-shadow),
+                        0 4px 12px rgba(0, 0, 0, 0.05);
                 border: 1px solid var(--silver-border);
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 position: relative;
                 overflow: hidden;
                 animation: fadeInDown 0.4s ease-out;
@@ -678,36 +688,42 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                height: 3px;
-                background: linear-gradient(90deg, var(--silver-medium), var(--silver-dark));
+                height: 4px;
+                background: var(--primary-gradient);
             }
 
             .stat-card:hover {
-                transform: translateY(-3px);
+                transform: translateY(-5px);
                 box-shadow:
-                        0 6px 15px var(--silver-shadow),
-                        0 3px 8px rgba(0, 0, 0, 0.06);
+                        0 12px 30px var(--silver-shadow),
+                        0 6px 20px rgba(0, 0, 0, 0.08);
             }
 
             .stat-card i {
-                font-size: 1.5rem;
-                margin-bottom: 0.8rem;
-                color: var(--accent-blue);
+                font-size: 2rem;
+                margin-bottom: 1rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
                 display: block;
             }
 
             .stat-number {
-                font-size: 1.5rem;
-                font-weight: 600;
-                margin-bottom: 0.5rem;
-                color: var(--text-primary);
+                font-size: 2rem;
+                font-weight: 700;
+                margin-bottom: 0.8rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
                 line-height: 1;
             }
 
             .stat-label {
                 color: var(--text-secondary);
-                font-weight: 500;
-                font-size: 0.9rem;
+                font-weight: 600;
+                font-size: 1rem;
             }
 
             /* Table Styling */
@@ -720,75 +736,165 @@
             .products-table th {
                 background: var(--silver-light) !important;
                 color: var(--text-primary) !important;
-                font-weight: 600 !important;
-                font-size: 0.85rem;
-                padding: 0.8rem 1rem !important;
-                border-bottom: 1.5px solid var(--silver-border) !important;
+                font-weight: 700 !important;
+                font-size: 0.9rem;
+                padding: 1.2rem 1.5rem !important;
+                border-bottom: 2px solid var(--silver-border) !important;
                 text-transform: uppercase;
-                letter-spacing: 0.3px;
+                letter-spacing: 0.5px;
             }
 
             .products-table td {
-                padding: 0.8rem 1rem !important;
+                padding: 1.2rem 1.5rem !important;
                 border-bottom: 1px solid var(--silver-border) !important;
                 color: var(--text-primary);
                 font-weight: 400;
                 vertical-align: middle;
+                transition: all 0.2s ease;
             }
 
             .products-table tr:hover td {
-                background: rgba(108, 117, 125, 0.03) !important;
-                transition: all 0.2s ease;
+                background: rgba(102, 126, 234, 0.05) !important;
+                transform: translateY(-1px);
             }
 
             /* QR Code Styling - تم التعديل هنا لتكبير الحجم */
             .qr-code-container {
                 text-align: center;
-                padding: 0.5rem;
-                transition: all 0.2s ease;
+                padding: 0.8rem;
+                transition: all 0.3s ease;
+                border-radius: 12px;
+                background: var(--silver-light);
             }
 
             .qr-code-container:hover {
-                transform: scale(1.05);
+                transform: scale(1.08);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             }
 
             /* تم إضافة هذا التنسيق لتحديد حجم الـ QR code - حجم أكبر */
             .qr-code-container canvas {
-                width: 80px !important;
-                height: 80px !important;
+                width: 90px !important;
+                height: 90px !important;
             }
 
             .products-table th:nth-child(5),
             .products-table td:nth-child(5) {
                 width: 18% !important;
-                min-width: 120px;
+                min-width: 140px;
             }
 
+            /* Dialog Styling - تصميم محسّن للـ Dialogs */
+            .ui-dialog {
+                border-radius: 20px !important;
+                box-shadow: var(--dialog-shadow) !important;
+                border: none !important;
+                overflow: hidden;
+                animation: slideUp 0.3s ease-out;
+            }
+
+            .ui-dialog .ui-dialog-titlebar {
+                background: var(--primary-gradient) !important;
+                color: white !important;
+                border: none !important;
+                padding: 1.5rem 2rem !important;
+                border-radius: 0 !important;
+                font-weight: 700 !important;
+                font-size: 1.3rem !important;
+            }
+
+            .ui-dialog .ui-dialog-content {
+                background: var(--dialog-background) !important;
+                backdrop-filter: var(--backdrop-blur) !important;
+                padding: 2rem !important;
+                border: none !important;
+            }
+
+            .ui-dialog .ui-dialog-footer {
+                background: var(--silver-light) !important;
+                border: none !important;
+                padding: 1.5rem 2rem !important;
+                border-radius: 0 0 20px 20px !important;
+            }
+
+            .ui-dialog .ui-dialog-titlebar-close {
+                color: white !important;
+                background: rgba(255, 255, 255, 0.2) !important;
+                border-radius: 50% !important;
+                width: 32px !important;
+                height: 32px !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .ui-dialog .ui-dialog-titlebar-close:hover {
+                background: rgba(255, 255, 255, 0.3) !important;
+                transform: scale(1.1);
+            }
+
+            /* Form elements inside dialogs */
+            .ui-dialog .ui-panelgrid td {
+                border: none !important;
+                padding: 1rem 0.5rem !important;
+            }
+
+            .ui-dialog .ui-outputlabel {
+                font-weight: 600 !important;
+                color: var(--text-primary) !important;
+            }
+
+            .ui-dialog .ui-selectonemenu {
+                width: 100% !important;
+            }
+
+            .ui-dialog .ui-selectonemenu .ui-selectonemenu-label {
+                padding: 1rem 1.2rem !important;
+                border-radius: 12px !important;
+                border: 1.5px solid var(--silver-border) !important;
+                background: var(--silver-light) !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .ui-dialog .ui-selectonemenu .ui-selectonemenu-label:hover {
+                border-color: var(--accent-blue) !important;
+                background: var(--surface) !important;
+            }
+
+            .ui-dialog .ui-selectonemenu-trigger {
+                background: var(--primary-gradient) !important;
+                border: none !important;
+                border-radius: 12px !important;
+                color: white !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .ui-dialog .ui-selectonemenu-trigger:hover {
+                background: var(--secondary-gradient) !important;
+            }
 
             /* Responsive Design */
             @media (max-width: 768px) {
                 .sticker-container {
-                    padding: 1rem;
+                    padding: 1.5rem;
                     margin: 0.5rem;
-                    border-radius: 12px;
+                    border-radius: 16px;
                 }
 
                 .header-section,
                 .input-section,
                 .table-section {
-                    padding: 1rem;
-                    border-radius: 10px;
+                    padding: 1.5rem;
+                    border-radius: 14px;
                 }
 
                 .input-group {
                     flex-direction: column;
                     align-items: stretch;
-                    gap: 0.6rem;
+                    gap: 1rem;
                 }
 
                 .input-label {
                     min-width: auto;
-                    font-size: 0.95rem;
+                    font-size: 1rem;
                 }
 
                 .input-field {
@@ -798,20 +904,20 @@
                 .button-section {
                     flex-direction: column;
                     align-items: center;
-                    gap: 0.6rem;
+                    gap: 1rem;
                 }
 
                 .enhanced-button {
                     width: 100%;
-                    max-width: 220px;
-                    font-size: 0.9rem !important;
+                    max-width: 260px;
+                    font-size: 1rem !important;
                 }
 
                 .table-header {
                     flex-direction: column;
                     text-align: center;
-                    gap: 0.8rem;
-                    padding: 0.8rem;
+                    gap: 1.2rem;
+                    padding: 1.2rem;
                 }
 
                 .search-container {
@@ -827,48 +933,61 @@
                 }
 
                 .header-title {
-                    font-size: 1.3rem;
+                    font-size: 1.5rem;
                 }
 
                 .header-description {
-                    font-size: 0.95rem;
+                    font-size: 1rem;
                 }
 
                 /* تعديل حجم الـ QR code للهواتف - حجم أكبر */
                 .qr-code-container canvas {
-                    width: 70px !important;
-                    height: 70px !important;
+                    width: 80px !important;
+                    height: 80px !important;
+                }
+
+                /* Dialog adjustments for mobile */
+                .ui-dialog {
+                    width: 90% !important;
+                    max-width: 90% !important;
+                    margin: 5% auto !important;
+                }
+
+                .ui-dialog .ui-dialog-titlebar,
+                .ui-dialog .ui-dialog-content,
+                .ui-dialog .ui-dialog-footer {
+                    padding: 1.2rem !important;
                 }
             }
 
             /* Custom Scrollbar */
             ::-webkit-scrollbar {
-                width: 5px;
+                width: 8px;
             }
 
             ::-webkit-scrollbar-track {
-                background: rgba(108, 117, 125, 0.06);
-                border-radius: 6px;
+                background: rgba(108, 117, 125, 0.08);
+                border-radius: 10px;
             }
 
             ::-webkit-scrollbar-thumb {
-                background: var(--gradient-accent);
-                border-radius: 6px;
+                background: var(--primary-gradient);
+                border-radius: 10px;
             }
 
             ::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(135deg, var(--accent-blue-dark), var(--accent-blue));
+                background: var(--secondary-gradient);
             }
 
             /* Floating Elements - أكثر خفة */
             .floating-element {
                 position: absolute;
-                width: 60px;
-                height: 60px;
-                background: var(--gradient-accent);
+                width: 80px;
+                height: 80px;
+                background: var(--primary-gradient);
                 border-radius: 50%;
-                opacity: 0.05;
-                animation: float 10s ease-in-out infinite;
+                opacity: 0.06;
+                animation: float 12s ease-in-out infinite;
                 pointer-events: none;
             }
 
@@ -881,15 +1000,15 @@
             .floating-element:nth-child(2) {
                 top: 60%;
                 right: 5%;
-                animation-delay: 3s;
-                background: var(--gradient-secondary);
+                animation-delay: 4s;
+                background: var(--secondary-gradient);
             }
 
             .floating-element:nth-child(3) {
                 bottom: 20%;
                 left: 10%;
-                animation-delay: 6s;
-                background: var(--gradient-primary);
+                animation-delay: 8s;
+                background: var(--success-gradient);
             }
         </style>
         <script type="text/javascript">
@@ -939,12 +1058,12 @@
                             position: absolute;
                             width: ${size}px;
                             height: ${size}px;
-                            background: rgba(255, 255, 255, 0.3);
+                            background: rgba(255, 255, 255, 0.4);
                             border-radius: 50%;
                             top: ${y}px;
                             left: ${x}px;
                             transform: scale(0);
-                            animation: ripple 0.4s linear;
+                            animation: ripple 0.6s linear;
                             pointer-events: none;
                         `;
 
@@ -952,7 +1071,7 @@
 
                         setTimeout(function() {
                             ripple.remove();
-                        }, 400);
+                        }, 600);
                     });
                 });
 
@@ -963,7 +1082,22 @@
                     element.className = 'floating-element';
                     container.appendChild(element);
                 }
+
+                // Enhance dialogs
+                var dialogs = document.querySelectorAll('.ui-dialog');
+                dialogs.forEach(function(dialog) {
+                    dialog.style.borderRadius = '20px';
+                });
             });
+
+            // Dialog enhancement function
+            function enhanceDialog(dialogId) {
+                var dialog = document.querySelector('[id="' + dialogId + '"]');
+                if (dialog) {
+                    dialog.style.borderRadius = '20px';
+                    dialog.style.overflow = 'hidden';
+                }
+            }
             //]]>
         </script>
     </ui:define>
@@ -976,7 +1110,7 @@
                 <!-- Header Section -->
                 <div class="header-section">
                     <h2 class="header-title">
-                        <i class="pi pi-qrcode" style="margin-right: 0.5rem;"></i>
+                        <i class="pi pi-qrcode" style="margin-right: 0.8rem;"></i>
                         Sticker Management
                     </h2>
                     <p class="header-description">
@@ -984,10 +1118,59 @@
                     </p>
                 </div>
 
+                <!-- Export Range Dialog -->
+                <p:dialog widgetVar="exportDialog" header="Export Stickers Range" modal="true" resizable="false" appendTo="@(body)"
+                          styleClass="enhanced-dialog">
+                    <h:panelGrid columns="2" columnClasses="label,field" style="width:100%" cellpadding="10">
+                        <h:outputLabel value="From:" styleClass="dialog-label" />
+                        <p:selectOneMenu id="exportFromSelect" value="#{stickerManagementBean.exportFromSticker}"
+                                         converter="omnifaces.SelectItemsIndexConverter" style="width:100%">
+                            <f:selectItem itemLabel="-- choose --" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{stickerManagementBean.stickers}" var="sticker"
+                                           itemLabel="#{sticker.stickerNo} - #{sticker.serialNo}" itemValue="#{sticker}" />
+                        </p:selectOneMenu>
+
+                        <h:outputLabel value="To:" styleClass="dialog-label" />
+                        <p:selectOneMenu id="exportToSelect" value="#{stickerManagementBean.exportToSticker}"
+                                         converter="omnifaces.SelectItemsIndexConverter" style="width:100%">
+                            <f:selectItem itemLabel="-- choose --" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{stickerManagementBean.stickers}" var="sticker"
+                                           itemLabel="#{sticker.stickerNo} - #{sticker.serialNo}" itemValue="#{sticker}" />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <f:facet name="footer">
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <p:commandButton value="Cancel" onclick="PF('exportDialog').hide();"
+                                             type="button" styleClass="ui-button-secondary enhanced-button" />
+                            <p:commandButton value="Export" type="button"
+                                             onclick="(function(){
+                                                var fromInput = document.querySelector('[id$=exportFromSelect_input]');
+                                                var toInput = document.querySelector('[id$=exportToSelect_input]');
+                                                if(!fromInput || !toInput){
+                                                    PF('exportDialog').hide();
+                                                    return false;
+                                                }
+                                                var fromVal = encodeURIComponent(fromInput.value);
+                                                var toVal = encodeURIComponent(toInput.value);
+                                                if(!fromVal || !toVal){
+                                                    alert('Please select From and To stickers');
+                                                    return false;
+                                                }
+                                                var ctx = '#{facesContext.externalContext.requestContextPath}';
+                                                var url = ctx + '/export/stickersRange?from=' + fromVal + '&amp;to=' + toVal;
+                                                window.open(url, '_blank');
+                                                PF('exportDialog').hide();
+                                            })();"
+                                             styleClass="enhanced-button export-btn" />
+                        </div>
+                    </f:facet>
+                </p:dialog>
+
                 <!-- Input Section -->
                 <div class="input-section">
                     <div class="input-group">
                         <div class="input-label">
+                            <i class="pi pi-tag"></i>
                             Sticker Number:
                         </div>
                         <div class="input-field">
@@ -1009,15 +1192,59 @@
                             <i class="pi pi-check-circle success-icon"></i>
                         </p:commandButton>
 
-                        <p:commandButton value="Export Stickers"
-                                         icon="pi pi-download"
-                                         action="#{stickerManagementBean.exportStickers()}"
+                        <p:commandButton value="Export Stickers" icon="pi pi-download"
+                                         type="button"
                                          styleClass="enhanced-button export-btn"
-                                         onclick="window.open('_blank')">
-
-                        </p:commandButton>
+                                         onclick="PF('exportDialog').show()" />
 
                     </div>
+
+                    <div class="input-group">
+                        <div class="input-label">
+                            <i class="pi pi-user"></i>
+                            Assign To:
+                        </div>
+                        <div class="input-field">
+
+                            <p:selectOneMenu id="selectoneMenu_UserAlias"
+                                             style="width:100%;" filter="true" filterMatchMode="contains"
+                                             widgetVar="widgetVar_SelectOneMenu"
+                                             converter="omnifaces.SelectItemsIndexConverter"
+                                             value="#{stickerManagementBean.selectedUserAlias}">
+                                <f:selectItem itemLabel="Choose user please:" value="#{null}" noSelectionOption="true" />
+                                <f:selectItems
+                                        itemLabel=" ( #{userAlias.userCode} )#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                        itemValue="#{userAlias}" var="userAlias"
+                                        value="#{stickerManagementBean.userAliasList}" />
+                                <p:ajax event="change" listener="#{stickerManagementBean.findStickerForSelectedUser()}" update="@([id$=datatable-stickers])"></p:ajax>
+
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <!-- Assign Range Section -->
+                    <div class="input-group">
+                        <div class="input-label">
+                            <i class="pi pi-sort-alt"></i>
+                            Assign Range:
+                        </div>
+                        <div class="input-field" style="min-width:180px;">
+                            <p:inputText id="assignFrom" value="#{stickerManagementBean.assignFromStickerNo}"
+                                         placeholder="From e.g. SK00001" />
+                        </div>
+
+                        <div class="input-field" style="min-width:180px;">
+                            <p:inputText id="assignTo" value="#{stickerManagementBean.assignToStickerNo}"
+                                         placeholder="To e.g. SK00020" />
+                        </div>
+                        <div class="input-field" style="min-width:180px;">
+                            <p:commandButton value="Assign Range" icon="pi pi-angle-double-right"
+                                             action="#{stickerManagementBean.assignRangeToUser()}"
+                                             update="@([id$=datatable-stickers]) @([id$=messages])"
+                                             styleClass="enhanced-button generate-btn" />
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Table Section -->
@@ -1045,14 +1272,14 @@
 
                         <p:column headerText="Sequence" width="8%"
                                   sortBy="#{stickerVar.seq}" filterBy="#{stickerVar.seq}">
-                            <div style="text-align: center; font-weight: 500; color: var(--text-primary);">
+                            <div style="text-align: center; font-weight: 600; color: var(--text-primary);">
                                 ##{stickerVar.seq}
                             </div>
                         </p:column>
 
                         <p:column headerText="Serial Number" width="18%"
                                   sortBy="#{stickerVar.serialNo}" filterBy="#{stickerVar.serialNo}">
-                            <div style="font-family: monospace; font-weight: 500; color: var(--text-primary);">
+                            <div style="font-family: monospace; font-weight: 600; color: var(--text-primary);">
                                 #{stickerVar.serialNo}
                             </div>
                         </p:column>
@@ -1060,11 +1287,18 @@
                         <p:column headerText="Sticker Number" width="18%"
                                   sortBy="#{stickerVar.stickerNo}"
                                   filterBy="#{stickerVar.stickerNo}">
-                            <div style="font-family: monospace; font-weight: 500; color: var(--text-primary);">
+                            <div style="font-family: monospace; font-weight: 600; color: var(--text-primary);">
                                 #{stickerVar.stickerNo}
                             </div>
                         </p:column>
 
+                        <p:column headerText="For user" width="20%"
+                                  sortBy="#{stickerVar.sysUserByForUser.displayName}"
+                                  filterBy="#{stickerVar.sysUserByForUser.displayName}">
+                            <div style="font-family: monospace; font-weight: 600; color: #2d3748;">
+                                #{stickerVar.sysUserByForUser.displayName}
+                            </div>
+                        </p:column>
 
                         <p:column headerText="Status" width="12%"
                                   sortBy="#{stickerVar.isUsed}" filterBy="#{stickerVar.isUsed}">
@@ -1077,10 +1311,10 @@
                             <div class="qr-code-container">
                                 <pe:qrCode id="qrCodeElem" renderMethod="canvas" renderMode="2"
                                            text="#{stickerVar.serialNo.concat(stickerVar.stickerNo)}"
-                                           label="SMAT" size="80" fillColor="#007bff" fontName="Arial"
+                                           label="SMAT" size="90" fillColor="#007bff" fontName="Arial"
                                            fontColor="#0056b3" ecLevel="M" radius="0.1"
                                            title="Click to view larger" />
-                                <div style="margin-top: 0.3rem; font-size: 0.65rem; color: var(--text-secondary); font-weight: 400;">
+                                <div style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--text-secondary); font-weight: 500;">
                                     Click to enlarge
                                 </div>
                             </div>
@@ -1089,8 +1323,8 @@
                 </div>
 
                 <!-- Statistics Panel -->
-                <div class="input-section" style="margin-top: 1.5rem;">
-                    <div class="table-header" style="margin-bottom: 1rem;">
+                <div class="input-section" style="margin-top: 2rem;">
+                    <div class="table-header" style="margin-bottom: 1.5rem;">
                         <h3>
                             <i class="pi pi-chart-bar"></i> Statistics
                         </h3>
