@@ -2,158 +2,124 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/WEB-INF/template.xhtml">
+                xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 
     <ui:define name="section-head">
         #{interfaceLabel.roleUpdate}
     </ui:define>
 
+
     <ui:define name="section-content">
-        <h:form id="form_updateSysRole" prependId="true">
-            <!-- Growl / Messages -->
-            <p:growl id="messages" showDetail="true" life="4000" sticky="false" />
+        <h:form id="form_updateSysRole">
+            <div class="card crud-demo">
+                <p:growl id="messages" showDetail="true" />
+                <p:panelGrid columns="3"
+                             columnClasses="ui-grid-col-2,ui-grid-col-7,ui-grid-col-3"
+                             layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+                             style="border:0px none; background-color:transparent;">
+                    <h:outputText value="#{interfaceLabel.name}" />
+                    <p:inputText value="#{sysRoleBean.sysRole.name}"></p:inputText>
+                    <p:column></p:column>
 
-            <!-- Toolbar (Top actions) -->
-            <p:toolbar style="margin-bottom:1rem;">
-                <p:toolbarGroup align="left">
-                    <p:commandButton id="btnBack" value="#{interfaceLabel.back}" icon="pi pi-undo"
-                                     styleClass="ui-button-secondary"
-                                     action="pretty:roles"
-                                     title="#{interfaceLabel.back}" />
-                </p:toolbarGroup>
+                    <h:outputText value="#{interfaceLabel.code}" />
+                    <p:inputText value="#{sysRoleBean.sysRole.code}"></p:inputText>
+                    <p:column></p:column>
 
-                <p:toolbarGroup align="right">
-                    <p:commandButton id="btnUpdateTop" value="#{interfaceLabel.update}"
+                    <h:outputText value="#{interfaceLabel.description}" />
+                    <p:inputTextarea rows="4"
+                                     value="#{sysRoleBean.sysRole.description}"></p:inputTextarea>
+                    <p:column></p:column>
+                    <p:commandButton value="#{interfaceLabel.update}"
                                      icon="pi pi-check" styleClass="ui-button-success"
                                      action="#{sysRoleBean.update()}" ajax="true"
-                                     update=":form_updateSysRole:messages :form_updateSysRole:rolePermission_datatable" />
-                </p:toolbarGroup>
-            </p:toolbar>
+                                     update=":form_updateSysRole:messages" />
+                    <p:column></p:column>
+                    <p:column></p:column>
+                </p:panelGrid>
 
-            <!-- Main card -->
-            <div class="card crud-demo">
 
-                <p:panel header="#{interfaceLabel.roleUpdate}" styleClass="ui-panel-header-1" toggleable="false">
 
-                    <!-- Role basic info -->
-                    <h:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8"
-                                 cellpadding="6" style="width:100%;" layout="grid">
-                        <h:outputLabel for="roleName" value="#{interfaceLabel.name}" />
-                        <p:inputText id="roleName" value="#{sysRoleBean.sysRole.name}" required="true"
-                                     requiredMessage="#{interfaceLabel.name} #{interfaceLabel.isRequired}">
-                            <f:ajax render=":form_updateSysRole:messages" />
-                        </p:inputText>
 
-                        <h:outputLabel for="roleCode" value="#{interfaceLabel.code}" />
-                        <p:inputText id="roleCode" value="#{sysRoleBean.sysRole.code}" required="true"
-                                     requiredMessage="#{interfaceLabel.code} #{interfaceLabel.isRequired}">
-                            <f:ajax render=":form_updateSysRole:messages" />
-                        </p:inputText>
 
-                        <h:outputLabel for="roleDesc" value="#{interfaceLabel.description}" />
-                        <p:inputTextarea id="roleDesc" value="#{sysRoleBean.sysRole.description}"
-                                         rows="4" autoResize="false" />
-                    </h:panelGrid>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-9,ui-grid-col-3"
+                             layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+                             style="border:0px none; background-color:transparent;">
+                    <p:fieldset id="availableArticlesField"
+                                legend="#{interfaceLabel.permissionsGrantedGroup}">
 
-                    <!-- Actions under form -->
-                    <p:separator />
+                        <p:commandButton value="#{interfaceLabel.addPermission}"
+                                         icon="pi pi-plus" styleClass="ui-button-success"
+                                         action="#{sysRoleBean.getPermissionSourceList()}"
+                                         update=":form_updateSysRole:permissions_datatable"
+                                         oncomplete="PF('manageSysPermessionDialog').show()"
+                                         process="@this" />
 
-                    <p:panelGrid columns="3" columnClasses="ui-grid-col-3,ui-grid-col-6,ui-grid-col-3"
-                                 style="width:100%; margin-top:0.5rem;" layout="grid">
-                        <p:column>
-                            <p:commandButton id="btnUpdate" value="#{interfaceLabel.update}"
-                                             icon="pi pi-check" styleClass="ui-button-success"
-                                             action="#{sysRoleBean.update()}" ajax="true"
-                                             update=":form_updateSysRole:messages :form_updateSysRole:rolePermission_datatable" />
-                        </p:column>
+                        <p:dataTable id="rolePermission_datatable" var="rolePermissionVar"
+                                     value="#{sysRoleBean.rolePermissionList}"
+                                     paginatorPosition="bottom" rows="8" paginator="true">
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{interfaceLabel.permission}" />
+                                </f:facet>
+                                <h:outputText value="#{rolePermissionVar.sysPermission.name}" />
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{interfaceLabel.delete}" />
+                                </f:facet>
+                                <p:commandButton styleClass="ui-button-danger"
+                                                 icon="pi pi-trash" ajax="true"
+                                                 action="#{sysRoleBean.deletePermission(rolePermissionVar)}"
+                                                 update="@([id$=rolePermission_datatable],[id$=messages])">
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:fieldset>
+                    <p:column></p:column>
+                </p:panelGrid>
+                <p:panelGrid columns="3"
+                             columnClasses="ui-grid-col-2,ui-grid-col-7,ui-grid-col-3"
+                             layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+                             style="border:0px none; background-color:transparent;">
+                    <p:commandButton value="#{interfaceLabel.back}"
+                                     styleClass="ui-button-success" action="pretty:roles"
+                                     icon="pi pi-undo" />
+                    <p:column></p:column>
+                    <p:column></p:column>
 
-                        <p:column style="text-align:center;">
-                            <!-- placeholder for spacing or future buttons -->
-                        </p:column>
+                </p:panelGrid>
 
-                        <p:column style="text-align:right;">
-                            <p:commandButton id="btnAddPermissionTop" value="#{interfaceLabel.addPermission}"
-                                             icon="pi pi-plus" styleClass="ui-button-primary"
-                                             action="#{sysRoleBean.getPermissionSourceList()}"
-                                             update=":form_updateSysRole:permissions_datatable"
-                                             oncomplete="PF('manageSysPermessionDialog').show()" process="@this" />
-                        </p:column>
-                    </p:panelGrid>
-                </p:panel>
 
-                <!-- Permissions granted section -->
-                <p:panel header="#{interfaceLabel.permissionsGrantedGroup}" style="margin-top:1rem;">
-                    <p:dataTable id="rolePermission_datatable" var="rolePermissionVar"
-                                 value="#{sysRoleBean.rolePermissionList}"
-                                 paginator="true" rows="8" paginatorPosition="bottom"
-                                 emptyMessage="#{interfaceLabel.noRecordsFound}"
-                                 styleClass="p-datatable-sm" responsiveLayout="scroll">
-
-                        <p:column headerText="#{interfaceLabel.permission}">
-                            <h:outputText value="#{rolePermissionVar.sysPermission.name}" />
-                        </p:column>
-
-                        <p:column headerText="#{interfaceLabel.actions}" style="width:120px;text-align:center;">
-                            <p:commandButton id="deletePermBtn" styleClass="ui-button-danger"
-                                             icon="pi pi-trash" ajax="true"
-                                             action="#{sysRoleBean.deletePermission(rolePermissionVar)}"
-                                             update=":form_updateSysRole:rolePermission_datatable :form_updateSysRole:messages"
-                                             title="#{interfaceLabel.delete}">
-                            </p:commandButton>
-                        </p:column>
-                    </p:dataTable>
-
-                    <!-- Add permission floating action -->
-                    <p:row>
-                        <p:column>
-                            <p:commandButton id="openPermDialog" value="#{interfaceLabel.addPermission}"
-                                             icon="pi pi-plus" styleClass="ui-button-success"
-                                             action="#{sysRoleBean.getPermissionSourceList()}"
-                                             update=":form_updateSysRole:permissions_datatable"
-                                             oncomplete="PF('manageSysPermessionDialog').show()" process="@this" />
-                        </p:column>
-                    </p:row>
-                </p:panel>
-
-                <!-- Permissions dialog -->
-                <p:dialog id="dlgPermissions" header="#{interfaceLabel.permissions}" widgetVar="manageSysPermessionDialog"
-                          modal="true" resizable="false" width="620" appendTo="@(body)">
+                <p:dialog header="#{interfaceLabel.permissions}" showEffect="fade"
+                          modal="true" width="400" widgetVar="manageSysPermessionDialog"
+                          responsive="true">
                     <p:outputPanel id="sysPermession-content" class="ui-fluid">
                         <p:dataTable id="permissions_datatable" var="permissionVar"
                                      value="#{sysRoleBean.permissionsSource}"
                                      emptyMessage="#{interfaceLabel.noRecordsFound}"
-                                     paginator="true" rows="8" paginatorPosition="bottom"
+                                     paginatorPosition="bottom" rows="8" paginator="true"
                                      selection="#{sysRoleBean.permissionsTarget}"
-                                     rowKey="#{permissionVar.id}"
-                                     responsiveLayout="scroll">
-
-                            <p:column selectionMode="multiple" headerText="#{interfaceLabel.select}" style="width:60px" />
-
-                            <p:column headerText="#{interfaceLabel.permission}">
+                                     rowKey="#{permissionVar.id}">
+                            <p:column headerText="#{interfaceLabel.check}"
+                                      selectionMode="multiple" />
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{interfaceLabel.permission}" />
+                                </f:facet>
                                 <h:outputText value="#{permissionVar.name}" />
                             </p:column>
-
-                            <p:column headerText="#{interfaceLabel.description}">
-                                <h:outputText value="#{permissionVar.description}" />
-                            </p:column>
-
                         </p:dataTable>
                     </p:outputPanel>
-
                     <f:facet name="footer">
                         <p:commandButton value="#{interfaceLabel.addPermission}"
                                          icon="pi pi-check" styleClass="ui-button-success"
                                          action="#{sysRoleBean.addPermission()}"
-                                         update=":form_updateSysRole:rolePermission_datatable :form_updateSysRole:messages"
-                                         oncomplete="PF('manageSysPermessionDialog').hide()" />
-                        <p:commandButton value="#{interfaceLabel.cancel}" icon="pi pi-times"
-                                         onclick="PF('manageSysPermessionDialog').hide(); return false;"
-                                         styleClass="ui-button-secondary" />
+                                         update="@([id$=rolePermission_datatable],[id$=messages])"
+                                         oncomplete="PF('manageSysPermessionDialog').hide()"
+                                         class="ui-button-secondary" />
                     </f:facet>
                 </p:dialog>
-
-            </div> <!-- end card -->
+            </div>
         </h:form>
     </ui:define>
 </ui:composition>
