@@ -1593,11 +1593,11 @@ public class InspectionFormBean implements Serializable {
                 data.put("reviewedBy", loginBean.getUser() != null ? loginBean.getUser().getEnDisplayName() : "");
             }
 
-            // Generate QR code data (use same parameters as الأصلي)
+            // Build QR using serialNo (if available) and reportNo instead of stickerNo
             String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
                     (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null ? equipmentInspectionForm.getSticker().getSerialNo() : "") +
                     "&" +
-                    (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null ? equipmentInspectionForm.getSticker().getStickerNo() : "");
+                    (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null ? equipmentInspectionForm.getReportNo() : "");
             byte[] qrCodeBytes = QRCodeGenerator.generateQrCodeImage(qrCodeData, 5, 1); // كما في الأصل
 
             // Try to insert QR via bookmark if present, otherwise put bytes in data map
@@ -2113,9 +2113,10 @@ public class InspectionFormBean implements Serializable {
         data.put("issureDate", formatDate(Calendar.getInstance().getTime()));
 
         // QR
+        // Use reportNo instead of stickerNo so QR remains valid when sticker selection is empty
         String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
                 (eForm.getSticker() != null ? eForm.getSticker().getSerialNo() : "") + "&" +
-                (eForm.getSticker() != null ? eForm.getSticker().getStickerNo() : "");
+                (eForm.getReportNo() != null ? eForm.getReportNo() : "");
         byte[] qrBytes = QRCodeGenerator.generateQrCodeImage(qrCodeData, 5, 1);
         Bookmark qrB = document.getRange().getBookmarks().get("QRCodeImage");
         if (qrB != null && qrBytes != null) {
