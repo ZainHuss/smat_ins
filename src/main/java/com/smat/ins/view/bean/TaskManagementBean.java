@@ -21,6 +21,17 @@ import com.smat.ins.model.entity.UserAlias;
 import com.smat.ins.model.service.TaskService;
 import com.smat.ins.model.service.UserAliasService;
 import com.smat.ins.util.BeanUtility;
+import com.smat.ins.model.entity.Company;
+import com.smat.ins.model.entity.EquipmentCategory;
+import com.smat.ins.model.entity.ServiceType;
+import com.smat.ins.model.entity.Correspondence;
+import com.smat.ins.model.entity.CorrespondenceTask;
+import com.smat.ins.model.service.CompanyService;
+import com.smat.ins.model.service.EquipmentCategoryService;
+import com.smat.ins.model.service.ServiceTypeService;
+import com.smat.ins.model.service.CorrespondenceService;
+import com.smat.ins.model.service.CorrespondenceTaskService;
+import org.primefaces.PrimeFaces;
 //new imports for export functionality
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,17 +60,6 @@ import javax.faces.context.FacesContext;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-// Java / IO / util
-import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-// JSF / Servlet
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 
 // Apache POI (SS + XSSF)
 import org.apache.poi.ss.usermodel.Cell;
@@ -99,6 +99,17 @@ import org.slf4j.LoggerFactory;
 public class TaskManagementBean implements Serializable {
 
     private static final long serialVersionUID = 7045989318270076532L;
+    // index للتبويبات (مربوط بـ activeIndex في p:tabView)
+    private int addTaskActiveIndex = 0;
+
+    public int getAddTaskActiveIndex() {
+        return addTaskActiveIndex;
+    }
+
+    public void setAddTaskActiveIndex(int addTaskActiveIndex) {
+        this.addTaskActiveIndex = addTaskActiveIndex;
+    }
+
 
     private List<Task> tasks;
     private List<Task> activeTasks; // قائمة المهام النشطة فقط
@@ -108,15 +119,47 @@ public class TaskManagementBean implements Serializable {
     private boolean showDeactivatedTasks = false; // لعرض المهام المعطلة بدلاً من النشطة
     // filter by correspondence id (optional)
     private Long correspondenceIdFilter;
+    // For the Add-Task dialog
+    private Long addTaskCorrespondenceId;
+
+    // new fields (place near other dialog fields)
+// بدل Long استخدم Integer
+    private Integer selectedCompanyId;
+    private Short selectedEquipmentCategoryId;
+
+    private Company selectedCompany;
+    private EquipmentCategory selectedEquipmentCategory;
+    private ServiceType selectedServiceType;
+    private List<Company> companyList = new ArrayList<>();
+    private List<EquipmentCategory> equipmentCategoryList = new ArrayList<>();
+    private List<ServiceType> serviceTypeList = new ArrayList<>();
+
+    private CompanyService companyService;
+    private EquipmentCategoryService equipmentCategoryService;
+    private ServiceTypeService serviceTypeService;
+    private CorrespondenceService correspondenceService;
+    private CorrespondenceTaskService correspondenceTaskService;
+    private ServiceType equipmentServiceType; // service type object for Equipment Inspection tab
+    private ServiceType trainingServiceType;
 
     @Inject
     private LoginBean loginBean;
     private TaskService taskService;
     private UserAliasService userAliasService;
+    private static final String EQUIP_SERVICE_CODE_FALLBACK = "001";
+    private static final String EQUIP_SERVICE_NAME_FALLBACK = "Equipment Inspection";
+    private static final String TRAIN_SERVICE_CODE_FALLBACK = "002"; // احتمال تغيير — فالدالة تبحث بالاسم أيضاً
+    private static final String TRAIN_SERVICE_NAME_FALLBACK = "Training & Assessment";
 
     public TaskManagementBean() {
         taskService = (TaskService) BeanUtility.getBean("taskService");
         userAliasService = (UserAliasService) BeanUtility.getBean("userAliasService");
+        // services used by add-task dialog
+        companyService = (CompanyService) BeanUtility.getBean("companyService");
+        equipmentCategoryService = (EquipmentCategoryService) BeanUtility.getBean("equipmentCategoryService");
+        serviceTypeService = (ServiceTypeService) BeanUtility.getBean("serviceTypeService");
+        correspondenceService = (CorrespondenceService) BeanUtility.getBean("correspondenceService");
+        correspondenceTaskService = (CorrespondenceTaskService) BeanUtility.getBean("correspondenceTaskService");
         tasks = new ArrayList<>();
         activeTasks = new ArrayList<>();
         deactivatedTasks = new ArrayList<>();
@@ -709,6 +752,555 @@ public class TaskManagementBean implements Serializable {
         sortTasks();
     }
 
+    /**
+     * Prepare the add-task dialog for a given group key (correspondence id or "No Correspondence").
+     * تعديل: لا نترك selectedEquipmentCategory ككائن افتراضي يظل يعطل اختيار المستخدم.
+     * بدلاً من ذلك نضع الافتراضات على الـ id ونمسح الكائن حتى لا يطغى على التحديد الجديد.
+     */
+    public void prepareNewTaskForWorkOrder(String groupKey) {
+        try {
+            if (groupKey == null || "No Correspondence".equals(groupKey)) {
+                addTaskCorrespondenceId = null;
+            } else {
+                try {
+                    addTaskCorrespondenceId = Long.valueOf(groupKey);
+                } catch (NumberFormatException nfe) {
+                    addTaskCorrespondenceId = null;
+                }
+            }
+
+            // load dropdowns (best-effort)
+            try { companyList = companyService.findAll(); } catch (Exception e) { companyList = new ArrayList<>(); }
+            try {
+                equipmentCategoryList = equipmentCategoryService.findAllEnabled();
+            } catch (Exception e) {
+                try { equipmentCategoryList = equipmentCategoryService.findAll(); } catch (Exception ex) { equipmentCategoryList = new ArrayList<>(); }
+            }
+            try { serviceTypeList = serviceTypeService.findAll(); } catch (Exception e) { serviceTypeList = new ArrayList<>(); }
+
+            // resolve service types for tabs
+            equipmentServiceType = findServiceTypeByCodeOrName(EQUIP_SERVICE_CODE_FALLBACK, EQUIP_SERVICE_NAME_FALLBACK);
+            trainingServiceType  = findServiceTypeByCodeOrName(TRAIN_SERVICE_CODE_FALLBACK, TRAIN_SERVICE_NAME_FALLBACK);
+
+            // sensible defaults: set IDs (primitives) as defaults and CLEAR the object references
+            if (!companyList.isEmpty() && companyList.get(0) != null) {
+                Number compIdNum = (Number) companyList.get(0).getId();
+                selectedCompanyId = (compIdNum == null) ? null : compIdNum.intValue();
+                selectedCompany = null; // clear object so id takes precedence on submit
+            } else {
+                selectedCompany = null;
+                selectedCompanyId = null;
+            }
+
+            if (!equipmentCategoryList.isEmpty() && equipmentCategoryList.get(0) != null) {
+                Object rawEcId = equipmentCategoryList.get(0).getId();
+                Short defaultEcId = null;
+                if (rawEcId instanceof Number) {
+                    defaultEcId = (short) ((Number) rawEcId).shortValue();
+                } else if (rawEcId != null) {
+                    try { defaultEcId = Short.valueOf(rawEcId.toString()); } catch (Exception ex) { defaultEcId = null; }
+                }
+                selectedEquipmentCategoryId = defaultEcId;
+                selectedEquipmentCategory = null; // IMPORTANT: clear object so changed id will be used
+            } else {
+                selectedEquipmentCategory = null;
+                selectedEquipmentCategoryId = null;
+            }
+
+            // default visible service type (equipment tab)
+            if (equipmentServiceType != null) {
+                selectedServiceType = equipmentServiceType;
+            } else if (!serviceTypeList.isEmpty()) {
+                selectedServiceType = serviceTypeList.get(0);
+            } else {
+                selectedServiceType = null;
+            }
+
+            // ensure the tab index defaults to equipment tab
+            addTaskActiveIndex = 0;
+
+            // update dialog contents
+            PrimeFaces.current().ajax().update("taskForm:panelTaskDialog");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to prepare Add Task dialog: " + e.getMessage()));
+        }
+    }
+
+
+
+
+    /**
+     * Handle Add button from dialog.
+     * تعديل: عندما يرد id من request parameters نفضّ الكائنات القديمة (selectedEquipmentCategory / selectedCompany)
+     * حتى لا تُستخدم كائنات قديمة عند الإنشاء.
+     */
+    public String handleAddFromDialog() {
+        try {
+            System.out.println("handleAddFromDialog called - activeIndex=" + this.addTaskActiveIndex +
+                    " addTaskCorrespondenceId=" + this.addTaskCorrespondenceId +
+                    " selectedCompanyId=" + this.selectedCompanyId +
+                    " selectedEquipmentCategoryId=" + this.selectedEquipmentCategoryId);
+
+            // Dump relevant request parameters (kept for debugging)
+            try {
+                FacesContext fc = FacesContext.getCurrentInstance();
+                java.util.Map<String, String> params = fc.getExternalContext().getRequestParameterMap();
+
+                // If user changed dropdowns, prefer the primitive id values submitted by the UI.
+                // If the id param exists, null out the object reference (object might be stale).
+                if (params != null) {
+                    // equipment category input name ends with dlg_equipment_cat_input in PrimeFaces
+                    String equipCatKey = null;
+                    for (String key : params.keySet()) {
+                        if (key.endsWith("dlg_equipment_cat_input")) equipCatKey = key;
+                    }
+                    if (equipCatKey != null) {
+                        String val = params.get(equipCatKey);
+                        try {
+                            if (val == null || val.isEmpty()) {
+                                this.selectedEquipmentCategoryId = null;
+                            } else {
+                                this.selectedEquipmentCategoryId = Short.valueOf(val);
+                            }
+                        } catch (Exception ex) {
+                            // keep existing selectedEquipmentCategoryId if parse fails
+                        }
+                        // ensure object doesn't override the id
+                        this.selectedEquipmentCategory = null;
+                    }
+
+                    // company inputs
+                    String equipCompanyKey = null;
+                    String trainCompanyKey = null;
+                    for (String key : params.keySet()) {
+                        if (key.endsWith("dlg_company_equip_input")) equipCompanyKey = key;
+                        if (key.endsWith("dlg_company_train_input")) trainCompanyKey = key;
+                    }
+                    // pick company based on active tab
+                    if (this.addTaskActiveIndex == 0 && equipCompanyKey != null) {
+                        String val = params.get(equipCompanyKey);
+                        try { this.selectedCompanyId = (val == null || val.isEmpty()) ? null : Integer.valueOf(val); } catch (Exception ex) {}
+                        this.selectedCompany = null;
+                    } else if (this.addTaskActiveIndex == 1 && trainCompanyKey != null) {
+                        String val = params.get(trainCompanyKey);
+                        try { this.selectedCompanyId = (val == null || val.isEmpty()) ? null : Integer.valueOf(val); } catch (Exception ex) {}
+                        this.selectedCompany = null;
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.println("Failed to reconcile params for active tab: " + ex.getMessage());
+            }
+
+            // now branch based on tab
+            if (this.addTaskActiveIndex == 0) {
+                // Equipment tab
+                createEquipmentTaskInWorkOrder();
+            } else {
+                // Training tab
+                createTrainingTaskInWorkOrder();
+            }
+
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to add task from dialog: " + e.getMessage()));
+            return null;
+        }
+    }
+
+
+
+
+
+    /**
+     * Helper: find ServiceType first by code, if not found try by name (case-insensitive).
+     * Returns null if not found.
+     */
+    private ServiceType findServiceTypeByCodeOrName(String code, String name) {
+        if (serviceTypeList == null) return null;
+        // try by code (exact)
+        if (code != null) {
+            for (ServiceType st : serviceTypeList) {
+                try {
+                    if (st != null && st.getCode() != null && st.getCode().equals(code)) {
+                        return st;
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
+        // try by name (case-insensitive contains/equals)
+        if (name != null) {
+            for (ServiceType st : serviceTypeList) {
+                try {
+                    if (st != null && st.getName() != null) {
+                        String nm = st.getName().trim();
+                        if (nm.equalsIgnoreCase(name) || nm.toLowerCase().contains(name.toLowerCase())) {
+                            return st;
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
+        // fallback: return any service type whose name contains "equipment" or "training"
+        for (ServiceType st : serviceTypeList) {
+            try {
+                String nm = st.getName() == null ? "" : st.getName().toLowerCase();
+                if (name != null && nm.contains(name.toLowerCase())) return st;
+            } catch (Exception ignored) {}
+        }
+        return null;
+    }
+
+    /**
+     * Create Equipment Inspection task (called from Equipment tab's Add button).
+     * تعديل: نفضّل selectedEquipmentCategoryId (الـ id) أولًا لأن selectedEquipmentCategory قد يكون غير محدث.
+     */
+    public void createEquipmentTaskInWorkOrder() {
+        try {
+            if (addTaskCorrespondenceId == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Missing Work Order", "Cannot add task: target work order not selected."));
+                PrimeFaces.current().ajax().addCallbackParam("taskCreated", false);
+                return;
+            }
+
+            if (equipmentServiceType == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Missing Service Type", "Equipment service type not found. Contact admin."));
+                PrimeFaces.current().ajax().addCallbackParam("taskCreated", false);
+                return;
+            }
+
+            // Prefer selectedEquipmentCategoryId (primitive) over selectedEquipmentCategory object
+            Short ecIdShort = null;
+            if (this.selectedEquipmentCategoryId != null) {
+                ecIdShort = this.selectedEquipmentCategoryId;
+            } else if (selectedEquipmentCategory != null && selectedEquipmentCategory.getId() != null) {
+                Object raw = selectedEquipmentCategory.getId();
+                if (raw instanceof Number) {
+                    ecIdShort = (short) ((Number) raw).shortValue();
+                } else {
+                    try { ecIdShort = Short.valueOf(raw.toString()); } catch (Exception ex) { ecIdShort = null; }
+                }
+            }
+
+            if (ecIdShort == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Missing Equipment Category", "Please select equipment category for inspection."));
+                PrimeFaces.current().ajax().addCallbackParam("taskCreated", false);
+                return;
+            }
+
+            // set serviceType explicitly to equipment
+            selectedServiceType = equipmentServiceType;
+
+            // resolve equipmentCategory object from id using service (service expects Short)
+            EquipmentCategory equipResolved = null;
+            try {
+                equipResolved = equipmentCategoryService.findById(ecIdShort);
+            } catch (Exception e) {
+                equipResolved = null;
+            }
+
+            if (equipResolved == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Invalid Equipment Category", "Selected equipment category could not be resolved."));
+                PrimeFaces.current().ajax().addCallbackParam("taskCreated", false);
+                return;
+            }
+
+            // ensure selectedEquipmentCategory object reflects resolved value (keep bean consistent)
+            this.selectedEquipmentCategory = equipResolved;
+
+            // delegate to common creator
+            createTaskAndLink(selectedServiceType, equipResolved);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create equipment task: " + e.getMessage()));
+            try { PrimeFaces.current().ajax().addCallbackParam("taskCreated", false); } catch (Exception ignore) {}
+        }
+    }
+
+
+
+
+    /**
+     * Create Training & Assessment task (called from Training tab's Add button).
+     * ServiceType is forced to trainingServiceType; no equipment category.
+     */
+    public void createTrainingTaskInWorkOrder() {
+        try {
+            if (addTaskCorrespondenceId == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Missing Work Order", "Cannot add task: target work order not selected."));
+                PrimeFaces.current().ajax().addCallbackParam("taskCreated", false);
+                return;
+            }
+            if (trainingServiceType == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Missing Service Type", "Training service type not found. Contact admin."));
+                PrimeFaces.current().ajax().addCallbackParam("taskCreated", false);
+                return;
+            }
+
+            // set serviceType explicitly to training
+            selectedServiceType = trainingServiceType;
+
+            // training: equipment category must be null (also clear id)
+            selectedEquipmentCategory = null;
+            selectedEquipmentCategoryId = null;
+
+            // delegate to common creator (no equipment)
+            createTaskAndLink(selectedServiceType, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create training task: " + e.getMessage()));
+            try { PrimeFaces.current().ajax().addCallbackParam("taskCreated", false); } catch (Exception ignore) {}
+        }
+    }
+
+
+
+    /**
+     * Common routine: create Task with given serviceType and optional equipmentCategory,
+     * persist and link to correspondence.
+     * تعديل طفيف: عند حل الشركة / equipment نفضّل الحقول الـ id أولًا (المُرسَّلة من الواجهة).
+     */
+    private void createTaskAndLink(ServiceType svc, EquipmentCategory equipCat) {
+        try {
+            System.out.println("createTaskAndLink called: svc=" + (svc != null ? svc.getName() : "null") +
+                    " equip(arg)=" + (equipCat != null ? equipCat.getName() : "null") +
+                    " corrId=" + addTaskCorrespondenceId +
+                    " companyId=" + selectedCompanyId + " equipIdField=" + selectedEquipmentCategoryId);
+
+            if (addTaskCorrespondenceId == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Missing Work Order", "Target work order is not set."));
+                return;
+            }
+
+            // Resolve company: prefer selectedCompanyId (primitive from UI) then fallback to selectedCompany object
+            Company companyToSet = null;
+            if (selectedCompanyId != null) {
+                try { companyToSet = companyService.findById(selectedCompanyId); } catch (Exception e) { companyToSet = null; }
+            }
+            if (companyToSet == null && selectedCompany != null) {
+                companyToSet = selectedCompany;
+            }
+
+            // Resolve equipment: prefer the explicit argument (equipCat) then selectedEquipmentCategoryId then selectedEquipmentCategory object
+            EquipmentCategory equipmentToSet = equipCat;
+            if (equipmentToSet == null && selectedEquipmentCategoryId != null) {
+                try { equipmentToSet = equipmentCategoryService.findById(selectedEquipmentCategoryId); } catch (Exception e) { equipmentToSet = null; }
+            }
+            if (equipmentToSet == null && selectedEquipmentCategory != null) {
+                equipmentToSet = selectedEquipmentCategory;
+            }
+
+            Task t = new Task();
+            t.setCompany(companyToSet);
+            t.setServiceType(svc);
+            t.setEquipmentCategory(equipmentToSet);
+            t.setCreatedDate(new Date());
+            t.setIsCompleted(false);
+            t.setIsDone(false);
+            t.setTaskDescription("");
+            t.setIs_active(true);
+
+            // set assigner & assignTo to current user's first alias (send to myself behavior)
+            try {
+                List<UserAlias> myAliases = userAliasService.getBySysUser(loginBean.getUser());
+                if (myAliases != null && !myAliases.isEmpty()) {
+                    UserAlias ua = myAliases.get(0);
+                    t.setUserAliasByAssigner(ua);
+                    t.setUserAliasByAssignTo(ua);
+                }
+            } catch (Exception e) {
+                // ignore and continue
+            }
+
+            try { t.setSysUser(loginBean.getUser()); } catch (Exception e) { }
+
+            // persist task
+            Task saved = taskService.saveOrUpdate(t);
+            if (saved == null || saved.getId() == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Save Failed", "Task could not be saved."));
+                try { PrimeFaces.current().ajax().addCallbackParam("taskCreated", false); } catch (Exception ignore) {}
+                return;
+            }
+
+            // link to correspondence
+            Correspondence corr = null;
+            try { corr = correspondenceService.findById(addTaskCorrespondenceId); } catch (Exception e) { corr = null; }
+            if (corr != null) {
+                CorrespondenceTask ct = new CorrespondenceTask();
+                ct.setTask(saved);
+                ct.setCorrespondence(corr);
+                correspondenceTaskService.saveOrUpdate(ct);
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Linked Work Order Missing", "Task created but could not be linked to selected work order."));
+            }
+
+            // refresh tasks and UI
+            loadAndSortTasks();
+            PrimeFaces.current().ajax().update("taskForm");
+
+            // add success message
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Task created and linked to work order."));
+            try { PrimeFaces.current().ajax().addCallbackParam("taskCreated", true); } catch (Exception ignore) {}
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create task: " + e.getMessage()));
+            try { PrimeFaces.current().ajax().addCallbackParam("taskCreated", false); } catch (Exception ignore) {}
+        }
+    }
+
+
+
+    /**
+     * New helper: called by p:ajax when equipment select changes.
+     * Purpose: فور تغيير الـ id في الواجهة نحدّث الكائن selectedEquipmentCategory في الـ bean (أو نمسحه إذا لم يوجد).
+     */
+    public void onEquipmentCategoryChange() {
+        try {
+            if (this.selectedEquipmentCategoryId != null) {
+                try {
+                    this.selectedEquipmentCategory = equipmentCategoryService.findById(this.selectedEquipmentCategoryId);
+                } catch (Exception e) {
+                    this.selectedEquipmentCategory = null;
+                }
+            } else {
+                this.selectedEquipmentCategory = null;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+
+
+
+
+
+    /** AJAX listener when the service type selection changes in the dialog. */
+    public void onChangeSelectedServiceType() {
+        try {
+            if (selectedServiceType == null || !"001".equals(selectedServiceType.getCode())) {
+                // If not the equipment-inspection service type, clear equipment selection
+                selectedEquipmentCategory = null;
+            }
+            // Client-side p:ajax already updates the inner panel; avoid re-rendering the dialog widget
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    // Helper for UI: true when equipment-inspection service is selected
+    public boolean isEquipmentServiceSelected() {
+        try {
+            return selectedServiceType != null && "001".equals(selectedServiceType.getCode());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Helper for UI: true when a non-equipment (employee/training) service is selected
+    public boolean isEmployeeServiceSelected() {
+        try {
+            return selectedServiceType != null && !"001".equals(selectedServiceType.getCode());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** Create and persist a new Task linked to the selected Correspondence (work order). */
+    public void createTaskInWorkOrder() {
+        try {
+            if (addTaskCorrespondenceId == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_WARN, "Missing Work Order", "Cannot add task: target work order not selected."));
+                return;
+            }
+
+            Task t = new Task();
+            t.setCompany(selectedCompany);
+            t.setServiceType(selectedServiceType);
+            // only set equipment category when service type requires it (code '001' per create.xhtml convention)
+            if (selectedServiceType == null || !"001".equals(selectedServiceType.getCode())) {
+                t.setEquipmentCategory(null);
+            } else {
+                t.setEquipmentCategory(selectedEquipmentCategory);
+            }
+            t.setCreatedDate(new Date());
+            t.setIsCompleted(false);
+            t.setIsDone(false);
+            t.setTaskDescription("");
+            t.setIs_active(true);
+
+            // set assigner & assignTo to current user's first alias (send to myself behavior)
+            try {
+                List<UserAlias> myAliases = userAliasService.getBySysUser(loginBean.getUser());
+                if (myAliases != null && !myAliases.isEmpty()) {
+                    UserAlias ua = myAliases.get(0);
+                    t.setUserAliasByAssigner(ua);
+                    t.setUserAliasByAssignTo(ua);
+                }
+            } catch (Exception e) {
+                // ignore and continue
+            }
+
+            // set sysUser if available
+            try { t.setSysUser(loginBean.getUser()); } catch (Exception e) { }
+
+            // persist task
+            Task saved = taskService.saveOrUpdate(t);
+
+            // link to correspondence
+            Correspondence corr = null;
+            try { corr = correspondenceService.findById(addTaskCorrespondenceId); } catch (Exception e) { corr = null; }
+            if (corr != null && saved != null) {
+                CorrespondenceTask ct = new CorrespondenceTask();
+                ct.setTask(saved);
+                ct.setCorrespondence(corr);
+                correspondenceTaskService.saveOrUpdate(ct);
+            }
+
+            // refresh tasks and UI
+            loadAndSortTasks();
+            PrimeFaces.current().ajax().update("taskForm");
+            PrimeFaces.current().executeScript("PF('addTaskDialog').hide();");
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Task created and linked to work order."));
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to create task: " + e.getMessage()));
+        }
+    }
+    public void onTabChange(org.primefaces.event.TabChangeEvent event) {
+        try {
+            // get index from the tabView component
+            javax.faces.component.UIComponent tabView = event.getComponent();
+            Object idx = tabView.getAttributes().get("activeIndex");
+            // أسهل: اقرأ قيمة addTaskActiveIndex مباشرة لأن activeIndex مربوط بالفعل بالـ bean
+            System.out.println("tab changed - addTaskActiveIndex = " + this.addTaskActiveIndex);
+        } catch (Exception e) { /* ignore */ }
+    }
+
+
     // getter/setter for correspondence filter
     public Long getCorrespondenceIdFilter() {
         return correspondenceIdFilter;
@@ -748,5 +1340,69 @@ public class TaskManagementBean implements Serializable {
 
         return result;
     }
+
+    // Getters/Setters for Add Task dialog fields
+    public Long getAddTaskCorrespondenceId() {
+        return addTaskCorrespondenceId;
+    }
+
+    public Company getSelectedCompany() {
+        return selectedCompany;
+    }
+
+    public void setSelectedCompany(Company selectedCompany) {
+        this.selectedCompany = selectedCompany;
+    }
+
+    public EquipmentCategory getSelectedEquipmentCategory() {
+        return selectedEquipmentCategory;
+    }
+
+    public void setSelectedEquipmentCategory(EquipmentCategory selectedEquipmentCategory) {
+        this.selectedEquipmentCategory = selectedEquipmentCategory;
+    }
+
+    public ServiceType getSelectedServiceType() {
+        return selectedServiceType;
+    }
+
+    public void setSelectedServiceType(ServiceType selectedServiceType) {
+        this.selectedServiceType = selectedServiceType;
+    }
+
+    public List<Company> getCompanyList() {
+        return companyList;
+    }
+
+    public List<EquipmentCategory> getEquipmentCategoryList() {
+        return equipmentCategoryList;
+    }
+
+    public List<ServiceType> getServiceTypeList() {
+        return serviceTypeList;
+    }
+
+    public ServiceType getEquipmentServiceType() {
+        return equipmentServiceType;
+    }
+
+    public ServiceType getTrainingServiceType() {
+        return trainingServiceType;
+    }
+    public Integer getSelectedCompanyId() {
+        return selectedCompanyId;
+    }
+    public void setSelectedCompanyId(Integer selectedCompanyId) {
+        this.selectedCompanyId = selectedCompanyId;
+    }
+
+
+    public Short getSelectedEquipmentCategoryId() {
+        return selectedEquipmentCategoryId;
+    }
+    public void setSelectedEquipmentCategoryId(Short selectedEquipmentCategoryId) {
+        this.selectedEquipmentCategoryId = selectedEquipmentCategoryId;
+    }
+
 
 } 

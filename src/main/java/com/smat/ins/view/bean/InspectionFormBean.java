@@ -1225,8 +1225,10 @@ public class InspectionFormBean implements Serializable {
     }
 
     public String doSave() {
-        if (!doValidate())
+        if (!doValidate()) {
+            try { org.primefaces.PrimeFaces.current().ajax().addCallbackParam("approveOk", false); } catch (Exception ignore) {}
             return "";
+        }
         try {
             // If user explicitly selected the UI sentinel for "N\\A",
             // clear the sticker relationship (we only persist stickerNo="N\\A").
@@ -1351,6 +1353,7 @@ public class InspectionFormBean implements Serializable {
                     ex.printStackTrace();
                 }
 
+                try { org.primefaces.PrimeFaces.current().ajax().addCallbackParam("approveOk", true); } catch (Exception ignore) {}
                 UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
                 return "";
             }
@@ -1461,6 +1464,7 @@ public class InspectionFormBean implements Serializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            try { org.primefaces.PrimeFaces.current().ajax().addCallbackParam("approveOk", false); } catch (Exception ignore) {}
             UtilityHelper.addInfoMessage(localizationService.getErrorMessage().getString("operationFaild"));
             return "";
         }
@@ -2571,6 +2575,50 @@ public class InspectionFormBean implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
             UtilityHelper.addErrorMessage("Failed to generate certificate: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Prepare a preview PDF from the current in-memory `equipmentInspectionForm`.
+     * Stores the generated PDF bytes in the HTTP session under a token and
+     * returns the token to the client via PrimeFaces callback param `previewToken`.
+     * The client can then open `/attachments/previewPdf?token={token}` in a new tab.
+     */
+    public void preparePreviewPdf() {
+        try {
+            if (this.equipmentInspectionForm == null) {
+                UtilityHelper.addErrorMessage("No form available for preview");
+                return;
+            }
+
+            FormTemplate tpl = this.formTemplate;
+            if (tpl == null && this.equipmentInspectionForm.getEquipmentCategory() != null) {
+                tpl = formTemplateService.getBy(this.equipmentInspectionForm.getEquipmentCategory().getCode());
+            }
+            if (tpl == null || tpl.getPrintedDoc() == null) {
+                UtilityHelper.addErrorMessage("Template not available for preview");
+                return;
+            }
+
+            byte[] pdfBytes = generateEquipmentPdfBytes(this.equipmentInspectionForm, tpl);
+            if (pdfBytes == null || pdfBytes.length == 0) {
+                UtilityHelper.addErrorMessage("Failed to generate preview PDF");
+                return;
+            }
+
+            String token = java.util.UUID.randomUUID().toString();
+            String sessionKey = "previewPdf_" + token;
+            FacesContext fc = FacesContext.getCurrentInstance();
+            if (fc != null) {
+                fc.getExternalContext().getSessionMap().put(sessionKey, pdfBytes);
+            }
+
+            // return token to client
+            try { PrimeFaces.current().ajax().addCallbackParam("previewToken", token); } catch (Exception ignore) {}
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error preparing preview: " + e.getMessage());
         }
     }
     // helper: convert any object to safe string
