@@ -37,15 +37,17 @@ public class LoginBean implements Serializable {
     // Guard to prevent concurrent/re-entrant login requests from same session
     private transient AtomicBoolean loginProcessing = new AtomicBoolean(false);
 
-    
+
     // خصائص جديدة لتغيير كلمة المرور
     private String currentPassword;
     private String newPassword;
     private String confirmPassword;
-    
+    // حالة تحقق كلمة المرور الحالية لعرض أيقونة فورية في الواجهة
+    private Boolean currentPasswordValid;
+
     private List<SysUserRole> userRoles;
     private List<SysPermission> sysPermissionList;
-    
+
     private SysUserService userService;
     private SysUserRoleService sysUserRoleService;
     private SysPermissionService sysPermissionService;
@@ -74,7 +76,7 @@ public class LoginBean implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     // محولات جديدة لتغيير كلمة المرور
     public String getCurrentPassword() {
         return currentPassword;
@@ -98,6 +100,14 @@ public class LoginBean implements Serializable {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public Boolean getCurrentPasswordValid() {
+        return currentPasswordValid;
+    }
+
+    public void setCurrentPasswordValid(Boolean currentPasswordValid) {
+        this.currentPasswordValid = currentPasswordValid;
     }
 
     public List<SysUserRole> getUserRoles() {
@@ -242,7 +252,7 @@ public class LoginBean implements Serializable {
             loginProcessing.set(false);
         }
     }
-    
+
     public boolean hasSysPermission(String code) {
         if (sysPermissionList != null) {
             for (SysPermission sysPermission : sysPermissionList) {
@@ -264,30 +274,58 @@ public class LoginBean implements Serializable {
         }
         return null;
     }
-    
+
     // طريقة للتحقق من صحة كلمة المرور الحالية
     public void validateCurrentPassword(FacesContext context, javax.faces.component.UIComponent component, Object value) {
         currentPassword = (String) value;
-        
-        if (user != null) {
-            if (user.getIsSuperAdmin()) {
-                // للمستخدمين المسؤولين
-                String storedPassword = localizationService.getApplicationProperties().getString("password");
-                if (!BCrypt.checkpw(currentPassword, storedPassword)) {
-                    throw new javax.faces.validator.ValidatorException(
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                        localizationService.getErrorMessage().getString("incorrectCurrentPassword"), 
-                        null));
+        try {
+            if (user == null) {
+                String msg = "Session expired. Please login again.";
+                if (localizationService != null && localizationService.getErrorMessage() != null && localizationService.getErrorMessage().containsKey("sessionExpired")) {
+                    msg = localizationService.getErrorMessage().getString("sessionExpired");
+                }
+                throw new javax.faces.validator.ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null));
+            }
+
+            boolean isSuper = (user.getIsSuperAdmin() != null && user.getIsSuperAdmin());
+
+            if (isSuper) {
+                String storedPassword = null;
+                if (localizationService != null && localizationService.getApplicationProperties() != null && localizationService.getApplicationProperties().containsKey("password")) {
+                    storedPassword = localizationService.getApplicationProperties().getString("password");
+                }
+                if (storedPassword == null || !BCrypt.checkpw(currentPassword, storedPassword)) {
+                    currentPasswordValid = false;
+                    String msg = "Incorrect current password.";
+                    if (localizationService != null && localizationService.getErrorMessage() != null && localizationService.getErrorMessage().containsKey("incorrectCurrentPassword")) {
+                        msg = localizationService.getErrorMessage().getString("incorrectCurrentPassword");
+                    }
+                    throw new javax.faces.validator.ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null));
+                } else {
+                    currentPasswordValid = true;
                 }
             } else {
-                // للمستخدمين العاديين
-                if (!BCrypt.checkpw(currentPassword, user.getPassword())) {
-                    throw new javax.faces.validator.ValidatorException(
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-                        localizationService.getErrorMessage().getString("incorrectCurrentPassword"), 
-                        null));
+                String userPwd = (user.getPassword() != null) ? user.getPassword() : null;
+                if (userPwd == null || !BCrypt.checkpw(currentPassword, userPwd)) {
+                    currentPasswordValid = false;
+                    String msg = "Incorrect current password.";
+                    if (localizationService != null && localizationService.getErrorMessage() != null && localizationService.getErrorMessage().containsKey("incorrectCurrentPassword")) {
+                        msg = localizationService.getErrorMessage().getString("incorrectCurrentPassword");
+                    }
+                    throw new javax.faces.validator.ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null));
+                } else {
+                    currentPasswordValid = true;
                 }
             }
+        } catch (javax.faces.validator.ValidatorException ve) {
+            throw ve;
+        } catch (Exception ex) {
+            currentPasswordValid = false;
+            String msg = "Unable to validate current password.";
+            if (localizationService != null && localizationService.getErrorMessage() != null && localizationService.getErrorMessage().containsKey("validationError")) {
+                msg = localizationService.getErrorMessage().getString("validationError");
+            }
+            throw new javax.faces.validator.ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, null));
         }
     }
 
@@ -297,22 +335,58 @@ public class LoginBean implements Serializable {
     public void changePassword() {
         try {
             if (user != null) {
+                // تحقق من وجود الحقول أولاً (حماية من NPE)
+                if (newPassword == null || confirmPassword == null || newPassword.trim().isEmpty() || confirmPassword.trim().isEmpty()) {
+                    UtilityHelper.addErrorMessage(localizationService.getErrorMessage().containsKey("requiredNewPassword")
+                            ? localizationService.getErrorMessage().getString("requiredNewPassword")
+                            : "New password and confirmation are required.");
+                    return;
+                }
+
+                // التحقق من كلمة المرور الحالية موجودة
+                if (currentPassword == null || currentPassword.trim().isEmpty()) {
+                    UtilityHelper.addErrorMessage(localizationService.getErrorMessage().containsKey("requiredCurrentPassword")
+                            ? localizationService.getErrorMessage().getString("requiredCurrentPassword")
+                            : "Current password is required.");
+                    return;
+                }
+
                 // التحقق من تطابق كلمتي المرور الجديدة
                 if (!newPassword.equals(confirmPassword)) {
-                    UtilityHelper.addErrorMessage("The passwords do not match.");
+                    UtilityHelper.addErrorMessage(localizationService.getErrorMessage().containsKey("passwordsNotMatch")
+                            ? localizationService.getErrorMessage().getString("passwordsNotMatch")
+                            : "The passwords do not match.");
                     return;
+                }
+
+                // التحقق من صحة كلمة المرور الحالية على الخادم
+                if (user.getIsSuperAdmin() != null && user.getIsSuperAdmin()) {
+                    String storedPassword = localizationService.getApplicationProperties().getString("password");
+                    if (!BCrypt.checkpw(currentPassword, storedPassword)) {
+                        UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("incorrectCurrentPassword"));
+                        return;
+                    }
+                } else {
+                    if (!BCrypt.checkpw(currentPassword, user.getPassword())) {
+                        UtilityHelper.addErrorMessage(localizationService.getErrorMessage().getString("incorrectCurrentPassword"));
+                        return;
+                    }
                 }
 
                 String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
-                if (user.getIsSuperAdmin() !=null && user.getIsSuperAdmin()) {
-                    // للمستخدمين المسؤولين
-                    UtilityHelper.addInfoMessage("Password changed successfully");
+                if (user.getIsSuperAdmin() != null && user.getIsSuperAdmin()) {
+                    // للمستخدمين المسؤولين: لا نحدّث كلمة المرور في DB حسب السلوك الحالي
+                    UtilityHelper.addInfoMessage(localizationService.getErrorMessage().containsKey("passwordChanged")
+                            ? localizationService.getErrorMessage().getString("passwordChanged")
+                            : "Password changed successfully");
                 } else {
                     // للمستخدمين العاديين
                     user.setPassword(hashedPassword);
                     userService.update(user);
-                    UtilityHelper.addInfoMessage("Password changed successfully");
+                    UtilityHelper.addInfoMessage(localizationService.getErrorMessage().containsKey("passwordChanged")
+                            ? localizationService.getErrorMessage().getString("passwordChanged")
+                            : "Password changed successfully");
                 }
 
                 // إعادة تعيين الحقول
@@ -320,7 +394,6 @@ public class LoginBean implements Serializable {
 
                 // إضافة باراميتر للإشارة إلى النجاح بدلاً من إعادة التوجيه المباشر
                 PrimeFaces.current().executeScript("handlePasswordChangeSuccess();");
-
             }
         } catch (Exception e) {
             UtilityHelper.addErrorMessage("فشل تغيير كلمة المرور");
@@ -342,12 +415,13 @@ public class LoginBean implements Serializable {
         return sb.toString();
     }
 
-    
+
     // طريقة لإعادة تعيين نموذج تغيير كلمة المرور
     public void resetPasswordForm() {
         currentPassword = null;
         newPassword = null;
         confirmPassword = null;
+        currentPasswordValid = null;
     }
     public boolean hasRole(String roleCode) {
         if (userRoles == null || userRoles.isEmpty()) {

@@ -680,13 +680,13 @@ public class InspectionFormBean implements Serializable {
 
         step = "01";
         disableSticker=false;
-        // initialize sentinel representing explicit N\A selection in the UI
-        try {
-            naSentinel = new Sticker();
-            naSentinel.setStickerNo("N\\A");
-        } catch (Exception ignore) {
-            naSentinel = new Sticker();
-        }
+            // initialize sentinel representing explicit N\A selection in the UI
+            try {
+                naSentinel = new Sticker();
+                naSentinel.setStickerNo("N\\A");
+            } catch (Exception ignore) {
+                naSentinel = new Sticker();
+            }
     }
 
     @PostConstruct
@@ -1597,8 +1597,8 @@ public class InspectionFormBean implements Serializable {
                 data.put("reviewedBy", loginBean.getUser() != null ? loginBean.getUser().getEnDisplayName() : "");
             }
 
-            // Build QR using serialNo (if available) and reportNo instead of stickerNo
-            String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
+                // Build QR using serialNo (if available) and reportNo instead of stickerNo
+                String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
                     (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null ? equipmentInspectionForm.getSticker().getSerialNo() : "") +
                     "&" +
                     (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null ? equipmentInspectionForm.getReportNo() : "");
@@ -2119,8 +2119,8 @@ public class InspectionFormBean implements Serializable {
         // QR
         // Use reportNo instead of stickerNo so QR remains valid when sticker selection is empty
         String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
-                (eForm.getSticker() != null ? eForm.getSticker().getSerialNo() : "") + "&" +
-                (eForm.getReportNo() != null ? eForm.getReportNo() : "");
+            (eForm.getSticker() != null ? eForm.getSticker().getSerialNo() : "") + "&" +
+            (eForm.getReportNo() != null ? eForm.getReportNo() : "");
         byte[] qrBytes = QRCodeGenerator.generateQrCodeImage(qrCodeData, 5, 1);
         Bookmark qrB = document.getRange().getBookmarks().get("QRCodeImage");
         if (qrB != null && qrBytes != null) {

@@ -21,6 +21,7 @@ import com.smat.ins.model.entity.EmpCertification;
 import com.smat.ins.model.service.EmpCertificationService;
 import com.smat.ins.util.BeanUtility;
 import com.smat.ins.util.UtilityHelper;
+import com.smat.ins.util.CertificatePdfGenerator;
 
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -79,8 +80,33 @@ public class EmpCertificateExportServlet extends HttpServlet {
                 return;
             }
             
-            // Generate certificate PDF on-the-fly
-            byte[] pdfData = generateCertificatePDF(request, empCertification, certNumber, tsNumber);
+            // Generate certificate PDF on-the-fly using the new iText generator
+            ServletContext context = getServletContext();
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("CertNumber", empCertification.getCertNumber());
+            parameters.put("TsNumber", empCertification.getTsNumber());
+            parameters.put("IssueDate", empCertification.getIssueDate());
+            parameters.put("ExpiryDate", empCertification.getExpiryDate());
+            parameters.put("EmployeeName", empCertification.getEmployee().getFullName());
+            parameters.put("CompanyName", empCertification.getEmployee().getCompany().getName());
+            parameters.put("CertType", empCertification.getEmpCertificationType().getCertName());
+            parameters.put("EmployeeId", empCertification.getEmployee().getIdNumber());
+
+            parameters.put("logoLeftPath", context.getRealPath("views/jasper/images/logo-left.png"));
+            parameters.put("logoRightPath", context.getRealPath("views/jasper/images/logo-right.png"));
+
+            // keep same QR payload as before
+            String qrText = getBaseURL(request) + "/api/emp-cert/" + certNumber + "&" + tsNumber;
+            byte[] qrCodeBytes = generateQRCode(qrText);
+            parameters.put("QRCodeImage", new java.io.ByteArrayInputStream(qrCodeBytes));
+
+            if (empCertification.getEmployee().getEmployeePhoto() != null) {
+                parameters.put("EmployeePhoto", new java.io.ByteArrayInputStream(empCertification.getEmployee().getEmployeePhoto()));
+            } else {
+                parameters.put("EmployeePhoto", null);
+            }
+
+            byte[] pdfData = CertificatePdfGenerator.generate(parameters, context);
             
             // Set response headers for PDF display
             response.setContentType("application/pdf");

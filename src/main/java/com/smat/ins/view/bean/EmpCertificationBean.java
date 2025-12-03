@@ -1,6 +1,7 @@
 package com.smat.ins.view.bean;
 
 
+import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.qrcode.WriterException;
 import com.smat.ins.model.entity.*;
 import com.smat.ins.model.service.*;
@@ -14,6 +15,16 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+// iText imports for direct PDF generation
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.ExternalContext;
@@ -29,6 +40,9 @@ import org.primefaces.PrimeFaces;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -444,10 +458,31 @@ public class EmpCertificationBean implements Serializable {
                         parameters.put("QRCodeImage", new ByteArrayInputStream(qrCodeImage));
                     }
 
-                    String jasperPath = getServletContextPath("views/jasper/emp-certification.jasper");
-                    if (jasperPath != null) {
-                        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperPath, parameters, new JREmptyDataSource());
-                        byte[] pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
+                    byte[] pdfBytes = null;
+                    try {
+                        // prefer iText generator implemented in this bean
+                        pdfBytes = generateCertificatePdfBytes(parameters);
+                    } catch (Exception genEx) {
+                        genEx.printStackTrace();
+                        // fallback to existing Jasper if generator fails
+                        try {
+                            String jasperPath = getServletContextPath("views/jasper/emp-certification.jasper");
+                            if (jasperPath != null) {
+                                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperPath, parameters, new JREmptyDataSource());
+                                pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
+                            }
+                        } catch (Exception jex) {
+                            jex.printStackTrace();
+                        }
+                    }
+
+                    if (pdfBytes != null) {
+                        // put bytes into session so viewer can display the newly generated PDF
+                        try {
+                            UtilityHelper.putSessionAttr("certPdfBytes", pdfBytes);
+                        } catch (Exception sessEx) {
+                            sessEx.printStackTrace();
+                        }
 
                         // store pdfBytes as attachment (reuse upload storage pattern)
                         try {
@@ -753,31 +788,19 @@ public class EmpCertificationBean implements Serializable {
                 parameters.put("QRCodeImage", new ByteArrayInputStream(qrCodeImage));
             }
 
-            String jasperPath = getServletContextPath("views/jasper/emp-certification.jasper");
-            if (jasperPath == null) {
-                UtilityHelper.addErrorMessage("Report template not found.");
-                return;
+            // Generate PDF bytes directly (no Jasper)
+            byte[] pdfBytes = generateCertificatePdfBytes(parameters);
+
+            // Put bytes in session so the CertificateViewerBean can read them and show viewer dialog
+            try {
+                UtilityHelper.putSessionAttr("certPdfBytes", pdfBytes);
+                // update viewer content and show dialog (works with AJAX)
+                try { PrimeFaces.current().ajax().update("form_viewer:manage-viewer-content"); } catch (Exception ignore) {}
+                try { PrimeFaces.current().executeScript("PF('viewerWidgetVar').show();"); } catch (Exception ignore) {}
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                UtilityHelper.addErrorMessage("Failed to prepare PDF viewer: " + ex.getMessage());
             }
-
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperPath, parameters, new JREmptyDataSource());
-            // Export to bytes
-            byte[] pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
-
-            // Stream to response safely
-            ExternalContext externalContext = facesContext.getExternalContext();
-            HttpServletResponse response = (HttpServletResponse) externalContext.getResponse();
-            response.reset();
-            response.setContentType("application/pdf");
-            String fileName = "EmployeeCertification_" + (empCertification.getCertNumber() != null ? empCertification.getCertNumber() : System.currentTimeMillis()) + ".pdf";
-            response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
-            response.setContentLength(pdfBytes.length);
-
-            try (ServletOutputStream out = response.getOutputStream()) {
-                out.write(pdfBytes);
-                out.flush();
-            }
-
-            facesContext.responseComplete();
 
         } catch (Exception e) {
             UtilityHelper.addErrorMessage("Failed to generate report: " + e.getMessage());
@@ -982,6 +1005,342 @@ public class EmpCertificationBean implements Serializable {
     // helper
     private String safeString(Object o) {
         return o == null ? "" : String.valueOf(o);
+    }
+    /**
+     * Generate certificate PDF bytes directly using iText (no Jasper).
+     * Uses the prepared parameters map (keys used in jrxml) to layout the PDF.
+     */
+    private byte[] generateCertificatePdfBytes(Map<String, Object> parameters) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4);
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, baos);
+            document.open();
+
+            // Colors and fonts
+            // refreshed color palette for better visual appeal
+            com.itextpdf.text.BaseColor brandBlue = new com.itextpdf.text.BaseColor(10, 102, 204); // brighter blue
+            com.itextpdf.text.BaseColor lightGray = new com.itextpdf.text.BaseColor(250, 250, 252);
+            com.itextpdf.text.BaseColor darkText = new com.itextpdf.text.BaseColor(38, 50, 56);
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, com.itextpdf.text.BaseColor.BLACK);
+            Font roleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, com.itextpdf.text.BaseColor.BLACK);
+            Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, brandBlue);
+            Font valueFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, darkText);
+            Font smallFont = FontFactory.getFont(FontFactory.HELVETICA, 9, darkText);
+            Font urlFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, brandBlue);
+            // fonts for certificate and approval labels/values
+            Font certLabelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, brandBlue);
+            Font certValueFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, darkText);
+            Font approvalLabelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, brandBlue);
+            Font approvalValueFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, darkText);
+
+            // page metrics
+            float pageW = document.getPageSize().getWidth();
+            float pageH = document.getPageSize().getHeight();
+            float margin = 28f;
+            float gap = 18f;
+
+            // Two card panels stacked vertically (front + back)
+            float panelW = pageW - margin * 2;
+            float panelH = (pageH - margin * 2 - gap) / 2f;
+            float cornerRadius = 8f;
+
+            PdfContentByte cb = writer.getDirectContent();
+
+            // helper to draw rounded panel background with subtle drop shadow
+            java.util.function.BiConsumer<Float, Float> drawPanelBg = (x, y) -> {
+                try {
+                    // shadow (slightly offset)
+                    cb.saveState();
+                    cb.setColorFill(new com.itextpdf.text.BaseColor(220, 220, 224));
+                    cb.roundRectangle(x + 3f, y - 3f, panelW, panelH, cornerRadius);
+                    cb.fill();
+                    cb.restoreState();
+
+                    // panel
+                    cb.saveState();
+                    cb.setColorFill(lightGray);
+                    cb.roundRectangle(x, y, panelW, panelH, cornerRadius);
+                    cb.fillStroke();
+                    cb.restoreState();
+                } catch (Exception ignore) {}
+            };
+
+            // FRONT PANEL (top)
+            float frontX = margin;
+            float frontY = pageH - margin - panelH;
+            drawPanelBg.accept(frontX, frontY);
+
+            // header: logos and title
+            // increase header height to give more breathing room below the logos/title
+            float headerH = 110f;
+            try {
+                // left logo
+                String leftPath = getServletContextPath("views/jasper/images/logo-left.png");
+                if (leftPath != null) {
+                    byte[] leftBytes = makeImageTransparent(leftPath);
+                    if (leftBytes != null) {
+                        Image logoL = Image.getInstance(leftBytes);
+                        // larger logo for more presence
+                        logoL.scaleToFit(90, 90);
+                        // raise left logo further up
+                        logoL.setAbsolutePosition(frontX + 12, frontY + panelH - 6 - logoL.getScaledHeight());
+                        cb.addImage(logoL);
+                    }
+                }
+            } catch (Exception ignore) {}
+            try {
+                // right logo
+                String rightPath = getServletContextPath("views/jasper/images/logo-right.png");
+                if (rightPath != null) {
+                    byte[] rightBytes = makeImageTransparent(rightPath);
+                    if (rightBytes != null) {
+                        Image logoR = Image.getInstance(rightBytes);
+                        // larger right logo (landscape style)
+                        logoR.scaleToFit(160, 80);
+                        // raise right logo to align with left
+                        logoR.setAbsolutePosition(frontX + panelW - 12 - logoR.getScaledWidth(), frontY + panelH - 6 - logoR.getScaledHeight());
+                        cb.addImage(logoR);
+                    }
+                }
+            } catch (Exception ignore) {}
+
+
+            // thin blue separator
+            cb.setLineWidth(3f);
+            cb.setColorStroke(brandBlue);
+            cb.moveTo(frontX + 12f, frontY + panelH - headerH + 6f);
+            cb.lineTo(frontX + panelW - 12f, frontY + panelH - headerH + 6f);
+            cb.stroke();
+
+            // Role title (Certified as: <role>) - moved below the blue separator to avoid overlap
+            String certType = safeString(parameters.get("CertType"));
+            // move 'Certified As' a bit higher for better alignment with logos (capitalize)
+            // Render 'Certified As' and its value on the same baseline with matching size
+            // lower the "Certified As" line slightly for better spacing
+            float certifiedY = frontY + panelH - headerH - 22f;
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("Certified As:", certLabelFont), frontX + 12f, certifiedY, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(certType, certValueFont), frontX + 150f, certifiedY, 0);
+
+            // left photo area (positioned below header, with stable spacing)
+            float photoX = frontX + 18f;
+            float photoW = 120f; float photoH = 140f;
+            // shift content a bit lower to avoid header overlap
+            float contentTop = frontY + panelH - headerH - 40f; // increased gap under header
+            float photoY = contentTop - photoH - 12f; // place photo slightly lower
+
+            // draw white rounded backdrop behind photo for consistent look
+            try {
+                cb.saveState();
+                cb.setColorFill(new com.itextpdf.text.BaseColor(255, 255, 255));
+                cb.setColorStroke(brandBlue);
+                cb.setLineWidth(1f);
+                cb.roundRectangle(photoX - 4f, photoY - 4f, photoW + 8f, photoH + 8f, 6f);
+                cb.fillStroke();
+                cb.restoreState();
+            } catch (Exception ignore) {}
+
+            try {
+                Object empPhoto = parameters.get("EmployeePhoto");
+                Image img = null;
+                if (empPhoto instanceof java.io.InputStream) img = Image.getInstance(streamToBytes((java.io.InputStream) empPhoto));
+                else if (empPhoto instanceof byte[]) img = Image.getInstance((byte[]) empPhoto);
+                if (img != null) {
+                    img.scaleToFit(photoW - 8f, photoH - 8f);
+                    float imgW = img.getScaledWidth();
+                    float imgH = img.getScaledHeight();
+                    float imgX = photoX + (photoW - imgW) / 2f;
+                    float imgY = photoY + (photoH - imgH) / 2f;
+                    img.setAbsolutePosition(imgX, imgY);
+                    cb.addImage(img);
+                }
+            } catch (Exception ignore) {}
+
+            // right info box with rounded header (aligned with photo)
+            float infoX = frontX + photoW + 36f; // leave space for photo + gap
+            float infoY = photoY + 4f; // nudge info box down a bit to align visually with photo
+            float infoW = frontX + panelW - 18f - infoX; // right margin
+            float infoH = photoH + 8f; // make info box similar height to photo
+
+            // draw rounded header bar
+            cb.saveState();
+            cb.setColorFill(brandBlue);
+            cb.roundRectangle(infoX, infoY + infoH - 26f, infoW, 26f, 8f);
+            cb.fill();
+            cb.restoreState();
+
+            // header text
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("Company: ", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, com.itextpdf.text.BaseColor.WHITE)), infoX + 8f, infoY + infoH - 18f, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(safeString(parameters.get("CompanyName")), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, com.itextpdf.text.BaseColor.WHITE)), infoX + 80f, infoY + infoH - 18f, 0);
+
+            // draw rows inside info box with borders and consistent spacing
+            float innerPad = 8f;
+            float availableH = infoH - 36f; // space below rounded header
+            int rowsCount = 4;
+            float rowH = availableH / rowsCount;
+            float curY = infoY + infoH - 36f; // start below rounded header
+            String[][] rows = new String[][] {
+                    {"Name:", safeString(parameters.get("EmployeeName"))},
+                    {"Id/Iqama No:", safeString(parameters.get("EmployeeId"))},
+                    {"Issue on:", formatDateParam(parameters.get("IssueDate"))},
+                    {"Valid up to:", formatDateParam(parameters.get("ExpiryDate"))}
+            };
+            cb.setLineWidth(1f);
+            cb.setColorStroke(brandBlue);
+            for (int i = 0; i < rows.length; i++) {
+                float rY = curY - rowH + 6f;
+                // draw row rectangle
+                cb.saveState();
+                cb.setColorFill(new com.itextpdf.text.BaseColor(255, 255, 255));
+                cb.rectangle(infoX, rY, infoW, rowH - 6f);
+                cb.fillStroke();
+                cb.restoreState();
+
+                // left label
+                ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(rows[i][0], labelFont), infoX + innerPad, rY + (rowH / 2f) - 6f, 0);
+                // value (wrap if long) - place at fixed X
+                ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(rows[i][1], valueFont), infoX + 110f, rY + (rowH / 2f) - 6f, 0);
+                curY -= rowH;
+            }
+
+            // bottom ID and TS line (separated and aligned)
+            float bottomY = frontY + 22f;
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("ID No.", labelFont), frontX + 12f, bottomY, 0);
+            // bring ID value closer to label
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("ID/" + safeString(parameters.get("CertNumber")), approvalValueFont), frontX + 62f, bottomY, 0);
+            // TS label and value tightened and closer
+            ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase("TS No.", labelFont), frontX + panelW - 92f, bottomY, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase(safeString(parameters.get("TsNumber")), approvalValueFont), frontX + panelW - 12f, bottomY, 0);
+
+            // small footer note
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("Certified to Operate the equipment listed on the back side of the card", smallFont), frontX + panelW / 2f, frontY + 6f, 0);
+
+            // BACK PANEL (bottom)
+            float backX = frontX;
+            float backY = frontY - gap - panelH;
+            drawPanelBg.accept(backX, backY);
+
+
+            // back header text: keep issuer sentence at top, move company title lower for balance
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("This card is issued by and remains the property of:", smallFont), backX + panelW / 2f, backY + panelH - 16f, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("SMAT for Inspection Company", titleFont), backX + panelW / 2f, backY + panelH - 44f, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("Postal code: 34432, P.O.Box: 19331", smallFont), backX + panelW / 2f, backY + panelH - 62f, 0);
+
+            // big ID
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("ID No. " + "ID/" + safeString(parameters.get("CertNumber")), valueFont), backX + panelW / 2f, backY + panelH - 74f, 0);
+
+            // approval schedule box with QR
+            // make box slightly smaller and place it lower
+            float boxX = backX + 28f;
+            float boxY = backY + 12f; // lowered
+            float boxW = panelW - 56f;
+            float boxH = panelH - 180f; // reduced height
+
+            // draw outline
+            cb.setLineWidth(1f);
+            cb.setColorStroke(brandBlue);
+            cb.rectangle(boxX, boxY, boxW, boxH);
+            cb.stroke();
+
+            // left text in box (Approval schedule + cert type) - bigger and clearer
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("APPROVAL SCHEDULE", approvalLabelFont), boxX + 12f, boxY + boxH - 34f, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(certType, approvalValueFont), boxX + 12f, boxY + boxH - 58f, 0);
+
+            // QR on right inside box, with URL centered under it
+            try {
+                byte[] qrBytes = null;
+                if (parameters.get("QRCodeImage") instanceof java.io.InputStream) qrBytes = streamToBytes((java.io.InputStream) parameters.get("QRCodeImage"));
+                else if (parameters.get("QRCodeImage") instanceof byte[]) qrBytes = (byte[]) parameters.get("QRCodeImage");
+                if (qrBytes != null) {
+                    Image q = Image.getInstance(qrBytes);
+                    // allow a slightly larger QR while keeping margin
+                    float qSize = Math.min(140f, boxH - 30f);
+                    q.scaleToFit(qSize, qSize);
+                    // position QR near top-right of the box
+                    float qY = boxY + boxH - 12f - q.getScaledHeight();
+                    float qX = boxX + boxW - 12f - q.getScaledWidth();
+                    q.setAbsolutePosition(qX, qY);
+                    cb.addImage(q);
+                    // add URL centered under the QR
+                    float urlY = qY - 12f;
+                    float urlX = qX + (q.getScaledWidth() / 2f);
+                    ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("www.smat-ins.com", urlFont), urlX, urlY, 0);
+                }
+            } catch (Exception ignore) {}
+
+            document.close();
+            return baos.toByteArray();
+        } catch (DocumentException de) {
+            throw new Exception("PDF generation failed: " + de.getMessage(), de);
+        } finally {
+            try { document.close(); } catch (Exception ignore) {}
+        }
+    }
+
+    private byte[] streamToBytes(java.io.InputStream is) throws java.io.IOException {
+        if (is == null) return null;
+        try (java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream()) {
+            byte[] buffer = new byte[4096];
+            int r;
+            while ((r = is.read(buffer)) != -1) bos.write(buffer, 0, r);
+            return bos.toByteArray();
+        }
+    }
+
+    /**
+     * Load image from disk and convert near-white background pixels to transparent.
+     * Returns PNG bytes (ARGB) on success or original file bytes on failure.
+     */
+    private byte[] makeImageTransparent(String path) {
+        if (path == null) return null;
+        try {
+            File f = new File(path);
+            if (!f.exists()) return null;
+            BufferedImage src = ImageIO.read(f);
+            if (src == null) return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path));
+            int w = src.getWidth();
+            int h = src.getHeight();
+            BufferedImage dst = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < w; x++) {
+                    int rgb = src.getRGB(x, y);
+                    int r = (rgb >> 16) & 0xff;
+                    int g = (rgb >> 8) & 0xff;
+                    int b = rgb & 0xff;
+                    // treat near-white as transparent
+                    if (r > 240 && g > 240 && b > 240) {
+                        dst.setRGB(x, y, (0 << 24) | (r << 16) | (g << 8) | b);
+                    } else {
+                        dst.setRGB(x, y, (255 << 24) | (r << 16) | (g << 8) | b);
+                    }
+                }
+            }
+            try (java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+                ImageIO.write(dst, "png", baos);
+                return baos.toByteArray();
+            }
+        } catch (Exception e) {
+            try { return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)); } catch (Exception ex) { return null; }
+        }
+    }
+
+    private PdfPCell makeCell(String text, Font f, int border) {
+        PdfPCell c = new PdfPCell(new Phrase(text, f));
+        c.setBorder(border);
+        c.setPadding(4);
+        return c;
+    }
+
+    private String formatDateParam(Object o) {
+        if (o == null) return "";
+        try {
+            if (o instanceof java.util.Date) {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MM-yyyy");
+                return sdf.format((java.util.Date) o);
+            } else {
+                return String.valueOf(o);
+            }
+        } catch (Exception e) { return String.valueOf(o); }
     }
     // helper to set date time to noon to avoid timezone day-shift issues
     private Date toNoon(Date d) {
@@ -1671,10 +2030,6 @@ public class EmpCertificationBean implements Serializable {
             e.printStackTrace();
         }
     }
-
-
-
-
 
     public void removePhoto() {
         try {

@@ -1021,7 +1021,7 @@ public class StickerManagementBean implements Serializable {
         this.exportToSticker = exportToSticker;
     }
 
-
+    
 
     public List<UserAlias> getUserAliasList() {
         return userAliasList;

@@ -524,27 +524,48 @@
                 color: white !important;
             }
 
-            /* Action Buttons Container */
-            .action-buttons {
+            /* تحسين التخطيط للأزرار السفلية */
+            .action-buttons-container {
                 display: flex;
-                gap: 1rem;
+                justify-content: space-between;
+                align-items: center;
                 flex-wrap: wrap;
-                justify-content: flex-start;
                 margin-top: 2rem;
                 padding-top: 1.5rem;
                 border-top: 1px solid rgba(203, 213, 225, 0.3);
+                gap: 1rem;
+            }
+
+            .left-buttons-group {
+                display: flex;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+                align-items: center;
+            }
+
+            .right-buttons-group {
+                display: flex;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: flex-end;
             }
 
             /* Responsive adjustments for buttons */
             @media (max-width: 768px) {
-                .action-buttons {
+                .action-buttons-container {
                     flex-direction: column;
-                    gap: 0.75rem;
+                    gap: 1rem;
                 }
 
-                .ui-button {
+                .left-buttons-group,
+                .right-buttons-group {
                     width: 100%;
-                    margin-bottom: 0;
+                    justify-content: center;
+                }
+
+                .right-buttons-group {
+                    margin-top: 0.5rem;
                 }
             }
 
@@ -745,16 +766,6 @@
                 height: 38px !important;
             }
 
-            .action-buttons {
-                display: flex;
-                gap: 0.75rem;
-                flex-wrap: wrap;
-                justify-content: flex-start;
-                margin-top: 1.5rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(203, 213, 225, 0.3);
-            }
-
             /* Extra Small Button Styles */
             .btn-xs {
                 padding: 0.5rem 1rem !important;
@@ -762,23 +773,6 @@
                 min-width: 90px !important;
                 border-radius: 20px !important;
                 height: 32px !important;
-            }
-
-            /* Compact action buttons container */
-            .action-buttons-compact {
-                display: flex;
-                gap: 0.6rem;
-                flex-wrap: wrap;
-                justify-content: flex-end;
-                margin-top: 1.5rem;
-                padding-top: 1rem;
-                border-top: 1px solid rgba(203, 213, 225, 0.3);
-                width: 100%;
-            }
-
-            /* Make icons slightly smaller in xs buttons */
-            .btn-xs .ui-icon {
-                font-size: 0.75rem !important;
             }
 
             .rounded-btn {
@@ -825,6 +819,21 @@
                 box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
             }
 
+            .btn-info {
+                background: var(--gradient-info) !important;
+                color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3) !important;
+            }
+
+            /* لون جديد لزر Preview PDF */
+            .btn-preview {
+                background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%) !important;
+                color: white !important;
+                border: none !important;
+                box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3) !important;
+            }
+
             /* Hover Effects for Buttons */
             .btn-primary:hover {
                 background: linear-gradient(135deg, var(--primary-600), var(--primary-800)) !important;
@@ -856,12 +865,19 @@
                 box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4) !important;
             }
 
+            .btn-preview:hover {
+                background: linear-gradient(135deg, #7c3aed, #6b21a8) !important;
+                transform: translateY(-3px) scale(1.05) !important;
+                box-shadow: 0 6px 20px rgba(147, 51, 234, 0.4) !important;
+            }
+
             /* Active/Pressed State */
             .btn-primary:active,
             .btn-mint:active,
             .btn-purple:active,
             .btn-hazel:active,
-            .btn-danger:active {
+            .btn-danger:active,
+            .btn-preview:active {
                 transform: translateY(0) scale(1) !important;
                 box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2) !important;
             }
@@ -871,7 +887,8 @@
             .btn-mint.ui-state-disabled,
             .btn-purple.ui-state-disabled,
             .btn-hazel.ui-state-disabled,
-            .btn-danger.ui-state-disabled {
+            .btn-danger.ui-state-disabled,
+            .btn-preview.ui-state-disabled {
                 opacity: 0.6 !important;
                 background: var(--surface-300) !important;
                 color: var(--surface-600) !important;
@@ -2411,63 +2428,72 @@
                     </h:panelGroup>
                 </h:panelGroup>
 
-                <div class="action-buttons-compact">
-                    <!-- Remote command to prepare preview PDF and return a token -->
-                    <p:remoteCommand name="preparePreviewPdfRemote"
-                                     action="#{inspectionFormBean.preparePreviewPdf}"
-                                     process="@form"
-                                     update=":form:messages"
-                                     onstart="PF('statusDialog').show();"
-                                     oncomplete="PF('statusDialog').hide(); if (args &amp;&amp; args.previewToken) { window.open('#{request.contextPath}/attachments/previewPdf?token=' + args.previewToken, '_blank'); } else { /* no previewToken returned - check messages */ }" />
+                <!-- ***** التصحيح المطلوب: إضافة remoteCommand هنا ***** -->
+                <!-- Remote command to prepare preview PDF and return a token -->
+                <p:remoteCommand name="preparePreviewPdfRemote"
+                                 action="#{inspectionFormBean.preparePreviewPdf}"
+                                 process="@form"
+                                 update=":form:messages"
+                                 onstart="PF('statusDialog').show();"
+                                 oncomplete="PF('statusDialog').hide(); if (args &amp;&amp; args.previewToken) { window.open('#{request.contextPath}/attachments/previewPdf?token=' + args.previewToken, '_blank'); } else { /* no previewToken returned - check messages */ }" />
 
-                    <!-- Inspector-only: Preliminary Preview (opens PDF in new tab without saving/changing state) -->
-                    <p:commandButton id="commandButton_preview"
-                                     value="Preview PDF"
-                                     icon="pi pi-eye"
-                                     styleClass="btn-info rounded-btn"
-                                     rendered="#{inspectionFormBean.inspectorVisible}"
-                                     type="button"
-                                     onclick="preparePreviewPdfRemote(); return false;" />
-                    <!-- Save/Done Button - Primary -->
-                    <p:commandButton id="commandButton_save"
-                                     value="#{inspectionFormBean.disabled ? 'Approve' : interfaceLabel.save}"
-                                     icon="#{inspectionFormBean.disabled ? 'pi pi-check-circle' : 'pi pi-save'}"
-                                     pt:data-tooltip="#{inspectionFormBean.disabled ? 'Done' : interfaceLabel.save}"
-                                     process="@form" action="#{inspectionFormBean.doSave()}"
-                                     update="@form" disabled="#{inspectionFormBean.step.equals('03')}"
-                                     styleClass="btn-primary rounded-btn"
-                                     outcome="pretty:inspection/my-tasks"
-                                     onstart="PF('statusDialog').show();"
-                                     oncomplete="if (args &amp;&amp; args.approveOk===false) { PF('statusDialog').hide(); }" />
+                <!-- إعادة تخطيط الأزرار بشكل أنيق -->
+                <div class="action-buttons-container">
+                    <!-- الأزرار على اليسار -->
+                    <div class="left-buttons-group">
+                        <!-- زر Preview PDF - لون بنفسجي -->
+                        <p:commandButton id="commandButton_preview"
+                                         value="Preview PDF"
+                                         icon="pi pi-eye"
+                                         styleClass="rounded-btn btn-preview"
+                                         rendered="#{inspectionFormBean.inspectorVisible}"
+                                         type="button"
+                                         onclick="preparePreviewPdfRemote(); return false;" />
 
-                    <!-- Return Button - Hazel -->
-                    <p:commandButton id="commandButton_return"
-                                     value="#{interfaceLabel.returnToInspector}"
-                                     disabled="#{inspectionFormBean.step.equals('03')}"
-                                     icon="pi pi-file-edit" rendered="#{inspectionFormBean.disabled}"
-                                     pt:data-tooltip="#{interfaceLabel.returnToInspector}"
-                                     process="@form" update="@([id$=messages])"
-                                     action="#{inspectionFormBean.returnToInspector()}"
-                                     styleClass="btn-hazel rounded-btn" />
+                        <!-- زر Return to Inspector - لون عسلي -->
+                        <p:commandButton id="commandButton_return"
+                                         value="#{interfaceLabel.returnToInspector}"
+                                         disabled="#{inspectionFormBean.step.equals('03')}"
+                                         icon="pi pi-file-edit" rendered="#{inspectionFormBean.disabled}"
+                                         pt:data-tooltip="#{interfaceLabel.returnToInspector}"
+                                         process="@form" update="@([id$=messages])"
+                                         action="#{inspectionFormBean.returnToInspector()}"
+                                         styleClass="rounded-btn btn-hazel" />
 
-                    <!-- Print Button - Mint -->
-                    <p:commandButton id="commandButton_print"
-                                     rendered="#{inspectionFormBean.step.equals('03')}"
-                                     action="#{inspectionFormBean.doPrint()}"
-                                     value="#{interfaceLabel.print}" icon="pi pi-print"
-                                     pt:data-tooltip="#{interfaceLabel.print}"
-                                     styleClass="btn-mint rounded-btn"
-                                     onstart="PF('statusDialog').show();"
-                                     onclick="window.open('#{request.contextPath}/attachments/zip?type=ins&amp;reportNo=' + encodeURIComponent('#{inspectionFormBean.equipmentInspectionForm.reportNo}'))"
-                                     oncomplete="PF('statusDialog').hide(); setTimeout(function(){ window.print(); }, 800);" />
+                        <!-- زر Cancel - لون أحمر -->
+                        <p:button id="commandButton_cancel"
+                                  value="Return"
+                                  icon="pi pi-times"
+                                  pt:data-tooltip="Return"
+                                  styleClass="rounded-btn btn-danger"
+                                  outcome="pretty:inspection/my-tasks" />
+                    </div>
 
-                    <!-- Cancel Button - Danger -->
-                    <p:button id="commandButton_cancel"
-                              value="Return"
-                              icon="pi pi-times"
-                              pt:data-tooltip="Return"
-                              styleClass="btn-danger rounded-btn"
-                              outcome="pretty:inspection/my-tasks" />
+                    <!-- الأزرار على اليمين -->
+                    <div class="right-buttons-group">
+                        <!-- زر Save/Approve - لون أزرق أساسي -->
+                        <p:commandButton id="commandButton_save"
+                                         value="#{inspectionFormBean.disabled ? 'Approve' : interfaceLabel.save}"
+                                         icon="#{inspectionFormBean.disabled ? 'pi pi-check-circle' : 'pi pi-save'}"
+                                         pt:data-tooltip="#{inspectionFormBean.disabled ? 'Done' : interfaceLabel.save}"
+                                         process="@form" action="#{inspectionFormBean.doSave()}"
+                                         update="@form" disabled="#{inspectionFormBean.step.equals('03')}"
+                                         styleClass="rounded-btn btn-primary"
+                                         outcome="pretty:inspection/my-tasks"
+                                         onstart="PF('statusDialog').show();"
+                                         oncomplete="if (args &amp;&amp; args.approveOk===false) { PF('statusDialog').hide(); }" />
+
+                        <!-- زر Print - لون أخضر فاتح -->
+                        <p:commandButton id="commandButton_print"
+                                         rendered="#{inspectionFormBean.step.equals('03')}"
+                                         action="#{inspectionFormBean.doPrint()}"
+                                         value="#{interfaceLabel.print}" icon="pi pi-print"
+                                         pt:data-tooltip="#{interfaceLabel.print}"
+                                         styleClass="rounded-btn btn-mint"
+                                         onstart="PF('statusDialog').show();"
+                                         onclick="window.open('#{request.contextPath}/attachments/zip?type=ins&amp;reportNo=' + encodeURIComponent('#{inspectionFormBean.equipmentInspectionForm.reportNo}'))"
+                                         oncomplete="PF('statusDialog').hide(); setTimeout(function(){ window.print(); }, 800);" />
+                    </div>
                 </div>
             </div>
         </h:form>

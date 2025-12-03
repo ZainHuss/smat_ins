@@ -22,10 +22,25 @@ public class GeneralEquipmentItemDaoImpl extends
 		Integer maxFormCode = null;
 		try {
 			session = sessionFactory.getCurrentSession();
-			return Integer.parseInt((String) session
+			Object result = session
 					.createNativeQuery(
-							"select coalesce(max(substr(item_code,-3)),0) as Max_Code from general_equipment_item")
-					.addScalar("Max_Code").uniqueResult());
+							"select coalesce(max(cast(item_code as unsigned)),0) as Max_Code from general_equipment_item")
+					.uniqueResult();
+
+			if (result == null) {
+				return 0;
+			}
+
+			if (result instanceof Number) {
+				return ((Number) result).intValue();
+			}
+
+			try {
+				return Integer.parseInt(result.toString());
+			} catch (NumberFormatException nfe) {
+				nfe.printStackTrace();
+				return 0;
+			}
 
 		} catch (HibernateException e) {
 			e.printStackTrace();
