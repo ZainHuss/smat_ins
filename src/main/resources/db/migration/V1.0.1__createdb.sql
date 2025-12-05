@@ -610,64 +610,21 @@ CREATE TABLE equipment_category(
 -- TABLE: equipment_inspection_certificate 
 --
 
-CREATE TABLE smat_ins_db.equipment_inspection_form (
-                                                       id bigint NOT NULL AUTO_INCREMENT,
-                                                       report_no varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                                                       time_sheet_no varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                                                       job_no varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                                                       sticker_no varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-                                                       name_and_address_of_employer varchar(3000) DEFAULT NULL,
-                                                       date_of_thorough_examination date DEFAULT NULL,
-                                                       next_examination_date date DEFAULT NULL,
-                                                       previous_examination_date date DEFAULT NULL,
-                                                       examination_type smallint DEFAULT NULL,
-                                                       equipment_type smallint DEFAULT NULL,
-                                                       equipment_category smallint DEFAULT NULL,
-                                                       company int DEFAULT NULL,
-                                                       sticker bigint DEFAULT NULL,
-                                                       inspection_by bigint DEFAULT NULL,
-                                                       reviewed_by bigint DEFAULT NULL,
-                                                       created_date datetime DEFAULT NULL,
-                                                       pinned_by bigint DEFAULT NULL,
-                                                       PRIMARY KEY (id)
-)
-    ENGINE = INNODB,
-AUTO_INCREMENT = 23,
-AVG_ROW_LENGTH = 4096,
-CHARACTER SET utf8mb4,
-COLLATE utf8mb4_0900_ai_ci;
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT fk_eif_pinned_by FOREIGN KEY (pinned_by)
-        REFERENCES smat_ins_db.sys_user (id);
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT FK_equipment_inspection_form_inspection_by FOREIGN KEY (inspection_by)
-        REFERENCES smat_ins_db.sys_user (id);
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT FK_equipment_inspection_form_reviewed_by FOREIGN KEY (reviewed_by)
-        REFERENCES smat_ins_db.sys_user (id);
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT Refcompany139 FOREIGN KEY (company)
-        REFERENCES smat_ins_db.company (id);
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT Refequipment_category4 FOREIGN KEY (equipment_category)
-        REFERENCES smat_ins_db.equipment_category (id);
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT Refequipment_type3 FOREIGN KEY (equipment_type)
-        REFERENCES smat_ins_db.equipment_type (id);
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT Refexamination_type2 FOREIGN KEY (examination_type)
-        REFERENCES smat_ins_db.examination_type (id);
-
-ALTER TABLE smat_ins_db.equipment_inspection_form
-    ADD CONSTRAINT Refsticker154 FOREIGN KEY (sticker)
-        REFERENCES smat_ins_db.sticker (id);
+CREATE TABLE equipment_inspection_certificate(
+    id                           BIGINT             AUTO_INCREMENT,
+    issue_date                   DATE               NOT NULL,
+    certificate_document         VARBINARY(4000)    NOT NULL,
+    is_printed                   BIT(1),
+    company                      INT                NOT NULL,
+    equipment_inspection_form    BIGINT             NOT NULL,
+    created_by                   BIGINT             NOT NULL,
+    created_date                 DATE               NOT NULL,
+    allow_reprint_cert           BIT(1),
+    allow_reprint_by             BIGINT,
+    reprint_by                   BIGINT,
+    PRIMARY KEY (id)
+)ENGINE=INNODB
+;
 
 
 
@@ -689,6 +646,8 @@ CREATE TABLE equipment_inspection_form(
     equipment_type                  SMALLINT,
     equipment_category              SMALLINT,
     company                         INT,
+    created_date                    datetime DEFAULT NULL,
+    pinned_by                       bigint DEFAULT NULL,
     sticker                         BIGINT,
     PRIMARY KEY (id)
 )ENGINE=INNODB

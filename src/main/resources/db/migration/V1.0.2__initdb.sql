@@ -233,58 +233,45 @@ INSERT INTO purpose_type(id, arabic_name, english_name, code) VALUES
 (3, 'مهمة', 'Task', '03')
 ON DUPLICATE KEY UPDATE id=VALUES(id), arabic_name=VALUES(arabic_name), english_name=VALUES(english_name), code=VALUES(code);
 
-
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (1, 'Archive Menu', '001', 'View archive menue')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (2, 'My cabinets', '002', 'My cabinets')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (3, 'Define cabinets', '003', 'Define cabinets')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (4, 'Job Management Menu', '004', 'Job Management Menu')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (5, 'Cerate Task', '005', 'Create Task')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (6, 'Outbound mail', '006', 'Outbound mail')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (7, 'Inbox', '007', 'Inbox')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (8, 'Outbox', '008', 'Outbox')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (9, 'Advanced Search Menu', '009', 'Certificate and create inspection form')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (10, 'Inspection form', '010', 'Inspection form')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (11, 'Review Form', '011', 'Review form')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (12, 'Sticker Managemnt', '012', 'Sticker managemnt')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (13, 'My Tasks', '013', 'My tasks')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (14, 'completed task search', '014', 'completed task search')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (15, 'sticker search', '015', 'sticker search')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (16, 'active task search', '016', 'active task search')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
-INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
-    (17, 'Add Task', '017', 'inspector add task')
-    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(1, 'Archive', '001', 'View archive menue')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(2, 'My cabinets', '002', 'My cabinets')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(3, 'Define cabinets', '003', 'Define cabinets')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(4, 'Divan', '004', 'View divan menue')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(5, 'Inbound mail', '005', 'Inbound mail')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(6, 'Outbound mail', '006', 'Outbound mail')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(7, 'Inbox', '007', 'Inbox')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(8, 'Outbox', '008', 'Outbox')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(9, 'Certificate and create inspection form', '009', 'Certificate and create inspection form')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(10, 'Inspection form', '010', 'Inspection form')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(11, 'Review form', '011', 'Review form')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(12, 'Sticker managemnt', '012', 'Sticker managemnt')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO sys_permission(id, name, code, description) VALUES
+(13, 'My tasks', '013', 'My tasks')
+ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
 
 INSERT INTO transmission_type(id, arabic_name, english_name, code) VALUES
 (1, 'بريد جديد', 'New mail', '01')
