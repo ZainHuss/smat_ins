@@ -1235,6 +1235,244 @@
                 box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3) !important;
             }
 
+            /* زر أبيض بسيط داخل قسم المسودات */
+            .draft-button-white {
+                background: #ffffff !important;
+                color: var(--surface-800) !important;
+                border: 1px solid rgba(15,23,42,0.06) !important;
+                box-shadow: none !important;
+            }
+
+            .draft-button-white:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 18px rgba(15,23,42,0.06) !important;
+            }
+
+            /* تصميم محسّن بشكل كبير لـ Load Last Fill في الأعلى */
+            .top-load-last-container {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                z-index: 11000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                pointer-events: none;
+            }
+
+            .top-load-last-wrapper {
+                background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.98) 0%,
+                rgba(248, 250, 252, 0.98) 100%);
+                border-radius: var(--radius-xl);
+                padding: 0.75rem 1.5rem;
+                box-shadow:
+                        var(--shadow-2xl),
+                        0 8px 32px rgba(255, 77, 139, 0.15),
+                        0 0 0 1px rgba(255, 255, 255, 0.4);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                display: flex;
+                align-items: center;
+                gap: 1.25rem;
+                pointer-events: auto;
+                transform: translateY(-20px);
+                opacity: 0;
+                animation: elegantSlideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                position: relative;
+                overflow: hidden;
+                min-width: 420px;
+            }
+
+            /* تأثير خلفية متوهجة */
+            .top-load-last-wrapper::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(
+                        135deg,
+                        rgba(255, 122, 89, 0.05) 0%,
+                        rgba(255, 77, 139, 0.05) 50%,
+                        rgba(147, 51, 234, 0.05) 100%
+                );
+                z-index: -1;
+                border-radius: inherit;
+            }
+
+            /* حدود متدرجة */
+            .top-load-last-wrapper::after {
+                content: '';
+                position: absolute;
+                top: -1px;
+                left: -1px;
+                right: -1px;
+                bottom: -1px;
+                background: linear-gradient(
+                        135deg,
+                        rgba(255, 122, 89, 0.3),
+                        rgba(255, 77, 139, 0.3),
+                        rgba(147, 51, 234, 0.3)
+                );
+                border-radius: calc(var(--radius-xl) + 1px);
+                z-index: -2;
+                opacity: 0.8;
+            }
+
+            .top-load-last-label {
+                font-family: 'Poppins', sans-serif;
+                font-weight: 600;
+                font-size: 0.95rem;
+                color: var(--surface-700);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 0;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .top-load-last-label::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                        90deg,
+                        transparent,
+                        rgba(255, 255, 255, 0.8),
+                        transparent
+                );
+                transition: left 0.7s ease;
+            }
+
+            .top-load-last-wrapper:hover .top-load-last-label::before {
+                left: 100%;
+            }
+
+            .top-load-last-label i {
+                color: #ff7a59;
+                font-size: 1.1rem;
+                filter: drop-shadow(0 2px 4px rgba(255, 122, 89, 0.3));
+                animation: gentlePulse 3s ease-in-out infinite;
+            }
+
+            .btn-highlight {
+                background: linear-gradient(135deg,
+                #ff7a59 0%,
+                #ff4d8b 50%,
+                #9333ea 100%) !important;
+                color: white !important;
+                border: none !important;
+                box-shadow:
+                        0 4px 15px rgba(255, 77, 139, 0.3),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+                padding: 0.85rem 2rem !important;
+                font-weight: 700 !important;
+                font-size: 0.95rem !important;
+                border-radius: var(--radius-full) !important;
+                height: 46px !important;
+                min-width: 200px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.75rem !important;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                letter-spacing: 0.3px;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            }
+
+            /* تأثير التوهج للزر */
+            .btn-highlight::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                        90deg,
+                        transparent,
+                        rgba(255, 255, 255, 0.4),
+                        transparent
+                );
+                transition: left 0.8s ease;
+            }
+
+            .btn-highlight:hover::before {
+                left: 100%;
+            }
+
+            /* تأثير الظل عند التحويم */
+            .btn-highlight:hover {
+                transform: translateY(-3px) scale(1.03) !important;
+                box-shadow:
+                        0 8px 25px rgba(255, 77, 139, 0.4),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+            }
+
+            .btn-highlight:active {
+                transform: translateY(0) scale(1) !important;
+                box-shadow:
+                        0 2px 10px rgba(255, 77, 139, 0.3),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+            }
+
+            .pulse-glow {
+                animation: elegantPulseGlow 2.5s ease-in-out infinite;
+            }
+
+            @keyframes elegantPulseGlow {
+                0% {
+                    transform: scale(1);
+                    box-shadow:
+                            0 4px 15px rgba(255, 77, 139, 0.3),
+                            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+                }
+                50% {
+                    transform: scale(1.02);
+                    box-shadow:
+                            0 8px 30px rgba(255, 77, 139, 0.5),
+                            0 0 20px rgba(255, 77, 139, 0.3),
+                            inset 0 1px 1px rgba(255, 255, 255, 0.3);
+                }
+                100% {
+                    transform: scale(1);
+                    box-shadow:
+                            0 4px 15px rgba(255, 77, 139, 0.3),
+                            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+                }
+            }
+
+            @keyframes elegantSlideDown {
+                from {
+                    transform: translateY(-30px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes gentlePulse {
+                0%, 100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.1);
+                    opacity: 0.8;
+                }
+            }
+
             .draft-button-rounded:hover {
                 transform: translateY(-3px) scale(1.05) !important;
                 box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4) !important;
@@ -1710,20 +1948,54 @@
                 .attachment-icon {
                     align-self: flex-start;
                 }
+
+                /* تصميم محسّن للجوال */
+                .top-load-last-container {
+                    top: 70px;
+                    padding: 0 1rem;
+                }
+
+                .top-load-last-wrapper {
+                    flex-direction: column;
+                    gap: 0.75rem;
+                    padding: 1.25rem;
+                    min-width: auto;
+                    width: 100%;
+                    max-width: 100%;
+                }
+
+                .btn-highlight {
+                    min-width: 100% !important;
+                    padding: 0.75rem 1.5rem !important;
+                    font-size: 0.9rem !important;
+                    height: 44px !important;
+                }
+
+                .top-load-last-label {
+                    text-align: center;
+                    font-size: 0.9rem;
+                    justify-content: center;
+                }
             }
 
             @media (max-width: 480px) {
-                .attachments-section {
+                .top-load-last-container {
+                    top: 65px;
+                    padding: 0 0.75rem;
+                }
+
+                .top-load-last-wrapper {
                     padding: 1rem;
-                    margin: 1rem 0;
                 }
 
-                .attachment-actions {
-                    flex-direction: column;
+                .btn-highlight {
+                    padding: 0.7rem 1.25rem !important;
+                    font-size: 0.85rem !important;
+                    height: 42px !important;
                 }
 
-                .attachment-action-btn {
-                    width: 100%;
+                .top-load-last-label {
+                    font-size: 0.85rem;
                 }
             }
 
@@ -1881,6 +2153,146 @@
         <h:form id="form">
             <p:growl id="messages" widgetVar="growlWV" showDetail="true" showSummary="false" sticky="false" life="10000" />
 
+            <!-- Top center Load Last Fill button (appears only when user has previous form) -->
+            <p:outputPanel layout="block" style="pointer-events:none;" rendered="#{inspectionFormBean.inspectorVisible and inspectionFormBean.previousFormExists}">
+                <div id="topLoadLastContainer" class="top-load-last-container" style="pointer-events:auto;">
+                    <style>
+                        /* Recent toggle styles - refined palette  micro-interactions */
+                        .recent-toggle {
+                            display:flex; align-items:center; gap:0.6rem; border:0; cursor:pointer;
+                            padding:0.5rem 1rem; border-radius:999px;
+                            background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(16,185,129,0.03));
+                            box-shadow: 0 8px 18px rgba(15,23,42,0.06);
+                            transition: transform .14s ease, box-shadow .18s ease, background .18s ease;
+                        }
+                        .recent-toggle .pi { font-size:1.28rem; color: #06b6d4; }
+                        #recentToggleArrow { font-size:1.18rem; transition: transform .22s ease; color:var(--surface-600); display:inline-block; }
+                        .recent-toggle:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(2,6,23,0.10); }
+                        .recent-toggle:focus { outline: none; box-shadow: 0 0 0 6px rgba(6,182,212,0.08); }
+                        .recent-toggle.active { background: linear-gradient(90deg, rgba(14,165,233,0.12), rgba(99,102,241,0.06)); box-shadow: 0 20px 46px rgba(2,6,23,0.12); }
+                        .recent-toggle.pulse { animation: recentPulse 2.8s ease-in-out infinite; }
+                        @keyframes recentPulse { 0% { box-shadow: 0 0 0 0 rgba(6,182,212,0.18);} 70% { box-shadow: 0 0 0 14px rgba(6,182,212,0);} 100% { box-shadow:0 0 0 0 rgba(6,182,212,0);} }
+
+                        /* Panel show/hide */
+                        .recent-forms-panel { transition: opacity .25s ease, transform .25s ease, max-height .28s ease; transform-origin: top center; overflow: hidden; }
+                        .recent-forms-panel.collapsed { opacity:0; transform: translateY(-6px) scaleY(.99); max-height:0; }
+                        .recent-forms-panel:not(.collapsed) { opacity:1; transform: translateY(0) scaleY(1); max-height:480px; display:block; }
+
+                        /* Card styling */
+                        .recent-forms-list { display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap; }
+                        .recent-form-card {
+                            position: relative;
+                            min-width:180px; max-width:220px; padding:0.7rem 0.9rem; border-radius:12px;
+                            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+                            border: 1px solid rgba(99,102,241,0.06);
+                            box-shadow: 0 8px 22px rgba(2,6,23,0.06); display:flex; flex-direction:column; gap:6px;
+                            transition: transform .18s ease, box-shadow .18s ease;
+                        }
+                        /* Pinned badge (small chip shown on pinned cards) */
+                        .pinned-badge {
+                            display: none;
+                            position: absolute;
+                            top: 8px;
+                            right: 8px;
+                            z-index: 90;
+                            background: linear-gradient(90deg,#ef4444,#dc2626);
+                            color: #fff;
+                            font-size: 0.70rem;
+                            font-weight: 700;
+                            padding: 4px 8px;
+                            border-radius: 999px;
+                            box-shadow: 0 6px 18px rgba(220,38,38,0.18);
+                            text-transform: uppercase;
+                            letter-spacing: 0.04em;
+                        }
+                        .recent-form-card.pinned .pinned-badge { display: block; }
+                        .recent-form-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(2,6,23,0.10); }
+                        .recent-form-card > div:first-child { font-weight:700; font-size:0.95rem; color: #0f172a; }
+                        .recent-form-card > div:nth-child(2) { font-size:0.79rem; color: #6b7280; }
+
+                        /* Button system - modern rounded buttons */
+                        .rounded-btn { border-radius:10px; padding:0.55rem 0.9rem; font-weight:600; box-shadow: 0 6px 18px rgba(2,6,23,0.06); transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease; }
+                        .rounded-btn:hover { transform: translateY(-2px); }
+
+                        /* Primary (save) */
+                        .btn-primary, .ui-button.btn-primary { background: linear-gradient(90deg,#6366f1,#06b6d4); color: #fff !important; border: none; }
+                        .ui-button.btn-primary:hover { filter:brightness(.96); }
+
+                        /* Preview (purple) */
+                        .btn-preview, .ui-button.btn-preview { background: linear-gradient(90deg,#7c3aed,#4f46e5); color:#fff !important; border:none; }
+
+                        /* Hazel (amber) */
+                        .btn-hazel, .ui-button.btn-hazel { background: linear-gradient(90deg,#f59e0b,#f97316); color:#102a43 !important; }
+
+                        /* Danger */
+                        .btn-danger, .ui-button.btn-danger { background: linear-gradient(90deg,#ef4444,#dc2626); color:#fff !important; }
+
+                        /* Mint / success */
+                        .btn-mint, .ui-button.btn-mint { background: linear-gradient(90deg,#10b981,#06b6d4); color:#fff !important; }
+
+                        /* small/compact button */
+                        .btn-xs, .ui-button.btn-xs { padding:0.38rem 0.6rem; font-size:0.86rem; border-radius:8px; }
+
+                        /* ensure icons align nicely */
+                        .ui-button .pi { margin-right:0.48rem; }
+                        /* Pin button small */
+                        .pin-small { border-radius:8px; padding:0.28rem 0.36rem; font-size:0.85rem; }
+                        .pin-small.pinned-on { background: linear-gradient(90deg,#06b6d4,#0ea5a4); color: #fff !important; }
+                        .pin-corner { position:absolute; top:8px; right:8px; z-index:40; }
+                        /* Pin button on main card */
+                        .pin-button-main { position:absolute; top:14px; right:14px; z-index:60; border-radius:10px; padding:0.4rem 0.6rem; }
+
+                        /* Pinned card styles (highlighted red when pinned by current user) */
+                        .recent-form-card.pinned {
+                            background: linear-gradient(180deg,#ef4444,#dc2626) !important;
+                            color: #fff !important;
+                            border-color: rgba(0,0,0,0.06) !important;
+                            box-shadow: 0 18px 40px rgba(220,38,38,0.18);
+                        }
+                        .recent-form-card.pinned > div { color: #fff !important; }
+                        .recent-form-card.pinned .pi { color: #fff !important; }
+                        .recent-form-card.pinned .btn-xs { background: rgba(255,255,255,0.06) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.08) !important; }
+
+                        /* Unpin / pinned button styling */
+                        .btn-unpin { background: linear-gradient(90deg,#ef4444,#dc2626) !important; color: #fff !important; border: none !important; }
+                        .btn-unpin:hover { filter: brightness(0.95); }
+
+                        /* Main card pinned style */
+                        .card.basic-info-card.pinned-main {
+                            background: linear-gradient(180deg,#ef4444,#dc2626) !important;
+                            color: #fff !important;
+                            box-shadow: 0 22px 48px rgba(220,38,38,0.2);
+                            border-color: rgba(0,0,0,0.06) !important;
+                        }
+                        .card.basic-info-card.pinned-main h3, .card.basic-info-card.pinned-main .smat-label { color: #fff !important; }
+                    </style>
+
+                    <div class="top-load-last-wrapper" style="display:flex;gap:0.5rem;align-items:center;">
+                        <button type="button" id="recentToggleBtn" class="recent-toggle pulse" onclick="toggleRecentPanel();" aria-expanded="false" title="Recent fills">
+                            <i class="pi pi-history" aria-hidden="true"></i>
+                            <span style="font-weight:700;color:var(--surface-800);">Recent fills</span>
+                            <i id="recentToggleArrow" class="pi pi-chevron-down" aria-hidden="true"></i>
+                        </button>
+
+                        <div id="recentFormsPanel" class="recent-forms-panel collapsed" aria-hidden="true" style="display:none;">
+                            <div class="recent-forms-list" style="display:flex;gap:0.6rem;align-items:center;">
+                                <ui:repeat value="#{inspectionFormBean.lastFiveFormsForCategory}" var="recent">
+                                    <div class="recent-form-card #{inspectionFormBean.isPinnedByCurrent(recent) ? 'pinned' : ''}" style="background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.98));border-radius:12px;padding:0.5rem 0.75rem;box-shadow:var(--shadow-sm);min-width:170px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+                                        <div class="pinned-badge">Pinned</div>
+                                        <div style="font-weight:700;font-size:0.92rem;color:var(--surface-800);">#{recent.sysUserByInspectionBy.displayName}</div>
+                                        <div style="font-size:0.78rem;color:var(--surface-600);">#{inspectionFormBean.formatFormDate(recent)}</div>
+                                        <div style="margin-top:6px;width:100%;display:flex;gap:6px;align-items:center;">
+                                            <p:commandButton icon="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'pi pi-times' : 'pi pi-bookmark'}" value="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'Unpin' : null}" styleClass="pin-small btn-xs #{inspectionFormBean.isPinnedByCurrent(recent) ? 'pinned-on btn-unpin' : ''}" action="#{inspectionFormBean.togglePinById(recent.id)}" update="@form" process="@this" title="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'Unpin (you)' : (not empty recent.pinnedBy ? 'Pinned by ' + recent.pinnedBy.displayName : 'Pin this form')}" disabled="#{(not empty recent.pinnedBy and recent.pinnedBy.id ne loginBean.user.id) or (not empty recent.sysUserByInspectionBy and recent.sysUserByInspectionBy.id ne loginBean.user.id)}" />
+                                            <p:commandButton value="Load" icon="pi pi-history" styleClass="btn-xs btn-primary" action="#{inspectionFormBean.loadFormById(recent.id)}" process="@this" update="@form" onclick="if(!confirm('This will overwrite matching fields with the selected form. Continue?')) return false;" />
+                                        </div>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p:outputPanel>
+
             <!-- قسم إدارة المسودات الجديد باللون الأخضر الفاتح -->
             <div class="draft-management-section">
                 <div class="draft-management-header">
@@ -1903,6 +2315,8 @@
                                      onstart="showLoadingIndicator();"
                                      oncomplete="setTimeout(triggerMintGlow, 1000);"
                                      rendered="#{inspectionFormBean.inspectorVisible}" />
+
+
                 </div>
 
                 <!-- رسالة نجاح حفظ المسودة -->
@@ -2022,10 +2436,42 @@
                 document.addEventListener('DOMContentLoaded', function() {
                     console.log('draft loaded successfully');
                 });
+
+                // Toggle recent forms panel (collapsible) — improved behavior and button state
+                function toggleRecentPanel() {
+                    var panel = document.getElementById('recentFormsPanel');
+                    var btn = document.getElementById('recentToggleBtn');
+                    var arrow = document.getElementById('recentToggleArrow');
+                    if (!panel || !btn) return;
+                    var isCollapsed = panel.classList.contains('collapsed');
+                    if (isCollapsed) {
+                        // show
+                        panel.style.display = 'block';
+                        setTimeout(function() { panel.classList.remove('collapsed'); }, 10);
+                        btn.setAttribute('aria-expanded', 'true');
+                        panel.setAttribute('aria-hidden', 'false');
+                        if (arrow) arrow.style.transform = 'rotate(180deg)';
+                        btn.classList.add('active');
+                        btn.classList.remove('pulse');
+                        // focus the panel for accessibility
+                        setTimeout(function() { panel.setAttribute('tabindex','-1'); panel.focus &amp;&amp; panel.focus(); }, 160);
+                    } else {
+                        // hide
+                        panel.classList.add('collapsed');
+                        if (arrow) arrow.style.transform = 'rotate(0deg)';
+                        btn.setAttribute('aria-expanded', 'false');
+                        panel.setAttribute('aria-hidden', 'true');
+                        btn.classList.remove('active');
+                        // restore pulse after collapse so it draws attention later
+                        setTimeout(function() { btn.classList.add('pulse'); }, 600);
+                        setTimeout(function() { panel.style.display = 'none'; }, 260);
+                    }
+                }
             </script>
 
             <!-- Main Form Card - باللون الأساسي -->
-            <div class="card basic-info-card">
+            <div class="card basic-info-card #{inspectionFormBean.isPinnedByCurrent(inspectionFormBean.equipmentInspectionForm) ? 'pinned-main' : ''}">
+                <!-- main pin button removed per user request -->
                 <div class="section-header">
                     <h3 style="color: var(--blue-700); margin: 0; font-family: 'Playfair Display', serif;">#{inspectionFormBean.formTemplate.title} </h3>
                     <p:badge value="INSPECTION FORM" severity="info" styleClass="badge-lg" />
@@ -2449,6 +2895,8 @@
                                          rendered="#{inspectionFormBean.inspectorVisible}"
                                          type="button"
                                          onclick="preparePreviewPdfRemote(); return false;" />
+
+
 
                         <!-- زر Return to Inspector - لون عسلي -->
                         <p:commandButton id="commandButton_return"

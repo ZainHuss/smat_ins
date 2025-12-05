@@ -88,6 +88,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+
+import com.aspose.words.Bookmark;
+import com.aspose.words.Document;
+import com.aspose.words.DocumentBuilder;
+import com.aspose.words.ParagraphAlignment;
+import com.aspose.words.SaveFormat;
+import com.aspose.words.Shape;
+import com.aspose.words.ShapeType;
+import com.aspose.words.WrapType;
+import org.primefaces.PrimeFaces;
+
+import javax.faces.context.FacesContext;
+import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+
 @Named
 @ViewScoped
 public class InspectionFormBean implements Serializable {
@@ -389,6 +409,8 @@ public class InspectionFormBean implements Serializable {
 
     public void setEquipmentCategory(EquipmentCategory equipmentCategory) {
         this.equipmentCategory = equipmentCategory;
+        try { this.previousFormExists = null; } catch (Exception ignore) {}
+        try { this.lastFiveFormsForCategory = null; } catch (Exception ignore) {}
     }
 
     public EquipmentInspectionForm getEquipmentInspectionForm() {
@@ -397,6 +419,8 @@ public class InspectionFormBean implements Serializable {
 
     public void setEquipmentInspectionForm(EquipmentInspectionForm equipmentInspectionForm) {
         this.equipmentInspectionForm = equipmentInspectionForm;
+        try { this.previousFormExists = null; } catch (Exception ignore) {}
+        try { this.lastFiveFormsForCategory = null; } catch (Exception ignore) {}
     }
 
     public InspectionFormWorkflow getInspectionFormWorkflow() {
@@ -680,13 +704,13 @@ public class InspectionFormBean implements Serializable {
 
         step = "01";
         disableSticker=false;
-            // initialize sentinel representing explicit N\A selection in the UI
-            try {
-                naSentinel = new Sticker();
-                naSentinel.setStickerNo("N\\A");
-            } catch (Exception ignore) {
-                naSentinel = new Sticker();
-            }
+        // initialize sentinel representing explicit N\A selection in the UI
+        try {
+            naSentinel = new Sticker();
+            naSentinel.setStickerNo("N\\A");
+        } catch (Exception ignore) {
+            naSentinel = new Sticker();
+        }
     }
 
     @PostConstruct
@@ -1234,6 +1258,13 @@ public class InspectionFormBean implements Serializable {
             // clear the sticker relationship (we only persist stickerNo="N\\A").
             normalizeNaSentinelSticker();
 
+            // Always update createdDate to current time when the user clicks Save
+            try {
+                if (this.equipmentInspectionForm != null) {
+                    this.equipmentInspectionForm.setCreatedDate(Calendar.getInstance().getTime());
+                }
+            } catch (Exception ignore) {}
+
             WorkflowDefinition workflowDefinitionInit = workflowDefinitionService.getInitStep((short) 1);
             WorkflowDefinition workflowDefinitionFinal = workflowDefinitionService.getFinalStep((short) 1);
             Set<InspectionFormWorkflow> inspectionFormWorkflows = new HashSet<InspectionFormWorkflow>();
@@ -1408,6 +1439,14 @@ public class InspectionFormBean implements Serializable {
 
                 equipmentInspectionForm.getInspectionFormWorkflowSteps().add(inspectionFormWorkflowStepTwo);
 
+                // If the current user is the inspector who filled the form, update createdDate
+                try {
+                    if (equipmentInspectionForm.getSysUserByInspectionBy() != null && loginBean.getUser() != null &&
+                            equipmentInspectionForm.getSysUserByInspectionBy().getId() != null && equipmentInspectionForm.getSysUserByInspectionBy().getId().equals(loginBean.getUser().getId())) {
+                        equipmentInspectionForm.setCreatedDate(Calendar.getInstance().getTime());
+                    }
+                } catch (Exception ignore) {}
+
                 equipmentInspectionFormService.merge(equipmentInspectionForm);
                 UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
 
@@ -1416,6 +1455,8 @@ public class InspectionFormBean implements Serializable {
             } else if (UtilityHelper.decipher(persistentMode).equals("insert")) {
                 maxStepSeq = inspectionFormWorkflowStepService.getLastStepSeq(null);
                 equipmentInspectionForm.setSysUserByInspectionBy(loginBean.getUser());
+                // record the timestamp when inspector saves the form for the first time
+                try { equipmentInspectionForm.setCreatedDate(Calendar.getInstance().getTime()); } catch (Exception ignore) {}
                 equipmentInspectionForm.setNameAndAddressOfEmployer(equipmentInspectionForm.getCompany().getName());
 
                 InspectionFormWorkflow inspectionFormWorkflow = new InspectionFormWorkflow();
@@ -1518,6 +1559,34 @@ public class InspectionFormBean implements Serializable {
         return (o == null) ? "" : String.valueOf(o);
     }
 
+    // Public helper for Facelets to format dates consistently
+    public String formatDateForDisplay(java.util.Date d) {
+        try {
+            return formatDate(d);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * Safely format a date representative for an EquipmentInspectionForm.
+     * Some code previously referred to `createdDate` which does not exist on
+     * the entity; prefer using `dateOfThoroughExamination` then `nextExaminationDate`.
+     */
+    public String formatFormDate(EquipmentInspectionForm f) {
+        try {
+            if (f == null) return "";
+            // Prefer createdDate (date when inspector filled/saved the form)
+            try { if (f.getCreatedDate() != null) return formatDateForDisplay(f.getCreatedDate()); } catch (Exception ign) {}
+            if (f.getDateOfThoroughExamination() != null) return formatDateForDisplay(f.getDateOfThoroughExamination());
+            if (f.getNextExaminationDate() != null) return formatDateForDisplay(f.getNextExaminationDate());
+            if (f.getPreviousExaminationDate() != null) return formatDateForDisplay(f.getPreviousExaminationDate());
+            return "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     /**
      * If the selected sticker is the UI sentinel representing explicit "N\\A",
      * clear the sticker relationship so Hibernate won't try to persist an
@@ -1597,8 +1666,8 @@ public class InspectionFormBean implements Serializable {
                 data.put("reviewedBy", loginBean.getUser() != null ? loginBean.getUser().getEnDisplayName() : "");
             }
 
-                // Build QR using serialNo (if available) and reportNo instead of stickerNo
-                String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
+            // Build QR using serialNo (if available) and reportNo instead of stickerNo
+            String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
                     (equipmentInspectionForm != null && equipmentInspectionForm.getSticker() != null ? equipmentInspectionForm.getSticker().getSerialNo() : "") +
                     "&" +
                     (equipmentInspectionForm != null && equipmentInspectionForm.getReportNo() != null ? equipmentInspectionForm.getReportNo() : "");
@@ -2085,11 +2154,15 @@ public class InspectionFormBean implements Serializable {
 
 
 
+    /**
+     * Generate PDF bytes for the given equipment inspection form using the provided template.
+     * Important: inserts QR as an INLINE Shape centered by paragraph alignment to avoid overlap.
+     */
     private byte[] generateEquipmentPdfBytes(EquipmentInspectionForm eForm, FormTemplate tpl) throws Exception {
         if (eForm == null) throw new IllegalArgumentException("EquipmentInspectionForm is null");
         if (tpl == null || tpl.getPrintedDoc() == null) throw new IllegalArgumentException("Form template missing");
 
-        Document document = new Document(ByteSource.wrap(tpl.getPrintedDoc().getData()).openStream());
+        com.aspose.words.Document document = new com.aspose.words.Document(com.google.common.io.ByteSource.wrap(tpl.getPrintedDoc().getData()).openStream());
 
         Map<String, Object> data = new HashMap<>();
         data.put("ReportNo", eForm.getReportNo() != null ? eForm.getReportNo() : "");
@@ -2100,7 +2173,6 @@ public class InspectionFormBean implements Serializable {
         data.put("Ned", formatDate(eForm.getNextExaminationDate()));
         data.put("Ped", formatDate(eForm.getPreviousExaminationDate()));
 
-        // ===== Company fallback logic =====
         String companyName = "";
         if (eForm.getNameAndAddressOfEmployer() != null && !eForm.getNameAndAddressOfEmployer().trim().isEmpty()) {
             companyName = eForm.getNameAndAddressOfEmployer().trim();
@@ -2108,39 +2180,104 @@ public class InspectionFormBean implements Serializable {
             companyName = eForm.getCompany().getName().trim();
         }
         data.put("company", companyName);
-        data.put("Company", companyName); // also add uppercase key for template compatibility
-
+        data.put("Company", companyName);
         data.put("Address", eForm.getCompany() != null ? eForm.getCompany().getAddress() : "");
         data.put("ExType", eForm.getExaminationType() != null ? eForm.getExaminationType().getEnglishName() : "");
         data.put("insBy", eForm.getSysUserByInspectionBy() != null ? eForm.getSysUserByInspectionBy().getEnDisplayName() : "");
         data.put("reviewedBy", loginBean != null && loginBean.getUser() != null ? loginBean.getUser().getEnDisplayName() : "");
-        data.put("issureDate", formatDate(Calendar.getInstance().getTime()));
+        data.put("issureDate", formatDate(java.util.Calendar.getInstance().getTime()));
 
-        // QR
-        // Use reportNo instead of stickerNo so QR remains valid when sticker selection is empty
-        String qrCodeData = UtilityHelper.getBaseURL() + "api/equipment-cert/" +
-            (eForm.getSticker() != null ? eForm.getSticker().getSerialNo() : "") + "&" +
-            (eForm.getReportNo() != null ? eForm.getReportNo() : "");
-        byte[] qrBytes = QRCodeGenerator.generateQrCodeImage(qrCodeData, 5, 1);
-        Bookmark qrB = document.getRange().getBookmarks().get("QRCodeImage");
-        if (qrB != null && qrBytes != null) {
-            Shape qrShape = new Shape(document, ShapeType.IMAGE);
-            qrShape.getImageData().setImageBytes(qrBytes);
-            qrShape.setWidth(75);
-            qrShape.setHeight(75);
-            qrB.getBookmarkStart().getParentNode().appendChild(qrShape);
-        } else {
-            if (qrBytes != null) data.put("QRCodeImage", qrBytes);
+        // --- NOTE: For preview we DO NOT generate/insert QR or signatures.
+        // Replace bookmarks that would hold QR/signature with explanatory text.
+
+        java.util.function.BiConsumer<com.aspose.words.Bookmark, String> replaceBookmarkWithText =
+                (bookmark, message) -> {
+                    try {
+                        if (bookmark == null) return;
+                        com.aspose.words.BookmarkStart bs = bookmark.getBookmarkStart();
+                        com.aspose.words.BookmarkEnd be = bookmark.getBookmarkEnd();
+
+                        java.util.List<com.aspose.words.Node> nodesBetween = new java.util.ArrayList<>();
+                        if (bs != null && be != null) {
+                            com.aspose.words.Node cur = bs.getNextSibling();
+                            while (cur != null && cur != be) {
+                                com.aspose.words.Node next = cur.getNextSibling();
+                                nodesBetween.add(cur);
+                                cur = next;
+                            }
+                            for (com.aspose.words.Node n : nodesBetween) {
+                                try { n.remove(); } catch (Exception ignore) {}
+                            }
+                            // use a DocumentBuilder constructed from the Document (cast DocumentBase -> Document)
+                            com.aspose.words.Document docForBuilder = (com.aspose.words.Document) bookmark.getBookmarkStart().getDocument();
+                            com.aspose.words.DocumentBuilder b = new com.aspose.words.DocumentBuilder(docForBuilder);
+                            b.moveTo(bs);
+                            b.getParagraphFormat().setAlignment(com.aspose.words.ParagraphAlignment.CENTER);
+                            b.getFont().setSize(9);
+                            b.getFont().setItalic(true);
+                            try { b.getFont().setColor(java.awt.Color.DARK_GRAY); } catch (Exception ignore) {}
+                            b.write(message);
+                        } else if (bs != null) {
+                            com.aspose.words.Document docForBuilder = (com.aspose.words.Document) bookmark.getBookmarkStart().getDocument();
+                            com.aspose.words.DocumentBuilder b = new com.aspose.words.DocumentBuilder(docForBuilder);
+                            b.moveTo(bs);
+                            b.getParagraphFormat().setAlignment(com.aspose.words.ParagraphAlignment.CENTER);
+                            b.getFont().setSize(9);
+                            b.getFont().setItalic(true);
+                            try { b.getFont().setColor(java.awt.Color.DARK_GRAY); } catch (Exception ignore) {}
+                            b.write(message);
+                        }
+                        try { if (bs != null) bs.remove(); } catch (Exception ignore) {}
+                        try { if (be != null) be.remove(); } catch (Exception ignore) {}
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                };
+
+        // Replace QR and signature bookmarks
+        com.aspose.words.Bookmark qrBookmark = document.getRange().getBookmarks().get("QRCodeImage");
+        replaceBookmarkWithText.accept(qrBookmark, "(QR code omitted in preview)");
+
+        com.aspose.words.Bookmark sig1 = document.getRange().getBookmarks().get("inspectedByImg");
+        replaceBookmarkWithText.accept(sig1, "(Signature omitted in preview)");
+
+        com.aspose.words.Bookmark sig2 = document.getRange().getBookmarks().get("reviewedByImg");
+        replaceBookmarkWithText.accept(sig2, "(Signature omitted in preview)");
+
+        // Insert prominent banner at top
+        try {
+            com.aspose.words.DocumentBuilder headerBuilder = new com.aspose.words.DocumentBuilder(document);
+            headerBuilder.moveToDocumentStart();
+
+            headerBuilder.getParagraphFormat().setAlignment(com.aspose.words.ParagraphAlignment.CENTER);
+            headerBuilder.getParagraphFormat().setSpaceAfter(6);
+            headerBuilder.getFont().setSize(14);
+            headerBuilder.getFont().setBold(true);
+
+            headerBuilder.writeln();
+
+            headerBuilder.getFont().setSize(10);
+            headerBuilder.getFont().setBold(false);
+            headerBuilder.getFont().setItalic(true);
+            try { headerBuilder.getFont().setColor(java.awt.Color.DARK_GRAY); } catch (Exception ignore) {}
+            headerBuilder.write("There is no QR code for previewed reports. Signatures are not included in preview.");
+            headerBuilder.writeln();
+
+            headerBuilder.getParagraphFormat().setSpaceAfter(8);
+            headerBuilder.getFont().clearFormatting();
+            headerBuilder.writeln();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        // Items: format Date values to date-only strings
+        // map items
         if (eForm.getEquipmentInspectionFormItems() != null) {
             for (Object obj : eForm.getEquipmentInspectionFormItems()) {
                 if (obj instanceof EquipmentInspectionFormItem) {
                     EquipmentInspectionFormItem item = (EquipmentInspectionFormItem) obj;
                     Object value = item.getItemValue();
-                    if (value instanceof Date) {
-                        data.put(item.getAliasName(), formatDate((Date) value));
+                    if (value instanceof java.util.Date) {
+                        data.put(item.getAliasName(), formatDate((java.util.Date) value));
                     } else {
                         data.put(item.getAliasName(), value != null ? value.toString() : "");
                     }
@@ -2148,31 +2285,32 @@ public class InspectionFormBean implements Serializable {
             }
         }
 
+        // Also merge any unsaved UI field values from `columnContents` so preview
+        // reflects the current form state even when items are not yet persisted.
+        try {
+            if (this.columnContents != null) {
+                for (ColumnContent cc : this.columnContents) {
+                    if (cc == null) continue;
+                    String alias = cc.getAliasName();
+                    if (alias == null) continue;
+                    Object v = cc.getContentValue();
+                    if (v instanceof java.util.Date) {
+                        data.put(alias, formatDate((java.util.Date) v));
+                    } else {
+                        data.put(alias, v != null ? v.toString() : "");
+                    }
+                }
+            }
+        } catch (Exception ignore) {
+            // non-fatal: preview will still work with persisted items
+        }
+
+        // build report
         ReportingEngine engine = new ReportingEngine();
         engine.buildReport(document, data, "data");
 
-        // signatures
-        if (eForm.getSysUserByInspectionBy() != null && eForm.getSysUserByInspectionBy().getSignturePhoto() != null) {
-            Bookmark b = document.getRange().getBookmarks().get("inspectedByImg");
-            if (b != null) {
-                Shape shape = new Shape(document, ShapeType.IMAGE);
-                shape.getImageData().setImageBytes(eForm.getSysUserByInspectionBy().getSignturePhoto());
-                shape.setWidth(160); shape.setHeight(40);
-                b.getBookmarkStart().getParentNode().appendChild(shape);
-            }
-        }
-        if (eForm.getSysUserByReviewedBy() != null && eForm.getSysUserByReviewedBy().getSignturePhoto() != null) {
-            Bookmark b2 = document.getRange().getBookmarks().get("reviewedByImg");
-            if (b2 != null) {
-                Shape shape = new Shape(document, ShapeType.IMAGE);
-                shape.getImageData().setImageBytes(eForm.getSysUserByReviewedBy().getSignturePhoto());
-                shape.setWidth(160); shape.setHeight(40);
-                b2.getBookmarkStart().getParentNode().appendChild(shape);
-            }
-        }
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        document.save(out, SaveFormat.PDF);
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+        document.save(out, com.aspose.words.SaveFormat.PDF);
         return out.toByteArray();
     }
 
@@ -2578,11 +2716,11 @@ public class InspectionFormBean implements Serializable {
         }
     }
 
+
     /**
      * Prepare a preview PDF from the current in-memory `equipmentInspectionForm`.
      * Stores the generated PDF bytes in the HTTP session under a token and
      * returns the token to the client via PrimeFaces callback param `previewToken`.
-     * The client can then open `/attachments/previewPdf?token={token}` in a new tab.
      */
     public void preparePreviewPdf() {
         try {
@@ -2606,21 +2744,196 @@ public class InspectionFormBean implements Serializable {
                 return;
             }
 
-            String token = java.util.UUID.randomUUID().toString();
+            String token = UUID.randomUUID().toString();
             String sessionKey = "previewPdf_" + token;
+
             FacesContext fc = FacesContext.getCurrentInstance();
             if (fc != null) {
+                // نخزن في session map (خيار مناسب للتجارب)
                 fc.getExternalContext().getSessionMap().put(sessionKey, pdfBytes);
-            }
 
-            // return token to client
-            try { PrimeFaces.current().ajax().addCallbackParam("previewToken", token); } catch (Exception ignore) {}
+                // نرجع الـ token للعميل عبر callback param
+                try {
+                    PrimeFaces.current().ajax().addCallbackParam("previewToken", token);
+                } catch (Exception ignore) { /* لا نفشل إن لم يستطع إرسال callback */ }
+            } else {
+                UtilityHelper.addErrorMessage("FacesContext not available");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             UtilityHelper.addErrorMessage("Error preparing preview: " + e.getMessage());
         }
     }
+
+    /**
+     * Load the latest EquipmentInspectionForm previously filled by the current user
+     * and copy matching fields (primitive fields and matching alias-based items)
+     * into the current in-memory `equipmentInspectionForm` and `columnContents`.
+     * Visible only to inspectors in the UI.
+     */
+    public void loadLastUserForm() {
+        try {
+            // Ensure a user is logged in (feature is visible only to inspectors),
+            // but search for the last form across ALL inspectors for the same
+            // equipment category — so forms are shared between inspectors.
+            if (loginBean == null || loginBean.getUser() == null) {
+                UtilityHelper.addErrorMessage("User not available");
+                return;
+            }
+
+            java.util.Map<String, Object> criteria = new java.util.HashMap<>();
+
+            // Require an equipment category to scope the search. Only load previous
+            // forms that belong to the same equipment category; do NOT filter by
+            // the inspector user id so the last form by any inspector is used.
+            String catCode = null;
+            if (this.equipmentInspectionForm != null && this.equipmentInspectionForm.getEquipmentCategory() != null
+                    && this.equipmentInspectionForm.getEquipmentCategory().getCode() != null) {
+                catCode = this.equipmentInspectionForm.getEquipmentCategory().getCode();
+            } else if (this.equipmentCategory != null && this.equipmentCategory.getCode() != null) {
+                catCode = this.equipmentCategory.getCode();
+            } else if (this.equipmentCatCode != null && !this.equipmentCatCode.trim().isEmpty()) {
+                catCode = this.equipmentCatCode;
+            }
+            if (catCode == null) {
+                UtilityHelper.addInfoMessage("No equipment category selected — cannot load previous form.");
+                return;
+            }
+            criteria.put("equipmentCategory.code", catCode);
+
+            // fetch latest by id descending (most recent)
+            java.util.List<com.smat.ins.model.entity.EquipmentInspectionForm> list = null;
+            try {
+                list = equipmentInspectionFormService.findByCriteria(criteria, 0, 1, "id", false);
+            } catch (Exception ex) {
+                // fallback to simple criteria without sort
+                try { list = equipmentInspectionFormService.findByCriteria(criteria, 0, 1); } catch (Exception ign) { list = null; }
+            }
+
+            if (list == null || list.isEmpty()) {
+                UtilityHelper.addInfoMessage("No previous filled form found for the same equipment category.");
+                return;
+            }
+
+            com.smat.ins.model.entity.EquipmentInspectionForm source = list.get(0);
+            if (source == null) {
+                UtilityHelper.addInfoMessage("No previous filled form found for the same equipment category.");
+                return;
+            }
+
+            // ensure current form exists
+            if (this.equipmentInspectionForm == null) this.equipmentInspectionForm = new EquipmentInspectionForm();
+
+            // copy simple fields only when source has value (overwrite by design)
+            // NOTE: we intentionally do NOT copy sticker/reportNo (see below)
+            try {
+                // copy name/address textual field
+                if (source.getNameAndAddressOfEmployer() != null && !source.getNameAndAddressOfEmployer().trim().isEmpty()) {
+                    this.equipmentInspectionForm.setNameAndAddressOfEmployer(source.getNameAndAddressOfEmployer());
+                }
+
+                // If the source references a Company entity, try to load the canonical Company
+                // via service so the selectOneMenu can bind correctly. Then overwrite the
+                // Company's address with the textual nameAndAddressOfEmployer so the
+                // textarea shows the expected content (user requested behavior).
+                if (source.getCompany() != null) {
+                    try {
+                        Integer srcCid = source.getCompany().getId();
+                        com.smat.ins.model.entity.Company resolved = null;
+                        if (srcCid != null) {
+                            try { resolved = companyService.findById(srcCid); } catch (Exception ign) {}
+                        }
+                        if (resolved == null) {
+                            // fallback: create lightweight company to hold address
+                            resolved = new com.smat.ins.model.entity.Company();
+                            try { resolved.setName(source.getCompany().getName()); } catch (Exception ignoreName) {}
+                        }
+                        // overwrite address from the textual NameAndAddress field when available
+                        try {
+                            String srcNameAddr = source.getNameAndAddressOfEmployer();
+                            if (srcNameAddr != null && !srcNameAddr.trim().isEmpty()) {
+                                resolved.setAddress(srcNameAddr);
+                            } else {
+                                // if no textual field present, preserve resolved.address if any
+                                try { if (resolved.getAddress() == null || resolved.getAddress().trim().isEmpty()) resolved.setAddress(source.getCompany().getAddress()); } catch (Exception ign) {}
+                            }
+                        } catch (Exception ignoreAddr) {}
+
+                        this.equipmentInspectionForm.setCompany(resolved);
+                    } catch (Exception ignoreSetCompany) {}
+                }
+            } catch (Exception ignore) {}
+            try { if (source.getDateOfThoroughExamination() != null) this.equipmentInspectionForm.setDateOfThoroughExamination(source.getDateOfThoroughExamination()); } catch (Exception ignore) {}
+            try { if (source.getNextExaminationDate() != null) this.equipmentInspectionForm.setNextExaminationDate(source.getNextExaminationDate()); } catch (Exception ignore) {}
+            try { if (source.getPreviousExaminationDate() != null) this.equipmentInspectionForm.setPreviousExaminationDate(source.getPreviousExaminationDate()); } catch (Exception ignore) {}
+            try { if (source.getExaminationType() != null) { this.examinationType = source.getExaminationType(); this.equipmentInspectionForm.setExaminationType(source.getExaminationType()); } } catch (Exception ignore) {}
+            try { if (source.getEquipmentType() != null) { this.equipmentType = source.getEquipmentType(); this.equipmentInspectionForm.setEquipmentType(source.getEquipmentType()); } } catch (Exception ignore) {}
+            // Do NOT copy sticker or report number from previous form (user requested)
+            // sticker/reportNo intentionally skipped to avoid reusing identifiers
+            try { if (source.getTimeSheetNo() != null) this.equipmentInspectionForm.setTimeSheetNo(source.getTimeSheetNo()); } catch (Exception ignore) {}
+            try { if (source.getJobNo() != null) this.equipmentInspectionForm.setJobNo(source.getJobNo()); } catch (Exception ignore) {}
+
+            // Note: intentionally do NOT copy nameAndAddressOfEmployer into the current form
+            // (user requested this field should not be restored).
+
+            // Merge dynamic items: map source items by aliasName AND by generalEquipmentItem.itemCode
+            java.util.Map<String, String> itemsByAlias = new java.util.HashMap<>();
+            java.util.Map<String, String> itemsByItemCode = new java.util.HashMap<>();
+            try {
+                if (source.getEquipmentInspectionFormItems() != null) {
+                    for (Object o : source.getEquipmentInspectionFormItems()) {
+                        if (o instanceof com.smat.ins.model.entity.EquipmentInspectionFormItem) {
+                            com.smat.ins.model.entity.EquipmentInspectionFormItem it = (com.smat.ins.model.entity.EquipmentInspectionFormItem) o;
+                            try {
+                                if (it.getAliasName() != null) itemsByAlias.put(it.getAliasName().toLowerCase(), it.getItemValue());
+                            } catch (Exception ignoreAlias) {}
+                            try {
+                                if (it.getGeneralEquipmentItem() != null && it.getGeneralEquipmentItem().getItemCode() != null) {
+                                    String code = it.getGeneralEquipmentItem().getItemCode().toLowerCase();
+                                    if (!itemsByItemCode.containsKey(code)) itemsByItemCode.put(code, it.getItemValue());
+                                }
+                            } catch (Exception ignoreCode) {}
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
+
+            // Apply values to current columnContents by alias match first, then by itemCode match
+            try {
+                if (this.columnContents != null && (!itemsByAlias.isEmpty() || !itemsByItemCode.isEmpty())) {
+                    for (com.smat.ins.model.entity.ColumnContent cc : this.columnContents) {
+                        try {
+                            if (cc == null) continue;
+                            String alias = cc.getAliasName();
+                            String val = null;
+                            if (alias != null) val = itemsByAlias.get(alias.toLowerCase());
+                            if (val == null) {
+                                try {
+                                    if (cc.getGeneralEquipmentItem() != null && cc.getGeneralEquipmentItem().getItemCode() != null) {
+                                        String code = cc.getGeneralEquipmentItem().getItemCode().toLowerCase();
+                                        val = itemsByItemCode.get(code);
+                                    }
+                                } catch (Exception ignoreCode) {}
+                            }
+                            if (val != null) cc.setContentValue(val);
+                        } catch (Exception ignore) {}
+                    }
+                }
+            } catch (Exception ignore) {}
+
+            // If the source had stickerNo 'N\\A', ensure we preserve the sentinel behavior
+            try { normalizeNaSentinelSticker(); } catch (Exception ignore) {}
+
+            UtilityHelper.addInfoMessage("Loaded last filled form and populated matching fields.");
+            try { PrimeFaces.current().ajax().update("@form"); } catch (Exception ignore) {}
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error loading last filled form: " + e.getMessage());
+        }
+    }
+
     // helper: convert any object to safe string
 
 
@@ -2636,6 +2949,317 @@ public class InspectionFormBean implements Serializable {
 
     public boolean isViewOnly() {
         return viewOnly;
+    }
+
+    // Cache: whether current user has a previous filled form (used to render top-center button)
+    private Boolean previousFormExists = null;
+    // Cache for recent forms in same equipment category
+    private java.util.List<EquipmentInspectionForm> lastFiveFormsForCategory = null;
+
+    /**
+     * Return true when the current logged-in user has at least one previously filled
+     * EquipmentInspectionForm. The result is cached for the view to avoid repeated DB calls.
+     */
+    public boolean isPreviousFormExists() {
+        try {
+            if (previousFormExists != null) return previousFormExists.booleanValue();
+            previousFormExists = Boolean.FALSE;
+            if (loginBean == null || loginBean.getUser() == null) return previousFormExists;
+
+            // Determine equipment category; if not available, return false
+            String catCode = null;
+            if (this.equipmentInspectionForm != null && this.equipmentInspectionForm.getEquipmentCategory() != null
+                    && this.equipmentInspectionForm.getEquipmentCategory().getCode() != null) {
+                catCode = this.equipmentInspectionForm.getEquipmentCategory().getCode();
+            } else if (this.equipmentCategory != null && this.equipmentCategory.getCode() != null) {
+                catCode = this.equipmentCategory.getCode();
+            } else if (this.equipmentCatCode != null && !this.equipmentCatCode.trim().isEmpty()) {
+                catCode = this.equipmentCatCode;
+            }
+            if (catCode == null) return previousFormExists;
+
+            java.util.Map<String, Object> criteria = new java.util.HashMap<>();
+            // Only check for any form in the same equipment category (shared across inspectors)
+            criteria.put("equipmentCategory.code", catCode);
+            java.util.List<com.smat.ins.model.entity.EquipmentInspectionForm> list = null;
+            try {
+                list = equipmentInspectionFormService.findByCriteria(criteria, 0, 1);
+            } catch (Exception ex) {
+                try { list = equipmentInspectionFormService.findByCriteria(criteria, 0, 1, "id", false); } catch (Exception ign) { list = null; }
+            }
+            if (list != null && !list.isEmpty()) previousFormExists = Boolean.TRUE;
+        } catch (Exception e) {
+            previousFormExists = Boolean.FALSE;
+        }
+        return previousFormExists.booleanValue();
+    }
+
+    /**
+     * Return up to 5 most recent EquipmentInspectionForm entries for the current
+     * equipment category. The result is cached for the view and invalidated when
+     * the category or current form changes.
+     */
+    public java.util.List<EquipmentInspectionForm> getLastFiveFormsForCategory() {
+        try {
+            if (lastFiveFormsForCategory != null) return lastFiveFormsForCategory;
+            lastFiveFormsForCategory = new java.util.ArrayList<>();
+
+            String catCode = null;
+            if (this.equipmentInspectionForm != null && this.equipmentInspectionForm.getEquipmentCategory() != null
+                    && this.equipmentInspectionForm.getEquipmentCategory().getCode() != null) {
+                catCode = this.equipmentInspectionForm.getEquipmentCategory().getCode();
+            } else if (this.equipmentCategory != null && this.equipmentCategory.getCode() != null) {
+                catCode = this.equipmentCategory.getCode();
+            } else if (this.equipmentCatCode != null && !this.equipmentCatCode.trim().isEmpty()) {
+                catCode = this.equipmentCatCode;
+            }
+            if (catCode == null) return lastFiveFormsForCategory;
+
+            java.util.Map<String, Object> criteria = new java.util.HashMap<>();
+            criteria.put("equipmentCategory.code", catCode);
+            try {
+                lastFiveFormsForCategory = equipmentInspectionFormService.findByCriteria(criteria, 0, 5, "id", false);
+            } catch (Exception ex) {
+                try { lastFiveFormsForCategory = equipmentInspectionFormService.findByCriteria(criteria, 0, 5); } catch (Exception ign) { lastFiveFormsForCategory = new java.util.ArrayList<>(); }
+            }
+
+            // Ensure pinned forms (any inspector) are shown first in the list and preserved
+            try {
+                // Fetch a slightly larger window to allow collecting pinned items
+                java.util.List<EquipmentInspectionForm> windowList = null;
+                try { windowList = equipmentInspectionFormService.findByCriteria(criteria, 0, 15, "id", false); } catch (Exception ign) { try { windowList = equipmentInspectionFormService.findByCriteria(criteria, 0, 15); } catch (Exception ignore2) { windowList = lastFiveFormsForCategory; } }
+
+                if (windowList == null) windowList = lastFiveFormsForCategory;
+
+                java.util.List<EquipmentInspectionForm> pinned = new java.util.ArrayList<>();
+                java.util.List<EquipmentInspectionForm> notPinned = new java.util.ArrayList<>();
+
+                for (EquipmentInspectionForm f : windowList) {
+                    try {
+                        if (f != null && f.getPinnedBy() != null) {
+                            // include pinned ones (unique)
+                            boolean found = false;
+                            for (EquipmentInspectionForm pf : pinned) { if (pf != null && pf.getId() != null && f.getId() != null && pf.getId().equals(f.getId())) { found = true; break; } }
+                            if (!found) pinned.add(f);
+                        } else {
+                            // non-pinned candidates
+                            notPinned.add(f);
+                        }
+                    } catch (Exception ignore) {}
+                }
+
+                // Build final result: pinned first, then latest non-pinned, ensure uniqueness and limit to 5
+                java.util.List<EquipmentInspectionForm> result = new java.util.ArrayList<>();
+                for (EquipmentInspectionForm pf : pinned) { if (pf != null) result.add(pf); }
+                for (EquipmentInspectionForm nf : notPinned) { if (nf != null) {
+                    // avoid duplicates
+                    boolean exists = false;
+                    for (EquipmentInspectionForm r : result) { if (r != null && r.getId() != null && nf.getId() != null && r.getId().equals(nf.getId())) { exists = true; break; } }
+                    if (!exists) result.add(nf);
+                    if (result.size() >= 5) break;
+                } }
+
+                // If result empty (fallback), use lastFiveFormsForCategory already loaded
+                if (result.isEmpty()) {
+                    // keep previous behavior
+                } else {
+                    // ensure final trimming to exactly up to 5
+                    while (result.size() > 5) result.remove(result.size()-1);
+                    lastFiveFormsForCategory = result;
+                }
+            } catch (Exception ignore) {}
+
+            return lastFiveFormsForCategory != null ? lastFiveFormsForCategory : new java.util.ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new java.util.ArrayList<>();
+        }
+    }
+
+    /**
+     * Return true if the given form is pinned by the currently logged-in inspector.
+     */
+    public boolean isPinnedByCurrent(EquipmentInspectionForm f) {
+        try {
+            if (f == null || f.getPinnedBy() == null || loginBean == null || loginBean.getUser() == null) return false;
+            return f.getPinnedBy().getId() != null && f.getPinnedBy().getId().equals(loginBean.getUser().getId());
+        } catch (Exception e) { return false; }
+    }
+
+    /**
+     * Toggle pin state for the currently-loaded equipmentInspectionForm.
+     * Only the inspector who set the pin can remove it.
+     */
+    public void togglePinCurrentForm() {
+        try {
+            if (equipmentInspectionForm == null) { UtilityHelper.addErrorMessage("No form loaded to pin"); return; }
+            if (loginBean == null || loginBean.getUser() == null) { UtilityHelper.addErrorMessage("User not available"); return; }
+            Long curId = loginBean.getUser().getId();
+            if (equipmentInspectionForm.getPinnedBy() == null) {
+                equipmentInspectionForm.setPinnedBy(loginBean.getUser());
+                try { equipmentInspectionFormService.saveOrUpdate(equipmentInspectionForm); } catch (Exception ignore) { }
+                UtilityHelper.addInfoMessage("Form pinned — it will remain in Recent fills (until you unpin)");
+            } else {
+                try {
+                    if (equipmentInspectionForm.getPinnedBy().getId() != null && equipmentInspectionForm.getPinnedBy().getId().equals(curId)) {
+                        equipmentInspectionForm.setPinnedBy(null);
+                        try { equipmentInspectionFormService.saveOrUpdate(equipmentInspectionForm); } catch (Exception ignore) {}
+                        UtilityHelper.addInfoMessage("Pin removed");
+                    } else {
+                        UtilityHelper.addErrorMessage("Only the inspector who pinned this form can remove the pin");
+                    }
+                } catch (Exception ignore) { UtilityHelper.addErrorMessage("Unable to toggle pin"); }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error toggling pin: " + e.getMessage());
+        } finally {
+            try { this.lastFiveFormsForCategory = null; } catch (Exception ignore) {}
+            try { PrimeFaces.current().ajax().update("form"); } catch (Exception ignore) {}
+        }
+    }
+
+    /**
+     * Toggle pin state for a given form id (used by recent-cards pin action).
+     */
+    public void togglePinById(Integer formId) {
+        try {
+            if (formId == null) { UtilityHelper.addErrorMessage("Invalid form"); return; }
+            EquipmentInspectionForm f = null;
+            try { f = equipmentInspectionFormService.findById(formId.longValue()); } catch (Exception ign) { try { f = equipmentInspectionFormService.getBy(formId); } catch (Exception ignore) { f = null; } }
+            if (f == null) { UtilityHelper.addErrorMessage("Form not found"); return; }
+            if (loginBean == null || loginBean.getUser() == null) { UtilityHelper.addErrorMessage("User not available"); return; }
+            Long curId = loginBean.getUser().getId();
+            if (f.getPinnedBy() == null) {
+                // Prevent pinning forms that were inspected/created by another inspector
+                try {
+                    if (f.getSysUserByInspectionBy() != null && f.getSysUserByInspectionBy().getId() != null && !f.getSysUserByInspectionBy().getId().equals(curId)) {
+                        UtilityHelper.addErrorMessage("You can only pin forms you inspected");
+                        return;
+                    }
+                } catch (Exception ignore) {}
+
+                f.setPinnedBy(loginBean.getUser());
+                try { equipmentInspectionFormService.saveOrUpdate(f); } catch (Exception ignore) {}
+                UtilityHelper.addInfoMessage("Form pinned");
+            } else {
+                try {
+                    if (f.getPinnedBy().getId() != null && f.getPinnedBy().getId().equals(curId)) {
+                        f.setPinnedBy(null);
+                        try { equipmentInspectionFormService.saveOrUpdate(f); } catch (Exception ignore) {}
+                        UtilityHelper.addInfoMessage("Pin removed");
+                    } else {
+                        UtilityHelper.addErrorMessage("Only the inspector who pinned this form can remove the pin");
+                    }
+                } catch (Exception ignore) { UtilityHelper.addErrorMessage("Unable to toggle pin"); }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error toggling pin: " + e.getMessage());
+        } finally {
+            try { this.lastFiveFormsForCategory = null; } catch (Exception ignore) {}
+            try { PrimeFaces.current().ajax().update("form"); } catch (Exception ignore) {}
+        }
+    }
+
+    /**
+     * Load a specific previous form by id (must be from the same equipment category)
+     * and apply its values into the current in-memory form (same rules as loadLastUserForm).
+     */
+    public void loadFormById(Integer formId) {
+        try {
+            if (formId == null) { UtilityHelper.addErrorMessage("Invalid form selected"); return; }
+            EquipmentInspectionForm source = null;
+            try { source = equipmentInspectionFormService.findById(formId.longValue()); } catch (Exception ex) { }
+            if (source == null) {
+                try { source = equipmentInspectionFormService.getBy(formId); } catch (Exception ignore) {}
+            }
+            if (source == null) { UtilityHelper.addInfoMessage("Selected form not found"); return; }
+
+            // Ensure category matches current category to be safe
+            String curCat = null;
+            if (this.equipmentInspectionForm != null && this.equipmentInspectionForm.getEquipmentCategory() != null) curCat = this.equipmentInspectionForm.getEquipmentCategory().getCode();
+            if (curCat == null && this.equipmentCategory != null) curCat = this.equipmentCategory.getCode();
+            if (curCat == null && this.equipmentCatCode != null) curCat = this.equipmentCatCode;
+            String srcCat = null;
+            try { if (source.getEquipmentCategory() != null) srcCat = source.getEquipmentCategory().getCode(); } catch (Exception ignore) {}
+            if (curCat != null && srcCat != null && !curCat.equals(srcCat)) { UtilityHelper.addInfoMessage("Selected form does not belong to the same equipment category."); return; }
+
+            // Apply same copy logic as loadLastUserForm (without user-scoped search)
+            if (this.equipmentInspectionForm == null) this.equipmentInspectionForm = new EquipmentInspectionForm();
+
+            try {
+                // assign company entity but DO NOT overwrite company.address from free-text
+                if (source.getCompany() != null) {
+                    try {
+                        Integer srcCid = source.getCompany().getId();
+                        com.smat.ins.model.entity.Company resolved = null;
+                        if (srcCid != null) {
+                            try { resolved = companyService.findById(srcCid); } catch (Exception ign) {}
+                        }
+                        if (resolved == null) {
+                            resolved = new com.smat.ins.model.entity.Company();
+                            try { resolved.setName(source.getCompany().getName()); } catch (Exception ignoreName) {}
+                        }
+                        this.equipmentInspectionForm.setCompany(resolved);
+                    } catch (Exception ignoreSetCompany) {}
+                }
+            } catch (Exception ignore) {}
+            try { if (source.getDateOfThoroughExamination() != null) this.equipmentInspectionForm.setDateOfThoroughExamination(source.getDateOfThoroughExamination()); } catch (Exception ignore) {}
+            try { if (source.getNextExaminationDate() != null) this.equipmentInspectionForm.setNextExaminationDate(source.getNextExaminationDate()); } catch (Exception ignore) {}
+            try { if (source.getPreviousExaminationDate() != null) this.equipmentInspectionForm.setPreviousExaminationDate(source.getPreviousExaminationDate()); } catch (Exception ignore) {}
+            try { if (source.getExaminationType() != null) { this.examinationType = source.getExaminationType(); this.equipmentInspectionForm.setExaminationType(source.getExaminationType()); } } catch (Exception ignore) {}
+            try { if (source.getEquipmentType() != null) { this.equipmentType = source.getEquipmentType(); this.equipmentInspectionForm.setEquipmentType(source.getEquipmentType()); } } catch (Exception ignore) {}
+
+            // Do NOT copy sticker/reportNo
+            try { if (source.getTimeSheetNo() != null) this.equipmentInspectionForm.setTimeSheetNo(source.getTimeSheetNo()); } catch (Exception ignore) {}
+            try { if (source.getJobNo() != null) this.equipmentInspectionForm.setJobNo(source.getJobNo()); } catch (Exception ignore) {}
+
+            // Merge dynamic items (alias then itemCode)
+            java.util.Map<String, String> itemsByAlias = new java.util.HashMap<>();
+            java.util.Map<String, String> itemsByItemCode = new java.util.HashMap<>();
+            try {
+                if (source.getEquipmentInspectionFormItems() != null) {
+                    for (Object o : source.getEquipmentInspectionFormItems()) {
+                        if (o instanceof com.smat.ins.model.entity.EquipmentInspectionFormItem) {
+                            com.smat.ins.model.entity.EquipmentInspectionFormItem it = (com.smat.ins.model.entity.EquipmentInspectionFormItem) o;
+                            try { if (it.getAliasName() != null) itemsByAlias.put(it.getAliasName().toLowerCase(), it.getItemValue()); } catch (Exception ignoreAlias) {}
+                            try { if (it.getGeneralEquipmentItem() != null && it.getGeneralEquipmentItem().getItemCode() != null) { String code = it.getGeneralEquipmentItem().getItemCode().toLowerCase(); if (!itemsByItemCode.containsKey(code)) itemsByItemCode.put(code, it.getItemValue()); } } catch (Exception ignoreCode) {}
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
+
+            try {
+                if (this.columnContents != null && (!itemsByAlias.isEmpty() || !itemsByItemCode.isEmpty())) {
+                    for (com.smat.ins.model.entity.ColumnContent cc : this.columnContents) {
+                        try {
+                            if (cc == null) continue;
+                            String alias = cc.getAliasName();
+                            String val = null;
+                            if (alias != null) val = itemsByAlias.get(alias.toLowerCase());
+                            if (val == null) {
+                                try {
+                                    if (cc.getGeneralEquipmentItem() != null && cc.getGeneralEquipmentItem().getItemCode() != null) {
+                                        String code = cc.getGeneralEquipmentItem().getItemCode().toLowerCase();
+                                        val = itemsByItemCode.get(code);
+                                    }
+                                } catch (Exception ignoreCode) {}
+                            }
+                            if (val != null) cc.setContentValue(val);
+                        } catch (Exception ignore) {}
+                    }
+                }
+            } catch (Exception ignore) {}
+
+            try { normalizeNaSentinelSticker(); } catch (Exception ignore) {}
+
+            UtilityHelper.addInfoMessage("Loaded selected form and populated matching fields.");
+            try { PrimeFaces.current().ajax().update("@form"); } catch (Exception ignore) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+            UtilityHelper.addErrorMessage("Error loading selected form: " + e.getMessage());
+        }
     }
 }
 
