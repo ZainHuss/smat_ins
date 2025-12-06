@@ -2157,141 +2157,762 @@
             <p:outputPanel layout="block" style="pointer-events:none;" rendered="#{inspectionFormBean.inspectorVisible and inspectionFormBean.previousFormExists}">
                 <div id="topLoadLastContainer" class="top-load-last-container" style="pointer-events:auto;">
                     <style>
-                        /* Recent toggle styles - refined palette  micro-interactions */
-                        .recent-toggle {
-                            display:flex; align-items:center; gap:0.6rem; border:0; cursor:pointer;
-                            padding:0.5rem 1rem; border-radius:999px;
-                            background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(16,185,129,0.03));
-                            box-shadow: 0 8px 18px rgba(15,23,42,0.06);
-                            transition: transform .14s ease, box-shadow .18s ease, background .18s ease;
+                        /* Modern color palette */
+                        :root {
+                            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                            --warning-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+                            --surface-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                            --card-bg: rgba(255, 255, 255, 0.98);
+                            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+                            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+                            --shadow-strong: 0 15px 50px rgba(0, 0, 0, 0.18);
+                            --border-radius-sm: 10px;
+                            --border-radius-md: 14px;
+                            --border-radius-lg: 20px;
+                            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                         }
-                        .recent-toggle .pi { font-size:1.28rem; color: #06b6d4; }
-                        #recentToggleArrow { font-size:1.18rem; transition: transform .22s ease; color:var(--surface-600); display:inline-block; }
-                        .recent-toggle:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(2,6,23,0.10); }
-                        .recent-toggle:focus { outline: none; box-shadow: 0 0 0 6px rgba(6,182,212,0.08); }
-                        .recent-toggle.active { background: linear-gradient(90deg, rgba(14,165,233,0.12), rgba(99,102,241,0.06)); box-shadow: 0 20px 46px rgba(2,6,23,0.12); }
-                        .recent-toggle.pulse { animation: recentPulse 2.8s ease-in-out infinite; }
-                        @keyframes recentPulse { 0% { box-shadow: 0 0 0 0 rgba(6,182,212,0.18);} 70% { box-shadow: 0 0 0 14px rgba(6,182,212,0);} 100% { box-shadow:0 0 0 0 rgba(6,182,212,0);} }
 
-                        /* Panel show/hide */
-                        .recent-forms-panel { transition: opacity .25s ease, transform .25s ease, max-height .28s ease; transform-origin: top center; overflow: hidden; }
-                        .recent-forms-panel.collapsed { opacity:0; transform: translateY(-6px) scaleY(.99); max-height:0; }
-                        .recent-forms-panel:not(.collapsed) { opacity:1; transform: translateY(0) scaleY(1); max-height:480px; display:block; }
+                        /* Elegant toggle button */
+                        .recent-toggle {
+                            display: flex;
+                            align-items: center;
+                            gap: 0.75rem;
+                            border: 0;
+                            cursor: pointer;
+                            padding: 0.7rem 1.4rem;
+                            border-radius: var(--border-radius-lg);
+                            background: var(--primary-gradient);
+                            color: white;
+                            font-weight: 600;
+                            font-size: 0.9rem;
+                            box-shadow: var(--shadow-medium);
+                            transition: var(--transition-smooth);
+                            position: relative;
+                            overflow: hidden;
+                            z-index: 1;
+                        }
 
-                        /* Card styling */
-                        .recent-forms-list { display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap; }
+                        .recent-toggle::before {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: var(--secondary-gradient);
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                            z-index: -1;
+                        }
+
+                        .recent-toggle:hover::before {
+                            opacity: 1;
+                        }
+
+                        .recent-toggle:hover {
+                            transform: translateY(-4px);
+                            box-shadow: var(--shadow-strong);
+                        }
+
+                        .recent-toggle:active {
+                            transform: translateY(-1px);
+                        }
+
+                        #recentToggleArrow {
+                            font-size: 0.9rem;
+                            transition: transform 0.3s ease;
+                            margin-left: auto;
+                        }
+
+                        .recent-toggle.active #recentToggleArrow {
+                            transform: rotate(180deg);
+                        }
+
+                        .recent-toggle.pulse {
+                            animation: elegantPulse 3s infinite;
+                        }
+
+                        @keyframes elegantPulse {
+                            0% {
+                                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+                            }
+                            70% {
+                                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+                            }
+                            100% {
+                                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+                            }
+                        }
+
+                        /* Panel */
+                        .recent-forms-panel {
+                            transition: var(--transition-smooth);
+                            transform-origin: top center;
+                            overflow: hidden;
+                            margin-top: 1rem;
+                            background: var(--surface-gradient);
+                            border-radius: var(--border-radius-md);
+                            padding: 1rem;
+                            box-shadow: var(--shadow-soft);
+                            backdrop-filter: blur(10px);
+                            border: 1px solid rgba(255, 255, 255, 0.2);
+                        }
+
+                        .recent-forms-panel.collapsed {
+                            opacity: 0;
+                            transform: translateY(-20px) scaleY(0.9);
+                            max-height: 0;
+                            margin-top: 0;
+                            padding: 0;
+                            border: none;
+                        }
+
+                        .recent-forms-panel:not(.collapsed) {
+                            opacity: 1;
+                            transform: translateY(0) scaleY(1);
+                            max-height: 500px;
+                            display: block;
+                        }
+
+                        /* Carousel container */
+                        .recent-forms-list {
+                            display: flex;
+                            gap: 1rem;
+                            align-items: stretch;
+                            flex-wrap: nowrap;
+                            overflow-x: auto;
+                            padding: 0.5rem 0.5rem 1rem;
+                            scroll-snap-type: x mandatory;
+                            -webkit-overflow-scrolling: touch;
+                            scrollbar-width: thin;
+                            scrollbar-color: rgba(102, 126, 234, 0.5) transparent;
+                        }
+
+                        .recent-forms-list::-webkit-scrollbar {
+                            height: 6px;
+                            border-radius: 10px;
+                        }
+
+                        .recent-forms-list::-webkit-scrollbar-track {
+                            background: rgba(0, 0, 0, 0.05);
+                            border-radius: 10px;
+                        }
+
+                        .recent-forms-list::-webkit-scrollbar-thumb {
+                            background: rgba(102, 126, 234, 0.5);
+                            border-radius: 10px;
+                            transition: background 0.3s ease;
+                        }
+
+                        .recent-forms-list::-webkit-scrollbar-thumb:hover {
+                            background: rgba(102, 126, 234, 0.8);
+                        }
+
+                        /* Premium card styling - More compact */
                         .recent-form-card {
                             position: relative;
-                            min-width:180px; max-width:220px; padding:0.7rem 0.9rem; border-radius:12px;
-                            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-                            border: 1px solid rgba(99,102,241,0.06);
-                            box-shadow: 0 8px 22px rgba(2,6,23,0.06); display:flex; flex-direction:column; gap:6px;
-                            transition: transform .18s ease, box-shadow .18s ease;
+                            flex: 0 0 auto;
+                            width: 280px;
+                            min-width: 260px;
+                            padding: 1.4rem 1.2rem;
+                            border-radius: var(--border-radius-md);
+                            background: var(--card-bg);
+                            border: 1px solid rgba(255, 255, 255, 0.9);
+                            box-shadow: var(--shadow-soft);
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.75rem;
+                            transition: var(--transition-smooth);
+                            scroll-snap-align: center;
+                            transform-origin: center center;
+                            will-change: transform, box-shadow;
+                            animation: cardAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+                            overflow: hidden;
+                            box-sizing: border-box;
+                            z-index: 1;
                         }
-                        /* Pinned badge (small chip shown on pinned cards) */
-                        .pinned-badge {
-                            display: none;
+
+                        .recent-form-card::before {
+                            content: '';
                             position: absolute;
-                            top: 8px;
-                            right: 8px;
-                            z-index: 90;
-                            background: linear-gradient(90deg,#ef4444,#dc2626);
-                            color: #fff;
-                            font-size: 0.70rem;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 4px;
+                            background: var(--primary-gradient);
+                            opacity: 0.8;
+                            transition: height 0.3s ease;
+                        }
+
+                        .recent-form-card:hover::before {
+                            height: 6px;
+                        }
+
+                        @keyframes cardAppear {
+                            from {
+                                opacity: 0;
+                                transform: translateY(20px) scale(0.95);
+                            }
+                            to {
+                                opacity: 1;
+                                transform: translateY(0) scale(1);
+                            }
+                        }
+
+                        .recent-form-card:hover {
+                            transform: translateY(-6px) scale(1.02);
+                            box-shadow: var(--shadow-strong);
+                        }
+
+                        /* Card header - More compact */
+                        .recent-form-card .card-header {
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 0.75rem;
+                            margin-bottom: 0.5rem;
+                        }
+
+                        /* Elegant avatar */
+                        .recent-avatar {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 40px;
+                            height: 40px;
+                            border-radius: 10px;
+                            background: var(--primary-gradient);
+                            color: white;
                             font-weight: 700;
-                            padding: 4px 8px;
-                            border-radius: 999px;
-                            box-shadow: 0 6px 18px rgba(220,38,38,0.18);
-                            text-transform: uppercase;
-                            letter-spacing: 0.04em;
+                            font-size: 0.9rem;
+                            flex-shrink: 0;
+                            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                            transition: var(--transition-smooth);
+                            position: relative;
+                            overflow: hidden;
                         }
-                        .recent-form-card.pinned .pinned-badge { display: block; }
-                        .recent-form-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(2,6,23,0.10); }
-                        .recent-form-card > div:first-child { font-weight:700; font-size:0.95rem; color: #0f172a; }
-                        .recent-form-card > div:nth-child(2) { font-size:0.79rem; color: #6b7280; }
 
-                        /* Button system - modern rounded buttons */
-                        .rounded-btn { border-radius:10px; padding:0.55rem 0.9rem; font-weight:600; box-shadow: 0 6px 18px rgba(2,6,23,0.06); transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease; }
-                        .rounded-btn:hover { transform: translateY(-2px); }
+                        .recent-avatar::after {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(255, 255, 255, 0.1);
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                        }
 
-                        /* Primary (save) */
-                        .btn-primary, .ui-button.btn-primary { background: linear-gradient(90deg,#6366f1,#06b6d4); color: #fff !important; border: none; }
-                        .ui-button.btn-primary:hover { filter:brightness(.96); }
+                        .recent-form-card:hover .recent-avatar {
+                            transform: scale(1.1);
+                            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+                        }
 
-                        /* Preview (purple) */
-                        .btn-preview, .ui-button.btn-preview { background: linear-gradient(90deg,#7c3aed,#4f46e5); color:#fff !important; border:none; }
+                        .recent-form-card:hover .recent-avatar::after {
+                            opacity: 1;
+                        }
 
-                        /* Hazel (amber) */
-                        .btn-hazel, .ui-button.btn-hazel { background: linear-gradient(90deg,#f59e0b,#f97316); color:#102a43 !important; }
+                        .recent-avatar .pi-user {
+                            font-size: 0.9rem;
+                            z-index: 2;
+                            position: relative;
+                        }
 
-                        /* Danger */
-                        .btn-danger, .ui-button.btn-danger { background: linear-gradient(90deg,#ef4444,#dc2626); color:#fff !important; }
+                        .recent-form-card .header-content {
+                            flex: 1;
+                            min-width: 0;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.4rem;
+                        }
 
-                        /* Mint / success */
-                        .btn-mint, .ui-button.btn-mint { background: linear-gradient(90deg,#10b981,#06b6d4); color:#fff !important; }
+                        .recent-form-card .recent-title {
+                            font-weight: 700;
+                            font-size: 0.9rem;
+                            color: #2d3748;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
 
-                        /* small/compact button */
-                        .btn-xs, .ui-button.btn-xs { padding:0.38rem 0.6rem; font-size:0.86rem; border-radius:8px; }
+                        .recent-form-card .recent-meta {
+                            font-size: 0.75rem;
+                            color: #718096;
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 0.4rem;
+                            align-items: center;
+                        }
 
-                        /* ensure icons align nicely */
-                        .ui-button .pi { margin-right:0.48rem; }
-                        /* Pin button small */
-                        .pin-small { border-radius:8px; padding:0.28rem 0.36rem; font-size:0.85rem; }
-                        .pin-small.pinned-on { background: linear-gradient(90deg,#06b6d4,#0ea5a4); color: #fff !important; }
-                        .pin-corner { position:absolute; top:8px; right:8px; z-index:40; }
-                        /* Pin button on main card */
-                        .pin-button-main { position:absolute; top:14px; right:14px; z-index:60; border-radius:10px; padding:0.4rem 0.6rem; }
+                        .recent-form-card .recent-meta .report-label {
+                            font-weight: 600;
+                            color: #4a5568;
+                            font-size: 0.7rem;
+                        }
 
-                        /* Pinned card styles (highlighted red when pinned by current user) */
+                        .recent-form-card .recent-meta .report-value {
+                            font-weight: 700;
+                            color: #2d3748;
+                            font-size: 0.75rem;
+                        }
+
+                        /* IMPROVED: Compact date section */
+                        .date-section {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            background: rgba(245, 247, 250, 0.7);
+                            border-radius: 8px;
+                            padding: 0.5rem 0.7rem;
+                            margin-top: 0.4rem;
+                            border: 1px solid rgba(0, 0, 0, 0.05);
+                            transition: var(--transition-smooth);
+                        }
+
+                        .recent-form-card:hover .date-section {
+                            background: rgba(245, 247, 250, 0.9);
+                            border-color: rgba(102, 126, 234, 0.15);
+                        }
+
+                        .date-info {
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                        }
+
+                        .date-icon {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 26px;
+                            height: 26px;
+                            border-radius: 7px;
+                            background: var(--primary-gradient);
+                            color: white;
+                            font-size: 0.7rem;
+                        }
+
+                        .date-details {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0.1rem;
+                        }
+
+                        .exact-date {
+                            font-size: 0.75rem;
+                            font-weight: 600;
+                            color: #2d3748;
+                            line-height: 1.2;
+                        }
+
+                        .relative-age {
+                            font-size: 0.65rem;
+                            color: #718096;
+                            font-weight: 500;
+                            line-height: 1.2;
+                        }
+
+                        /* IMPROVED: Compact buttons section */
+                        .card-actions {
+                            margin-top: 0.7rem;
+                            display: flex;
+                            gap: 0.6rem;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding-top: 0.7rem;
+                            border-top: 1px solid rgba(0, 0, 0, 0.08);
+                        }
+
+                        /* Style for PrimeFaces buttons - COMPACT */
+                        .card-actions .ui-button {
+                            margin: 0 !important;
+                            padding: 0.45rem 0.6rem !important;
+                            min-height: auto !important;
+                            border: none !important;
+                            font-size: 0.75rem !important;
+                            font-weight: 600 !important;
+                            border-radius: 8px !important;
+                            transition: var(--transition-smooth) !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            gap: 0.4rem !important;
+                            flex: 1 !important;
+                            cursor: pointer !important;
+                            min-width: 0 !important;
+                            max-width: 100% !important;
+                            height: 34px !important;
+                        }
+
+                        /* Remove PrimeFaces default styling */
+                        .card-actions .ui-button .ui-button-text {
+                            padding: 0 !important;
+                            line-height: 1.2 !important;
+                            font-size: 0.75rem !important;
+                        }
+
+                        .card-actions .ui-button .ui-button-icon-left {
+                            margin: 0 !important;
+                            font-size: 0.8rem !important;
+                            width: auto !important;
+                            height: auto !important;
+                        }
+
+                        /* Compact Pin button styling */
+                        .pin-button {
+                            background: rgba(245, 247, 250, 0.8) !important;
+                            color: #4a5568 !important;
+                            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+                            position: relative !important;
+                            overflow: hidden !important;
+                            min-width: 75px !important;
+                        }
+
+                        .pin-button::before {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: var(--success-gradient);
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                            z-index: 1;
+                        }
+
+                        .pin-button.pinned-on {
+                            background: var(--success-gradient) !important;
+                            color: white !important;
+                            border: none !important;
+                            box-shadow: 0 3px 10px rgba(79, 172, 254, 0.3) !important;
+                        }
+
+                        .pin-button.pinned-on::before {
+                            opacity: 1;
+                        }
+
+                        .pin-button:hover:not(.pinned-on) {
+                            background: rgba(102, 126, 234, 0.1) !important;
+                            color: #667eea !important;
+                            border-color: rgba(102, 126, 234, 0.3) !important;
+                            transform: translateY(-2px) !important;
+                            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.15) !important;
+                        }
+
+                        .pin-button.pinned-on:hover {
+                            transform: translateY(-2px) !important;
+                            box-shadow: 0 4px 12px rgba(79, 172, 254, 0.4) !important;
+                        }
+
+                        .pin-button .ui-button-text,
+                        .pin-button .ui-button-icon-left {
+                            position: relative;
+                            z-index: 2;
+                        }
+
+                        /* IMPROVED: Compact Load button styling */
+                        .load-button {
+                            background: var(--primary-gradient) !important;
+                            color: white !important;
+                            border: none !important;
+                            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3) !important;
+                            position: relative !important;
+                            overflow: hidden !important;
+                            min-width: 70px !important;
+                        }
+
+                        .load-button::before {
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: var(--secondary-gradient);
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                            z-index: 1;
+                        }
+
+                        .load-button:hover::before {
+                            opacity: 1;
+                        }
+
+                        .load-button:hover {
+                            transform: translateY(-2px) !important;
+                            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3) !important;
+                        }
+
+                        .load-button:active {
+                            transform: translateY(0) !important;
+                        }
+
+                        .load-button .ui-button-text,
+                        .load-button .ui-button-icon-left {
+                            position: relative;
+                            z-index: 2;
+                        }
+
+                        /* Button text specifically for Load button */
+                        .load-button .ui-button-text {
+                            font-size: 0.75rem !important;
+                            font-weight: 700 !important;
+                        }
+
+                        /* Ensure buttons fit within card */
+                        .recent-form-card .ui-button {
+                            white-space: nowrap !important;
+                            overflow: hidden !important;
+                            text-overflow: ellipsis !important;
+                        }
+
+                        /* Pinned card styling */
                         .recent-form-card.pinned {
-                            background: linear-gradient(180deg,#ef4444,#dc2626) !important;
-                            color: #fff !important;
-                            border-color: rgba(0,0,0,0.06) !important;
-                            box-shadow: 0 18px 40px rgba(220,38,38,0.18);
+                            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+                            border: 1px solid rgba(245, 101, 101, 0.2);
                         }
-                        .recent-form-card.pinned > div { color: #fff !important; }
-                        .recent-form-card.pinned .pi { color: #fff !important; }
-                        .recent-form-card.pinned .btn-xs { background: rgba(255,255,255,0.06) !important; color: #fff !important; border: 1px solid rgba(255,255,255,0.08) !important; }
 
-                        /* Unpin / pinned button styling */
-                        .btn-unpin { background: linear-gradient(90deg,#ef4444,#dc2626) !important; color: #fff !important; border: none !important; }
-                        .btn-unpin:hover { filter: brightness(0.95); }
-
-                        /* Main card pinned style */
-                        .card.basic-info-card.pinned-main {
-                            background: linear-gradient(180deg,#ef4444,#dc2626) !important;
-                            color: #fff !important;
-                            box-shadow: 0 22px 48px rgba(220,38,38,0.2);
-                            border-color: rgba(0,0,0,0.06) !important;
+                        .recent-form-card.pinned::before {
+                            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
                         }
-                        .card.basic-info-card.pinned-main h3, .card.basic-info-card.pinned-main .smat-label { color: #fff !important; }
+
+                        .recent-form-card.pinned .date-section {
+                            background: rgba(254, 215, 215, 0.5);
+                            border-color: rgba(245, 101, 101, 0.15);
+                        }
+
+                        .pinned-badge {
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+                            color: white;
+                            font-size: 0.6rem;
+                            font-weight: 700;
+                            padding: 0.2rem 0.6rem;
+                            border-radius: 10px;
+                            box-shadow: 0 3px 8px rgba(229, 62, 62, 0.3);
+                            z-index: 10;
+                            letter-spacing: 0.5px;
+                            display: none;
+                        }
+
+                        .recent-form-card.pinned .pinned-badge {
+                            display: block;
+                            animation: badgePulse 2s infinite;
+                        }
+
+                        @keyframes badgePulse {
+                            0%, 100% {
+                                box-shadow: 0 3px 8px rgba(229, 62, 62, 0.3);
+                            }
+                            50% {
+                                box-shadow: 0 3px 12px rgba(229, 62, 62, 0.5);
+                            }
+                        }
+
+                        /* Empty state */
+                        .recent-forms-list:empty::before {
+                            content: 'No recent forms found';
+                            display: block;
+                            width: 100%;
+                            text-align: center;
+                            padding: 3rem;
+                            color: #a0aec0;
+                            font-style: italic;
+                            font-size: 0.9rem;
+                        }
+
+                        /* Responsive improvements */
+                        @media (max-width: 768px) {
+                            .recent-form-card {
+                                width: 260px;
+                                min-width: 240px;
+                                padding: 1.2rem 1rem;
+                            }
+
+                            .recent-toggle {
+                                padding: 0.6rem 1.2rem;
+                                font-size: 0.85rem;
+                            }
+
+                            .recent-forms-panel {
+                                margin-left: -0.5rem;
+                                margin-right: -0.5rem;
+                                border-radius: 0;
+                            }
+
+                            .card-actions {
+                                flex-direction: row;
+                                gap: 0.5rem;
+                            }
+
+                            .card-actions .ui-button {
+                                padding: 0.4rem 0.5rem !important;
+                                font-size: 0.7rem !important;
+                                height: 32px !important;
+                            }
+
+                            .pin-button {
+                                min-width: 70px !important;
+                            }
+
+                            .load-button {
+                                min-width: 65px !important;
+                            }
+                        }
+
+                        @media (max-width: 480px) {
+                            .recent-form-card {
+                                width: 240px;
+                                min-width: 220px;
+                            }
+
+                            .date-section {
+                                flex-direction: column;
+                                align-items: flex-start;
+                                gap: 0.4rem;
+                            }
+
+                            .card-actions {
+                                flex-wrap: wrap;
+                            }
+
+                            .card-actions .ui-button {
+                                flex: 1 1 auto !important;
+                                min-width: 65px !important;
+                            }
+                        }
                     </style>
 
-                    <div class="top-load-last-wrapper" style="display:flex;gap:0.5rem;align-items:center;">
-                        <button type="button" id="recentToggleBtn" class="recent-toggle pulse" onclick="toggleRecentPanel();" aria-expanded="false" title="Recent fills">
+                    <div class="top-load-last-wrapper" style="display:flex;gap:0.75rem;align-items:center;justify-content:center;">
+                        <button type="button" id="recentToggleBtn" class="recent-toggle pulse" onclick="toggleRecentPanel();" aria-expanded="false" title="View recent forms">
                             <i class="pi pi-history" aria-hidden="true"></i>
-                            <span style="font-weight:700;color:var(--surface-800);">Recent fills</span>
+                            <span style="font-weight:700;">Recent Forms</span>
                             <i id="recentToggleArrow" class="pi pi-chevron-down" aria-hidden="true"></i>
                         </button>
 
                         <div id="recentFormsPanel" class="recent-forms-panel collapsed" aria-hidden="true" style="display:none;">
-                            <div class="recent-forms-list" style="display:flex;gap:0.6rem;align-items:center;">
+                            <div class="recent-forms-list">
                                 <ui:repeat value="#{inspectionFormBean.lastFiveFormsForCategory}" var="recent">
-                                    <div class="recent-form-card #{inspectionFormBean.isPinnedByCurrent(recent) ? 'pinned' : ''}" style="background:linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.98));border-radius:12px;padding:0.5rem 0.75rem;box-shadow:var(--shadow-sm);min-width:170px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
-                                        <div class="pinned-badge">Pinned</div>
-                                        <div style="font-weight:700;font-size:0.92rem;color:var(--surface-800);">#{recent.sysUserByInspectionBy.displayName}</div>
-                                        <div style="font-size:0.78rem;color:var(--surface-600);">#{inspectionFormBean.formatFormDate(recent)}</div>
-                                        <div style="margin-top:6px;width:100%;display:flex;gap:6px;align-items:center;">
-                                            <p:commandButton icon="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'pi pi-times' : 'pi pi-bookmark'}" value="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'Unpin' : null}" styleClass="pin-small btn-xs #{inspectionFormBean.isPinnedByCurrent(recent) ? 'pinned-on btn-unpin' : ''}" action="#{inspectionFormBean.togglePinById(recent.id)}" update="@form" process="@this" title="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'Unpin (you)' : (not empty recent.pinnedBy ? 'Pinned by ' + recent.pinnedBy.displayName : 'Pin this form')}" disabled="#{(not empty recent.pinnedBy and recent.pinnedBy.id ne loginBean.user.id) or (not empty recent.sysUserByInspectionBy and recent.sysUserByInspectionBy.id ne loginBean.user.id)}" />
-                                            <p:commandButton value="Load" icon="pi pi-history" styleClass="btn-xs btn-primary" action="#{inspectionFormBean.loadFormById(recent.id)}" process="@this" update="@form" onclick="if(!confirm('This will overwrite matching fields with the selected form. Continue?')) return false;" />
+                                    <div class="recent-form-card #{inspectionFormBean.isPinnedByCurrent(recent) ? 'pinned' : ''}">
+                                        <!-- Pinned badge -->
+                                        <div class="pinned-badge">PINNED</div>
+
+                                        <!-- Card header -->
+                                        <div class="card-header">
+                                            <div class="recent-avatar">
+                                                <i class="pi pi-user"></i>
+                                            </div>
+                                            <div class="header-content">
+                                                <div class="recent-title">#{recent.sysUserByInspectionBy.displayName}</div>
+                                                <div class="recent-meta">
+                                                    <h:outputText value="Report:" styleClass="report-label" rendered="#{not empty recent.reportNo}" />
+                                                    <h:outputText value=" #{recent.reportNo}" styleClass="report-value" rendered="#{not empty recent.reportNo}" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- IMPROVED: Compact date section -->
+                                        <div class="date-section">
+                                            <div class="date-info">
+                                                <div class="date-icon">
+                                                    <i class="pi pi-calendar"></i>
+                                                </div>
+                                                <div class="date-details">
+                                        <span class="exact-date">
+                                            <h:outputText value="#{inspectionFormBean.formatCreatedDate(recent)}" rendered="#{not empty recent.createdDate}" />
+                                        </span>
+                                                    <span class="relative-age">
+                                            #{inspectionFormBean.formatRelativeAge(recent.createdDate)}
+                                        </span>
+                                                </div>
+                                            </div>
+                                            <div class="time-icon">
+                                                <i class="pi pi-clock" style="color:#718096;font-size:0.8rem;"></i>
+                                            </div>
+                                        </div>
+
+                                        <!-- FIXED: Compact PrimeFaces buttons -->
+                                        <div class="card-actions">
+                                            <!-- Compact Pin button -->
+                                            <p:commandButton
+                                                    icon="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'}"
+                                                    value="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'Pinned' : 'Pin'}"
+                                                    styleClass="pin-button #{inspectionFormBean.isPinnedByCurrent(recent) ? 'pinned-on' : ''}"
+                                                    action="#{inspectionFormBean.togglePinById(recent.id)}"
+                                                    update="@form"
+                                                    process="@this"
+                                                    title="#{inspectionFormBean.isPinnedByCurrent(recent) ? 'Unpin this form' : (not empty recent.pinnedBy ? 'Pinned by ' + recent.pinnedBy.displayName : 'Pin this form for quick access')}"
+                                                    disabled="#{(not empty recent.pinnedBy and recent.pinnedBy.id ne loginBean.user.id) or (not empty recent.sysUserByInspectionBy and recent.sysUserByInspectionBy.id ne loginBean.user.id)}" />
+
+                                            <!-- Compact Load button -->
+                                            <p:commandButton
+                                                    value="Load"
+                                                    icon="pi pi-download"
+                                                    styleClass="load-button"
+                                                    action="#{inspectionFormBean.loadFormById(recent.id)}"
+                                                    process="@this"
+                                                    update="@form"
+                                                    onstart="return confirm('This will overwrite matching fields with the selected form. Continue?');" />
                                         </div>
                                     </div>
                                 </ui:repeat>
                             </div>
                         </div>
                     </div>
+
+                    <script>
+                        function toggleRecentPanel() {
+                            const panel = document.getElementById('recentFormsPanel');
+                            const button = document.getElementById('recentToggleBtn');
+                            const arrow = document.getElementById('recentToggleArrow');
+
+                            if (panel.classList.contains('collapsed')) {
+                                panel.classList.remove('collapsed');
+                                panel.style.display = 'block';
+                                button.classList.add('active');
+                                button.classList.remove('pulse');
+
+                                // Add animation to cards
+                                setTimeout(() => {
+                                    const cards = document.querySelectorAll('.recent-form-card');
+                                    cards.forEach((card, index) => {
+                                        card.style.animationDelay = `${index * 0.1}s`;
+                                    });
+                                }, 50);
+                            } else {
+                                panel.classList.add('collapsed');
+                                setTimeout(() => {
+                                    panel.style.display = 'none';
+                                }, 300);
+                                button.classList.remove('active');
+                            }
+                        }
+
+                        // Close panel when clicking outside
+                        document.addEventListener('click', function(event) {
+                            const panel = document.getElementById('recentFormsPanel');
+                            const button = document.getElementById('recentToggleBtn');
+
+                            if (!panel.classList.contains('collapsed') &amp;&amp;
+                                !panel.contains(event.target) &amp;&amp;
+                                !button.contains(event.target)) {
+                                panel.classList.add('collapsed');
+                                button.classList.remove('active');
+                                setTimeout(() => {
+                                    panel.style.display = 'none';
+                                }, 300);
+                            }
+                        });
+                    </script>
                 </div>
             </p:outputPanel>
+
+
 
             <!-- قسم إدارة المسودات الجديد باللون الأخضر الفاتح -->
             <div class="draft-management-section">

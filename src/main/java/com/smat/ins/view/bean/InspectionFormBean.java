@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1568,6 +1570,15 @@ public class InspectionFormBean implements Serializable {
         }
     }
 
+    // Format date+time for display (preserves time from DB's datetime(6))
+    public String formatDateTimeForDisplay(java.util.Date d) {
+        try {
+            return formatDateTime(d);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     /**
      * Safely format a date representative for an EquipmentInspectionForm.
      * Some code previously referred to `createdDate` which does not exist on
@@ -1582,6 +1593,53 @@ public class InspectionFormBean implements Serializable {
             if (f.getNextExaminationDate() != null) return formatDateForDisplay(f.getNextExaminationDate());
             if (f.getPreviousExaminationDate() != null) return formatDateForDisplay(f.getPreviousExaminationDate());
             return "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * Prefer showing the exact created timestamp (date + time) when available.
+     * Falls back to the existing form-date logic when createdDate is missing.
+     */
+    public String formatCreatedDate(EquipmentInspectionForm f) {
+        try {
+            if (f == null) return "";
+            if (f.getCreatedDate() != null) return formatDateTimeForDisplay(f.getCreatedDate());
+            return formatFormDate(f);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * Return a short human-friendly relative age for a timestamp, e.g. "5 days ago".
+     */
+    public String formatRelativeAge(Date d) {
+        try {
+            if (d == null) return "";
+            Instant then = d.toInstant();
+            Instant now = Instant.now();
+            Duration dur = Duration.between(then, now);
+            long days = dur.toDays();
+            if (days > 0) return days + (days == 1 ? " day ago" : " days ago");
+            long hours = dur.toHours();
+            if (hours > 0) return hours + (hours == 1 ? " hour ago" : " hours ago");
+            long mins = dur.toMinutes();
+            if (mins > 0) return mins + (mins == 1 ? " minute ago" : " minutes ago");
+            return "just now";
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * Safe report number for UI display (empty string if absent).
+     */
+    public String safeReportNo(EquipmentInspectionForm f) {
+        try {
+            if (f == null) return "";
+            return f.getReportNo() == null ? "" : f.getReportNo();
         } catch (Exception e) {
             return "";
         }
@@ -1612,6 +1670,13 @@ public class InspectionFormBean implements Serializable {
     private String formatDate(Date d) {
         if (d == null) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MMM.yyyy");
+        return sdf.format(d).toUpperCase();
+    }
+
+    // helper: format Date to date+time string (keeps DB time)
+    private String formatDateTime(Date d) {
+        if (d == null) return "";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MMM.yyyy, HH:mm");
         return sdf.format(d).toUpperCase();
     }
 
@@ -3261,5 +3326,18 @@ public class InspectionFormBean implements Serializable {
             UtilityHelper.addErrorMessage("Error loading selected form: " + e.getMessage());
         }
     }
+    // داخل InspectionFormBean (أو الـ bean الذي تستخدمه)
+    public String pinTitle(EquipmentInspectionForm recent) {
+        if (recent == null) return "Pin this form";
+        if (recent.getPinnedBy() != null) {
+            String name = recent.getPinnedBy().getDisplayName();
+            if (name == null || name.trim().isEmpty()) {
+                return "Pinned";
+            }
+            return "Pinned by " + name;
+        }
+        return "Pin this form";
+    }
+
 }
 
