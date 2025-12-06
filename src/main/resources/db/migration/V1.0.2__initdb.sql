@@ -3,7 +3,7 @@
 -- Product home page: http://www.devart.com/dbforge/mysql/studio
 -- Script date 5/6/2024 4:39:42 PM
 -- Server version: 8.0.30
---
+--first commit
 
 
 
