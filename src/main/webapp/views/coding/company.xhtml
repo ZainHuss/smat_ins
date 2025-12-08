@@ -16,9 +16,10 @@
 				display: flex;
 				align-items: center;
 				gap: 0.5rem;
-				white-space: normal;
-				word-wrap: break-word;
-				word-break: break-word;
+				/* keep contact cell on a single line */
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			.contact-avatar {
 				width: 32px;
@@ -33,9 +34,10 @@
 				flex-shrink: 0;
 			}
 			.details-cell {
-				white-space: normal;
-				word-wrap: break-word;
-				word-break: break-word;
+				/* keep details on a single line and use ellipsis for overflow */
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 				max-width: 300px;
 			}
 			.wrap-text-cell {
@@ -53,11 +55,22 @@
 				table-layout: auto;
 			}
 			.products-table .ui-datatable-tablewrapper td {
-				white-space: normal;
-				word-wrap: break-word;
-				word-break: break-word;
-				vertical-align: top;
+				/* force single-line rows (desktop) and ellipsis; full text available via title */
+				max-width: 220px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				vertical-align: middle;
 				padding: 8px;
+			}
+			/* make nested containers inside cells also truncate */
+			.products-table .ui-datatable-tablewrapper td .details-cell,
+			.products-table .ui-datatable-tablewrapper td .contact-person-cell {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				display: inline-block;
+				max-width: 100%;
 			}
 			@media screen and (max-width: 960px) {
 				.products-table .ui-datatable-tablewrapper table {
@@ -66,7 +79,11 @@
 				.name-column {
 					min-width: 150px;
 				}
+				/* allow wrapping on small screens */
 				.products-table .ui-datatable-tablewrapper td {
+					white-space: normal;
+					overflow: visible;
+					text-overflow: unset;
 					padding: 6px;
 				}
 			}
@@ -126,43 +143,62 @@
 						</div>
 					</f:facet>
 					<p:column selectionMode="multiple" exportable="false"></p:column>
+
+					<!-- Reordered & consolidated columns: Name, Code, Phones, Contact (name + email), Address, Details -->
 					<p:column headerText="#{interfaceLabel.name}"
 						sortBy="#{company.name}" filterBy="#{company.name}" styleClass="name-column wrap-text-cell">
-						<h:outputText value="#{company.name}" />
+						<h:outputText value="#{company.name}" title="#{company.name}" />
+					</p:column>
+
+					<p:column headerText="#{interfaceLabel.code}"
+						sortBy="#{company.code}" filterBy="#{company.code}" styleClass="wrap-text-cell"
+						headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+						<h:outputText value="#{company.code}" title="#{company.code}" />
 					</p:column>
 
 					<p:column headerText="#{interfaceLabel.phone}"
-						sortBy="#{company.phone}" filterBy="#{company.phone}" styleClass="wrap-text-cell">
-						<h:outputText value="#{company.phone}" />
+						sortBy="#{company.phone}" filterBy="#{company.phone}" styleClass="wrap-text-cell"
+						headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+						<h:outputText value="#{not empty company.phone ? company.phone : ''}" title="#{company.phone}" />
+						<h:outputText value=" / " rendered="#{not empty company.phone and not empty company.mobile}" />
+						<h:outputText value="#{company.mobile}" rendered="#{not empty company.mobile}" title="#{company.mobile}" />
+						<h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.phone and empty company.mobile}" />
 					</p:column>
 
-					<p:column headerText="#{interfaceLabel.mobile}"
-						sortBy="#{company.mobile}" filterBy="#{company.mobile}" styleClass="wrap-text-cell">
-						<h:outputText value="#{company.mobile}" />
-					</p:column>
-					
-					<p:column headerText="#{interfaceLabel.code}"
-						sortBy="#{company.code}" filterBy="#{company.code}" styleClass="wrap-text-cell">
-						<h:outputText value="#{company.code}" />
-					</p:column>
-					
-					<!-- New Contact Person Column -->
 					<p:column headerText="#{interfaceLabel.contactPerson}"
-						sortBy="#{company.contactPerson}" filterBy="#{company.contactPerson}" styleClass="wrap-text-cell">
+						sortBy="#{company.contactPerson}" filterBy="#{company.contactPerson}" styleClass="wrap-text-cell"
+						headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
 						<div class="contact-person-cell">
 							<div class="contact-avatar">
 								<h:outputText value="#{not empty company.contactPerson ? company.contactPerson.substring(0,1).toUpperCase() : '?'}" />
 							</div>
-							<h:outputText value="#{company.contactPerson}" rendered="#{not empty company.contactPerson}" />
-							<h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.contactPerson}" />
+							<div class="details-cell">
+								<h:outputText value="#{company.contactPerson}" rendered="#{not empty company.contactPerson}" title="#{company.contactPerson}" />
+								<h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.contactPerson}" />
+								<!-- inline separator only when both contactPerson and email exist -->
+								<h:outputText value=" - " rendered="#{not empty company.contactPerson and not empty company.email}" style="color:#6c757d;" />
+								<h:outputLink value="mailto:#{company.email}" rendered="#{not empty company.email}" title="#{company.email}">
+									<h:outputText value="#{company.email}" />
+								</h:outputLink>
+								<h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.email}" />
+							</div>
 						</div>
 					</p:column>
-					
-					<!-- New Details Column -->
-					<p:column headerText="#{interfaceLabel.details}"
-						sortBy="#{company.details}" filterBy="#{company.details}" styleClass="wrap-text-cell">
+
+					<p:column headerText="#{interfaceLabel.address}"
+						sortBy="#{company.address}" filterBy="#{company.address}" styleClass="wrap-text-cell"
+						headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
 						<div class="details-cell">
-							<h:outputText value="#{company.details}" rendered="#{not empty company.details}" />
+							<h:outputText value="#{company.address}" rendered="#{not empty company.address}" title="#{company.address}" />
+							<h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.address}" />
+						</div>
+					</p:column>
+
+					<p:column headerText="#{interfaceLabel.details}"
+						sortBy="#{company.details}" filterBy="#{company.details}" styleClass="wrap-text-cell"
+						headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+						<div class="details-cell">
+							<h:outputText value="#{company.details}" rendered="#{not empty company.details}" title="#{company.details}" />
 							<h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.details}" />
 						</div>
 					</p:column>
@@ -193,39 +229,45 @@
 						<p:outputPanel rendered="#{not empty codingCompanyBean.company}">
 							<div class="ui-fluid formgrid grid">
 								<div class="field col-12 md:col-4">
-									<p:outputLabel style="font-size:bolder;color:black;" for="name">#{interfaceLabel.name}</p:outputLabel>
+									<p:outputLabel style="font-weight:bold;color:black;" for="name">#{interfaceLabel.name}</p:outputLabel>
 									<p:inputText id="name"
 										value="#{codingCompanyBean.company.name}" required="true"
 										requiredMessage="#{interfaceLabel.name}  #{errorLabel.validateInput}" />
 								</div>
 								<div class="field col-12 md:col-4">
-									<p:outputLabel style="font-size:bolder;color:black;" for="phone">#{interfaceLabel.phone}</p:outputLabel>
+									<p:outputLabel style="font-weight:bold;color:black;" for="phone">#{interfaceLabel.phone}</p:outputLabel>
 									<p:inputText id="phone"
 										value="#{codingCompanyBean.company.phone}" />
 								</div>
 								<div class="field col-12 md:col-4">
-									<p:outputLabel style="font-size:bolder;color:black;" for="mobile">#{interfaceLabel.mobile}</p:outputLabel>
-									<p:inputText id="mobile" 
+									<p:outputLabel style="font-weight:bold;color:black;" for="mobile">#{interfaceLabel.mobile}</p:outputLabel>
+									<p:inputText id="mobile"
 										value="#{codingCompanyBean.company.mobile}" />
 								</div>
 							</div>
 							<div class="ui-fluid formgrid grid">
 								<div class="field col-12 md:col-6">
-									<p:outputLabel style="font-size:bolder;color:black;" for="contactPerson">#{interfaceLabel.contactPerson}</p:outputLabel>
+									<p:outputLabel style="font-weight:bold;color:black;" for="contactPerson">#{interfaceLabel.contactPerson}</p:outputLabel>
 									<p:inputText id="contactPerson"
 										value="#{codingCompanyBean.company.contactPerson}" />
+								</div>
+								<div class="field col-12 md:col-6">
+									<p:outputLabel style="font-weight:bold;color:black;" for="email">#{interfaceLabel.email}</p:outputLabel>
+									<p:inputText id="email" value="#{codingCompanyBean.company.email}" validatorMessage="#{interfaceLabel.invalidEmail}">
+										<f:validateRegex pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" />
+									</p:inputText>
 								</div>
 							</div>
 							<div class="row ">
 								<div class="col-lg-10 col-xl-9 col-xxl-8">
-									<p:outputLabel style="font-size:bold;color:black;">#{interfaceLabel.address}</p:outputLabel>
+									<p:outputLabel style="font-weight:bold;color:black;">#{interfaceLabel.address}</p:outputLabel>
 									<p:inputTextarea value="#{codingCompanyBean.company.address}"
 										rows="3"></p:inputTextarea>
 								</div>
 							</div>
 							<div class="row ">
 								<div class="col-lg-10 col-xl-9 col-xxl-8">
-									<p:outputLabel style="font-size:bold;color:black;">#{interfaceLabel.details}</p:outputLabel>
+									<p:outputLabel style="font-weight:bold;color:black;">#{interfaceLabel.details}</p:outputLabel>
 									<p:inputTextarea value="#{codingCompanyBean.company.details}"
 										rows="3"></p:inputTextarea>
 								</div>

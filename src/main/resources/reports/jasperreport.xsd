@@ -10,6 +10,5 @@
   <xs:element name="jasperReport" type="xs:anyType"/>
 
   <!-- Allow any other content (lax so actual processors can still handle real JRXML) -->
-  <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
 </xs:schema>
 
