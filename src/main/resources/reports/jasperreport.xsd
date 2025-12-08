@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Minimal stub XSD to satisfy IDE schema resolution. Keeps validation permissive. -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://jasperreports.sourceforge.net/jasperreports"
+           xmlns="http://jasperreports.sourceforge.net/jasperreports"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+  <!-- Basic declaration so the IDE recognizes the root element -->
+  <xs:element name="jasperReport" type="xs:anyType"/>
+
+  <!-- Allow any other content (lax so actual processors can still handle real JRXML) -->
+  <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+</xs:schema>
+
