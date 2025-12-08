@@ -1,0 +1,2 @@
+alter table equipment_inspection_certificate drop certificate_document;
+alter table equipment_inspection_certificate add certificate_document longblob NOT NULL;

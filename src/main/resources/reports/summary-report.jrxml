@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Simple, clean summary report for equipment certificate (fields only) -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="summary-report" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40" uuid="summary-report-uuid">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+
+    <parameter name="ReportNo" class="java.lang.String"/>
+    <parameter name="StNo" class="java.lang.String"/>
+    <parameter name="TsNo" class="java.lang.String"/>
+    <parameter name="JobNo" class="java.lang.String"/>
+    <parameter name="Company" class="java.lang.String"/>
+    <parameter name="Dte" class="java.lang.String"/>
+    <parameter name="Ned" class="java.lang.String"/>
+    <parameter name="Inspector" class="java.lang.String"/>
+    <parameter name="Reviewer" class="java.lang.String"/>
+    <parameter name="Result" class="java.lang.String"/>
+    <parameter name="logoLeftPath" class="java.lang.String"/>
+    <parameter name="logoRightPath" class="java.lang.String"/>
+
+    <title>
+        <band height="120">
+            <image>
+                <reportElement x="0" y="0" width="100" height="60"/>
+                <imageExpression><![CDATA[new java.io.File($P{logoLeftPath}).exists() ? $P{logoLeftPath} : ""]]></imageExpression>
+            </image>
+            <textField>
+                <reportElement x="120" y="0" width="275" height="60"/>
+                <textElement textAlignment="Center">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Equipment Inspection - Summary"]]></textFieldExpression>
+            </textField>
+            <image>
+                <reportElement x="420" y="0" width="100" height="60"/>
+                <imageExpression><![CDATA[new java.io.File($P{logoRightPath}).exists() ? $P{logoRightPath} : ""]]></imageExpression>
+            </image>
+
+            <line>
+                <reportElement x="0" y="70" width="515" height="1"/>
+            </line>
+
+            <!-- Key identifiers row -->
+            <textField>
+                <reportElement x="0" y="78" width="515" height="18"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Report: " + ($P{ReportNo} == null ? "-" : $P{ReportNo}) + "    |    Sticker: " + ($P{StNo} == null ? "-" : $P{StNo})]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <detail>
+        <band height="260">
+            <frame>
+                <reportElement x="0" y="0" width="515" height="260"/>
+
+                <!-- Two-column key:value layout -->
+                <staticText>
+                    <reportElement x="0" y="6" width="120" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Company:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="130" y="6" width="380" height="18"/>
+                    <textFieldExpression><![CDATA[$P{Company} == null ? "-" : $P{Company}]]></textFieldExpression>
+                </textField>
+
+                <staticText>
+                    <reportElement x="0" y="30" width="120" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Job No:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="130" y="30" width="200" height="18"/>
+                    <textFieldExpression><![CDATA[$P{JobNo} == null ? "-" : $P{JobNo}]]></textFieldExpression>
+                </textField>
+
+                <staticText>
+                    <reportElement x="340" y="30" width="60" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[TS No:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="405" y="30" width="105" height="18"/>
+                    <textFieldExpression><![CDATA[$P{TsNo} == null ? "-" : $P{TsNo}]]></textFieldExpression>
+                </textField>
+
+                <staticText>
+                    <reportElement x="0" y="56" width="120" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Inspection Date:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="130" y="56" width="200" height="18"/>
+                    <textFieldExpression><![CDATA[$P{Dte} == null ? "-" : $P{Dte}]]></textFieldExpression>
+                </textField>
+
+                <staticText>
+                    <reportElement x="340" y="56" width="60" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Next Date:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="405" y="56" width="105" height="18"/>
+                    <textFieldExpression><![CDATA[$P{Ned} == null ? "-" : $P{Ned}]]></textFieldExpression>
+                </textField>
+
+                <staticText>
+                    <reportElement x="0" y="86" width="120" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Inspector:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="130" y="86" width="380" height="18"/>
+                    <textFieldExpression><![CDATA[$P{Inspector} == null ? "-" : $P{Inspector}]]></textFieldExpression>
+                </textField>
+
+                <staticText>
+                    <reportElement x="0" y="110" width="120" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Reviewer:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="130" y="110" width="380" height="18"/>
+                    <textFieldExpression><![CDATA[$P{Reviewer} == null ? "-" : $P{Reviewer}]]></textFieldExpression>
+                </textField>
+
+                <staticText>
+                    <reportElement x="0" y="134" width="120" height="18"/>
+                    <textElement>
+                        <font isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[Result:]]></text>
+                </staticText>
+                <textField>
+                    <reportElement x="130" y="134" width="200" height="18"/>
+                    <textFieldExpression><![CDATA[$P{Result} == null ? "-" : $P{Result}]]></textFieldExpression>
+                </textField>
+
+                <!-- Small footer note -->
+                <textField>
+                    <reportElement x="0" y="210" width="515" height="40"/>
+                    <textElement textAlignment="Center">
+                        <font size="9"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["This summary contains general report information. For the full certificate and attachments use the provided link."]]></textFieldExpression>
+                </textField>
+            </frame>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="515" height="18"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Generated: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

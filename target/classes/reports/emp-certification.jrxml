@@ -1,0 +1,79 @@
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
+<jasperReport name="emp-certification" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="10" bottomMargin="10" uuid="3d3e71b2-77c3-40c0-b3d9-5e59da4a2360">
+	<parameter name="CertNumber" class="java.lang.String"/>
+	<parameter name="TsNumber" class="java.lang.String"/>
+	<parameter name="IssueDate" class="java.util.Date"/>
+	<parameter name="ExpiryDate" class="java.util.Date"/>
+	<parameter name="EmployeeName" class="java.lang.String"/>
+	<parameter name="CompanyName" class="java.lang.String"/>
+	<parameter name="CertType" class="java.lang.String"/>
+	<parameter name="EmployeePhoto" class="java.io.InputStream"/>
+	<parameter name="EmployeeId" class="java.lang.String"/>
+	<title height="400">
+		<element kind="rectangle" uuid="eb024063-4bd1-4900-94ed-be1c1e51bdf8" x="0" y="0" width="555" height="400">
+			<pen lineWidth="1.0"/>
+		</element>
+		<element kind="staticText" uuid="76e90199-1b31-4f9e-b89c-deda748d0947" x="0" y="10" width="555" height="30" fontSize="18.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Technical Inspection Agency INC]]></text>
+		</element>
+		<element kind="staticText" uuid="69d5a94c-c8c3-4df8-b658-99ca80d52021" x="0" y="40" width="555" height="25" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Certified as:]]></text>
+		</element>
+		<element kind="staticText" uuid="9f1a7c13-5104-4bc4-bb3f-a4373339bfea" x="0" y="65" width="555" height="30" fontSize="16.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[**$P{CertType}**]]></text>
+		</element>
+		<element kind="frame" uuid="0a7751a0-f2ba-441c-b32d-e50911189568" x="350" y="100" width="150" height="150">
+			<element kind="image" uuid="3b5b2c16-3b1c-4f43-8f23-0ca6e191b691" x="5" y="5" width="140" height="140">
+				<expression><![CDATA[$P{EmployeePhoto}]]></expression>
+			</element>
+			<element kind="staticText" uuid="1a394798-bd98-4a2d-8dab-efcbc718318f" x="0" y="145" width="150" height="15" fontSize="8.0" hTextAlign="Center">
+				<text><![CDATA[Employee Photo]]></text>
+			</element>
+			<box>
+				<pen lineWidth="0.5"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="00ca9d82-5538-417c-862d-57f6f81c6877" x="50" y="100" width="100" height="20">
+			<text><![CDATA[Company:]]></text>
+		</element>
+		<element kind="textField" uuid="4e578706-f31e-46ec-8c86-610158a44caa" x="150" y="100" width="180" height="20" bold="true">
+			<expression><![CDATA[$P{CompanyName}]]></expression>
+		</element>
+		<element kind="staticText" uuid="4ccbff38-9ff2-4774-9783-2ca313833171" x="50" y="130" width="100" height="20">
+			<text><![CDATA[Name:]]></text>
+		</element>
+		<element kind="textField" uuid="8128cf8c-3466-4256-93a6-c0c717cd6f02" x="150" y="130" width="180" height="20" bold="true">
+			<expression><![CDATA[$P{EmployeeName}]]></expression>
+		</element>
+		<element kind="staticText" uuid="49d596cb-d569-4425-915d-32f4b668679a" x="50" y="160" width="100" height="20">
+			<text><![CDATA[Id/Igama No:]]></text>
+		</element>
+		<element kind="textField" uuid="b40c379c-4ae9-403d-89d9-1d7ec63b7e0f" x="150" y="160" width="180" height="20">
+			<expression><![CDATA[$P{EmployeeId}]]></expression>
+		</element>
+		<element kind="staticText" uuid="3fd22a65-025b-46df-8a4f-3275a9640b8f" x="50" y="190" width="100" height="20">
+			<text><![CDATA[Issue on:]]></text>
+		</element>
+		<element kind="textField" uuid="84e8bea5-16e7-4355-9cc0-83dccb3fc088" x="150" y="190" width="180" height="20">
+			<expression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{IssueDate})]]></expression>
+		</element>
+		<element kind="staticText" uuid="d0032708-32e9-4d94-a00d-5498a8eb3b3c" x="50" y="220" width="100" height="20">
+			<text><![CDATA[Valid up to:]]></text>
+		</element>
+		<element kind="textField" uuid="82ae4437-7c44-4d48-b881-aaf43eac2ad5" x="150" y="220" width="180" height="20">
+			<expression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format($P{ExpiryDate})]]></expression>
+		</element>
+		<element kind="line" uuid="31e687bc-dca8-49db-ac72-eff46304859e" x="50" y="260" width="455" height="1">
+			<pen lineWidth="0.5" lineStyle="Dashed"/>
+		</element>
+		<element kind="staticText" uuid="039a5dd2-6311-4f1f-8935-a020ed881bf8" x="50" y="270" width="455" height="20" hTextAlign="Center">
+			<text><![CDATA[ID No. $P{CertNumber}]]></text>
+		</element>
+		<element kind="staticText" uuid="66b9ecbf-a9c2-4940-9135-87b88f6f0f17" x="50" y="290" width="455" height="20" hTextAlign="Center">
+			<text><![CDATA[TS No. $P{TsNumber}]]></text>
+		</element>
+		<element kind="staticText" uuid="23119b88-a791-4425-bee2-aa856c8dfe0a" x="50" y="310" width="455" height="30" hTextAlign="Center">
+			<text><![CDATA[Certified to Operate the equipment Listed on the back side of the card]]></text>
+		</element>
+	</title>
+</jasperReport>

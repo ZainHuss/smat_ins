@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:jsf="http://xmlns.jcp.org/jsf"
+      lang="#{p:language()}" xml:lang="#{p:language()}"
+      dir="#{app.locale.rtl ? 'rtl':'ltr'}">
+<h:head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Muhamad Nauval Azhar" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description"
+          content="This is a login page template based on Bootstrap 5" />
+    <h:outputStylesheet name="bootstrap-5.2.3/css/bootstrap.min.css" library="#{appSetting.resourceLib}" ></h:outputStylesheet>
+    <title>#{interfaceLabel.applicationTitle}</title>
+    <h:outputScript name="locales/locale-#{app.locale.language}.js"
+                    library="primefaces" />
+
+    <link rel="shortcut icon" type="image/x-icon" href="#{resource['smat-ins:images/smt_logo_ln.png']}"/>
+
+    <!-- Enhanced Background with Cosmic Nebula and Particles -->
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: #000000;
+            position: relative;
+        }
+
+        /* Cosmic Nebula Background */
+        .cosmic-nebula {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background:
+                    radial-gradient(circle at 20% 30%, rgba(10, 15, 50, 0.8) 0%, transparent 40%),
+                    radial-gradient(circle at 80% 70%, rgba(30, 10, 60, 0.6) 0%, transparent 40%),
+                    radial-gradient(circle at 40% 80%, rgba(20, 30, 80, 0.7) 0%, transparent 40%),
+                    radial-gradient(circle at 70% 20%, rgba(40, 20, 70, 0.5) 0%, transparent 40%);
+            animation: nebulaFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes nebulaFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(-1%, 1%) scale(1.02);
+            }
+            50% {
+                transform: translate(1%, -1%) scale(1.01);
+            }
+            75% {
+                transform: translate(-1%, -1%) scale(1.02);
+            }
+        }
+
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 136, 255, 0.6);
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+            animation: particleFloat 15s infinite linear;
+        }
+
+        .particle:nth-child(odd) {
+            background: rgba(0, 204, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.7);
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Stars Background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ENHANCED EPIC LOADING SCREEN - QUANTUM EDITION */
+        .epic-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #0a0a2a 0%, #000010 100%);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: loaderFadeOut 1s ease-out 3s forwards;
+            overflow: hidden;
+        }
+
+        .epic-loader-content {
+            text-align: center;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        /* Quantum Logo Assembly Effect */
+        .quantum-logo-container {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin: 0 auto 40px;
+            transform-style: preserve-3d;
+        }
+
+        .quantum-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #0088ff, #00ccff);
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.8);
+            animation: quantumFloat 3s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        .logo-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: url("#{resource['smat-ins:images/smt_logo_ln.png']}") no-repeat center center;
+            background-size: contain;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            box-shadow:
+                    0 0 80px rgba(0, 136, 255, 0.8),
+                    0 0 150px rgba(0, 204, 255, 0.6),
+                    0 0 200px rgba(0, 136, 255, 0.4);
+            animation: coreExpand 2s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1.5s forwards;
+            opacity: 0;
+        }
+
+        .energy-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ringExpand 3s ease-out forwards;
+        }
+
+        .ring-1 {
+            width: 0;
+            height: 0;
+            border-top-color: #0088ff;
+            animation-delay: 0.5s;
+        }
+
+        .ring-2 {
+            width: 0;
+            height: 0;
+            border-right-color: #00aaff;
+            animation-delay: 0.7s;
+        }
+
+        .ring-3 {
+            width: 0;
+            height: 0;
+            border-bottom-color: #00ccff;
+            animation-delay: 0.9s;
+        }
+
+        .ring-4 {
+            width: 0;
+            height: 0;
+            border-left-color: #00eeff;
+            animation-delay: 1.1s;
+        }
+
+        @keyframes quantumFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes coreExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(360deg);
+            }
+        }
+
+        @keyframes ringExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                width: 280px;
+                height: 280px;
+                opacity: 0.3;
+            }
+        }
+
+        /* Holographic Text Effect */
+        .holographic-text {
+            font-size: 42px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            position: relative;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: textReveal 1.5s ease-out 2.5s forwards;
+            transform-style: preserve-3d;
+        }
+
+        .holographic-text .text-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .text-front {
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            z-index: 3;
+            text-shadow: 0 0 30px rgba(0, 136, 255, 0.5);
+        }
+
+        .text-glow {
+            color: transparent;
+            text-shadow:
+                    0 0 20px rgba(0, 136, 255, 0.8),
+                    0 0 40px rgba(0, 204, 255, 0.6),
+                    0 0 60px rgba(0, 136, 255, 0.4);
+            z-index: 2;
+            filter: blur(2px);
+        }
+
+        .text-back {
+            color: transparent;
+            text-shadow:
+                    0 0 10px rgba(0, 136, 255, 0.4),
+                    0 0 20px rgba(0, 204, 255, 0.3);
+            z-index: 1;
+            filter: blur(4px);
+            transform: translateZ(-10px);
+        }
+
+        @keyframes textReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotateX(45deg);
+                letter-spacing: 20px;
+            }
+            60% {
+                letter-spacing: 6px;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+                letter-spacing: 8px;
+            }
+        }
+
+        /* Quantum Progress Bar */
+        .quantum-progress {
+            width: 400px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 30px auto;
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            animation: progressAppear 0.8s ease-out 2s forwards;
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.3);
+        }
+
+        .quantum-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg,
+            #0088ff 0%,
+            #00aaff 25%,
+            #00ccff 50%,
+            #00eeff 75%,
+            #0088ff 100%);
+            border-radius: 4px;
+            position: relative;
+            animation: quantumProgress 1s ease-in-out 3s forwards;
+            box-shadow:
+                    0 0 20px rgba(0, 136, 255, 0.6),
+                    0 0 40px rgba(0, 204, 255, 0.4);
+        }
+
+        .quantum-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.6),
+            transparent);
+            animation: progressShine 1s ease-in-out 3s infinite;
+        }
+
+        @keyframes quantumProgress {
+            0% {
+                width: 0%;
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                width: 100%;
+                opacity: 1;
+            }
+        }
+
+        @keyframes progressShine {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes progressAppear {
+            0% {
+                opacity: 0;
+                transform: scaleX(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scaleX(1);
+            }
+        }
+
+        /* Loading Status Text */
+        .loading-status {
+            color: #00ccff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 20px;
+            opacity: 0;
+            animation: statusAppear 0.8s ease-out 2s forwards;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+
+        @keyframes statusAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Final Portal Effect */
+        .portal-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+            rgba(0, 136, 255, 0.8) 0%,
+            rgba(0, 204, 255, 0.6) 30%,
+            transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: portalExpand 1s cubic-bezier(0.34, 1.56, 0.64, 1) 4s forwards;
+            z-index: -1;
+            filter: blur(20px);
+        }
+
+        @keyframes portalExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                width: 150vh;
+                height: 150vh;
+                opacity: 0;
+            }
+        }
+
+        @keyframes loaderFadeOut {
+            0% {
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        /* Main Container Entrance */
+        .main-container {
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            animation: epicContainerEntrance 1.5s ease-out 3s forwards;
+        }
+
+        @keyframes epicContainerEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(100px);
+                filter: blur(20px);
+            }
+            50% {
+                opacity: 0.5;
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* Container Animations */
+        .container {
+            animation: containerFadeIn 1s cubic-bezier(0.22, 1, 0.36, 1);
+            perspective: 1000px;
+        }
+
+        @keyframes containerFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotateX(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        /* Logo Animation */
+        .logo-container {
+            position: relative;
+            animation: logoEntrance 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+            transform-style: preserve-3d;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(0, 136, 255, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: logoGlow 3s ease-in-out infinite alternate;
+            z-index: -1;
+            filter: blur(25px);
+        }
+
+        @keyframes logoEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8) rotateY(30deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotateY(0);
+            }
+        }
+
+        @keyframes logoGlow {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.9;
+            }
+        }
+
+        /* Card Design - Glassmorphism Effect */
+        .card-smat {
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            border-radius: 20px;
+            box-shadow:
+                    0 30px 60px rgba(0, 0, 0, 0.5),
+                    0 0 30px rgba(0, 136, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-smat::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                    45deg,
+                    transparent 0%,
+                    rgba(0, 136, 255, 0.1) 50%,
+                    transparent 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.8s ease;
+            opacity: 0;
+        }
+
+        .card-smat:hover::before {
+            animation: shine 1.5s;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -50%;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.3;
+            }
+            100% {
+                left: 150%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(60px) rotateX(15deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        .card-smat:hover {
+            transform: translateY(-15px) rotateY(5deg);
+            box-shadow:
+                    0 40px 80px rgba(0, 0, 0, 0.6),
+                    0 30px 60px rgba(0, 0, 0, 0.4),
+                    0 0 40px rgba(0, 136, 255, 0.3);
+            border-color: rgba(0, 204, 255, 0.5);
+        }
+
+        /* Form Fields */
+        .form-field {
+            position: relative;
+            margin-bottom: 35px;
+            transform-style: preserve-3d;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 20px 28px;
+            border: 2px solid rgba(0, 136, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(30, 30, 30, 0.8);
+            font-size: 16px;
+            font-weight: 500;
+            color: #ddd;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(0, 204, 255, 0.8);
+            background: rgba(40, 40, 40, 0.9);
+            box-shadow:
+                    0 0 0 4px rgba(0, 204, 255, 0.2),
+                    0 10px 30px rgba(0, 204, 255, 0.3),
+                    0 0 20px rgba(0, 204, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* Floating Labels */
+        .floating-label {
+            position: absolute;
+            left: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(200, 200, 220, 0.8);
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            background: rgba(30, 30, 30, 0.8);
+            padding: 0 10px;
+            border-radius: 8px;
+            z-index: 2;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .form-control:focus + .floating-label,
+        .form-control:not(:placeholder-shown) + .floating-label,
+        .form-control.has-value + .floating-label {
+            top: 0;
+            left: 24px;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #00ccff;
+            font-weight: 600;
+            background: linear-gradient(to bottom, rgba(40, 40, 40, 0.9), rgba(30, 30, 30, 0.9));
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 0 5px rgba(0, 204, 255, 0.5);
+        }
+
+        /* Input Icons */
+        .input-icon {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(200, 200, 220, 0.6);
+            font-size: 20px;
+            transition: all 0.3s ease;
+            z-index: 2;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .form-control:focus ~ .input-icon {
+            color: #00ccff;
+            transform: translateY(-50%) scale(1.2);
+            filter: drop-shadow(0 2px 4px rgba(0, 204, 255, 0.5));
+        }
+
+        /* Button Design */
+        .btn-smat {
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 20px 50px;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                    0 15px 40px rgba(0, 136, 255, 0.4),
+                    0 8px 25px rgba(0, 204, 255, 0.3),
+                    0 0 20px rgba(0, 136, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            will-change: transform, box-shadow;
+            transform-style: preserve-3d;
+        }
+
+        .btn-smat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .btn-smat:hover::before {
+            left: 100%;
+        }
+
+        .btn-smat:hover {
+            transform: translateY(-6px) rotateY(5deg);
+            box-shadow:
+                    0 20px 50px rgba(0, 136, 255, 0.5),
+                    0 15px 40px rgba(0, 204, 255, 0.4),
+                    0 0 30px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
+        }
+
+        .btn-smat:active {
+            transform: translateY(-2px);
+            box-shadow:
+                    0 10px 30px rgba(0, 136, 255, 0.4),
+                    0 5px 20px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
+        }
+
+        /* Loading State */
+        .btn-smat.loading {
+            pointer-events: none;
+            opacity: 0.9;
+            transform: translateY(0);
+        }
+
+        .btn-smat.loading::after {
+            content: '';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: buttonSpin 1s linear infinite;
+            transform: translateY(-50%);
+        }
+
+        @keyframes buttonSpin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        /* Title Design */
+        .card-title {
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 1px;
+            animation: titleSlide 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
+            text-shadow: 0 0 20px rgba(0, 136, 255, 0.3);
+        }
+
+        @keyframes titleSlide {
+            0% {
+                opacity: 0;
+                transform: translateX(-40px) rotateY(30deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotateY(0);
+            }
+        }
+
+        /* Footer Design */
+        .card-footer {
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.3) 0%, rgba(80, 80, 80, 0.3) 100%);
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            animation: footerSlide 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.2s both;
+            overflow: hidden;
+        }
+
+        .card-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
+        }
+
+        @keyframes footerSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Branding Text */
+        .brand-text {
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand-primary {
+            background: linear-gradient(90deg, #0088ff, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-secondary {
+            color: #00ccff;
+        }
+
+        .brand-accent {
+            color: #0088ff;
+        }
+
+        /* Ripple Effect */
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple 0.8s ease-out;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Password Recovery Button */
+        .recovery-button-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            opacity: 0;
+            animation: recoveryButtonEntrance 1s ease-out 5s forwards;
+        }
+
+        @keyframes recoveryButtonEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .recovery-button {
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                    0 10px 25px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
+            letter-spacing: 1px;
+            will-change: transform, box-shadow;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recovery-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .recovery-button:hover::before {
+            left: 100%;
+        }
+
+        .recovery-button:hover {
+            transform: translateY(-3px) rotateY(3deg);
+            box-shadow:
+                    0 15px 35px rgba(0, 136, 255, 0.5),
+                    0 10px 25px rgba(0, 204, 255, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
+        }
+
+        .recovery-button:active {
+            transform: translateY(-1px);
+            box-shadow:
+                    0 8px 20px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 10px rgba(0, 136, 255, 0.2);
+        }
+
+        .recovery-button-icon {
+            font-size: 18px;
+        }
+
+        /* Password Recovery Modal */
+        .recovery-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .recovery-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .recovery-modal-content {
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            border-radius: 20px;
+            box-shadow:
+                    0 30px 60px rgba(0, 0, 0, 0.5),
+                    0 0 30px rgba(0, 136, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            width: 90%;
+            max-width: 500px;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .recovery-modal.active .recovery-modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .recovery-modal-header {
+            background: linear-gradient(135deg, rgba(60, 60, 60, 0.3) 0%, rgba(80, 80, 80, 0.3) 100%);
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recovery-modal-header::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
+        }
+
+        .recovery-modal-title {
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 24px;
+            margin: 0;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .recovery-modal-title-icon {
+            font-size: 28px;
+            color: #0088ff;
+        }
+
+        .recovery-close-btn {
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            color: #ddd;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .recovery-close-btn:hover {
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
+            color: white;
+            transform: rotate(90deg);
+            box-shadow: 0 6px 12px rgba(0, 136, 255, 0.4);
+        }
+
+        .recovery-modal-body {
+            padding: 30px;
+        }
+
+        .recovery-modal-description {
+            color: #ddd;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .recovery-whatsapp-icon {
+            font-size: 50px;
+            color: #25D366;
+            margin-bottom: 10px;
+            animation: whatsappPulse 2s infinite;
+        }
+
+        @keyframes whatsappPulse {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 0 rgba(37, 211, 102, 0.7));
+            }
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 15px rgba(37, 211, 102, 0.7));
+            }
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 0 rgba(37, 211, 102, 0.7));
+            }
+        }
+
+        .recovery-phone-number {
+            font-size: 20px;
+            font-weight: 600;
+            color: #00ccff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: rgba(60, 60, 60, 0.3);
+            border-radius: 50px;
+            border: 1px solid rgba(0, 204, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.2);
+        }
+
+        .recovery-phone-icon {
+            font-size: 22px;
+        }
+
+        .recovery-modal-footer {
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.3) 0%, rgba(70, 70, 70, 0.3) 100%);
+            padding: 20px 30px;
+            border-radius: 0 0 20px 20px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recovery-modal-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 136, 255, 0.3), transparent);
+        }
+
+        .recovery-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+            transform-style: preserve-3d;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recovery-btn-icon {
+            font-size: 16px;
+        }
+
+        .recovery-btn-cancel {
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
+            color: white;
+            box-shadow:
+                    0 10px 25px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
+        }
+
+        .recovery-btn-cancel:hover {
+            transform: translateY(-3px) rotateY(3deg);
+            box-shadow:
+                    0 15px 35px rgba(0, 136, 255, 0.5),
+                    0 10px 25px rgba(0, 204, 255, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
+        }
+
+        .recovery-btn-submit {
+            background: linear-gradient(135deg, #0088ff 0%, #00ccff 100%);
+            color: white;
+            box-shadow:
+                    0 10px 25px rgba(0, 136, 255, 0.4),
+                    0 5px 15px rgba(0, 204, 255, 0.3),
+                    0 0 15px rgba(0, 136, 255, 0.2);
+        }
+
+        .recovery-btn-submit:hover {
+            transform: translateY(-3px) rotateY(3deg);
+            box-shadow:
+                    0 15px 35px rgba(0, 136, 255, 0.5),
+                    0 10px 25px rgba(0, 204, 255, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.3);
+            background: linear-gradient(135deg, #00ccff 0%, #0088ff 100%);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .card-smat {
+                margin: 20px;
+                border-radius: 20px;
+            }
+
+            .btn-smat {
+                width: 100%;
+                padding: 20px;
+            }
+
+            .form-control {
+                padding: 18px 24px;
+            }
+
+            .floating-label {
+                left: 24px;
+            }
+
+            .card-title {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+
+            .recovery-button {
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+
+            .recovery-modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+
+            .recovery-modal-header, .recovery-modal-body, .recovery-modal-footer {
+                padding: 20px;
+            }
+
+            .recovery-modal-title {
+                font-size: 20px;
+            }
+
+            .recovery-whatsapp-icon {
+                font-size: 40px;
+            }
+
+            .recovery-phone-number {
+                font-size: 18px;
+            }
+
+            .holographic-text {
+                font-size: 32px;
+                letter-spacing: 6px;
+            }
+
+            .quantum-logo-container {
+                width: 250px;
+                height: 250px;
+            }
+
+            .quantum-progress {
+                width: 300px;
+            }
+        }
+
+        /* Growl Messages */
+        .ui-growl {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 2000;
+        }
+
+        .ui-growl .ui-growl-item {
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            box-shadow:
+                    0 20px 50px rgba(0, 0, 0, 0.4),
+                    0 0 20px rgba(0, 136, 255, 0.2);
+            animation: growlSlide 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
+        }
+
+        .ui-growl .ui-growl-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #0088ff, #00ccff);
+        }
+
+        @keyframes growlSlide {
+            0% {
+                transform: translateX(100%) rotateY(30deg);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Mouse Following Effects */
+        .mouse-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(circle, rgba(0, 136, 255, 0.3) 0%, transparent 70%);
+            filter: blur(20px);
+        }
+
+        .mouse-glow.active {
+            opacity: 1;
+        }
+
+        .mouse-trail {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(circle, rgba(0, 204, 255, 0.8) 0%, transparent 70%);
+            filter: blur(5px);
+        }
+
+        .mouse-trail.active {
+            opacity: 1;
+        }
+
+        /* Holographic Effect */
+        .holographic-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(125deg,
+            rgba(0, 136, 255, 0.1) 0%,
+            rgba(0, 204, 255, 0.1) 25%,
+            rgba(0, 136, 255, 0.1) 50%,
+            rgba(0, 204, 255, 0.1) 75%,
+            rgba(0, 136, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .card-smat:hover .holographic-effect {
+            opacity: 1;
+        }
+
+        /* ENHANCED SUCCESS ANIMATIONS */
+
+        /* Quantum Portal Success Effect */
+        .quantum-portal-success {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .quantum-portal-success.active {
+            opacity: 1;
+        }
+
+        .portal-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+            rgba(0, 136, 255, 0.9) 0%,
+            rgba(0, 204, 255, 0.7) 30%,
+            transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: portalCenterExpand 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            filter: blur(15px);
+        }
+
+        .portal-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: portalRingExpand 1.5s ease-out forwards;
+        }
+
+        .portal-ring-1 {
+            border-top-color: #0088ff;
+            animation-delay: 0.2s;
+        }
+
+        .portal-ring-2 {
+            border-right-color: #00aaff;
+            animation-delay: 0.4s;
+        }
+
+        .portal-ring-3 {
+            border-bottom-color: #00ccff;
+            animation-delay: 0.6s;
+        }
+
+        .portal-ring-4 {
+            border-left-color: #00eeff;
+            animation-delay: 0.8s;
+        }
+
+        .success-particles {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+        }
+
+        .success-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(0, 204, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+            animation: successParticleFloat 2s ease-out forwards;
+        }
+
+        @keyframes portalCenterExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.9;
+            }
+            100% {
+                width: 100vh;
+                height: 100vh;
+                opacity: 0;
+            }
+        }
+
+        @keyframes portalRingExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                width: 120vh;
+                height: 120vh;
+                opacity: 0;
+            }
+        }
+
+        @keyframes successParticleFloat {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx, 0), var(--ty, 0));
+                opacity: 0;
+            }
+        }
+
+        /* Dashboard Entrance Animation */
+        .dashboard-entrance {
+            opacity: 0;
+            animation: dashboardEntrance 2s ease-out forwards;
+        }
+
+        @keyframes dashboardEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(100px);
+                filter: blur(20px);
+            }
+            60% {
+                opacity: 1;
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        .dashboard-card {
+            background: rgba(20, 20, 20, 0.25);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 136, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 136, 255, 0.2);
+            animation: cardSlideIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes cardSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotateX(15deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        /* Welcome Text Animation */
+        .welcome-text {
+            background: linear-gradient(90deg, #0088ff, #00aaff, #00ccff, #00eeff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: welcomeTextReveal 1.5s ease-out 0.8s both;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes welcomeTextReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+                letter-spacing: 10px;
+            }
+            60% {
+                letter-spacing: 3px;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                letter-spacing: 2px;
+            }
+        }
+        /* إصلاح ألوان حقول الإدخال */
+        .form-control {
+            color: #ffffff !important; /* لون النص أبيض */
+            background: rgba(40, 40, 40, 0.9) !important; /* خلفية أغمق قليلاً */
+        }
+
+        /* إصلاح لون النص عند التركيز */
+        .form-control:focus {
+            color: #ffffff !important;
+            background: rgba(50, 50, 50, 0.95) !important;
+        }
+
+        /* إصلاح لون النص في حقل كلمة المرور */
+        input[type="password"].form-control {
+            color: #ffffff !important;
+        }
+
+        /* إصلاح لون النص في حقل البريد الإلكتروني */
+        input[type="email"].form-control {
+            color: #ffffff !important;
+        }
+
+        /* إصلاح لون النص في حالات validation */
+        .form-control.is-valid {
+            color: #ffffff !important;
+        }
+
+        .form-control.is-invalid {
+            color: #ffffff !important;
+        }
+
+        /* إصلاح لون placeholder */
+        .form-control::placeholder {
+            color: rgba(200, 200, 220, 0.6) !important;
+            opacity: 1;
+        }
+
+        /* إصلاح لون النص في العناوين العائمة */
+        .floating-label {
+            color: rgba(200, 200, 220, 0.8) !important;
+        }
+
+        .form-control:focus + .floating-label,
+        .form-control:not(:placeholder-shown) + .floating-label,
+        .form-control.has-value + .floating-label {
+            color: #00ccff !important;
+            background: rgba(50, 50, 50, 0.95) !important;
+        }
+    </style>
+</h:head>
+<h:body>
+    <f:view locale="#{app.locale.language}">
+        <!-- Cosmic Nebula Background -->
+        <div class="cosmic-nebula"></div>
+
+        <!-- Floating Particles -->
+        <div class="particles-container" id="particlesContainer"></div>
+
+        <!-- Stars Background -->
+        <div class="stars" id="stars"></div>
+
+        <!-- ENHANCED EPIC LOADING SCREEN -->
+        <div class="epic-loader" id="epicLoader">
+            <div class="epic-loader-content">
+                <!-- Quantum Logo Assembly -->
+                <div class="quantum-logo-container" id="quantumLogo">
+                    <!-- Energy rings will be created by JavaScript -->
+                    <!-- Logo core -->
+                    <div class="logo-core"></div>
+                </div>
+
+                <!-- Holographic Text -->
+                <div class="holographic-text">
+                    <div class="text-layer text-front">SMAT INDUSTRIAL</div>
+                    <div class="text-layer text-glow">SMAT INDUSTRIAL</div>
+                    <div class="text-layer text-back">SMAT INDUSTRIAL</div>
+                </div>
+
+                <!-- Quantum Progress Bar -->
+                <div class="quantum-progress">
+                    <div class="quantum-progress-bar"></div>
+                </div>
+
+                <!-- Loading Status -->
+                <div class="loading-status" id="loadingStatus">Initializing System...</div>
+
+                <!-- Portal Effect -->
+                <div class="portal-effect"></div>
+            </div>
+        </div>
+
+        <!-- Quantum Portal Success Effect -->
+        <div class="quantum-portal-success" id="quantumPortalSuccess">
+            <div class="portal-center"></div>
+            <div class="portal-ring portal-ring-1"></div>
+            <div class="portal-ring portal-ring-2"></div>
+            <div class="portal-ring portal-ring-3"></div>
+            <div class="portal-ring portal-ring-4"></div>
+            <div class="success-particles" id="successParticles"></div>
+        </div>
+
+        <!-- Mouse Following Effects -->
+        <div class="mouse-glow" id="mouseGlow"></div>
+        <div class="mouse-trail" id="mouseTrail"></div>
+
+        <!-- Password Recovery Button -->
+        <div class="recovery-button-container">
+            <button class="recovery-button" onclick="openRecoveryModal()">
+                <span class="recovery-button-icon">🔑</span>
+                <span>Can't get your password?</span>
+            </button>
+        </div>
+
+        <!-- Password Recovery Modal -->
+        <div class="recovery-modal" id="recoveryModal">
+            <div class="recovery-modal-content">
+                <div class="recovery-modal-header">
+                    <h2 class="recovery-modal-title">
+                        <span class="recovery-modal-title-icon">🔑</span>
+                        <span>Password Recovery</span>
+                    </h2>
+                    <button class="recovery-close-btn" onclick="closeRecoveryModal()">✕</button>
+                </div>
+                <div class="recovery-modal-body">
+                    <div class="recovery-modal-description">
+                        <div class="recovery-whatsapp-icon">📱</div>
+                        <p>If you can not get your password or forget it please contact me on my WhatsApp and I will get it to you</p>
+                        <div class="recovery-phone-number">
+                            <span class="recovery-phone-icon">📞</span>
+                            <span>+963 938 637 158</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="recovery-modal-footer">
+                    <button class="recovery-btn recovery-btn-cancel" onclick="closeRecoveryModal()">
+                        <span class="recovery-btn-icon">✕</span>
+                        <span>Close</span>
+                    </button>
+                    <button class="recovery-btn recovery-btn-submit" onclick="openWhatsApp()">
+                        <span class="recovery-btn-icon">💬</span>
+                        <span>Open WhatsApp</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Login Container -->
+        <div class="main-container">
+            <section class="h-100 w-100">
+                <div class="container h-100">
+                    <div class="row justify-content-sm-center h-100">
+                        <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+                            <div class="text-center my-5 logo-container">
+                                <p:graphicImage library="#{appSetting.resourceLib}" name="images/smt_logo_ln.png"
+                                                width="200" height="170" styleClass="logo-pulse"></p:graphicImage>
+                                <div class="mt-4">
+                                    <div class="brand-text">
+                                        <span class="brand-primary"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card card-smat shadow-lg">
+                                <div class="holographic-effect"></div>
+                                <div class="card-body p-5">
+                                    <h1 class="card-title">#{interfaceLabel.loginToSystem}</h1>
+                                    <h:form id="form_login" class="needs-validation" novalidate=""
+                                            autocomplete="off">
+                                        <p:growl id="growl" showDetail="true" showSummary="true" life="2000" sticky="false"></p:growl>
+
+                                        <div class="form-field">
+                                            <h:inputText id="email" type="email" class="form-control"
+                                                         name="email" value="#{loginBean.userName}"
+                                                         required="required" autofocus="autofocus"
+                                                         placeholder=" " onblur="checkInputValue(this)" />
+                                            <label class="floating-label" for="email">#{interfaceLabel.userName}</label>
+                                            <span class="input-icon">👤</span>
+                                            <div class="invalid-feedback">#{interfaceLabel.requiredUserName}</div>
+                                        </div>
+
+                                        <div class="form-field">
+                                            <h:inputSecret id="password" type="password" value="#{loginBean.password}"
+                                                           class="form-control"
+                                                           name="password" required="required"
+                                                           placeholder=" " onblur="checkInputValue(this)" />
+                                            <label class="floating-label" for="password">#{interfaceLabel.password}</label>
+                                            <span class="input-icon">🔒</span>
+                                            <div class="invalid-feedback">#{interfaceLabel.requiredPassword}</div>
+                                        </div>
+
+                                        <div class="d-flex align-items-center justify-content-end mt-4">
+                                            <h:commandButton value="#{interfaceLabel.login}" action="#{loginBean.login()}"
+                                                             class="btn btn-smat" id="loginBtn"
+                                                             onclick="handleLoginClick(this)">
+                                                <f:ajax execute="@form" render="form_login:growl"
+                                                        onstart="handleLoginStart()"
+                                                        oncomplete="handleLoginComplete()" />
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                                <div class="card-footer py-3 border-0">
+                                    <div class="text-center" style="color: #00ccff;font-size: medium;font-weight: bold;">
+                                        #{interfaceLabel.portalName}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <h:outputScript library="#{appSetting.resourceLib}" name="script/login.js"></h:outputScript>
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+                            name="css/custom-#{app.locale.rtl ? 'rtl':'ltr'}.css"></h:outputStylesheet>
+
+        <!-- Enhanced JavaScript with Quantum Loading Effects -->
+        <script type="text/javascript">
+            //<![CDATA[
+
+            // Quantum Loading Animation Manager
+            var QuantumLoader = {
+                particles: [],
+                statusText: null,
+                currentStatus: 0,
+                statusMessages: [
+                    "Initializing System...",
+                    "Loading Quantum Interface...",
+                    "Calibrating Security...",
+                    "Establishing Connection...",
+                    "System Ready!"
+                ],
+
+                init: function() {
+                    this.createQuantumParticles();
+                    this.createEnergyRings();
+                    this.startStatusAnimation();
+
+                    // Initialize the main page after loading completes
+                    setTimeout(function() {
+                        LoginPageManager.init();
+                    }, 4800);
+                },
+
+                createQuantumParticles: function() {
+                    var container = document.getElementById('quantumLogo');
+                    if (!container) return;
+
+                    var particleCount = 80;
+                    for (var i = 0; i < particleCount; i++) {
+                        var particle = document.createElement('div');
+                        particle.className = 'quantum-particle';
+
+                        // Random starting position around the center
+                        var angle = Math.random() * Math.PI * 2;
+                        var distance = Math.random() * 150 + 50;
+                        var startX = Math.cos(angle) * distance;
+                        var startY = Math.sin(angle) * distance;
+
+                        particle.style.left = '50%';
+                        particle.style.top = '50%';
+                        particle.style.transform = 'translate(-50%, -50%)';
+
+                        // Random size and animation
+                        var size = Math.random() * 6 + 2;
+                        var duration = Math.random() * 2 + 1;
+                        var delay = Math.random() * 2;
+
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        particle.style.animationDuration = duration + 's';
+                        particle.style.animationDelay = delay + 's';
+
+                        // Store initial position for animation
+                        particle.dataset.startX = startX;
+                        particle.dataset.startY = startY;
+
+                        container.appendChild(particle);
+                        this.particles.push(particle);
+                    }
+
+                    // Animate particles moving to form logo
+                    this.animateParticlesToLogo();
+                },
+
+                animateParticlesToLogo: function() {
+                    setTimeout(function() {
+                        QuantumLoader.particles.forEach(function(particle, index) {
+                            var delay = index * 0.02;
+
+                            setTimeout(function() {
+                                particle.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                                particle.style.transform = 'translate(-50%, -50%) translate(' +
+                                    particle.dataset.startX + 'px, ' +
+                                    particle.dataset.startY + 'px)';
+                                particle.style.opacity = '1';
+                            }, delay * 1000);
+                        });
+                    }, 500);
+                },
+
+                createEnergyRings: function() {
+                    var container = document.getElementById('quantumLogo');
+
+                    for (var i = 1; i <= 4; i++) {
+                        var ring = document.createElement('div');
+                        ring.className = 'energy-ring ring-' + i;
+                        container.appendChild(ring);
+                    }
+                },
+
+                startStatusAnimation: function() {
+                    this.statusText = document.getElementById('loadingStatus');
+                    if (!this.statusText) return;
+
+                    this.updateStatus();
+                },
+
+                updateStatus: function() {
+                    if (this.currentStatus < this.statusMessages.length) {
+                        this.statusText.textContent = this.statusMessages[this.currentStatus];
+
+                        // Add typing effect
+                        this.statusText.style.animation = 'none';
+                        setTimeout(function() {
+                            QuantumLoader.statusText.style.animation = 'statusAppear 0.8s ease-out forwards';
+                        }, 10);
+
+                        this.currentStatus++;
+
+                        // Schedule next status update based on progress
+                        var delay = this.currentStatus === this.statusMessages.length ? 1200 : 800;
+                        setTimeout(this.updateStatus.bind(this), delay);
+                    }
+                }
+            };
+
+            // Enhanced Login Page Manager
+            var LoginPageManager = {
+                initialized: false,
+                mouseGlow: null,
+                mouseTrail: null,
+                mouseX: 0,
+                mouseY: 0,
+
+                init: function() {
+                    if (this.initialized) return;
+
+                    this.createParticles();
+                    this.createStars();
+                    this.setupFormValidation();
+                    this.setupInputHandlers();
+                    this.setupAccessibility();
+                    this.setupHoverEffects();
+                    this.setupMouseFollowingEffect();
+                    this.initialized = true;
+
+                    console.log('%cEnhanced Cosmic Login Page Initialized', 'color: #0088ff; font-size: 14px; font-weight: bold;');
+                },
+
+                createParticles: function() {
+                    var particlesContainer = document.getElementById('particlesContainer');
+                    if (!particlesContainer) return;
+
+                    var particleCount = 30;
+                    for (var i = 0; i < particleCount; i++) {
+                        var particle = document.createElement('div');
+                        particle.className = 'particle';
+
+                        var size = Math.random() * 5 + 2;
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+
+                        var left = Math.random() * 100;
+                        particle.style.left = left + '%';
+
+                        var duration = Math.random() * 15 + 10;
+                        var delay = Math.random() * 5;
+
+                        particle.style.animationDuration = duration + 's';
+                        particle.style.animationDelay = delay + 's';
+
+                        particlesContainer.appendChild(particle);
+                    }
+                },
+
+                createStars: function() {
+                    var starsContainer = document.getElementById('stars');
+                    if (!starsContainer) return;
+
+                    var starCount = 150;
+                    for (var i = 0; i < starCount; i++) {
+                        var star = document.createElement('div');
+                        star.className = 'star';
+
+                        var size = Math.random() * 3;
+                        star.style.width = size + 'px';
+                        star.style.height = size + 'px';
+
+                        var left = Math.random() * 100;
+                        var top = Math.random() * 100;
+                        star.style.left = left + '%';
+                        star.style.top = top + '%';
+
+                        var duration = Math.random() * 5 + 3;
+                        var delay = Math.random() * 5;
+
+                        star.style.animationDuration = duration + 's';
+                        star.style.animationDelay = delay + 's';
+
+                        starsContainer.appendChild(star);
+                    }
+                },
+
+                setupFormValidation: function() {
+                    var form = document.getElementById('form_login');
+                    if (!form) return;
+
+                    var inputs = form.querySelectorAll('.form-control');
+
+                    for (var i = 0; i < inputs.length; i++) {
+                        inputs[i].addEventListener('blur', function() {
+                            LoginPageManager.validateField(this);
+                        });
+
+                        inputs[i].addEventListener('input', function() {
+                            if (this.classList.contains('is-invalid')) {
+                                LoginPageManager.validateField(this);
+                            }
+                        });
+                    }
+                },
+
+                validateField: function(field) {
+                    var value = field.value.trim();
+                    var isValid = value.length > 0;
+
+                    if (field.type === 'email' && value.length > 0) {
+                        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        isValid = emailRegex.test(value);
+                    }
+
+                    if (field.type === 'password' && value.length > 0) {
+                        isValid = value.length >= 3;
+                    }
+
+                    if (isValid) {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                        field.parentElement.style.transform = 'translateY(-5px)';
+                        setTimeout(function() {
+                            field.parentElement.style.transform = 'translateY(0)';
+                        }, 300);
+                    } else {
+                        field.classList.remove('is-valid');
+                        field.classList.add('is-invalid');
+                    }
+
+                    return isValid;
+                },
+
+                setupInputHandlers: function() {
+                    var inputs = document.querySelectorAll('.form-control');
+
+                    for (var i = 0; i < inputs.length; i++) {
+                        inputs[i].addEventListener('focus', function() {
+                            this.parentElement.style.transform = 'translateY(-5px)';
+                            this.parentElement.style.zIndex = '10';
+                        });
+
+                        inputs[i].addEventListener('blur', function() {
+                            this.parentElement.style.transform = 'translateY(0)';
+                            this.parentElement.style.zIndex = '1';
+                        });
+                    }
+                },
+
+                setupHoverEffects: function() {
+                    var card = document.querySelector('.card-smat');
+                    if (card) {
+                        card.addEventListener('mousemove', function(e) {
+                            var rect = this.getBoundingClientRect();
+                            var x = e.clientX - rect.left;
+                            var y = e.clientY - rect.top;
+
+                            this.style.setProperty('--mouse-x', (x / rect.width * 100) + '%');
+                            this.style.setProperty('--mouse-y', (y / rect.height * 100) + '%');
+
+                            var hue = (x / rect.width) * 30 + 200;
+                            this.style.boxShadow = `
+                                0 40px 80px rgba(0, 0, 0, 0.6),
+                                0 30px 60px rgba(0, 0, 0, 0.4),
+                                0 0 40px hsla(${hue}, 100%, 50%, 0.3)
+                            `;
+                        });
+
+                        card.addEventListener('mouseleave', function() {
+                            this.style.boxShadow = `
+                                0 40px 80px rgba(0, 0, 0, 0.6),
+                                0 30px 60px rgba(0, 0, 0, 0.4),
+                                0 0 40px rgba(0, 136, 255, 0.3)
+                            `;
+                        });
+                    }
+                },
+
+                setupMouseFollowingEffect: function() {
+                    this.mouseGlow = document.getElementById('mouseGlow');
+                    this.mouseTrail = document.getElementById('mouseTrail');
+
+                    if (!this.mouseGlow || !this.mouseTrail) return;
+
+                    document.addEventListener('mousemove', function(e) {
+                        LoginPageManager.mouseX = e.clientX;
+                        LoginPageManager.mouseY = e.clientY;
+
+                        LoginPageManager.mouseGlow.style.left = (e.clientX - 150) + 'px';
+                        LoginPageManager.mouseGlow.style.top = (e.clientY - 150) + 'px';
+
+                        LoginPageManager.mouseTrail.style.left = (e.clientX - 5) + 'px';
+                        LoginPageManager.mouseTrail.style.top = (e.clientY - 5) + 'px';
+
+                        LoginPageManager.mouseGlow.classList.add('active');
+                        LoginPageManager.mouseTrail.classList.add('active');
+                    });
+
+                    document.addEventListener('mouseleave', function() {
+                        LoginPageManager.mouseGlow.classList.remove('active');
+                        LoginPageManager.mouseTrail.classList.remove('active');
+                    });
+                },
+
+                setupAccessibility: function() {
+                    var emailField = document.getElementById('email');
+                    var passwordField = document.getElementById('password');
+                    var loginBtn = document.getElementById('loginBtn');
+
+                    if (emailField) {
+                        emailField.setAttribute('aria-label', 'Enter your email address');
+                        emailField.setAttribute('aria-describedby', 'emailHelp');
+                    }
+
+                    if (passwordField) {
+                        passwordField.setAttribute('aria-label', 'Enter your password');
+                    }
+
+                    if (loginBtn) {
+                        loginBtn.setAttribute('aria-label', 'Click to login');
+                    }
+                },
+
+                validateForm: function() {
+                    var form = document.getElementById('form_login');
+                    if (!form) return false;
+
+                    var inputs = form.querySelectorAll('.form-control');
+                    var isFormValid = true;
+
+                    for (var i = 0; i < inputs.length; i++) {
+                        var isFieldValid = this.validateField(inputs[i]);
+                        if (!isFieldValid) {
+                            isFormValid = false;
+                            inputs[i].parentElement.style.animation = 'fieldShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
+                            setTimeout(function(element) {
+                                return function() {
+                                    element.style.animation = '';
+                                };
+                            }(inputs[i].parentElement), 600);
+                        }
+                    }
+
+                    return isFormValid;
+                },
+
+                showQuantumSuccessPortal: function() {
+                    var portal = document.getElementById('quantumPortalSuccess');
+                    if (!portal) return;
+
+                    portal.classList.add('active');
+
+                    // Create particles for the success effect
+                    this.createSuccessParticles();
+
+                    // After portal animation, redirect to dashboard
+                    setTimeout(function() {
+                        window.location.href = "dashboard.xhtml";
+                    }, 2000);
+                },
+
+                createSuccessParticles: function() {
+                    var container = document.getElementById('successParticles');
+                    if (!container) return;
+
+                    var particleCount = 60;
+                    for (var i = 0; i < particleCount; i++) {
+                        var particle = document.createElement('div');
+                        particle.className = 'success-particle';
+
+                        // Random direction and distance
+                        var angle = Math.random() * Math.PI * 2;
+                        var distance = Math.random() * 400 + 200;
+                        var tx = Math.cos(angle) * distance;
+                        var ty = Math.sin(angle) * distance;
+
+                        particle.style.setProperty('--tx', tx + 'px');
+                        particle.style.setProperty('--ty', ty + 'px');
+
+                        // Random delay
+                        var delay = Math.random() * 1;
+                        particle.style.animationDelay = delay + 's';
+
+                        container.appendChild(particle);
+                    }
+                }
+            };
+
+            // Dashboard Animation Manager
+            var DashboardManager = {
+                init: function() {
+                    this.applyEntranceAnimations();
+                    this.setupDashboardEffects();
+                },
+
+                applyEntranceAnimations: function() {
+                    // Add entrance animation to main container
+                    var mainContainer = document.querySelector('.main-container');
+                    if (mainContainer) {
+                        mainContainer.classList.add('dashboard-entrance');
+                    }
+
+                    // Add staggered animations to cards
+                    var cards = document.querySelectorAll('.dashboard-card');
+                    cards.forEach(function(card, index) {
+                        card.style.animationDelay = (0.3 + index * 0.2) + 's';
+                    });
+
+                    // Add animation to welcome text
+                    var welcomeText = document.querySelector('.welcome-text');
+                    if (welcomeText) {
+                        welcomeText.classList.add('welcome-text');
+                    }
+                },
+
+                setupDashboardEffects: function() {
+                    // Add hover effects to dashboard cards
+                    var cards = document.querySelectorAll('.dashboard-card');
+                    cards.forEach(function(card) {
+                        card.addEventListener('mouseenter', function() {
+                            this.style.transform = 'translateY(-10px) rotateY(5deg)';
+                            this.style.boxShadow =
+                                '0 40px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(0, 136, 255, 0.3)';
+                        });
+
+                        card.addEventListener('mouseleave', function() {
+                            this.style.transform = 'translateY(0) rotateY(0)';
+                            this.style.boxShadow =
+                                '0 30px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 136, 255, 0.2)';
+                        });
+                    });
+                }
+            };
+
+            // Event handlers
+            function checkInputValue(input) {
+                if (input.value.trim().length > 0) {
+                    input.classList.add('has-value');
+                } else {
+                    input.classList.remove('has-value');
+                }
+            }
+
+            function handleLoginClick(button) {
+                var isValid = LoginPageManager.validateForm();
+                if (!isValid) {
+                    return false;
+                }
+                return true;
+            }
+
+            function handleLoginStart() {
+                var button = document.getElementById('loginBtn');
+                if (button) {
+                    button.classList.add('loading');
+                    button.disabled = true;
+                    button.innerHTML = '<span class="visually-hidden">Processing...</span>';
+                }
+            }
+
+            function handleLoginComplete() {
+                var button = document.getElementById('loginBtn');
+                if (button) {
+                    button.classList.remove('loading');
+                    button.disabled = false;
+                    button.textContent = '#{interfaceLabel.login}';
+                }
+
+                // Show the quantum success portal effect
+                LoginPageManager.showQuantumSuccessPortal();
+            }
+
+            // Password Recovery Modal Functions
+            function openRecoveryModal() {
+                var modal = document.getElementById('recoveryModal');
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            function closeRecoveryModal() {
+                var modal = document.getElementById('recoveryModal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+
+            function openWhatsApp() {
+                var phoneNumber = '+963938637158';
+                var message = 'Hello, I need help with my password recovery.';
+                var url = 'https://wa.me/' + phoneNumber.replace(/\s/g, '') + '?text=' + encodeURIComponent(message);
+                window.open(url, '_blank');
+            }
+
+            // Close modal when clicking outside
+            document.addEventListener('click', function(event) {
+                var modal = document.getElementById('recoveryModal');
+                if (event.target === modal) {
+                    closeRecoveryModal();
+                }
+            });
+
+            // Initialize when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Check if we're on the dashboard page
+                if (window.location.pathname.includes('dashboard.xhtml')) {
+                    DashboardManager.init();
+                } else {
+                    QuantumLoader.init();
+                }
+
+                // Add ripple effect to buttons
+                var buttons = document.querySelectorAll('.btn-smat, .recovery-button, .recovery-btn, .recovery-close-btn');
+                buttons.forEach(function(button) {
+                    button.addEventListener('click', function(e) {
+                        var rect = button.getBoundingClientRect();
+                        var x = e.clientX - rect.left;
+                        var y = e.clientY - rect.top;
+                        var ripple = document.createElement('span');
+
+                        ripple.className = 'ripple-effect';
+                        ripple.style.left = x + 'px';
+                        ripple.style.top = y + 'px';
+
+                        button.appendChild(ripple);
+
+                        setTimeout(function() {
+                            ripple.remove();
+                        }, 1000);
+                    });
+                });
+            });
+
+            // Reinitialize after AJAX updates
+            if (typeof jsf !== 'undefined') {
+                jsf.ajax.addOnEvent(function(data) {
+                    if (data.status === 'success') {
+                        setTimeout(function() {
+                            LoginPageManager.init();
+                        }, 100);
+                    }
+                });
+            }
+
+            //]]>
+        </script>
+    </f:view>
+</h:body>
+</html>

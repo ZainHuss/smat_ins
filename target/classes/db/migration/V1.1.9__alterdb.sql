@@ -1,0 +1,1 @@
+ALTER TABLE inspection_form_workflow_step ADD  step_seq   SMALLINT    NOT NULL;

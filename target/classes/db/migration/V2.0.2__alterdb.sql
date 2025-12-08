@@ -1,0 +1,1 @@
+alter table inspection_form_workflow  ADD reviewed_by bigint DEFAULT NULL;

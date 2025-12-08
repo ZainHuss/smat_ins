@@ -1,0 +1,10 @@
+environments:
+   prod:
+    url: jdbc:oracle:thin:@10.11.0.106:1521:orcl
+    username: OTI_GATEWAY
+    password: 1234567
+
+   dev:
+    url: jdbc:oracle:thin:@192.168.117.4:1521:DB19C
+    username: OTI_GATEWAY
+    password: 1234567
