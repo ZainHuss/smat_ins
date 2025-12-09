@@ -100,4 +100,6 @@ INSERT INTO smat_ins_db.sys_role_permission(id, sys_permission, sys_role) VALUES
     ON DUPLICATE KEY UPDATE id=VALUES(id), sys_permission=VALUES(sys_permission), sys_role=VALUES(sys_role);
 INSERT INTO smat_ins_db.sys_role_permission(id, sys_permission, sys_role) VALUES
     (87, 9, 4)
-    ON DUPLICATE KEY UPDATE id=VALUES(id), sys_permission=VALUES(sys_permission), sys_role=VALUES(sys_role);
+INSERT INTO smat_ins_db.sys_role_permission(id, sys_permission, sys_role) VALUES
+    (88, 18, 4)
+ON DUPLICATE KEY UPDATE id=VALUES(id), sys_permission=VALUES(sys_permission), sys_role=VALUES(sys_role);

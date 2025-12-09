@@ -12,127 +12,18 @@
         <h:outputStylesheet library="#{appSetting.resourceLib}"
                             name="css/material-theme.css"></h:outputStylesheet>
         <style>
-            /* تحسينات عامة للجدول */
-            .responsive-table-container {
-                overflow-x: auto;
-                width: 100%;
-                margin-top: 1rem;
-                border: 1px solid #dee2e6;
-                border-radius: 4px;
-                background: #fff;
-            }
-
-            .responsive-table-container table {
-                min-width: 1200px;
-                table-layout: fixed;
-                margin-bottom: 0;
-            }
-
-            /* تحسينات للأعمدة */
-            .table-cell-content {
-                white-space: normal;
-                word-wrap: break-word;
-                word-break: break-word;
-                padding: 12px 8px;
-                vertical-align: top;
-                line-height: 1.4;
-            }
-
-            /* أعمدة محددة */
-            .name-column {
-                min-width: 180px;
-                max-width: 250px;
-            }
-
-            .phone-column {
-                min-width: 140px;
-                max-width: 160px;
-            }
-
-            .mobile-column {
-                min-width: 140px;
-                max-width: 160px;
-            }
-
-            .code-column {
-                min-width: 100px;
-                max-width: 120px;
-            }
-
-            .email-column {
-                min-width: 220px;
-                max-width: 280px;
-            }
-
-            .contact-column {
-                min-width: 180px;
-                max-width: 200px;
-            }
-
-            .details-column {
-                min-width: 250px;
-                max-width: 300px;
-            }
-
-            .actions-column {
-                min-width: 100px;
-                max-width: 120px;
-                text-align: center;
-            }
-
-            /* تحسينات خاصة للأرقام - تظهر في سطر واحد */
-            .phone-number-cell,
-            .mobile-number-cell {
-                white-space: nowrap !important;
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                font-family: 'Courier New', monospace;
-                font-size: 14px;
-                direction: ltr;
-                text-align: left;
-                padding: 12px 8px;
-            }
-
-            .phone-number-cell:hover,
-            .mobile-number-cell:hover {
-                overflow: visible !important;
-                background-color: #fff;
-                position: relative;
-                z-index: 100;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-                border-radius: 4px;
-                white-space: normal !important;
-                word-break: break-all !important;
-                max-width: none !important;
-            }
-
-            /* حاوية للأرقام لضمان العرض الكامل */
-            .number-container {
-                display: inline-block;
-                max-width: 100%;
-                vertical-align: middle;
-            }
-
-            /* تحسينات للرأس */
-            .table-header {
-                background-color: #f8f9fa;
-                font-weight: 600;
-                padding: 12px 8px;
-                white-space: nowrap;
-                border-bottom: 2px solid #dee2e6;
-            }
-
-            /* تحسينات لشخص الاتصال */
             .contact-person-cell {
                 display: flex;
                 align-items: center;
-                gap: 0.75rem;
-                flex-wrap: wrap;
+                gap: 0.5rem;
+                /* keep contact cell on a single line */
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
-
             .contact-avatar {
-                width: 36px;
-                height: 36px;
+                width: 32px;
+                height: 32px;
                 border-radius: 50%;
                 background-color: #e9ecef;
                 display: flex;
@@ -141,490 +32,277 @@
                 font-weight: 600;
                 color: #495057;
                 flex-shrink: 0;
-                font-size: 14px;
             }
-
-            .contact-name {
-                flex: 1;
-                min-width: 120px;
-            }
-
-            /* تفاصيل النص */
-            .details-text {
-                max-height: 80px;
-                overflow-y: auto;
-                padding-right: 4px;
-            }
-
-            .details-text::-webkit-scrollbar {
-                width: 4px;
-            }
-
-            .details-text::-webkit-scrollbar-thumb {
-                background: #adb5bd;
-                border-radius: 2px;
-            }
-
-            /* تحسينات للفلتر */
-            .global-filter-container {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                gap: 1rem;
-                padding: 1rem;
-                background: #f8f9fa;
-                border-radius: 4px;
-                margin-bottom: 1rem;
-            }
-
-            .global-filter-input {
-                flex: 1;
-                min-width: 250px;
-            }
-
-            /* تحسينات للأزرار */
-            .button-group {
-                display: flex;
-                gap: 0.75rem;
-                flex-wrap: wrap;
-                margin-bottom: 1rem;
-            }
-
-            /* تحسينات للـ dialog */
-            .dialog-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 1.5rem;
-                padding: 1rem 0;
-            }
-
-            .dialog-field {
-                margin-bottom: 1rem;
-            }
-
-            .dialog-field label {
-                display: block;
-                font-weight: 600;
-                color: #343a40;
-                margin-bottom: 0.5rem;
-                font-size: 14px;
-            }
-
-            .dialog-field input,
-            .dialog-field textarea {
-                width: 100%;
-                padding: 0.75rem;
-                border: 1px solid #ced4da;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-
-            .dialog-field textarea {
-                resize: vertical;
-                min-height: 100px;
-            }
-
-            /* تحسينات للـ card */
-            .card-content {
-                padding: 1.5rem;
-            }
-
-            /* تحسينات خاصة لحقول الهاتف في الـ dialog */
-            .phone-input {
-                font-family: 'Courier New', monospace;
-                direction: ltr;
-                text-align: left;
-                letter-spacing: 0.5px;
-            }
-
-            /* تحسينات للشاشات الصغيرة */
-            @media screen and (max-width: 768px) {
-                .responsive-table-container {
-                    border: none;
-                    margin: 0 -1rem;
-                    width: calc(100% + 2rem);
-                }
-
-                .button-group {
-                    flex-direction: column;
-                    gap: 0.5rem;
-                }
-
-                .button-group .p-button {
-                    width: 100%;
-                    justify-content: center;
-                }
-
-                .global-filter-container {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-
-                .global-filter-input {
-                    min-width: 100%;
-                }
-
-                .dialog-grid {
-                    grid-template-columns: 1fr;
-                    gap: 1rem;
-                }
-
-                .phone-column,
-                .mobile-column {
-                    min-width: 120px;
-                    max-width: 140px;
-                }
-
-                .phone-number-cell,
-                .mobile-number-cell {
-                    font-size: 13px;
-                    padding: 8px 4px;
-                }
-            }
-
-            @media screen and (max-width: 576px) {
-                .table-cell-content {
-                    padding: 8px 4px;
-                    font-size: 13px;
-                }
-
-                .table-header {
-                    padding: 8px 4px;
-                    font-size: 13px;
-                }
-
-                .contact-avatar {
-                    width: 28px;
-                    height: 28px;
-                    font-size: 12px;
-                }
-
-                .phone-column,
-                .mobile-column {
-                    min-width: 100px;
-                    max-width: 120px;
-                }
-            }
-
-            /* تحسينات للـ paginator */
-            .ui-paginator {
-                padding: 0.75rem;
-                background: #f8f9fa;
-                border-top: 1px solid #dee2e6;
-            }
-
-            /* ألوان للحقول المطلوبة */
-            .required-field label:after {
-                content: " *";
-                color: #dc3545;
-            }
-
-            /* تحسينات للرسائل */
-            .ui-growl {
-                max-width: 400px;
-            }
-
-            /* تحسينات للارقام الطويلة - للعرض على الهواتف */
-            .number-tooltip {
-                position: absolute;
-                background: #333;
-                color: white;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 12px;
+            .details-cell {
+                /* keep details on a single line and use ellipsis for overflow */
                 white-space: nowrap;
-                z-index: 1000;
-                display: none;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 300px;
             }
-
-            /* لون خاص للأرقام */
-            .phone-number {
-                color: #0066cc;
-                font-weight: 500;
+            .wrap-text-cell {
+                white-space: normal;
+                word-wrap: break-word;
+                word-break: break-word;
+            }
+            .name-column {
+                min-width: 200px;
+                white-space: normal;
+                word-wrap: break-word;
+                word-break: break-word;
+            }
+            .products-table .ui-datatable-tablewrapper table {
+                table-layout: auto;
+            }
+            .products-table .ui-datatable-tablewrapper td {
+                /* force single-line rows (desktop) and ellipsis; full text available via title */
+                max-width: 220px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: middle;
+                padding: 8px;
+            }
+            /* make nested containers inside cells also truncate */
+            .products-table .ui-datatable-tablewrapper td .details-cell,
+            .products-table .ui-datatable-tablewrapper td .contact-person-cell {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: inline-block;
+                max-width: 100%;
+            }
+            @media screen and (max-width: 960px) {
+                .products-table .ui-datatable-tablewrapper table {
+                    table-layout: auto;
+                }
+                .name-column {
+                    min-width: 150px;
+                }
+                /* allow wrapping on small screens */
+                .products-table .ui-datatable-tablewrapper td {
+                    white-space: normal;
+                    overflow: visible;
+                    text-overflow: unset;
+                    padding: 6px;
+                }
             }
         </style>
-
-        <script type="text/javascript">
-            // دالة لعرض الرقم بالكامل عند التحويم
-            function showFullNumber(element) {
-                var number = element.innerText || element.textContent;
-                if (number &amp;&amp; number.trim() !== '') {
-                    element.title = number;
-                }
-            }
-        </script>
     </ui:define>
-
     <ui:define name="section-content">
         <h:form id="form">
             <div class="card">
-                <div class="card-content">
-                    <p:growl id="messages" showDetail="true" life="2000" sticky="false" />
-
-                    <div class="button-group">
-                        <div class="flex gap-2">
-                            <p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
-                                             actionListener="#{codingCompanyBean.openNew}"
-                                             update=":form:outputPanel-content"
-                                             oncomplete="PF('widgetVarDetailDialog').show()"
-                                             styleClass="p-button-success p-button-raised"
-                                             style="min-width: 120px;">
-                                <p:resetInput target=":form:outputPanel-content" />
-                            </p:commandButton>
-
-                            <p:commandButton id="delete-company-button"
-                                             value="#{codingCompanyBean.deleteButtonMessage}"
-                                             icon="pi pi-trash"
-                                             styleClass="p-button-danger p-button-raised"
-                                             actionListener="#{codingCompanyBean.delete()}"
-                                             disabled="#{!codingCompanyBean.hasSelected()}"
-                                             update="@this :form:messages"
-                                             style="min-width: 150px;">
-                                <p:confirm header="#{interfaceLabel.confirmation}"
-                                           message="#{interfaceLabel.deleteSelectedCompany}"
-                                           icon="pi pi-exclamation-triangle" />
-                            </p:commandButton>
-                        </div>
+                <p:growl id="messages" showDetail="true" life="2000" sticky="false" />
+                <div class="row">
+                    <div class="col-6 col-lg-3 col-xl-2 col-xxl-1">
+                        <p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+                                         actionListener="#{codingCompanyBean.openNew}"
+                                         update=":form:outputPanel-content"
+                                         oncomplete="PF('widgetVarDetailDialog').show()"
+                                         styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+                                         style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+                            <p:resetInput target=":form:outputPanel-content" />
+                        </p:commandButton>
                     </div>
-
-                    <p:divider layout="horizontal" />
-
-
-
-                    <div class="responsive-table-container">
-                        <p:dataTable id="dataTable-company" widgetVar="widgetVarCompany"
-                                     var="company" value="#{codingCompanyBean.companies}" reflow="true"
-                                     selection="#{codingCompanyBean.selectedCompanyList}"
-                                     rowKey="#{company.id}" paginator="true" rows="10"
-                                     rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
-                                     paginatorPosition="bottom"
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     rowsPerPageTemplate="5,10,20,50"
-                                     currentPageReportTemplate="showing records">
-
-                            <p:ajax event="rowSelect" update=":form:delete-company-button" />
-                            <p:ajax event="rowUnselect" update=":form:delete-company-button" />
-                            <p:ajax event="rowSelectCheckbox" update=":form:delete-company-button" />
-                            <p:ajax event="rowUnselectCheckbox" update=":form:delete-company-button" />
-                            <p:ajax event="toggleSelect" update=":form:delete-company-button" />
-
-                            <p:column selectionMode="multiple" exportable="false"
-                                      styleClass="actions-column" headerClass="table-header">
-                            </p:column>
-
-                            <p:column headerText="#{interfaceLabel.name}"
-                                      sortBy="#{company.name}" filterBy="#{company.name}"
-                                      styleClass="name-column" headerClass="table-header">
-                                <div class="table-cell-content">
-                                    <h:outputText value="#{company.name}" />
-                                </div>
-                            </p:column>
-
-                            <p:column headerText="#{interfaceLabel.phone}"
-                                      sortBy="#{company.phone}" filterBy="#{company.phone}"
-                                      styleClass="phone-column" headerClass="table-header">
-                                <div class="phone-number-cell" onmouseover="showFullNumber(this)">
-                                    <span class="number-container phone-number">
-                                        <h:outputText value="#{company.phone}"
-                                                      rendered="#{not empty company.phone}" />
-                                        <h:outputText value="-" style="color: #6c757d;"
-                                                      rendered="#{empty company.phone}" />
-                                    </span>
-                                </div>
-                            </p:column>
-
-                            <p:column headerText="#{interfaceLabel.mobile}"
-                                      sortBy="#{company.mobile}" filterBy="#{company.mobile}"
-                                      styleClass="mobile-column" headerClass="table-header">
-                                <div class="mobile-number-cell" onmouseover="showFullNumber(this)">
-                                    <span class="number-container phone-number">
-                                        <h:outputText value="#{company.mobile}"
-                                                      rendered="#{not empty company.mobile}" />
-                                        <h:outputText value="-" style="color: #6c757d;"
-                                                      rendered="#{empty company.mobile}" />
-                                    </span>
-                                </div>
-                            </p:column>
-
-                            <p:column headerText="#{interfaceLabel.code}"
-                                      sortBy="#{company.code}" filterBy="#{company.code}"
-                                      styleClass="code-column" headerClass="table-header">
-                                <div class="table-cell-content">
-                                    <h:outputText value="#{company.code}" />
-                                </div>
-                            </p:column>
-
-                            <p:column headerText="#{interfaceLabel.email}"
-                                      sortBy="#{company.email}" filterBy="#{company.email}"
-                                      styleClass="email-column" headerClass="table-header">
-                                <div class="table-cell-content">
-                                    <h:outputText value="#{company.email}" />
-                                </div>
-                            </p:column>
-
-                            <p:column headerText="#{interfaceLabel.contactPerson}"
-                                      sortBy="#{company.contactPerson}" filterBy="#{company.contactPerson}"
-                                      styleClass="contact-column" headerClass="table-header">
-                                <div class="table-cell-content">
-                                    <div class="contact-person-cell">
-                                        <div class="contact-avatar">
-                                            <h:outputText value="#{not empty company.contactPerson ? company.contactPerson.substring(0,1).toUpperCase() : '?'}" />
-                                        </div>
-                                        <div class="contact-name">
-                                            <h:outputText value="#{company.contactPerson}"
-                                                          rendered="#{not empty company.contactPerson}" />
-                                            <h:outputText value="-" style="color: #6c757d;"
-                                                          rendered="#{empty company.contactPerson}" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </p:column>
-
-                            <p:column headerText="#{interfaceLabel.details}"
-                                      sortBy="#{company.details}" filterBy="#{company.details}"
-                                      styleClass="details-column" headerClass="table-header">
-                                <div class="table-cell-content">
-                                    <div class="details-text">
-                                        <h:outputText value="#{company.details}"
-                                                      rendered="#{not empty company.details}" />
-                                        <h:outputText value="-" style="color: #6c757d;"
-                                                      rendered="#{empty company.details}" />
-                                    </div>
-                                </div>
-                            </p:column>
-
-                            <p:column exportable="false" styleClass="actions-column"
-                                      headerClass="table-header">
-                                <div class="table-cell-content" style="text-align: center;">
-                                    <p:commandButton icon="pi pi-pencil"
-                                                     update=":form:outputPanel-content"
-                                                     oncomplete="PF('widgetVarDetailDialog').show()"
-                                                     process="@this"
-                                                     styleClass="p-button-text p-button-sm">
-                                        <f:setPropertyActionListener value="#{company}"
-                                                                     target="#{codingCompanyBean.company}" />
-                                        <p:resetInput target=":form:outputPanel-content" />
-                                    </p:commandButton>
-
-                                    <p:commandButton icon="pi pi-trash"
-                                                     process="@this"
-                                                     oncomplete="PF('widgetVarDeleteDialog').show()"
-                                                     styleClass="p-button-text p-button-sm p-button-danger">
-                                        <f:setPropertyActionListener value="#{company}"
-                                                                     target="#{codingCompanyBean.company}" />
-                                    </p:commandButton>
-                                </div>
-                            </p:column>
-                        </p:dataTable>
+                    <div class="col-6 col-lg-5 col-xl-4 col-xxl-3">
+                        <p:commandButton id="delete-company-button"
+                                         value="#{codingCompanyBean.deleteButtonMessage}"
+                                         icon="pi pi-trash" style="width:auto;"
+                                         styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+                                         actionListener="#{codingCompanyBean.delete()}"
+                                         disabled="#{!codingCompanyBean.hasSelected()}" update="@this">
+                            <p:confirm header="#{interfaceLabel.confirmation}"
+                                       message="#{interfaceLabel.deleteSelectedCompany}"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
                     </div>
-
-                    <p:dialog
-                            header="#{interfaceLabel.details} #{interfaceLabel.company}"
-                            showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog"
-                            responsive="true" width="90%" height="auto"
-                            style="max-width: 800px;">
-                        <p:outputPanel id="outputPanel-content" class="ui-fluid">
-                            <p:outputPanel rendered="#{not empty codingCompanyBean.company}">
-                                <div class="dialog-grid">
-                                    <div class="dialog-field required-field">
-                                        <label for="name">#{interfaceLabel.name}</label>
-                                        <p:inputText id="name"
-                                                     value="#{codingCompanyBean.company.name}" required="true"
-                                                     requiredMessage="#{interfaceLabel.name} #{errorLabel.validateInput}"
-                                                     style="width: 100%;" />
-                                    </div>
-
-                                    <div class="dialog-field">
-                                        <label for="phone">#{interfaceLabel.phone}</label>
-                                        <p:inputText id="phone"
-                                                     value="#{codingCompanyBean.company.phone}"
-                                                     style="width: 100%;" styleClass="phone-input" />
-                                    </div>
-
-                                    <div class="dialog-field">
-                                        <label for="mobile">#{interfaceLabel.mobile}</label>
-                                        <p:inputText id="mobile"
-                                                     value="#{codingCompanyBean.company.mobile}"
-                                                     style="width: 100%;" styleClass="phone-input" />
-                                    </div>
-
-                                    <div class="dialog-field">
-                                        <label for="email">#{interfaceLabel.email}</label>
-                                        <p:inputText id="email"
-                                                     value="#{codingCompanyBean.company.email}"
-                                                     style="width: 100%;" />
-                                    </div>
-
-                                    <div class="dialog-field">
-                                        <label for="code">#{interfaceLabel.code}</label>
-                                        <p:inputText id="code"
-                                                     value="#{codingCompanyBean.company.code}"
-                                                     style="width: 100%;" />
-                                    </div>
-
-                                    <div class="dialog-field">
-                                        <label for="contactPerson">#{interfaceLabel.contactPerson}</label>
-                                        <p:inputText id="contactPerson"
-                                                     value="#{codingCompanyBean.company.contactPerson}"
-                                                     style="width: 100%;" />
-                                    </div>
-
-                                    <div class="dialog-field" style="grid-column: span 2;">
-                                        <label for="address">#{interfaceLabel.address}</label>
-                                        <p:inputTextarea id="address"
-                                                         value="#{codingCompanyBean.company.address}"
-                                                         rows="3" style="width: 100%;" />
-                                    </div>
-
-                                    <div class="dialog-field" style="grid-column: span 2;">
-                                        <label for="details">#{interfaceLabel.details}</label>
-                                        <p:inputTextarea id="details"
-                                                         value="#{codingCompanyBean.company.details}"
-                                                         rows="3" style="width: 100%;" />
-                                    </div>
-                                </div>
-                            </p:outputPanel>
-                        </p:outputPanel>
-                        <f:facet name="footer">
-                            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-                                <p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
-                                                 actionListener="#{codingCompanyBean.save}"
-                                                 update=":form:outputPanel-content :form:dataTable-company :form:messages"
-                                                 process="outputPanel-content @this"
-                                                 styleClass="p-button-success" />
-                                <p:commandButton value="#{interfaceLabel.cancel}"
-                                                 icon="pi pi-times"
-                                                 onclick="PF('widgetVarDetailDialog').hide()"
-                                                 styleClass="p-button-secondary" />
-                            </div>
-                        </f:facet>
-                    </p:dialog>
-
-                    <p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
-                                     width="400" message="#{interfaceLabel.deleteSelectedCompany}"
-                                     header="#{interfaceLabel.confirmation}" severity="warn">
-                        <f:facet name="footer">
-                            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-                                <p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
-                                                 actionListener="#{codingCompanyBean.delete()}" process="@this"
-                                                 oncomplete="PF('widgetVarDeleteDialog').hide()"
-                                                 styleClass="p-button-danger" />
-                                <p:commandButton value="#{interfaceLabel.no}"
-                                                 styleClass="p-button-secondary" icon="pi pi-times"
-                                                 onclick="PF('widgetVarDeleteDialog').hide()" />
-                            </div>
-                        </f:facet>
-                    </p:confirmDialog>
-
-                    <p:confirmDialog global="true" showEffect="fade" width="300">
-                        <p:commandButton value="#{interfaceLabel.yes}" type="button"
-                                         styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-                        <p:commandButton value="#{interfaceLabel.no}" type="button"
-                                         styleClass="ui-confirmdialog-no ui-button-secondary"
-                                         icon="pi pi-times" />
-                    </p:confirmDialog>
                 </div>
+
+                <p:divider layout="horizontal" type="dashed"></p:divider>
+
+                <p:dataTable id="dataTable-company" widgetVar="widgetVarCompany"
+                             var="company" value="#{codingCompanyBean.companies}" reflow="true"
+                             styleClass="products-table" globalFilterOnly="true"
+                             selection="#{codingCompanyBean.selectedCompanyList}"
+                             rowKey="#{company.id}" paginator="true" rows="10"
+                             rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
+                             paginatorPosition="bottom">
+                    <p:ajax event="rowSelect" update=":form:delete-company-button" />
+                    <p:ajax event="rowUnselect" update=":form:delete-company-button" />
+                    <p:ajax event="rowSelectCheckbox"
+                            update=":form:delete-company-button" />
+                    <p:ajax event="rowUnselectCheckbox"
+                            update=":form:delete-company-button" />
+                    <p:ajax event="toggleSelect" update=":form:delete-company-button" />
+                    <f:facet name="header">
+                        <div class="flex align-items-center justify-content-between">
+                            <h:outputText value="#{interfaceLabel.search} : " />
+                            <p:inputText id="globalFilter"
+                                         onkeyup="PF('widgetVarCompany').filter()" style="width:auto;"
+                                         placeholder="#{interfaceLabel.enterKeyword}" />
+                        </div>
+                    </f:facet>
+                    <p:column selectionMode="multiple" exportable="false"></p:column>
+
+                    <!-- Reordered & consolidated columns: Name, Code, Phones, Contact (name + email), Address, Details -->
+                    <p:column headerText="#{interfaceLabel.name}"
+                              sortBy="#{company.name}" filterBy="#{company.name}" styleClass="name-column wrap-text-cell">
+                        <h:outputText value="#{company.name}" title="#{company.name}" />
+                    </p:column>
+
+                    <p:column headerText="#{interfaceLabel.code}"
+                              sortBy="#{company.code}" filterBy="#{company.code}" styleClass="wrap-text-cell"
+                              headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                        <h:outputText value="#{company.code}" title="#{company.code}" />
+                    </p:column>
+
+                    <p:column headerText="#{interfaceLabel.phone}"
+                              sortBy="#{company.phone}" filterBy="#{company.phone}" styleClass="wrap-text-cell"
+                              headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                        <h:outputText value="#{not empty company.phone ? company.phone : ''}" title="#{company.phone}" />
+                        <h:outputText value=" / " rendered="#{not empty company.phone and not empty company.mobile}" />
+                        <h:outputText value="#{company.mobile}" rendered="#{not empty company.mobile}" title="#{company.mobile}" />
+                        <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.phone and empty company.mobile}" />
+                    </p:column>
+
+                    <p:column headerText="#{interfaceLabel.contactPerson}"
+                              sortBy="#{company.contactPerson}" filterBy="#{company.contactPerson}" styleClass="wrap-text-cell"
+                              headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                        <div class="contact-person-cell">
+                            <div class="contact-avatar">
+                                <h:outputText value="#{not empty company.contactPerson ? company.contactPerson.substring(0,1).toUpperCase() : '?'}" />
+                            </div>
+                            <div class="details-cell">
+                                <h:outputText value="#{company.contactPerson}" rendered="#{not empty company.contactPerson}" title="#{company.contactPerson}" />
+                                <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.contactPerson}" />
+                                <!-- inline separator only when both contactPerson and email exist -->
+                                <h:outputText value=" - " rendered="#{not empty company.contactPerson and not empty company.email}" style="color:#6c757d;" />
+                                <h:outputLink value="mailto:#{company.email}" rendered="#{not empty company.email}" title="#{company.email}">
+                                    <h:outputText value="#{company.email}" />
+                                </h:outputLink>
+                                <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.email}" />
+                            </div>
+                        </div>
+                    </p:column>
+
+                    <p:column headerText="#{interfaceLabel.address}"
+                              sortBy="#{company.address}" filterBy="#{company.address}" styleClass="wrap-text-cell"
+                              headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                        <div class="details-cell">
+                            <h:outputText value="#{company.address}" rendered="#{not empty company.address}" title="#{company.address}" />
+                            <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.address}" />
+                        </div>
+                    </p:column>
+
+                    <p:column headerText="#{interfaceLabel.details}"
+                              sortBy="#{company.details}" filterBy="#{company.details}" styleClass="wrap-text-cell"
+                              headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                        <div class="details-cell">
+                            <h:outputText value="#{company.details}" rendered="#{not empty company.details}" title="#{company.details}" />
+                            <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.details}" />
+                        </div>
+                    </p:column>
+
+                    <p:column exportable="false" width="20">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":form:outputPanel-content"
+                                         oncomplete="PF('widgetVarDetailDialog').show()" process="@this">
+                            <f:setPropertyActionListener value="#{company}"
+                                                         target="#{codingCompanyBean.company}" />
+                            <p:resetInput target=":form:outputPanel-content" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column exportable="false" width="20">
+                        <p:commandButton styleClass="ui-button-danger" icon="pi pi-trash"
+                                         process="@this" oncomplete="PF('widgetVarDeleteDialog').show()">
+                            <f:setPropertyActionListener value="#{company}"
+                                                         target="#{codingCompanyBean.company}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:dialog
+                        header="#{interfaceLabel.details} #{interfaceLabel.company}"
+                        showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog"
+                        responsive="true">
+                    <p:outputPanel id="outputPanel-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty codingCompanyBean.company}">
+                            <div class="ui-fluid formgrid grid">
+                                <div class="field col-12 md:col-4">
+                                    <p:outputLabel style="font-weight:bold;color:black;" for="name">#{interfaceLabel.name}</p:outputLabel>
+                                    <p:inputText id="name"
+                                                 value="#{codingCompanyBean.company.name}" required="true"
+                                                 requiredMessage="#{interfaceLabel.name}  #{errorLabel.validateInput}" />
+                                </div>
+                                <div class="field col-12 md:col-4">
+                                    <p:outputLabel style="font-weight:bold;color:black;" for="phone">#{interfaceLabel.phone}</p:outputLabel>
+                                    <p:inputText id="phone"
+                                                 value="#{codingCompanyBean.company.phone}" />
+                                </div>
+                                <div class="field col-12 md:col-4">
+                                    <p:outputLabel style="font-weight:bold;color:black;" for="mobile">#{interfaceLabel.mobile}</p:outputLabel>
+                                    <p:inputText id="mobile"
+                                                 value="#{codingCompanyBean.company.mobile}" />
+                                </div>
+                            </div>
+                            <div class="ui-fluid formgrid grid">
+                                <div class="field col-12 md:col-6">
+                                    <p:outputLabel style="font-weight:bold;color:black;" for="contactPerson">#{interfaceLabel.contactPerson}</p:outputLabel>
+                                    <p:inputText id="contactPerson"
+                                                 value="#{codingCompanyBean.company.contactPerson}" />
+                                </div>
+                                <div class="field col-12 md:col-6">
+                                    <p:outputLabel style="font-weight:bold;color:black;" for="email">#{interfaceLabel.email}</p:outputLabel>
+                                    <p:inputText id="email" value="#{codingCompanyBean.company.email}" validatorMessage="#{interfaceLabel.invalidEmail}">
+                                        <f:validateRegex pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" />
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-lg-10 col-xl-9 col-xxl-8">
+                                    <p:outputLabel style="font-weight:bold;color:black;">#{interfaceLabel.address}</p:outputLabel>
+                                    <p:inputTextarea value="#{codingCompanyBean.company.address}"
+                                                     rows="3"></p:inputTextarea>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-lg-10 col-xl-9 col-xxl-8">
+                                    <p:outputLabel style="font-weight:bold;color:black;">#{interfaceLabel.details}</p:outputLabel>
+                                    <p:inputTextarea value="#{codingCompanyBean.company.details}"
+                                                     rows="3"></p:inputTextarea>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+                    <f:facet name="footer">
+                        <p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+                                         actionListener="#{codingCompanyBean.save}"
+                                         update=":form:outputPanel-content :form:dataTable-company"
+                                         process="outputPanel-content @this" />
+                        <p:commandButton value="#{interfaceLabel.cancel}"
+                                         icon="pi pi-times" onclick="PF('widgetVarDetailDialog').hide()"
+                                         class="ui-button-secondary" />
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
+                                 width="300" message="#{interfaceLabel.deleteSelectedCompany}"
+                                 header="#{interfaceLabel.confirmation}" severity="warn">
+                    <p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+                                     actionListener="#{codingCompanyBean.delete()}" process="@this"
+                                     oncomplete="PF('widgetVarDeleteDialog').hide()" />
+                    <p:commandButton value="#{interfaceLabel.no}" type="button"
+                                     styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('widgetVarDeleteDialog').hide()" />
+                </p:confirmDialog>
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="#{interfaceLabel.yes}" type="button"
+                                     styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="#{interfaceLabel.no}" type="button"
+                                     styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times" />
+                </p:confirmDialog>
+
             </div>
         </h:form>
     </ui:define>

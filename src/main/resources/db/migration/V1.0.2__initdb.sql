@@ -286,6 +286,10 @@ INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
 INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
     (17, 'Add Task', '017', 'Allow Add Task to Inspector')
     ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+INSERT INTO smat_ins_db.sys_permission(id, name, code, description) VALUES
+    (18, 'show statistics', '018', 'show statistics')
+    ON DUPLICATE KEY UPDATE id=VALUES(id), name=VALUES(name), code=VALUES(code), description=VALUES(description);
+
 
 INSERT INTO transmission_type(id, arabic_name, english_name, code) VALUES
 (1, 'بريد جديد', 'New mail', '01')
