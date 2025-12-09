@@ -19,6 +19,9 @@
         <property name="mobile" type="java.lang.String">
             <column name="mobile" length="100" />
         </property>
+        <property name="email" type="java.lang.String">
+            <column name="email" length="200" />
+        </property>
         <property name="code" type="java.lang.String">
             <column name="code" length="50" not-null="true" />
         </property>
@@ -28,9 +31,6 @@
        
         <property name="contactPerson" type="java.lang.String">
             <column name="contact_person" length="255" />
-        </property>
-        <property name="email" type="java.lang.String">
-            <column name="email" length="255" />
         </property>
         <property name="details" type="java.lang.String">
             <column name="details" length="3000" />

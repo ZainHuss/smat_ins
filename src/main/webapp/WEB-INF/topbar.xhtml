@@ -699,6 +699,12 @@
                                         </h:link>
                                     </li>
                                     <li class="nk-menu-item">
+                                        <h:link styleClass="nk-menu-link" outcome="pretty:email">
+                                            <span class="menu-icon"><i class="fa fa-paper-plane primary-color" aria-hidden="true"></i></span>
+                                            Email
+                                        </h:link>
+                                    </li>
+                                    <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('013')}"
                                                 outcome="pretty:inspection/my-tasks"
                                                 styleClass="nk-menu-link">
@@ -750,6 +756,14 @@
                                                 styleClass="nk-menu-link">
                                             <span class="menu-icon"><i class="fa fa-check-circle vibrant-1" aria-hidden="true"></i></span>
                                             Completed Search Tasks
+                                        </h:link>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <h:link rendered="#{loginBean.user.isSuperAdmin or loginBean.hasSysPermission('014')}"
+                                                outcome="pretty:statistics"
+                                                styleClass="nk-menu-link">
+                                            <span class="menu-icon"><i class="fa fa-chart-bar vibrant-2" aria-hidden="true"></i></span>
+                                            Statistics
                                         </h:link>
                                     </li>
 
@@ -836,6 +850,7 @@
                                             #{interfaceLabel.companies}
                                         </h:link>
                                     </li>
+
                                     <li class="nk-menu-item">
                                         <h:link styleClass="nk-menu-link" outcome="pretty:equipmentCategory">
                                             <span class="menu-icon"><i class="fa fa-tools vibrant-2" aria-hidden="true"></i></span>
@@ -905,6 +920,12 @@
                                         <h:link styleClass="nk-menu-link" outcome="pretty:purposeType">
                                             <span class="menu-icon"><i class="fa fa-bullseye vibrant-2" aria-hidden="true"></i></span>
                                             #{interfaceLabel.purposeType}
+                                        </h:link>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <h:link styleClass="nk-menu-link" outcome="pretty:empCertificationType">
+                                            <span class="menu-icon"><i class="fa fa-certificate vibrant-2" aria-hidden="true"></i></span>
+                                            #{interfaceLabel.empCertificationType}
                                         </h:link>
                                     </li>
                                     <li class="nk-menu-item">

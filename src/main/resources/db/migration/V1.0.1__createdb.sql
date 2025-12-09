@@ -396,6 +396,7 @@ CREATE TABLE company(
     name       NATIONAL VARCHAR(200),
     phone      NATIONAL VARCHAR(100),
     mobile     NATIONAL VARCHAR(100),
+    email      NATIONAL VARCHAR(200),
     code       NATIONAL VARCHAR(50)      NOT NULL,
     address    NATIONAL VARCHAR(2000),
     PRIMARY KEY (id)

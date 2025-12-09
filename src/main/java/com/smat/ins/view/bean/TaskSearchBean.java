@@ -54,6 +54,7 @@ public class TaskSearchBean implements Serializable {
     private Date fromDate;
     private Date toDate;
     private UserAlias assignee;
+    private UserAlias reviewer;
 
     // New search criteria fields
     private Company company;
@@ -160,6 +161,30 @@ public class TaskSearchBean implements Serializable {
             if (assigner != null) {
                 searchResults.removeIf(task -> task.getUserAliasByAssigner() == null
                         || !assigner.getId().equals(task.getUserAliasByAssigner().getId()));
+            }
+
+            // Reviewer filter: map to form-level ReviewedBy (equipment inspection or emp certification)
+            if (reviewer != null) {
+                final com.smat.ins.model.entity.SysUser reviewerSysUser = reviewer.getSysUserBySysUser();
+                searchResults.removeIf(task -> {
+                    try {
+                        if (task.getEquipmentCategory() != null) {
+                            EquipmentInspectionForm eif = equipmentInspectionFormService.getBy(task.getId());
+                            if (eif != null && eif.getSysUserByReviewedBy() != null) {
+                                return !reviewerSysUser.getId().equals(eif.getSysUserByReviewedBy().getId());
+                            }
+                            return true; // no form or no reviewer -> exclude
+                        } else {
+                            EmpCertification ec = empCertificationService.getBy(task.getId());
+                            if (ec != null && ec.getSysUserByReviewedBy() != null) {
+                                return !reviewerSysUser.getId().equals(ec.getSysUserByReviewedBy().getId());
+                            }
+                            return true; // no cert or no reviewer -> exclude
+                        }
+                    } catch (Exception e) {
+                        return true;
+                    }
+                });
             }
 
             if (completedFromDate != null) {
@@ -347,6 +372,7 @@ public class TaskSearchBean implements Serializable {
         fromDate = null;
         toDate = null;
         assignee = null;
+        reviewer = null;
 
         // Clear new filters
         company = null;
@@ -608,7 +634,6 @@ public class TaskSearchBean implements Serializable {
     }
 
 
-
     // Getters and Setters
     public String getTaskDescription() {
         return taskDescription;
@@ -657,6 +682,8 @@ public class TaskSearchBean implements Serializable {
     public void setAssignee(UserAlias assignee) {
         this.assignee = assignee;
     }
+    public UserAlias getReviewer() { return reviewer; }
+    public void setReviewer(UserAlias reviewer) { this.reviewer = reviewer; }
 
     public List<Task> getSearchResults() {
         return searchResults;

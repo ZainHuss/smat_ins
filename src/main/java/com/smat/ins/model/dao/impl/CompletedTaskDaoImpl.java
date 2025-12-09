@@ -63,10 +63,11 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
             sql.append("    'Equipment Inspection' AS task_type, ");
             sql.append("    eif.report_no, ");
             sql.append("    eif.sticker_no, ");
+            sql.append("    eif.created_date AS form_created_date, ");
             sql.append("    t.created_date, ");
             sql.append("    t.completed_date, ");
             sql.append("    c.name AS company_name, ");
-            sql.append("    ec.arabic_name AS equipment_category_name, ");
+                sql.append("    ec.arabic_name AS equipment_category_name, ");
             sql.append("    ec.code AS equipment_category_code, ");
             sql.append("    ua_assigner.en_alias_name AS assigner_name, ");
             sql.append("    su_assigner.user_name AS assigner_user_name, ");
@@ -94,12 +95,12 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
             parameters.put("stepCode", COMPLETED_STEP_CODE);
 
             if (fromDate != null) {
-                sql.append("AND t.created_date >= :fromDate ");
+                sql.append("AND t.completed_date >= :fromDate ");
                 parameters.put("fromDate", fromDate);
             }
 
             if (toDate != null) {
-                sql.append("AND t.created_date <= :toDate ");
+                sql.append("AND t.completed_date <= :toDate ");
                 parameters.put("toDate", toDate);
             }
 
@@ -130,17 +131,18 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
                 taskMap.put("taskType", row[2]);
                 taskMap.put("reportNo", row[3]);
                 taskMap.put("stickerNo", row[4]);
-                taskMap.put("createdDate", row[5]);
-                taskMap.put("completedDate", row[6]);
-                taskMap.put("companyName", row[7]);
-                taskMap.put("equipmentCategoryName", row[8]);
-                taskMap.put("equipmentCategoryCode", row[9]);
-                taskMap.put("assignerName", row[10]);
-                taskMap.put("assignerUserName", row[11]);
-                taskMap.put("assigneeName", row[12]);
-                taskMap.put("assigneeUserName", row[13]);
-                taskMap.put("assignerUserDisplayName", row[14]);
-                taskMap.put("stepName", row[15]);
+                taskMap.put("formCreatedDate", row[5]);
+                taskMap.put("createdDate", row[6]);
+                taskMap.put("completedDate", row[7]);
+                taskMap.put("companyName", row[8]);
+                    taskMap.put("equipmentCategoryName", row[9]);
+                    taskMap.put("equipmentCategoryCode", row[10]);
+                    taskMap.put("assignerName", row[11]);
+                    taskMap.put("assignerUserName", row[12]);
+                    taskMap.put("assigneeName", row[13]);
+                    taskMap.put("assigneeUserName", row[14]);
+                    taskMap.put("assignerUserDisplayName", row[15]);
+                    taskMap.put("stepName", row[16]);
                 results.add(taskMap);
             }
 
@@ -166,6 +168,7 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
             sql.append("    'Employee Certification' AS task_type, ");
             sql.append("    ec.cert_number, ");
             sql.append("    e.full_name AS employee_name, ");
+            sql.append("    ec.created_at AS cert_created_date, ");
             sql.append("    t.created_date, ");
             sql.append("    t.completed_date, ");
             sql.append("    c.name AS company_name, ");
@@ -197,12 +200,12 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
             parameters.put("stepCode", COMPLETED_STEP_CODE);
 
             if (fromDate != null) {
-                sql.append("AND t.created_date >= :fromDate ");
+                sql.append("AND t.completed_date >= :fromDate ");
                 parameters.put("fromDate", fromDate);
             }
 
             if (toDate != null) {
-                sql.append("AND t.created_date <= :toDate ");
+                sql.append("AND t.completed_date <= :toDate ");
                 parameters.put("toDate", toDate);
             }
 
@@ -228,17 +231,18 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
                 taskMap.put("taskType", row[2]);
                 taskMap.put("certNumber", row[3]);
                 taskMap.put("employeeName", row[4]);
-                taskMap.put("createdDate", row[5]);
-                taskMap.put("completedDate", row[6]);
-                taskMap.put("companyName", row[7]);
-                taskMap.put("certificationType", row[8]);
-                taskMap.put("assignerName", row[9]);
-                taskMap.put("assignerUserName", row[10]);
-                taskMap.put("assigneeName", row[11]);
-                taskMap.put("assigneeUserName", row[12]);
-                taskMap.put("assignerUserDisplayName", row[13]);
-                taskMap.put("empCertificateId", row[14]);
-                taskMap.put("stepName", row[15]);
+                taskMap.put("formCreatedDate", row[5]);
+                taskMap.put("createdDate", row[6]);
+                taskMap.put("completedDate", row[7]);
+                taskMap.put("companyName", row[8]);
+                taskMap.put("certificationType", row[9]);
+                taskMap.put("assignerName", row[10]);
+                taskMap.put("assignerUserName", row[11]);
+                taskMap.put("assigneeName", row[12]);
+                taskMap.put("assigneeUserName", row[13]);
+                taskMap.put("assignerUserDisplayName", row[14]);
+                taskMap.put("empCertificateId", row[15]);
+                taskMap.put("stepName", row[16]);
                 results.add(taskMap);
             }
 
@@ -284,12 +288,12 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
         parameters.put("stepCode", COMPLETED_STEP_CODE);
 
         if (fromDate != null) {
-            sql.append("AND t.created_date >= :fromDate ");
+            sql.append("AND t.completed_date >= :fromDate ");
             parameters.put("fromDate", fromDate);
         }
 
         if (toDate != null) {
-            sql.append("AND t.created_date <= :toDate ");
+            sql.append("AND t.completed_date <= :toDate ");
             parameters.put("toDate", toDate);
         }
 
@@ -328,12 +332,12 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
         parameters.put("stepCode", COMPLETED_STEP_CODE);
 
         if (fromDate != null) {
-            sql.append("AND t.created_date >= :fromDate ");
+            sql.append("AND t.completed_date >= :fromDate ");
             parameters.put("fromDate", fromDate);
         }
 
         if (toDate != null) {
-            sql.append("AND t.created_date <= :toDate ");
+            sql.append("AND t.completed_date <= :toDate ");
             parameters.put("toDate", toDate);
         }
 

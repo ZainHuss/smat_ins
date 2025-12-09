@@ -177,7 +177,9 @@ C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\mo
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\dao\impl\ChecklistDetailDataSourceDaoImpl.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\service\impl\CabinetFolderServiceImpl.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\service\impl\EquipmentInspectionFormItemServiceImpl.java
+C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\view\bean\StatisticsBean.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\util\FileCode.java
+C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\view\bean\CodingEmpCertificationTypeBean.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\entity\FormColumn.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\service\NotificationRecordService.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\dao\SysUserDao.java
@@ -291,6 +293,7 @@ C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\mo
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\dao\DocumentSharingDao.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\service\CabinetDefinitionService.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\service\WorkingGroupService.java
+C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\view\bean\EmailBean.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\service\FormColumnService.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\view\bean\LoginBean.java
 C:\Users\Hussein\workspace\attach_improve\smat-ins\src\main\java\com\smat\ins\model\dao\NotificationTypeDao.java

@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.hibernate.envers.Audited;
 
+import com.smat.ins.util.UtilityHelper;
+
 /**
  * Company entity. @author MyEclipse Persistence Tools
  */
@@ -22,11 +24,11 @@ public class Company implements java.io.Serializable {
 	private String name;
 	private String phone;
 	private String mobile;
+	private String email;
 	private String code;
 	private String address;
 	private String contactPerson;
 	private String details;
-	private String email;
 	private Set equipmentInspectionCertificates = new HashSet(0);
 	private Set equipmentInspectionForms = new HashSet(0);
 	private Set employees = new HashSet(0);
@@ -53,7 +55,6 @@ public class Company implements java.io.Serializable {
 		this.address = address;
 		this.contactPerson=contactPerson;
 		this.details=details;
-		this.email = null;
 		this.equipmentInspectionCertificates = equipmentInspectionCertificates;
 		this.equipmentInspectionForms = equipmentInspectionForms;
 		this.employees = employees;
@@ -94,6 +95,14 @@ public class Company implements java.io.Serializable {
 		this.mobile = mobile;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public String getCode() {
 		return this.code;
 	}
@@ -124,14 +133,6 @@ public class Company implements java.io.Serializable {
 
 	public void setDetails(String details) {
 		this.details = details;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public Set getEquipmentInspectionCertificates() {

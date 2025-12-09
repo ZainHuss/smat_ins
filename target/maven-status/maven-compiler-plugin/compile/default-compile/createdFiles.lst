@@ -76,6 +76,7 @@ com\smat\ins\model\service\impl\JobPositionHierarchyServiceImpl.class
 com\smat\ins\model\entity\SysUserSetting.class
 com\smat\ins\model\service\impl\ItemTypeServiceImpl.class
 com\smat\ins\model\dao\HierarchySystemDao.class
+com\smat\ins\view\bean\CodingEmpCertificationTypeBean.class
 com\smat\ins\util\AppExceptionHandler.class
 com\smat\ins\util\FileContentMarkerUtil.class
 com\smat\ins\model\dao\impl\CorrespondenceStateDaoImpl.class
@@ -410,6 +411,7 @@ com\smat\ins\model\service\impl\FolderSharingServiceImpl.class
 com\smat\ins\model\dao\CorrespondenceStateDao.class
 com\smat\ins\model\service\CorrespondenceTransmissionService.class
 com\smat\ins\model\service\impl\CompletedTaskServiceImpl.class
+com\smat\ins\view\bean\EmailBean.class
 com\smat\ins\model\service\impl\SysRolePermissionServiceImpl.class
 com\smat\ins\model\dao\CorrespondenceTransmissionDao.class
 com\smat\ins\view\app\App.class
@@ -458,6 +460,7 @@ com\smat\ins\model\service\CorrespondenceTypeService.class
 com\smat\ins\model\service\impl\SysRoleServiceImpl.class
 com\smat\ins\model\dao\impl\CorrespondenceArchiveDaoImpl.class
 com\smat\ins\view\bean\PdfViewerBean.class
+com\smat\ins\view\bean\StatisticsBean.class
 com\smat\ins\model\service\NotificationService.class
 com\smat\ins\model\service\impl\CabinetServiceImpl.class
 com\smat\ins\model\service\HierarchySystemDefService.class

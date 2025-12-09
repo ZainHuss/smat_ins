@@ -156,6 +156,11 @@
 		<view-id value="/views/coding/purposeType.jsf" />
 	</url-mapping>
 
+	<url-mapping id="empCertificationType">
+		<pattern value="/empCertificationType" />
+		<view-id value="/views/coding/empCertificationType.jsf" />
+	</url-mapping>
+
 	<url-mapping id="purposeType">
 		<pattern value="/purposeType" />
 		<view-id value="/views/coding/purposeType.jsf" />
@@ -164,6 +169,11 @@
 	<url-mapping id="company">
 		<pattern value="/company" />
 		<view-id value="/views/coding/company.jsf" />
+	</url-mapping>
+
+	<url-mapping id="email">
+		<pattern value="/email" />
+		<view-id value="/views/email/email.xhtml" />
 	</url-mapping>
 
 	<url-mapping id="viewTemplate">
@@ -351,6 +361,11 @@
 	<url-mapping id="task/search">
 		<pattern value="/task/search" />
 		<view-id value="/views/tasks/tasksearch.jsf" />
+	</url-mapping>
+
+	<url-mapping id="statistics">
+		<pattern value="/statistics" />
+		<view-id value="/views/statics/statistics.xhtml" />
 	</url-mapping>
 	
 </pretty-config>

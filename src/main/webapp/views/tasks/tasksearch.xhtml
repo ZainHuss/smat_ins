@@ -1,15 +1,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:jsf="http://xmlns.jcp.org/jsf"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:pe="http://primefaces.org/ui/extensions"
-                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-                xmlns:o="http://omnifaces.org/ui"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:of="http://omnifaces.org/functions"
-                template="/views/mail/mail-template.xhtml">
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 xmlns:jsf="http://xmlns.jcp.org/jsf"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:pe="http://primefaces.org/ui/extensions"
+                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                 xmlns:o="http://omnifaces.org/ui"
+                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                 xmlns:of="http://omnifaces.org/functions"
+                 template="/views/mail/mail-template.xhtml">
 
     <ui:define name="section-head">
         <div class="section-header">
@@ -1244,21 +1244,6 @@
                                 </div>
 
                                 <div class="section-container">
-                                    <!-- Assignee -->
-                                    <div class="form-group">
-                                        <label for="assignee" class="form-label">Assignee</label>
-                                        <div class="input-container">
-                                            <p:selectOneMenu id="assignee" value="#{taskSearchBean.assignee}"
-                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
-                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
-                                                <f:selectItems
-                                                        itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
-                                                        itemValue="#{userAlias}" var="userAlias"
-                                                        value="#{taskSearchBean.userAliasList}" />
-                                            </p:selectOneMenu>
-                                        </div>
-                                    </div>
-
                                     <!-- Assigner -->
                                     <div class="form-group">
                                         <label for="assigner" class="form-label">Assigner</label>
@@ -1274,8 +1259,35 @@
                                         </div>
                                     </div>
 
-                                    <!-- Empty cell for alignment -->
-                                    <div></div>
+                                    <!-- Inspector (was Assignee) -->
+                                    <div class="form-group">
+                                        <label for="assignee" class="form-label">Inspector</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="assignee" value="#{taskSearchBean.assignee}"
+                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems
+                                                        itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                                        itemValue="#{userAlias}" var="userAlias"
+                                                        value="#{taskSearchBean.userAliasList}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
+
+                                    <!-- Reviewer (new) -->
+                                    <div class="form-group">
+                                        <label for="reviewer" class="form-label">Reviewer</label>
+                                        <div class="input-container">
+                                            <p:selectOneMenu id="reviewer" value="#{taskSearchBean.reviewer}"
+                                                             converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
+                                                <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems
+                                                        itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
+                                                        itemValue="#{userAlias}" var="userAlias"
+                                                        value="#{taskSearchBean.userAliasList}" />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1422,7 +1434,7 @@
                                 </div>
                             </p:column>
 
-                            <!-- Assignee Column -->
+                            <!-- Assigner Column -->
                             <p:column headerText="Assigner" style="min-width: 160px;">
                                 <div class="assignee-cell">
                                     <i class="pi pi-user" style="color: var(--accent); margin-right: 8px;"></i>
