@@ -1,15 +1,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 xmlns:jsf="http://xmlns.jcp.org/jsf"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                 xmlns:ui="http://java.sun.com/jsf/facelets"
-                 xmlns:p="http://primefaces.org/ui"
-                 xmlns:pe="http://primefaces.org/ui/extensions"
-                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-                 xmlns:o="http://omnifaces.org/ui"
-                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                 xmlns:of="http://omnifaces.org/functions"
-                 template="/views/mail/mail-template.xhtml">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:of="http://omnifaces.org/functions"
+                template="/views/mail/mail-template.xhtml">
 
     <ui:define name="section-head">
         <div class="section-header">
@@ -1244,9 +1244,9 @@
                                 </div>
 
                                 <div class="section-container">
-                                    <!-- Assigner -->
+                                    <!-- Coordinator (Assigner) -->
                                     <div class="form-group">
-                                        <label for="assigner" class="form-label">Assigner</label>
+                                        <label for="assigner" class="form-label">Assigner (Coordinator)</label>
                                         <div class="input-container">
                                             <p:selectOneMenu id="assigner" value="#{taskSearchBean.assigner}"
                                                              converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
@@ -1254,27 +1254,27 @@
                                                 <f:selectItems
                                                         itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
                                                         itemValue="#{userAlias}" var="userAlias"
-                                                        value="#{taskSearchBean.userAliasList}" />
+                                                        value="#{taskSearchBean.coordinatorList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
 
-                                    <!-- Inspector (was Assignee) -->
+                                    <!-- Inspector -->
                                     <div class="form-group">
-                                        <label for="assignee" class="form-label">Inspector</label>
+                                        <label for="inspector" class="form-label">Inspector</label>
                                         <div class="input-container">
-                                            <p:selectOneMenu id="assignee" value="#{taskSearchBean.assignee}"
+                                            <p:selectOneMenu id="inspector" value="#{taskSearchBean.inspector}"
                                                              converter="omnifaces.SelectItemsIndexConverter" styleClass="ui-inputfield">
                                                 <f:selectItem itemLabel="#{interfaceLabel.choose}" itemValue="" noSelectionOption="true"/>
                                                 <f:selectItems
                                                         itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
                                                         itemValue="#{userAlias}" var="userAlias"
-                                                        value="#{taskSearchBean.userAliasList}" />
+                                                        value="#{taskSearchBean.inspectorList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
 
-                                    <!-- Reviewer (new) -->
+                                    <!-- Reviewer -->
                                     <div class="form-group">
                                         <label for="reviewer" class="form-label">Reviewer</label>
                                         <div class="input-container">
@@ -1284,7 +1284,7 @@
                                                 <f:selectItems
                                                         itemLabel="#{userAlias.sysUserBySysUser.displayName} / #{userAlias.organizationByOrganization.name} / #{userAlias.jobPosition.name}"
                                                         itemValue="#{userAlias}" var="userAlias"
-                                                        value="#{taskSearchBean.userAliasList}" />
+                                                        value="#{taskSearchBean.reviewerList}" />
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
@@ -1434,7 +1434,7 @@
                                 </div>
                             </p:column>
 
-                            <!-- Assigner Column -->
+                            <!-- Assignee Column -->
                             <p:column headerText="Assigner" style="min-width: 160px;">
                                 <div class="assignee-cell">
                                     <i class="pi pi-user" style="color: var(--accent); margin-right: 8px;"></i>

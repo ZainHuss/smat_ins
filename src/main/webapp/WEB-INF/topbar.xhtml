@@ -699,11 +699,14 @@
                                         </h:link>
                                     </li>
                                     <li class="nk-menu-item">
-                                        <h:link styleClass="nk-menu-link" outcome="pretty:email">
+                                        <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('018')}"
+                                                styleClass="nk-menu-link" outcome="pretty:email">
                                             <span class="menu-icon"><i class="fa fa-paper-plane primary-color" aria-hidden="true"></i></span>
                                             Email
                                         </h:link>
                                     </li>
+
+
                                     <li class="nk-menu-item">
                                         <h:link rendered="#{!loginBean.user.isSuperAdmin and loginBean.hasSysPermission('013')}"
                                                 outcome="pretty:inspection/my-tasks"

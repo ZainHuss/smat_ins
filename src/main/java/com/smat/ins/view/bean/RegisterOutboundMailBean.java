@@ -463,6 +463,8 @@ public class RegisterOutboundMailBean implements Serializable {
     private CompanyService companyService;
     private EquipmentCategoryService equipmentCategoryService;
     private SysUserService sysUserService;
+    private com.smat.ins.model.service.EquipmentInspectionFormService equipmentInspectionFormService;
+    private com.smat.ins.model.service.EmpCertificationService empCertificationService;
     // #endregion
 
     @Inject
@@ -508,6 +510,18 @@ public class RegisterOutboundMailBean implements Serializable {
                     }
                 }
 
+            }
+
+            // initialize form services used to create/update inspection/certification forms
+            try {
+                equipmentInspectionFormService = (com.smat.ins.model.service.EquipmentInspectionFormService) BeanUtility.getBean("equipmentInspectionFormService");
+            } catch (Exception e) {
+                equipmentInspectionFormService = null;
+            }
+            try {
+                empCertificationService = (com.smat.ins.model.service.EmpCertificationService) BeanUtility.getBean("empCertificationService");
+            } catch (Exception e) {
+                empCertificationService = null;
             }
 
             viewDocFiles = false;
@@ -868,6 +882,77 @@ public class RegisterOutboundMailBean implements Serializable {
                     inboxPushContext.send("ajaxListenerEvent", recipient.getUserAlias().getSysUserBySysUser().getId());
                 }
                 UtilityHelper.addInfoMessage(localizationService.getInfoMessage().getString("operationSuccess"));
+                // Ensure inspection / certification forms reflect the assigned user immediately
+                try {
+                    if (correspondence.getCorrespondenceTasks() != null && !correspondence.getCorrespondenceTasks().isEmpty()) {
+                        for (Object o : correspondence.getCorrespondenceTasks()) {
+                            try {
+                                CorrespondenceTask ct = (CorrespondenceTask) o;
+                                if (ct == null || ct.getTask() == null) continue;
+                                Task t = ct.getTask();
+                                if (t.getUserAliasByAssignTo() == null || t.getUserAliasByAssignTo().getSysUserBySysUser() == null) continue;
+                                com.smat.ins.model.entity.SysUser assignee = t.getUserAliasByAssignTo().getSysUserBySysUser();
+                                com.smat.ins.model.entity.ServiceType st = t.getServiceType();
+                                String code = st != null ? st.getCode() : null;
+                                // Equipment inspection (code '001') -> ensure EquipmentInspectionForm exists and inspectionBy is set
+                                if ("001".equals(code) && equipmentInspectionFormService != null) {
+                                    try {
+                                        com.smat.ins.model.entity.EquipmentInspectionForm eif = null;
+                                        try { eif = equipmentInspectionFormService.getBy(t.getId()); } catch (Exception ignore) { eif = null; }
+                                        if (eif == null) {
+                                            eif = new com.smat.ins.model.entity.EquipmentInspectionForm();
+                                            eif.setCompany(t.getCompany());
+                                            eif.setSysUserByInspectionBy(assignee);
+                                            // link workflow to the task so getBy(taskId) will find this form
+                                            java.util.Set inspectionFormWorkflows = eif.getInspectionFormWorkflows();
+                                            if (inspectionFormWorkflows == null) inspectionFormWorkflows = new java.util.HashSet();
+                                            com.smat.ins.model.entity.InspectionFormWorkflow wf = new com.smat.ins.model.entity.InspectionFormWorkflow();
+                                            wf.setEquipmentInspectionForm(eif);
+                                            wf.setTask(t);
+                                            inspectionFormWorkflows.add(wf);
+                                            eif.setInspectionFormWorkflows(inspectionFormWorkflows);
+                                            equipmentInspectionFormService.saveOrUpdate(eif);
+                                        } else if (eif.getSysUserByInspectionBy() == null) {
+                                            eif.setSysUserByInspectionBy(assignee);
+                                            equipmentInspectionFormService.saveOrUpdate(eif);
+                                        }
+                                    } catch (Exception e) {
+                                        log.warn("Failed to create/update EquipmentInspectionForm for task {}", t.getId(), e);
+                                    }
+                                }
+                                // Employee certification (use code '002' as training/cert type) -> ensure EmpCertification exists and inspectedBy is set
+                                else if ("002".equals(code) && empCertificationService != null) {
+                                    try {
+                                        com.smat.ins.model.entity.EmpCertification ec = null;
+                                        try { ec = empCertificationService.getBy(t.getId()); } catch (Exception ignore) { ec = null; }
+                                        if (ec == null) {
+                                            ec = new com.smat.ins.model.entity.EmpCertification();
+                                            ec.setSysUserByInspectedBy(assignee);
+                                            // link workflow to the task so getBy(taskId) will find this cert (via EmpCertificationWorkflow)
+                                            java.util.Set empWorkflows = ec.getEmpCertificationWorkflows();
+                                            if (empWorkflows == null) empWorkflows = new java.util.HashSet();
+                                            com.smat.ins.model.entity.EmpCertificationWorkflow ew = new com.smat.ins.model.entity.EmpCertificationWorkflow();
+                                            ew.setEmpCertification(ec);
+                                            ew.setTask(t);
+                                            empWorkflows.add(ew);
+                                            ec.setEmpCertificationWorkflows(empWorkflows);
+                                            empCertificationService.saveOrUpdate(ec);
+                                        } else if (ec.getSysUserByInspectedBy() == null) {
+                                            ec.setSysUserByInspectedBy(assignee);
+                                            empCertificationService.saveOrUpdate(ec);
+                                        }
+                                    } catch (Exception e) {
+                                        log.warn("Failed to create/update EmpCertification for task {}", t.getId(), e);
+                                    }
+                                }
+                            } catch (Exception ex) {
+                                // ignore per-task failures
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("Error while syncing forms after correspondence send", e);
+                }
                 // clear in-memory tasks/map to avoid leaking between operations
                 if (correspondenceTasks != null) {
                     correspondenceTasks.clear();

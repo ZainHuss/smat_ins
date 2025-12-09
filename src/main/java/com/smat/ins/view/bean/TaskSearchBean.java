@@ -54,7 +54,6 @@ public class TaskSearchBean implements Serializable {
     private Date fromDate;
     private Date toDate;
     private UserAlias assignee;
-    private UserAlias reviewer;
 
     // New search criteria fields
     private Company company;
@@ -67,12 +66,20 @@ public class TaskSearchBean implements Serializable {
     private Date doneToDate;
     private String taskStatus; // Combined status filter
     private String workOrderFilter; // search by work order / correspondence id or jobNo
+    private UserAlias inspector;
+    private UserAlias reviewer;
 
     // Results
     private List<Task> searchResults = new ArrayList<>();
+    // cached display names for inspector/reviewer per task id to avoid N+1 during rendering
+    private Map<Integer, String> inspectorNameByTask = new HashMap<>();
+    private Map<Integer, String> reviewerNameByTask = new HashMap<>();
     // cached grouped results by work order (computed on demand)
     private Map<String, List<Task>> groupedResultsByWorkOrder;
     private List<UserAlias> userAliasList = new ArrayList<>();
+    private List<UserAlias> inspectorList = new ArrayList<>();
+    private List<UserAlias> reviewerList = new ArrayList<>();
+    private List<UserAlias> coordinatorList = new ArrayList<>();
     private List<Company> companyList = new ArrayList<>();
     private List<EquipmentCategory> equipmentCategoryList = new ArrayList<>();
     private List<ServiceType> serviceTypeList = new ArrayList<>();
@@ -104,6 +111,32 @@ public class TaskSearchBean implements Serializable {
             companyList = companyService.findAll();
             equipmentCategoryList = equipmentCategoryService.findAll();
             serviceTypeList = serviceTypeService.findAll();
+            // populate role-specific alias lists (Inspector=001, Reviewer=002, Coordinator=004)
+            try {
+                List<UserAlias> allAliases = userAliasService.getAllWithDetails();
+                if (allAliases != null) {
+                    for (UserAlias ua : allAliases) {
+                        if (ua == null || ua.getSysUserBySysUser() == null) continue;
+                        if (ua.getSysUserBySysUser().getSysUserRoles() != null) {
+                            for (Object oRole : ua.getSysUserBySysUser().getSysUserRoles()) {
+                                try {
+                                    com.smat.ins.model.entity.SysUserRole sur = (com.smat.ins.model.entity.SysUserRole) oRole;
+                                    if (sur != null && sur.getSysRole() != null) {
+                                        String code = sur.getSysRole().getCode();
+                                        if ("001".equals(code)) { // inspector
+                                            inspectorList.add(ua); break;
+                                        } else if ("002".equals(code)) { // reviewer
+                                            reviewerList.add(ua); break;
+                                        } else if ("004".equals(code)) { // coordinator
+                                            coordinatorList.add(ua); break;
+                                        }
+                                    }
+                                } catch (Exception ignore) {}
+                            }
+                        }
+                    }
+                }
+            } catch (Exception ignore) {}
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -163,30 +196,6 @@ public class TaskSearchBean implements Serializable {
                         || !assigner.getId().equals(task.getUserAliasByAssigner().getId()));
             }
 
-            // Reviewer filter: map to form-level ReviewedBy (equipment inspection or emp certification)
-            if (reviewer != null) {
-                final com.smat.ins.model.entity.SysUser reviewerSysUser = reviewer.getSysUserBySysUser();
-                searchResults.removeIf(task -> {
-                    try {
-                        if (task.getEquipmentCategory() != null) {
-                            EquipmentInspectionForm eif = equipmentInspectionFormService.getBy(task.getId());
-                            if (eif != null && eif.getSysUserByReviewedBy() != null) {
-                                return !reviewerSysUser.getId().equals(eif.getSysUserByReviewedBy().getId());
-                            }
-                            return true; // no form or no reviewer -> exclude
-                        } else {
-                            EmpCertification ec = empCertificationService.getBy(task.getId());
-                            if (ec != null && ec.getSysUserByReviewedBy() != null) {
-                                return !reviewerSysUser.getId().equals(ec.getSysUserByReviewedBy().getId());
-                            }
-                            return true; // no cert or no reviewer -> exclude
-                        }
-                    } catch (Exception e) {
-                        return true;
-                    }
-                });
-            }
-
             if (completedFromDate != null) {
                 searchResults.removeIf(
                         task -> task.getCompletedDate() == null || task.getCompletedDate().before(completedFromDate));
@@ -224,6 +233,82 @@ public class TaskSearchBean implements Serializable {
                         break;
                 }
             }
+
+            // Inspector filter: primary source is task.assign_to (userAliasByAssignTo)
+            if (inspector != null) {
+                searchResults.removeIf(task -> {
+                    try {
+                        if (task.getUserAliasByAssignTo() != null && task.getUserAliasByAssignTo().getSysUserBySysUser() != null) {
+                            return !inspector.getSysUserBySysUser().getId()
+                                    .equals(task.getUserAliasByAssignTo().getSysUserBySysUser().getId());
+                        }
+
+                        // If assign_to not present, fallback to form-based inspector if available
+                        try {
+                            if (task.getEquipmentCategory() != null && equipmentInspectionFormService != null) {
+                                EquipmentInspectionForm eif = equipmentInspectionFormService.getBy(task.getId());
+                                if (eif != null && eif.getSysUserByInspectionBy() != null) {
+                                    return !inspector.getSysUserBySysUser().getId()
+                                            .equals(eif.getSysUserByInspectionBy().getId());
+                                }
+                            } else if (empCertificationService != null) {
+                                try {
+                                    EmpCertification ec = empCertificationService.getBy(task.getId());
+                                    if (ec != null && ec.getSysUserByInspectedBy() != null) {
+                                        return !inspector.getSysUserBySysUser().getId()
+                                                .equals(ec.getSysUserByInspectedBy().getId());
+                                    }
+                                } catch (Exception ex) { /* ignore and treat as not matched */ }
+                            }
+                        } catch (Exception ignore) { }
+
+                        // If neither assign_to nor form info matched, exclude the task
+                        return true;
+                    } catch (Exception e) {
+                        return true;
+                    }
+                });
+            }
+
+            // Reviewer filter: primary source is workflow tables attached to the Task
+            if (reviewer != null) {
+                searchResults.removeIf(task -> {
+                    try {
+                        // 1) Check inspectionFormWorkflows on the task
+                        try {
+                            if (task.getInspectionFormWorkflows() != null && !task.getInspectionFormWorkflows().isEmpty()) {
+                                for (Object ow : task.getInspectionFormWorkflows()) {
+                                    com.smat.ins.model.entity.InspectionFormWorkflow wf = (com.smat.ins.model.entity.InspectionFormWorkflow) ow;
+                                    if (wf != null && wf.getReviewedBy() != null) {
+                                        return !reviewer.getSysUserBySysUser().getId().equals(wf.getReviewedBy().getId());
+                                    }
+                                }
+                            }
+                        } catch (Exception ignore) {}
+
+                        // 2) Check empCertificationWorkflows on the task
+                        try {
+                            if (task.getEmpCertificationWorkflows() != null && !task.getEmpCertificationWorkflows().isEmpty()) {
+                                for (Object ow : task.getEmpCertificationWorkflows()) {
+                                    com.smat.ins.model.entity.EmpCertificationWorkflow ew = (com.smat.ins.model.entity.EmpCertificationWorkflow) ow;
+                                    if (ew != null && ew.getSysUser() != null) {
+                                        return !reviewer.getSysUserBySysUser().getId().equals(ew.getSysUser().getId());
+                                    }
+                                }
+                            }
+                        } catch (Exception ignore) {}
+
+                        // 3) Fallback: check task.assignTo (some flows assign reviewer there)
+                        if (task.getUserAliasByAssignTo() != null && task.getUserAliasByAssignTo().getSysUserBySysUser() != null) {
+                            return !reviewer.getSysUserBySysUser().getId().equals(task.getUserAliasByAssignTo().getSysUserBySysUser().getId());
+                        }
+
+                    } catch (Exception e) {
+                        return true;
+                    }
+                    return true;
+                });
+            }
             // Work order filter (search by correspondence id or jobNo)
             if (workOrderFilter != null && !workOrderFilter.trim().isEmpty()) {
                 final String filter = workOrderFilter.trim().toLowerCase();
@@ -239,6 +324,39 @@ public class TaskSearchBean implements Serializable {
 
             // reset grouped cache so UI will recompute
             groupedResultsByWorkOrder = null;
+
+            // Prefetch inspector/reviewer display names for visible tasks to avoid N+1 in the UI
+            inspectorNameByTask.clear();
+            reviewerNameByTask.clear();
+            if (searchResults != null) {
+                for (Task task : searchResults) {
+                    try {
+                        Integer tid = task.getId();
+                        if (tid == null) continue;
+                        // Prefer using service.getBy(taskId) which queries via workflow
+                        try {
+                            EquipmentInspectionForm eif = null;
+                            EmpCertification ec = null;
+                            try { eif = equipmentInspectionFormService.getBy(tid); } catch (Exception ignore) { eif = null; }
+                            try { ec = empCertificationService.getBy(tid); } catch (Exception ignore) { ec = null; }
+
+                            if (eif != null && eif.getSysUserByInspectionBy() != null) {
+                                inspectorNameByTask.put(tid, eif.getSysUserByInspectionBy().getDisplayName());
+                            } else if (ec != null && ec.getSysUserByInspectedBy() != null) {
+                                inspectorNameByTask.put(tid, ec.getSysUserByInspectedBy().getDisplayName());
+                            }
+
+                            if (eif != null && eif.getSysUserByReviewedBy() != null) {
+                                reviewerNameByTask.put(tid, eif.getSysUserByReviewedBy().getDisplayName());
+                            } else if (ec != null && ec.getSysUserByReviewedBy() != null) {
+                                reviewerNameByTask.put(tid, ec.getSysUserByReviewedBy().getDisplayName());
+                            }
+                        } catch (Exception e) {
+                            // ignore per-task
+                        }
+                    } catch (Exception ex) { /* ignore */ }
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -372,7 +490,6 @@ public class TaskSearchBean implements Serializable {
         fromDate = null;
         toDate = null;
         assignee = null;
-        reviewer = null;
 
         // Clear new filters
         company = null;
@@ -390,22 +507,49 @@ public class TaskSearchBean implements Serializable {
     }
 
     public String getReviewerTask(Task task) {
-        if (task.getEquipmentCategory() != null) {
-            EquipmentInspectionForm equipmentInspectionForm = equipmentInspectionFormService.getBy(task.getId());
-            if (equipmentInspectionForm != null)
-                if (equipmentInspectionForm.getSysUserByReviewedBy() != null)
-                    return equipmentInspectionForm.getSysUserByReviewedBy().getDisplayName();
-                else
-                    return "Not assigned";
-        } else {
-            EmpCertification empCertification = empCertificationService.getBy(task.getId());
-            if (empCertification != null)
-                if (empCertification.getSysUserByReviewedBy() != null)
-                    return empCertification.getSysUserByReviewedBy().getDisplayName();
-                else
-                    return "Not assigned";
-        }
+        if (task == null) return "Not assigned";
 
+        // 1) If workflow attached to the task contains reviewer info, use it (immediate)
+        try {
+            if (task.getInspectionFormWorkflows() != null && !task.getInspectionFormWorkflows().isEmpty()) {
+                for (Object ow : task.getInspectionFormWorkflows()) {
+                    com.smat.ins.model.entity.InspectionFormWorkflow wf = (com.smat.ins.model.entity.InspectionFormWorkflow) ow;
+                    if (wf != null && wf.getReviewedBy() != null) {
+                        return wf.getReviewedBy().getDisplayName();
+                    }
+                }
+            }
+        } catch (Exception ignore) {}
+
+        try {
+            if (task.getEmpCertificationWorkflows() != null && !task.getEmpCertificationWorkflows().isEmpty()) {
+                for (Object ow : task.getEmpCertificationWorkflows()) {
+                    com.smat.ins.model.entity.EmpCertificationWorkflow ew = (com.smat.ins.model.entity.EmpCertificationWorkflow) ow;
+                    if (ew != null && ew.getSysUser() != null) {
+                        return ew.getSysUser().getDisplayName();
+                    }
+                }
+            }
+        } catch (Exception ignore) {}
+
+        // 2) Next: check cached prefetch
+        Integer tid = task.getId();
+        if (tid != null && reviewerNameByTask.containsKey(tid)) return reviewerNameByTask.get(tid);
+
+        // 3) Fallback to form-based reviewer (service lookup)
+        try {
+            if (task.getEquipmentCategory() != null) {
+                EquipmentInspectionForm equipmentInspectionForm = equipmentInspectionFormService.getBy(task.getId());
+                if (equipmentInspectionForm != null && equipmentInspectionForm.getSysUserByReviewedBy() != null)
+                    return equipmentInspectionForm.getSysUserByReviewedBy().getDisplayName();
+            } else {
+                EmpCertification empCertification = empCertificationService.getBy(task.getId());
+                if (empCertification != null && empCertification.getSysUserByReviewedBy() != null)
+                    return empCertification.getSysUserByReviewedBy().getDisplayName();
+            }
+        } catch (Exception ignore) {}
+
+        // 4) final fallback
         return "Not assigned";
     }
     public static enum TaskStatus {
@@ -454,21 +598,30 @@ public class TaskSearchBean implements Serializable {
     }
 
     public String getInspectorTask(Task task) {
-        if (task.getEquipmentCategory() != null) {
-            EquipmentInspectionForm equipmentInspectionForm = equipmentInspectionFormService.getBy(task.getId());
-            if (equipmentInspectionForm != null)
-                if (equipmentInspectionForm.getSysUserByInspectionBy() != null)
+        if (task == null) return "Not assigned";
+        // Primary: read directly from task.assign_to
+        try {
+            if (task.getUserAliasByAssignTo() != null && task.getUserAliasByAssignTo().getSysUserBySysUser() != null) {
+                return task.getUserAliasByAssignTo().getSysUserBySysUser().getDisplayName();
+            }
+        } catch (Exception ignore) {}
+
+        // Next: check cached prefetch
+        Integer tid = task.getId();
+        if (tid != null && inspectorNameByTask.containsKey(tid)) return inspectorNameByTask.get(tid);
+
+        // Fallback: check form-based inspector
+        try {
+            if (task.getEquipmentCategory() != null) {
+                EquipmentInspectionForm equipmentInspectionForm = equipmentInspectionFormService.getBy(task.getId());
+                if (equipmentInspectionForm != null && equipmentInspectionForm.getSysUserByInspectionBy() != null)
                     return equipmentInspectionForm.getSysUserByInspectionBy().getDisplayName();
-                else
-                    return "Not assigned";
-        } else {
-            EmpCertification empCertification = empCertificationService.getBy(task.getId());
-            if (empCertification != null)
-                if (empCertification.getSysUserByInspectedBy() != null)
+            } else {
+                EmpCertification empCertification = empCertificationService.getBy(task.getId());
+                if (empCertification != null && empCertification.getSysUserByInspectedBy() != null)
                     return empCertification.getSysUserByInspectedBy().getDisplayName();
-                else
-                    return "Not assigned";
-        }
+            }
+        } catch (Exception ignore) {}
 
         return "Not assigned";
     }
@@ -634,6 +787,7 @@ public class TaskSearchBean implements Serializable {
     }
 
 
+
     // Getters and Setters
     public String getTaskDescription() {
         return taskDescription;
@@ -682,6 +836,10 @@ public class TaskSearchBean implements Serializable {
     public void setAssignee(UserAlias assignee) {
         this.assignee = assignee;
     }
+
+    public UserAlias getInspector() { return inspector; }
+    public void setInspector(UserAlias inspector) { this.inspector = inspector; }
+
     public UserAlias getReviewer() { return reviewer; }
     public void setReviewer(UserAlias reviewer) { this.reviewer = reviewer; }
 
@@ -700,6 +858,15 @@ public class TaskSearchBean implements Serializable {
     public void setUserAliasList(List<UserAlias> userAliasList) {
         this.userAliasList = userAliasList;
     }
+
+    public List<UserAlias> getInspectorList() { return inspectorList; }
+    public void setInspectorList(List<UserAlias> inspectorList) { this.inspectorList = inspectorList; }
+
+    public List<UserAlias> getReviewerList() { return reviewerList; }
+    public void setReviewerList(List<UserAlias> reviewerList) { this.reviewerList = reviewerList; }
+
+    public List<UserAlias> getCoordinatorList() { return coordinatorList; }
+    public void setCoordinatorList(List<UserAlias> coordinatorList) { this.coordinatorList = coordinatorList; }
 
     // New getters and setters
     public Company getCompany() {
