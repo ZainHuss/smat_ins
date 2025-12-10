@@ -1,0 +1,1981 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="section-content">
+        <style>
+            :root {
+                --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+                --teal-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+                --orange-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+                --purple-gradient: linear-gradient(135deg, #9d50bb 0%, #6e48aa 100%);
+                --green-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+                --pink-gradient: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+                --cyan-gradient: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+                --dark-bg: #1a1d28;
+                --card-bg: #ffffff;
+                --light-bg: #f8fafc;
+                --border-color: #e2e8f0;
+                --text-primary: #2d3748;
+                --text-secondary: #718096;
+                --text-light: #a0aec0;
+                --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+                --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.06);
+                --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+                --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+                --radius-sm: 8px;
+                --radius-md: 12px;
+                --radius-lg: 16px;
+                --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* تحسينات عامة */
+            body {
+                background-color: var(--light-bg);
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+
+            /* تحسين التبويبات */
+            .stats-container .ui-tabview {
+                background: transparent;
+                border: none;
+                padding: 0;
+            }
+
+            .stats-container .ui-tabview-nav {
+                display: flex;
+                background: white;
+                border-radius: var(--radius-md);
+                padding: 6px;
+                margin-bottom: 24px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-sm);
+                overflow: hidden;
+            }
+
+            .stats-container .ui-tabview-nav li {
+                flex: 1;
+                margin: 0;
+                border: none !important;
+                border-radius: var(--radius-sm) !important;
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .stats-container .ui-tabview-nav li a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 16px 24px !important;
+                color: var(--text-secondary) !important;
+                font-weight: 600;
+                font-size: 15px;
+                text-decoration: none;
+                transition: var(--transition);
+                border: none !important;
+                background: transparent !important;
+                position: relative;
+                z-index: 2;
+            }
+
+            .stats-container .ui-tabview-nav li.ui-state-active {
+                background: var(--primary-gradient) !important;
+                box-shadow: var(--shadow-md);
+            }
+
+            .stats-container .ui-tabview-nav li.ui-state-active a {
+                color: white !important;
+                background: transparent !important;
+            }
+
+            .stats-container .ui-tabview-nav li:not(.ui-state-active):hover {
+                background: rgba(102, 126, 234, 0.05) !important;
+            }
+
+            .stats-container .ui-tabview-nav li:not(.ui-state-active):hover a {
+                color: var(--text-primary) !important;
+            }
+
+            .stats-container .ui-tabview-panels {
+                background: transparent;
+                border: none;
+                padding: 0;
+            }
+
+            /* بطاقة الفلاتر */
+            .filter-section {
+                background: white;
+                border-radius: var(--radius-lg);
+                padding: 28px;
+                margin-bottom: 32px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+                transition: var(--transition);
+            }
+
+            .filter-section:hover {
+                box-shadow: var(--shadow-lg);
+            }
+
+            .filter-section .section-title {
+                font-size: 18px;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 24px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #f1f5f9;
+            }
+
+            .filter-section .section-title .pi {
+                font-size: 20px;
+                color: #667eea;
+            }
+
+            /* شبكة الفلاتر المحسنة */
+            .filter-grid {
+                display: grid;
+                grid-template-columns: repeat(1, 1fr);
+                gap: 24px;
+            }
+
+            @media (min-width: 768px) {
+                .filter-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media (min-width: 1200px) {
+                .filter-grid {
+                    grid-template-columns: repeat(4, 1fr);
+                }
+            }
+
+            /* عناصر الفلاتر */
+            .filter-item {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .filter-label {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-primary);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .filter-label .pi {
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* تحسينات للـ SelectOneMenu */
+            .filter-select .ui-selectonemenu {
+                width: 100% !important;
+                border: 2px solid var(--border-color) !important;
+                border-radius: var(--radius-sm) !important;
+                padding: 12px 16px !important;
+                background: white !important;
+                color: var(--text-primary) !important;
+                font-size: 14px !important;
+                transition: var(--transition) !important;
+            }
+
+            .filter-select .ui-selectonemenu:hover {
+                border-color: #cbd5e0 !important;
+            }
+
+            .filter-select .ui-selectonemenu:focus {
+                border-color: #667eea !important;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+                outline: none !important;
+            }
+
+            /* تحسينات للـ Calendar */
+            .filter-calendar .ui-inputfield {
+                width: 100% !important;
+                border: 2px solid var(--border-color) !important;
+                border-radius: var(--radius-sm) !important;
+                padding: 12px 16px !important;
+                background: white !important;
+                color: var(--text-primary) !important;
+                font-size: 14px !important;
+                transition: var(--transition) !important;
+            }
+
+            .filter-calendar .ui-inputfield:hover {
+                border-color: #cbd5e0 !important;
+            }
+
+            .filter-calendar .ui-inputfield:focus {
+                border-color: #667eea !important;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+                outline: none !important;
+            }
+
+            /* زر البحث */
+            .filter-actions {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 8px;
+            }
+
+            .search-btn {
+                background: var(--primary-gradient) !important;
+                border: none !important;
+                padding: 14px 32px !important;
+                border-radius: var(--radius-sm) !important;
+                color: white !important;
+                font-weight: 600 !important;
+                font-size: 15px !important;
+                transition: var(--transition) !important;
+                box-shadow: 0 4px 6px rgba(102,126,234,0.3) !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                min-width: 140px !important;
+                justify-content: center !important;
+            }
+
+            .search-btn:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4) !important;
+            }
+
+            .search-btn:active {
+                transform: translateY(0) !important;
+            }
+
+            /* بطاقات الإحصائيات */
+            .stats-section {
+                background: white;
+                border-radius: var(--radius-lg);
+                padding: 28px;
+                margin-bottom: 32px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+            }
+
+            .stats-section .section-header {
+                font-size: 20px;
+                font-weight: 700;
+                color: var(--text-primary);
+                margin-bottom: 28px;
+                position: relative;
+                padding-bottom: 16px;
+            }
+
+            .stats-section .section-header::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 4px;
+                background: var(--primary-gradient);
+                border-radius: 2px;
+            }
+
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(1, 1fr);
+                gap: 20px;
+                margin-bottom: 32px;
+            }
+
+            @media (min-width: 768px) {
+                .stats-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media (min-width: 1200px) {
+                .stats-grid {
+                    grid-template-columns: repeat(4, 1fr);
+                }
+            }
+
+            /* بطاقات الإحصاءات الفردية */
+            .stat-card {
+                background: white;
+                border-radius: var(--radius-md);
+                padding: 24px;
+                border: 1px solid var(--border-color);
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: var(--primary-gradient);
+                opacity: 0;
+                transition: var(--transition);
+            }
+
+            .stat-card:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-lg);
+                border-color: transparent;
+            }
+
+            .stat-card:hover::before {
+                opacity: 1;
+            }
+
+            .stat-card.equipment:hover {
+                border-color: #4facfe;
+            }
+
+            .stat-card.employee:hover {
+                border-color: #fa709a;
+            }
+
+            .stat-card.avg:hover {
+                border-color: #f093fb;
+            }
+
+            .stat-icon {
+                width: 56px;
+                height: 56px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+                font-size: 24px;
+                color: white;
+            }
+
+            .stat-card:nth-child(1) .stat-icon {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            .stat-card.equipment .stat-icon {
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+
+            .stat-card.employee .stat-icon {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            }
+
+            .stat-card.avg .stat-icon {
+                background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            }
+
+            .stat-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 8px;
+            }
+
+            .stat-value {
+                font-size: 32px;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
+
+            .stat-unit {
+                font-size: 14px;
+                color: var(--text-light);
+                font-weight: 500;
+            }
+
+            /* قسم أفضل المستخدمين - تصميم جديد */
+            .top-users-section {
+                background: white;
+                border-radius: var(--radius-lg);
+                padding: 32px;
+                margin-bottom: 32px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .top-users-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 6px;
+                background: linear-gradient(90deg, #00c9ff 0%, #92fe9d 100%);
+            }
+
+            .top-users-section .section-header {
+                font-size: 24px;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: 32px;
+                position: relative;
+                padding-bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .top-users-section .section-header::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 80px;
+                height: 5px;
+                background: linear-gradient(90deg, #00c9ff 0%, #92fe9d 100%);
+                border-radius: 3px;
+            }
+
+            .top-users-section .section-header .pi {
+                font-size: 28px;
+                background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            /* شبكة أفضل المستخدمين */
+            .top-users-grid {
+                display: grid;
+                grid-template-columns: repeat(1, 1fr);
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            @media (min-width: 768px) {
+                .top-users-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media (min-width: 1200px) {
+                .top-users-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+
+            /* بطاقة المستخدم المميزة */
+            .user-card {
+                background: white;
+                border-radius: var(--radius-lg);
+                padding: 0;
+                border: 1px solid var(--border-color);
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+                box-shadow: var(--shadow-md);
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .user-card:hover {
+                transform: translateY(-6px);
+                box-shadow: var(--shadow-xl);
+                border-color: transparent;
+            }
+
+            /* شريط التصنيف */
+            .user-rank {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                font-size: 18px;
+                color: white;
+                z-index: 2;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            .user-rank.gold {
+                background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            }
+
+            .user-rank.silver {
+                background: linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%);
+            }
+
+            .user-rank.bronze {
+                background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
+            }
+
+            .user-rank.other {
+                background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+            }
+
+            /* رأس بطاقة المستخدم */
+            .user-card-header {
+                padding: 24px 24px 20px;
+                background: linear-gradient(135deg, rgba(0, 201, 255, 0.05) 0%, rgba(146, 254, 157, 0.05) 100%);
+                border-bottom: 1px solid var(--border-color);
+                position: relative;
+            }
+
+            .user-icon-container {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .user-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                color: white;
+                flex-shrink: 0;
+                box-shadow: var(--shadow-md);
+            }
+
+            .user-icon.gradient-1 { background: var(--teal-gradient); }
+            .user-icon.gradient-2 { background: var(--orange-gradient); }
+            .user-icon.gradient-3 { background: var(--purple-gradient); }
+            .user-icon.gradient-4 { background: var(--green-gradient); }
+            .user-icon.gradient-5 { background: var(--pink-gradient); }
+            .user-icon.gradient-6 { background: var(--cyan-gradient); }
+
+            .user-name-container {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .user-name {
+                font-size: 20px;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: 4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .user-title {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                background: rgba(0, 201, 255, 0.1);
+                padding: 4px 10px;
+                border-radius: 20px;
+                display: inline-block;
+            }
+
+            /* محتوى بطاقة المستخدم */
+            .user-card-content {
+                padding: 20px 24px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .user-stats {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+                padding: 16px;
+                border-radius: var(--radius-md);
+                border: 1px solid rgba(226, 232, 240, 0.6);
+            }
+
+            .stat-label {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .tasks-count {
+                font-size: 32px;
+                font-weight: 900;
+                color: var(--text-primary);
+                line-height: 1;
+                background: linear-gradient(135deg, var(--primary-gradient));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .tasks-label {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-light);
+            }
+
+            /* قسم أفضل الشركات - تصميم جديد مذهل */
+            .top-companies-section {
+                background: white;
+                border-radius: var(--radius-lg);
+                padding: 32px;
+                margin-bottom: 32px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow-md);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .top-companies-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 6px;
+                background: linear-gradient(90deg, var(--teal-gradient), var(--purple-gradient));
+            }
+
+            .top-companies-section .section-header {
+                font-size: 24px;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: 32px;
+                position: relative;
+                padding-bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .top-companies-section .section-header::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 80px;
+                height: 5px;
+                background: linear-gradient(90deg, var(--teal-gradient), var(--purple-gradient));
+                border-radius: 3px;
+            }
+
+            .top-companies-section .section-header .pi {
+                font-size: 28px;
+                background: var(--teal-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            /* شبكة أفضل الشركات */
+            .top-companies-grid {
+                display: grid;
+                grid-template-columns: repeat(1, 1fr);
+                gap: 24px;
+                margin-bottom: 32px;
+            }
+
+            @media (min-width: 768px) {
+                .top-companies-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media (min-width: 1200px) {
+                .top-companies-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+
+            /* بطاقة الشركة المميزة */
+            .company-card {
+                background: white;
+                border-radius: var(--radius-lg);
+                padding: 0;
+                border: 1px solid var(--border-color);
+                transition: var(--transition);
+                position: relative;
+                overflow: hidden;
+                box-shadow: var(--shadow-md);
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .company-card:hover {
+                transform: translateY(-6px);
+                box-shadow: var(--shadow-xl);
+                border-color: transparent;
+            }
+
+            /* شريط التصنيف */
+            .company-rank {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 900;
+                font-size: 18px;
+                color: white;
+                z-index: 2;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            .company-rank.gold {
+                background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            }
+
+            .company-rank.silver {
+                background: linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%);
+            }
+
+            .company-rank.bronze {
+                background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
+            }
+
+            .company-rank.other {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+
+            /* رأس بطاقة الشركة */
+            .company-card-header {
+                padding: 24px 24px 20px;
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+                border-bottom: 1px solid var(--border-color);
+                position: relative;
+            }
+
+            .company-icon-container {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+            .company-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                color: white;
+                flex-shrink: 0;
+                box-shadow: var(--shadow-md);
+            }
+
+            .company-icon.gradient-1 { background: var(--teal-gradient); }
+            .company-icon.gradient-2 { background: var(--orange-gradient); }
+            .company-icon.gradient-3 { background: var(--purple-gradient); }
+            .company-icon.gradient-4 { background: var(--green-gradient); }
+            .company-icon.gradient-5 { background: var(--pink-gradient); }
+            .company-icon.gradient-6 { background: var(--cyan-gradient); }
+
+            .company-name-container {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .company-name {
+                font-size: 20px;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: 4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .company-category {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                background: rgba(102, 126, 234, 0.1);
+                padding: 4px 10px;
+                border-radius: 20px;
+                display: inline-block;
+            }
+
+            /* محتوى بطاقة الشركة */
+            .company-card-content {
+                padding: 20px 24px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            /* شريط التقدم */
+            .progress-container {
+                margin-top: 8px;
+            }
+
+            .progress-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+
+            .progress-label {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-secondary);
+            }
+
+            .progress-percentage {
+                font-size: 16px;
+                font-weight: 800;
+                color: var(--text-primary);
+            }
+
+            .progress-bar {
+                height: 10px;
+                background: #e2e8f0;
+                border-radius: 5px;
+                overflow: hidden;
+                position: relative;
+            }
+
+            .progress-fill {
+                height: 100%;
+                border-radius: 5px;
+                position: relative;
+                overflow: hidden;
+                transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .progress-fill::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                animation: shimmer 2s infinite;
+            }
+
+            @keyframes shimmer {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(100%); }
+            }
+
+            /* ألوان شريط التقدم */
+            .gradient-1 .progress-fill { background: var(--teal-gradient); }
+            .gradient-2 .progress-fill { background: var(--orange-gradient); }
+            .gradient-3 .progress-fill { background: var(--purple-gradient); }
+            .gradient-4 .progress-fill { background: var(--green-gradient); }
+            .gradient-5 .progress-fill { background: var(--pink-gradient); }
+            .gradient-6 .progress-fill { background: var(--cyan-gradient); }
+
+            /* ملخص الأداء */
+            .performance-summary {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-top: 8px;
+            }
+
+            .performance-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 12px;
+                background: white;
+                border-radius: var(--radius-sm);
+                border: 1px solid var(--border-color);
+                transition: var(--transition);
+            }
+
+            .performance-item:hover {
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+                transform: translateY(-2px);
+            }
+
+            .performance-value {
+                font-size: 20px;
+                font-weight: 800;
+                color: var(--text-primary);
+                margin-bottom: 4px;
+            }
+
+            .performance-label {
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                text-align: center;
+            }
+
+            /* تذييل بطاقة الشركة */
+            .company-card-footer,
+            .user-card-footer {
+                padding: 16px 24px;
+                background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.9) 100%);
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .view-details-btn {
+                background: transparent;
+                border: 2px solid #667eea;
+                color: #667eea;
+                padding: 8px 20px;
+                border-radius: var(--radius-sm);
+                font-weight: 600;
+                font-size: 14px;
+                cursor: pointer;
+                transition: var(--transition);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .view-details-btn:hover {
+                background: #667eea;
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            .success-rate {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #10b981;
+            }
+
+            /* رسالة عدم وجود بيانات */
+            .no-companies-message,
+            .no-users-message {
+                text-align: center;
+                padding: 60px 20px;
+                background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.9) 100%);
+                border-radius: var(--radius-lg);
+                border: 2px dashed var(--border-color);
+            }
+
+            .no-companies-icon,
+            .no-users-icon {
+                font-size: 64px;
+                color: var(--text-light);
+                margin-bottom: 20px;
+                opacity: 0.5;
+            }
+
+            .no-companies-title,
+            .no-users-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--text-secondary);
+                margin-bottom: 12px;
+            }
+
+            .no-companies-description,
+            .no-users-description {
+                font-size: 16px;
+                color: var(--text-light);
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            /* Pagination محسن */
+            .custom-paginator {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                margin-top: 32px;
+                padding: 16px;
+                background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.9) 100%);
+                border-radius: var(--radius-md);
+                border: 1px solid var(--border-color);
+            }
+
+            .page-btn {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-sm);
+                color: var(--text-primary);
+                font-weight: 600;
+                cursor: pointer;
+                transition: var(--transition);
+            }
+
+            .page-btn:hover {
+                background: #667eea;
+                color: white;
+                border-color: #667eea;
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-md);
+            }
+
+            .page-btn.active {
+                background: linear-gradient(135deg, var(--primary-gradient));
+                color: white;
+                border: none;
+            }
+
+            /* تحسينات للرسائل */
+            .ui-growl {
+                top: 80px !important;
+                right: 20px !important;
+            }
+
+            /* تأثيرات الظهور */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .animate-fade-in {
+                animation: fadeInUp 0.6s ease-out forwards;
+            }
+
+            .delay-1 { animation-delay: 0.1s; opacity: 0; }
+            .delay-2 { animation-delay: 0.2s; opacity: 0; }
+            .delay-3 { animation-delay: 0.3s; opacity: 0; }
+            .delay-4 { animation-delay: 0.4s; opacity: 0; }
+            .delay-5 { animation-delay: 0.5s; opacity: 0; }
+
+            /* تحسينات للاستجابة */
+            @media (max-width: 768px) {
+                .stats-container .ui-tabview-nav {
+                    flex-direction: column;
+                }
+
+                .stats-container .ui-tabview-nav li {
+                    width: 100%;
+                }
+
+                .filter-section,
+                .stats-section,
+                .top-companies-section,
+                .top-users-section {
+                    padding: 20px;
+                }
+
+                .stat-card {
+                    padding: 20px;
+                }
+
+                .stat-value {
+                    font-size: 28px;
+                }
+
+                .company-card-header,
+                .user-card-header {
+                    padding: 20px;
+                }
+
+                .company-icon,
+                .user-icon {
+                    width: 56px;
+                    height: 56px;
+                    font-size: 24px;
+                }
+
+                .company-name,
+                .user-name {
+                    font-size: 18px;
+                }
+
+                .performance-summary {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* ===== Added styles from stickerSearch.xhtml to match header/buttons look-and-feel ===== */
+            .header-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(8px);
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 16px;
+                box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.25s ease;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-title {
+                color: var(--text-primary);
+                font-size: 20px;
+                font-weight: 700;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .header-icon {
+                font-size: 22px;
+                color: #667eea;
+                transition: all 0.3s ease;
+            }
+
+            .search-filter-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(6px);
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 16px;
+                box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.25s ease;
+            }
+
+            .button-section {
+                display: flex;
+                gap: 0.6rem;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                margin-top: 8px;
+            }
+
+            .enhanced-button {
+                position: relative;
+                overflow: hidden;
+                border-radius: 20px !important;
+                padding: 8px 18px !important;
+                font-weight: 600 !important;
+                font-size: 14px !important;
+                transition: all 0.25s ease !important;
+                border: none !important;
+                min-width: 110px;
+                z-index: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .enhanced-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+                z-index: -1;
+                transform: scale(0);
+                transition: transform 0.45s ease;
+                border-radius: 20px;
+            }
+
+            .enhanced-button:hover::before { transform: scale(1); }
+
+            .ripple { position: relative; overflow: hidden; }
+            .ripple:after { content: ''; display:block; position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; background-image: radial-gradient(circle, rgba(255,255,255,0.35) 10%, transparent 10.01%); background-repeat:no-repeat; background-position:50%; transform: scale(10,10); opacity:0; transition: transform .5s, opacity 1s; }
+            .ripple:active:after { transform: scale(0,0); opacity: .25; transition: 0s; }
+
+            .search-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; color: white !important; box-shadow: 0 4px 12px rgba(102,126,234,0.18) !important; }
+            .reset-btn { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important; color: white !important; box-shadow: 0 4px 12px rgba(245,87,108,0.16) !important; }
+
+            .stats-panel { margin-top: 12px; padding: 12px; background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%); border-radius: 12px; border: 1px solid #eef2f7; }
+
+            .table-section { background: rgba(255,255,255,0.95); border-radius: 12px; padding: 14px; box-shadow: 0 5px 18px rgba(0,0,0,0.06); border: 1px solid rgba(255,255,255,0.2); margin-top: 12px; }
+
+            .results-counter { display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.2); color: var(--text-primary); font-weight:700; font-size:13px; padding:6px 10px; border-radius:20px; border:1px solid rgba(0,0,0,0.04); }
+
+            /* Enhanced pill-style tabs for Company/User Statistics */
+            .tabview-pills .ui-tabview-nav {
+                padding: 8px;
+                gap: 8px;
+                display: flex;
+                background: transparent !important;
+            }
+
+            .tabview-pills .ui-tabview-nav li {
+                flex: none;
+                margin: 0 !important;
+                border: none !important;
+                background: transparent !important;
+            }
+
+            .tabview-pills .ui-tabview-nav li a {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                padding: 12px 26px !important;
+                border-radius: 999px !important;
+                font-weight: 700 !important;
+                font-size: 18px !important; /* increased font size */
+                color: var(--text-primary) !important; /* stronger color for inactive */
+                background: rgba(255,255,255,0.95) !important;
+                border: 1px solid rgba(0,0,0,0.04) !important;
+                box-shadow: 0 8px 20px rgba(16,24,40,0.05) !important;
+                transition: all 200ms cubic-bezier(.4,0,.2,1) !important;
+                letter-spacing: 0.2px !important;
+            }
+
+            .tabview-pills .ui-tabview-nav li a .pi,
+            .tabview-pills .ui-tabview-nav li a em {
+                font-size: 20px !important; /* larger icon */
+                opacity: 0.98;
+                line-height: 1;
+            }
+
+            .tabview-pills .ui-tabview-nav li:hover a {
+                transform: translateY(-2px) !important;
+                color: var(--text-primary) !important;
+                border-color: rgba(102,126,234,0.12) !important;
+            }
+
+            .tabview-pills .ui-tabview-nav li.ui-state-active {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                box-shadow: 0 8px 24px rgba(102,126,234,0.18) !important;
+            }
+
+            .tabview-pills .ui-tabview-nav li.ui-state-active a {
+                color: #fff !important;
+                background: transparent !important;
+                border-color: transparent !important;
+                font-size: 19px !important; /* slightly larger for active */
+                font-weight: 800 !important;
+                letter-spacing: 0.4px !important;
+            }
+
+            .tabview-pills .ui-tabview-nav li a:focus {
+                outline: none !important;
+                box-shadow: 0 0 0 4px rgba(102,126,234,0.12) !important;
+            }
+
+            /* small responsive tweak: allow tabs to wrap on mobile */
+            @media (max-width: 640px) {
+                .tabview-pills .ui-tabview-nav { flex-wrap: wrap; }
+                .tabview-pills .ui-tabview-nav li a { padding: 8px 14px !important; font-size: 16px !important; }
+            }
+
+            /* Orange tab header styles */
+            .tabview-pills .ui-tabview-nav li.tab-header-orange a {
+                color: #b45309 !important; /* dark orange text for inactive */
+                background: rgba(255,243,199,0.6) !important; /* subtle warm background */
+                border-color: rgba(245,158,11,0.12) !important;
+            }
+
+            /* Active orange tab */
+            .tabview-pills .ui-tabview-nav li.tab-header-orange.ui-state-active {
+                background: linear-gradient(135deg, #f6d365 0%, #fda085 100%) !important; /* orange gradient */
+                box-shadow: 0 10px 28px rgba(253, 148, 35, 0.15) !important;
+            }
+
+            .tabview-pills .ui-tabview-nav li.tab-header-orange.ui-state-active a {
+                color: #ffffff !important;
+            }
+
+            /* Hover accent for orange header */
+            .tabview-pills .ui-tabview-nav li.tab-header-orange:hover a {
+                color: #92400e !important;
+                transform: translateY(-2px) !important;
+            }
+        </style>
+
+        <h:form id="form" styleClass="stats-container">
+            <p:growl id="messages" showDetail="true" life="3000" sticky="false" />
+
+            <!-- Added header similar to stickerSearch.xhtml -->
+            <div class="header-section">
+                <h2 class="header-title">
+                    <i class="pi pi-chart-bar header-icon"></i>
+                    Statistics
+                </h2>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <p:commandButton value="Export" icon="pi pi-file-excel" action="#{statisticsBean.exportAllToExcel}" ajax="false"
+                                     styleClass="enhanced-button ripple" />
+                </div>
+            </div>
+
+            <p:tabView id="tabs" dynamic="false" styleClass="tabview-pills">
+                <!-- تبويب إحصائيات المستخدمين -->
+                <p:tab id="userTab" title="👤 User Statistics" headerClass="tab-header-blue">
+                    <!-- لوحة الفلاتر -->
+                    <div class="filter-section animate-fade-in">
+                        <div class="section-title">
+                            <i class="pi pi-filter"></i>
+                            Filter Options
+                        </div>
+
+                        <div class="filter-grid">
+                            <!-- حقل المستخدم -->
+                            <div class="filter-item">
+                                <label class="filter-label" for="selectoneMenu_UserAlias">
+                                    <i class="pi pi-user"></i>
+                                    Select User
+                                </label>
+                                <p:selectOneMenu id="selectoneMenu_UserAlias"
+                                                 value="#{statisticsBean.selectedUserAlias}"
+                                                  styleClass="filter-select"
+                                                  filter="true"
+                                                  filterMatchMode="contains"
+                                                  converter="omnifaces.SelectItemsIndexConverter">
+                                    <f:selectItem itemLabel="Select a user..." value="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{statisticsBean.userAliasList}"
+                                                   var="userAlias"
+                                                   itemLabel="(#{userAlias.userCode}) #{userAlias.sysUserBySysUser.displayName} - #{userAlias.organizationByOrganization.name}"
+                                                   itemValue="#{userAlias}" />
+                                </p:selectOneMenu>
+                                <small style="color: var(--text-light); font-size: 12px; margin-top: 4px;">
+                                    Select user to view detailed statistics
+                                </small>
+                            </div>
+
+                            <!-- تاريخ البدء -->
+                            <div class="filter-item">
+                                <label class="filter-label" for="userFromDate">
+                                    <i class="pi pi-calendar"></i>
+                                    From Date
+                                </label>
+                                <p:calendar id="userFromDate"
+                                            value="#{statisticsBean.fromDate}"
+                                            pattern="yyyy-MM-dd"
+                                            showButtonPanel="true"
+                                            styleClass="filter-calendar"
+                                            placeholder="Select start date" />
+                            </div>
+
+                            <!-- تاريخ الانتهاء -->
+                            <div class="filter-item">
+                                <label class="filter-label" for="userToDate">
+                                    <i class="pi pi-calendar"></i>
+                                    To Date
+                                </label>
+                                <p:calendar id="userToDate"
+                                            value="#{statisticsBean.toDate}"
+                                            pattern="yyyy-MM-dd"
+                                            showButtonPanel="true"
+                                            styleClass="filter-calendar"
+                                            placeholder="Select end date" />
+                            </div>
+
+                            <!-- زر البحث -->
+                            <div class="filter-item">
+                                <div style="height: 24px;"></div>
+                                <div class="filter-actions">
+                                    <p:commandButton value="Search"
+                                                     action="#{statisticsBean.searchUserStats}"
+                                                     process="@form"
+                                                     update=":form"
+                                                     icon="pi pi-search"
+                                                     styleClass="enhanced-button search-btn ripple" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- نتائج الإحصائيات -->
+                    <div class="stats-section">
+                        <div class="section-header">User Statistics Results</div>
+
+                        <div class="stats-grid">
+                            <!-- بطاقة المهام الكلية -->
+                            <div class="stat-card animate-fade-in delay-1">
+                                <div class="stat-icon">
+                                    <i class="pi pi-chart-bar"></i>
+                                </div>
+                                <div class="stat-title">Total Tasks</div>
+                                <div class="stat-value">
+                                    #{empty statisticsBean.userStats['totalTasks'] ? 0 : statisticsBean.userStats['totalTasks']}
+                                </div>
+                                <div class="stat-unit">All assigned tasks</div>
+                            </div>
+
+                            <!-- بطاقة مهام المعدات -->
+                            <div class="stat-card equipment animate-fade-in delay-2">
+                                <div class="stat-icon">
+                                    <i class="pi pi-cog"></i>
+                                </div>
+                                <div class="stat-title">Equipment Tasks</div>
+                                <div class="stat-value">
+                                    #{empty statisticsBean.userStats['equipmentTasks'] ? 0 : statisticsBean.userStats['equipmentTasks']}
+                                </div>
+                                <div class="stat-unit">Equipment maintenance</div>
+                            </div>
+
+                            <!-- بطاقة مهام الموظفين -->
+                            <div class="stat-card employee animate-fade-in delay-3">
+                                <div class="stat-icon">
+                                    <i class="pi pi-users"></i>
+                                </div>
+                                <div class="stat-title">Tranning &amp; assissment Tasks</div>
+                                <div class="stat-value">
+                                    #{empty statisticsBean.userStats['employeeTasks'] ? 0 : statisticsBean.userStats['employeeTasks']}
+                                </div>
+                                <div class="stat-unit">Tranning management</div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    <!-- أفضل المستخدمين - تصميم جديد -->
+                    <div class="top-users-section animate-fade-in">
+                        <div class="section-header">
+                            <i class="pi pi-trophy"></i>
+                            Top Performing Users
+                        </div>
+
+                        <!-- زر تحديث أفضل المستخدمين -->
+                        <div style="display: flex; justify-content: flex-end; margin-bottom: 24px;">
+                            <p:commandButton value="Refresh Top Users"
+                                             action="#{statisticsBean.searchTopUsers}"
+                                             process="@form"
+                                             update="topUsersGrid"
+                                             icon="pi pi-refresh"
+                                             styleClass="enhanced-button search-btn ripple"
+                                             style="min-width: auto; padding: 10px 20px;" />
+                        </div>
+
+                        <!-- رسالة عدم وجود بيانات -->
+                        <ui:fragment rendered="#{empty statisticsBean.topUsers}">
+                            <div class="no-users-message">
+                                <div class="no-users-icon">
+                                    <i class="pi pi-user"></i>
+                                </div>
+                                <div class="no-users-title">No Users Found</div>
+                                <div class="no-users-description">
+                                    Adjust your filters or try a different date range to view user statistics.
+                                </div>
+                            </div>
+                        </ui:fragment>
+
+                        <!-- شبكة بطاقات المستخدمين -->
+                        <p:outputPanel id="topUsersGrid" styleClass="top-users-grid">
+                            <ui:repeat value="#{statisticsBean.topUsers}" var="tu" varStatus="status">
+                                <!-- تحديد التدرج اللوني حسب الترتيب -->
+                                <ui:param name="gradientClass" value="gradient-#{(status.index mod 6) + 1}" />
+                                <ui:param name="rankClass" value="#{status.index lt 3 ? (status.index eq 0 ? 'gold' : status.index eq 1 ? 'silver' : 'bronze') : 'other'}" />
+                                <ui:param name="topCount" value="#{statisticsBean.topUsers[0]['count']}" />
+
+                                <!-- حساب النسبة المئوية -->
+                                <ui:param name="percentage" value="#{topCount gt 0 ? (tu['count'] * 100) div topCount : 0}" />
+                                <ui:param name="roundedPercentage" value="#{percentage}" />
+
+                                <!-- حساب القيم الأخرى -->
+                                <ui:param name="taskDisplay" value="#{tu['count'] lt 100 ? tu['count'] : tu['count'] div 100}" />
+                                <ui:param name="successRate" value="#{statisticsBean.topUsers.size() gt 0 ? (tu['count'] * 10) div statisticsBean.topUsers.size() + 80 : 80}" />
+
+                                <!-- بطاقة المستخدم -->
+                                <div class="user-card #{gradientClass} animate-fade-in delay-#{(status.index mod 5) + 1}">
+                                    <!-- شارة الترتيب -->
+                                    <div class="user-rank #{rankClass}">
+                                        #{status.index + 1}
+                                    </div>
+
+                                    <!-- رأس البطاقة -->
+                                    <div class="user-card-header">
+                                        <div class="user-icon-container">
+                                            <div class="user-icon #{gradientClass}">
+                                                <i class="pi pi-user"></i>
+                                            </div>
+                                            <div class="user-name-container">
+                                                <div class="user-name">
+                                                    #{tu['displayName']}
+                                                </div>
+                                                <div class="user-title">
+                                                    #{tu['title']}
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- محتوى البطاقة -->
+                                    <div class="user-card-content">
+                                        <!-- إحصائيات المهام -->
+                                        <div class="user-stats">
+                                            <div>
+                                                <div class="stat-label">Completed Tasks</div>
+                                                <div class="tasks-count">#{tu['count']}</div>
+                                                <div class="tasks-label">Total assigned tasks</div>
+                                            </div>
+                                            <div style="text-align: right;">
+                                                <div class="stat-label">Rank</div>
+                                                <div style="font-size: 24px; font-weight: 900; color: var(--text-primary);">
+                                                    #{status.index + 1}
+                                                </div>
+                                                <div class="tasks-label">Out of #{statisticsBean.topUsers.size()}</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- شريط التقدم -->
+                                        <div class="progress-container">
+                                            <div class="progress-header">
+                                                <div class="progress-label">Performance Level</div>
+                                                <div class="progress-percentage">
+                                                    #{roundedPercentage gt 0 ? roundedPercentage : 0}%
+                                                </div>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: #{percentage gt 0 ? percentage : 0}%"></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- ملخص الأداء -->
+                                        <div class="performance-summary">
+                                            <div class="performance-item">
+                                                <div class="performance-value">
+                                                    #{tu['equipment']}
+                                                </div>
+                                                <div class="performance-label">
+                                                    Equipment Tasks
+                                                </div>
+                                            </div>
+                                            <div class="performance-item">
+                                                <div class="performance-value">
+                                                    #{tu['employee']}
+                                                </div>
+                                                <div class="performance-label">
+                                                    Tranning &amp; assissment Tasks
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- تذييل البطاقة -->
+                                    <div class="user-card-footer">
+                                        <div class="success-rate">
+                                            <i class="pi pi-check-circle"></i>
+                                            High Performer
+                                        </div>
+                                    </div>
+                                </div>
+                            </ui:repeat>
+                        </p:outputPanel>
+
+                        <!-- Pagination مبسط -->
+                        <ui:fragment rendered="#{not empty statisticsBean.topUsers and statisticsBean.topUsers.size() gt 6}">
+                            <div class="custom-paginator">
+                                <button class="page-btn">
+                                    <i class="pi pi-chevron-left"></i>
+                                </button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <span style="color: var(--text-light);">...</span>
+                                <button class="page-btn">5</button>
+                                <button class="page-btn">
+                                    <i class="pi pi-chevron-right"></i>
+                                </button>
+                            </div>
+                        </ui:fragment>
+                    </div>
+                </p:tab>
+
+                <!-- تبويب إحصائيات الشركات -->
+                <p:tab id="companyTab" title="🏢 Company Statistics" headerClass="tab-header-orange">
+                    <!-- لوحة الفلاتر -->
+                    <div class="filter-section animate-fade-in">
+                        <div class="section-title">
+                            <i class="pi pi-filter"></i>
+                            Filter Options
+                        </div>
+
+                        <div class="filter-grid">
+                            <!-- حقل الشركة -->
+                            <div class="filter-item">
+                                <label class="filter-label" for="selectedCompany">
+                                    <i class="pi pi-building"></i>
+                                    Select Company
+                                </label>
+                                <p:selectOneMenu id="selectedCompany"
+                                                 value="#{statisticsBean.selectedCompany}"
+                                                  styleClass="filter-select"
+                                                  converter="omnifaces.SelectItemsIndexConverter"
+                                                  filter="true"
+                                                  filterMatchMode="contains">
+                                    <f:selectItem itemLabel="All Companies" itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{statisticsBean.companyList}"
+                                                   var="c"
+                                                   itemLabel="#{c.name}"
+                                                   itemValue="#{c}" />
+                                </p:selectOneMenu>
+                                <small style="color: var(--text-light); font-size: 12px; margin-top: 4px;">
+                                    Select company or view all
+                                </small>
+                            </div>
+
+                            <!-- تاريخ البدء -->
+                            <div class="filter-item">
+                                <label class="filter-label" for="companyFromDate">
+                                    <i class="pi pi-calendar"></i>
+                                    From Date
+                                </label>
+                                <p:calendar id="companyFromDate"
+                                            value="#{statisticsBean.fromDate}"
+                                            pattern="yyyy-MM-dd"
+                                            showButtonPanel="true"
+                                            styleClass="filter-calendar"
+                                            placeholder="Select start date" />
+                            </div>
+
+                            <!-- تاريخ الانتهاء -->
+                            <div class="filter-item">
+                                <label class="filter-label" for="companyToDate">
+                                    <i class="pi pi-calendar"></i>
+                                    To Date
+                                </label>
+                                <p:calendar id="companyToDate"
+                                            value="#{statisticsBean.toDate}"
+                                            pattern="yyyy-MM-dd"
+                                            showButtonPanel="true"
+                                            styleClass="filter-calendar"
+                                            placeholder="Select end date" />
+                            </div>
+
+                            <!-- زر البحث -->
+                            <div class="filter-item">
+                                <div style="height: 24px;"></div>
+                                <div class="filter-actions">
+                                    <p:commandButton value="Search"
+                                                     action="#{statisticsBean.searchCompanyStats}"
+                                                     process="@form"
+                                                     update=":form"
+                                                     icon="pi pi-search"
+                                                     styleClass="enhanced-button search-btn ripple" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- نتائج الإحصائيات -->
+                    <div class="stats-section">
+                        <div class="section-header">Company Statistics Results</div>
+
+                        <div class="stats-grid">
+                            <!-- بطاقة مهام المعدات -->
+                            <div class="stat-card equipment animate-fade-in delay-1">
+                                <div class="stat-icon">
+                                    <i class="pi pi-cog"></i>
+                                </div>
+                                <div class="stat-title">Equipment Tasks</div>
+                                <div class="stat-value">
+                                    #{empty statisticsBean.companyStats['equipmentTasksCount'] ? 0 : statisticsBean.companyStats['equipmentTasksCount']}
+                                </div>
+                                <div class="stat-unit">Equipment related</div>
+                            </div>
+
+                            <!-- بطاقة مهام الموظفين -->
+                            <div class="stat-card employee animate-fade-in delay-2">
+                                <div class="stat-icon">
+                                    <i class="pi pi-users"></i>
+                                </div>
+                                <div class="stat-title">Tranning &amp; assissment Tasks</div>
+                                <div class="stat-value">
+                                    #{empty statisticsBean.companyStats['employeeTasksCount'] ? 0 : statisticsBean.companyStats['employeeTasksCount']}
+                                </div>
+                                <div class="stat-unit">Tranning &amp; assissment related</div>
+                            </div>
+
+                            <!-- بطاقة المهام الكلية -->
+                            <div class="stat-card animate-fade-in delay-3">
+                                <div class="stat-icon">
+                                    <i class="pi pi-chart-bar"></i>
+                                </div>
+                                <div class="stat-title">Total Tasks</div>
+                                <div class="stat-value">
+                                    #{empty statisticsBean.companyStats['totalTasksCount'] ? 0 : statisticsBean.companyStats['totalTasksCount']}
+                                </div>
+                                <div class="stat-unit">All company tasks</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- أفضل الشركات - تصميم جديد مذهل -->
+                    <div class="top-companies-section animate-fade-in">
+                        <div class="section-header">
+                            <i class="pi pi-trophy"></i>
+                            Top Performing Companies
+                        </div>
+
+                        <!-- رسالة عدم وجود بيانات -->
+                        <ui:fragment rendered="#{empty statisticsBean.topCompanies}">
+                            <div class="no-companies-message">
+                                <div class="no-companies-icon">
+                                    <i class="pi pi-building"></i>
+                                </div>
+                                <div class="no-companies-title">No Companies Found</div>
+                                <div class="no-companies-description">
+                                    Adjust your filters or try a different date range to view company statistics.
+                                </div>
+                            </div>
+                        </ui:fragment>
+
+                        <!-- جدول أفضل الشركات (صفوف وأعمدة) -->
+                        <p:dataTable id="topCompaniesTable" value="#{statisticsBean.topCompanies}" var="tc" rowIndexVar="rowIndex"
+                                     widgetVar="topCompaniesTableWidget" paginator="true" rows="10" responsiveLayout="scroll"
+                                     styleClass="styled-table" emptyMessage="No Companies Found">
+
+                            <f:facet name="header">
+                                <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                                    <div>
+                                        <h:outputText value="Top Companies" style="font-weight:800;" />
+                                    </div>
+                                        <div style="min-width:260px;">
+                                            <p:inputText id="topCompaniesGlobalFilter" placeholder="Search companies..." styleClass="filter-select"
+                                                         onkeyup="PF('topCompaniesTableWidget') &amp;&amp; PF('topCompaniesTableWidget').filter();" />
+                                        </div>
+                                </div>
+                            </f:facet>
+
+                            <p:column headerText="#" style="width:60px; text-align:center;">
+                                <h:outputText value="#{rowIndex + 1}" />
+                            </p:column>
+
+                            <p:column headerText="Company" filterBy="#{tc['companyName']}" filterMatchMode="contains">
+                                <h:outputText value="#{tc['companyName']}" />
+                            </p:column>
+
+                            <p:column headerText="Total tasks" filterBy="#{tc['count']}" sortBy="#{tc['count']}" style="text-align:right; width:120px;">
+                                <h:outputText value="#{tc['count']}" />
+                            </p:column>
+
+                            <p:column headerText="Equipment tasks" filterBy="#{tc['equipment']}" sortBy="#{tc['equipment']}" style="text-align:right; width:100px;">
+                                <h:outputText value="#{tc['equipment']}" />
+                            </p:column>
+
+                            <p:column headerText="Tranning tasks" filterBy="#{tc['employee']}" sortBy="#{tc['employee']}" style="text-align:right; width:100px;">
+                                <h:outputText value="#{tc['employee']}" />
+                            </p:column>
+
+                            <p:column headerText="Performance %" sortBy="#{tc['percentage']}" style="text-align:right; width:120px;">
+                                <h:outputText value="#{tc['percentage']}%" />
+                            </p:column>
+
+                            <p:column headerText="Email" style="width:140px; text-align:center;">
+                                <button class="view-details-btn" type="button" data-email="#{tc['companyEmail']}" onclick="navigateToEmail(this);">
+                                    <i class="pi pi-envelope"></i>
+                                    Email
+                                </button>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <div style="display:flex; justify-content:flex-end; margin-top:12px;">
+                            <p:commandButton value="Export Excel"
+                                             action="#{statisticsBean.exportCompaniesToExcel}"
+                                             icon="pi pi-file-excel"
+                                             styleClass="enhanced-button ripple btn-export"
+                                             title="Export to Excel"
+                                             ajax="false" />
+                        </div>
+
+                        <!-- Pagination مبسط -->
+                        <ui:fragment rendered="#{not empty statisticsBean.topCompanies and statisticsBean.topCompanies.size() gt 6}">
+                            <div class="custom-paginator">
+                                <button class="page-btn">
+                                    <i class="pi pi-chevron-left"></i>
+                                </button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <span style="color: var(--text-light);">...</span>
+                                <button class="page-btn">5</button>
+                                <button class="page-btn">
+                                    <i class="pi pi-chevron-right"></i>
+                                </button>
+                            </div>
+                        </ui:fragment>
+                    </div>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+
+        <script>
+            function navigateToEmail(btn) {
+                try {
+                    var email = btn.getAttribute('data-email');
+                    var subject = btn.getAttribute('data-subject') || '';
+                    if (!email || email === 'null' || email.trim() === '') {
+                        alert('This company does not have an email address.');
+                        return;
+                    }
+                    var contextPath = '#{facesContext.externalContext.requestContextPath}';
+                    var base = (contextPath &amp;&amp; contextPath.length>0 ? contextPath : '') + '/email';
+                    window.location.href = base + '?recipient=' + encodeURIComponent(email) + '&amp;subject=' + encodeURIComponent(subject);
+                } catch (e) {
+                    console.error('navigateToEmail error', e);
+                }
+            }
+            // تحسينات تفاعلية
+            document.addEventListener('DOMContentLoaded', function() {
+                // تأثيرات الظهور للبطاقات
+                const cards = document.querySelectorAll('.company-card, .user-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px) scale(0.95)';
+
+                    setTimeout(() => {
+                        card.style.transition = 'opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, 150 * index);
+                });
+
+                // تأثيرات شريط التقدم
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0';
+
+                    setTimeout(() => {
+                        bar.style.transition = 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                        bar.style.width = width;
+                    }, 500);
+                });
+
+                // تأثيرات hover للبطاقات
+                cards.forEach(card => {
+                    card.addEventListener('mouseenter', function() {
+                        const rank = this.querySelector('.company-rank, .user-rank');
+                        if (rank) {
+                            rank.style.transform = 'scale(1.1) rotate(5deg)';
+                            rank.style.transition = 'transform 0.3s ease';
+                        }
+                    });
+
+                    card.addEventListener('mouseleave', function() {
+                        const rank = this.querySelector('.company-rank, .user-rank');
+                        if (rank) {
+                            rank.style.transform = 'scale(1) rotate(0deg)';
+                        }
+                    });
+                });
+
+                // تأثيرات الأزرار
+                const buttons = document.querySelectorAll('.view-details-btn');
+                buttons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // تأثير النقر
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 150);
+                    });
+                });
+
+                // تحسين تجربة المستخدم للـ Select
+                const selectMenus = document.querySelectorAll('.ui-selectonemenu');
+                selectMenus.forEach(select => {
+                    select.addEventListener('focus', function() {
+                        this.parentElement.style.zIndex = '1000';
+                    });
+
+                    select.addEventListener('blur', function() {
+                        this.parentElement.style.zIndex = 'auto';
+                    });
+                });
+
+                // تأثيرات زر البحث
+                const searchBtns = document.querySelectorAll('.search-btn');
+                searchBtns.forEach(button => {
+                    button.addEventListener('click', function() {
+                         if (!this.classList.contains('loading')) {
+                             const originalHTML = this.innerHTML;
+                             this.classList.add('loading');
+                             this.innerHTML = '&lt;i class="pi pi-spin pi-spinner"&gt;&lt;/i&gt; Searching...';
+                             this.disabled = true;
+
+                             setTimeout(() => {
+                                 this.classList.remove('loading');
+                                 this.innerHTML = originalHTML;
+                                 this.disabled = false;
+                             }, 2000);
+                         }
+                     });
+                 });
+
+                // تحريك شارة الترتيب عند التمرير
+                let lastScrollTop = 0;
+                window.addEventListener('scroll', function() {
+                    const ranks = document.querySelectorAll('.company-rank, .user-rank');
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+
+                    ranks.forEach(rank => {
+                        if (scrollDirection === 'down') {
+                            rank.style.transform = 'translateY(-2px)';
+                        } else {
+                            rank.style.transform = 'translateY(2px)';
+                        }
+
+                        setTimeout(() => {
+                            rank.style.transform = '';
+                        }, 300);
+                    });
+
+                    lastScrollTop = scrollTop &lt;= 0 ? 0 : scrollTop;
+                });
+            });
+
+            // تأثيرات إضافية عند تحميل الصفحة
+            window.addEventListener('load', function() {
+                // تأثير توهج للبطاقات المميزة (المراكز الأولى)
+                const topCards = document.querySelectorAll('.company-card:has(.company-rank.gold), .company-card:has(.company-rank.silver), .company-card:has(.company-rank.bronze), .user-card:has(.user-rank.gold), .user-card:has(.user-rank.silver), .user-card:has(.user-rank.bronze)');
+                topCards.forEach(card => {
+                    setInterval(() => {
+                        card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+                        setTimeout(() => {
+                            card.style.boxShadow = 'var(--shadow-xl)';
+                        }, 1000);
+                    }, 3000);
+                });
+            });
+        </script>
+    </ui:define>
+</ui:composition>

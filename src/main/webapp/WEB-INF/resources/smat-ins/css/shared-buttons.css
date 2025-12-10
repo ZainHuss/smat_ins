@@ -1,0 +1,95 @@
+/* Shared button styles for SMAT INS — used by multiple pages */
+:root{
+  /* Color variables — change these to tune brand colors */
+  --btn-primary-start: #4f46e5; /* indigo-600 */
+  --btn-primary-end:   #7c3aed; /* violet-600 */
+  --btn-primary-gradient: linear-gradient(135deg, var(--btn-primary-start) 0%, var(--btn-primary-end) 100%);
+
+  --btn-orange-start: #ffb86b; /* warmer orange */
+  --btn-orange-end:   #ff7a18;
+  --btn-orange-gradient: linear-gradient(135deg, var(--btn-orange-start) 0%, var(--btn-orange-end) 100%);
+
+  --btn-blue: #2563eb; /* blue-600 */
+  --btn-gray-border: #e2e8f0;
+
+  --btn-focus-ring: rgba(79,70,229,0.16); /* semi-transparent indigo */
+
+  /* Reset button color (tweak to change reset look) */
+  --btn-reset-start: #94a3b8; /* slate-400 */
+  --btn-reset-end:   #64748b; /* slate-600 */
+  --btn-reset-gradient: linear-gradient(135deg, var(--btn-reset-start) 0%, var(--btn-reset-end) 100%);
+}
+
+/* Enhanced button used in statistics.xhtml (and elsewhere) */
+.enhanced-button{
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px !important;
+  padding: 8px 18px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  transition: all 0.25s ease !important;
+  border: none !important;
+  min-width: 110px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.enhanced-button::before{
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+  z-index: -1; transform: scale(0); transition: transform 0.45s ease; border-radius:20px;
+}
+.enhanced-button:hover::before{ transform: scale(1); }
+
+/* Ripple helper */
+.ripple{ position: relative; overflow: hidden; }
+.ripple:after{ content:''; display:block; position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; background-image: radial-gradient(circle, rgba(255,255,255,0.35) 10%, transparent 10.01%); background-repeat:no-repeat; background-position:50%; transform: scale(10,10); opacity:0; transition: transform .5s, opacity 1s; }
+.ripple:active:after{ transform: scale(0,0); opacity: .25; transition: 0s; }
+
+/* Common quick-variant buttons */
+.search-btn{ background: var(--btn-primary-gradient) !important; color: white !important; box-shadow: 0 4px 12px rgba(79,70,229,0.18) !important; }
+/* default .reset-btn maps to the reset variables so it's easy to tune */
+.reset-btn{ background: var(--btn-reset-gradient) !important; color: white !important; box-shadow: 0 4px 12px rgba(100,116,139,0.12) !important; }
+
+/* Dedicated reset pill/class for outlined buttons */
+.btn-reset{ /* for p-button-outlined or normal buttons */
+  color: var(--btn-reset-end) !important;
+  border-color: rgba(100,116,139,0.18) !important;
+  background: linear-gradient(135deg, rgba(148,163,184,0.06), rgba(100,116,139,0.03)) !important;
+}
+.btn-reset:hover{
+  background: var(--btn-reset-gradient) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+}
+
+/* Reusable pill button (used in email.xhtml) */
+.btn-pill{ border-radius: 999px !important; padding: 0.55rem 1.25rem !important; font-weight: 700 !important; font-size: 1rem !important; letter-spacing: 0.2px !important; min-height: 40px !important; display: inline-flex !important; align-items: center !important; gap: .5rem !important; transition: all 220ms cubic-bezier(.4,0,.2,1) !important; }
+
+/* Pill variants */
+.btn-primary{ background: var(--btn-primary-gradient) !important; color: #fff !important; box-shadow: 0 8px 24px rgba(79,70,229,0.18) !important; }
+.btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 12px 36px rgba(79,70,229,0.22) !important; }
+
+.btn-orange{ border-color: var(--btn-orange-start) !important; color: #b45309 !important; background: linear-gradient(135deg, rgba(255,184,107,0.08), rgba(255,122,24,0.04)) !important; }
+.btn-orange:hover{ background: var(--btn-orange-gradient) !important; color: #fff !important; transform: translateY(-2px); }
+
+.btn-blue{ color: var(--btn-blue) !important; border-color: var(--btn-blue) !important; }
+.btn-blue:hover{ background: rgba(37,99,235,0.08) !important; transform: translateY(-2px); }
+
+.btn-gray{ color: #4a5568 !important; border-color: var(--btn-gray-border) !important; }
+.btn-gray:hover{ background: rgba(74,85,104,0.06) !important; transform: translateY(-2px); }
+
+/* Make sure PrimeFaces outlined controls inherit color */
+.p-button-outlined.btn-pill .pi{ color: inherit !important; }
+.p-button-outlined.btn-pill{ background: transparent !important; }
+
+/* Accessible focus styles for buttons */
+.btn-pill:focus, .enhanced-button:focus, .p-button:focus{ outline: none; box-shadow: 0 0 0 4px var(--btn-focus-ring); }
+
+/* small responsive tweak */
+@media (max-width:640px){ .btn-pill{ padding: 8px 14px !important; font-size: 16px !important; } }

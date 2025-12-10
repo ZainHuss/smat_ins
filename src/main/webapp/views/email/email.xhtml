@@ -1,0 +1,843 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="section-head">
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+                            name="css/material-theme.css"></h:outputStylesheet>
+        <style type="text/css">
+            /* Animation Keyframes from stickerSearch */
+            @keyframes fadeInDown {
+                from {
+                    opacity:0;
+                    transform: translateY(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes slideInLeft {
+                from {
+                    opacity:0;
+                    transform: translateX(-30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+
+            @keyframes shimmer {
+                0% { background-position: -200px 0; }
+                100% { background-position: calc(200px + 100%) 0; }
+            }
+
+            @keyframes buttonShine {
+                0% { transform: translateX(-100%) rotate(45deg); }
+                100% { transform: translateX(200%) rotate(45deg); }
+            }
+
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-5px); }
+                100% { transform: translateY(0px); }
+            }
+
+            @keyframes iconPulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+                100% { transform: scale(1); }
+            }
+
+            @keyframes rotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+
+            /* Main Container */
+            .email-container {
+                animation: fadeInDown 0.8s ease-out;
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                border-radius: 15px;
+                padding: 1.5rem;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+                position: relative;
+                overflow: hidden;
+                margin-bottom: 1.5rem;
+                border: 1px solid #cbd5e0;
+            }
+
+            .email-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                animation: shimmer 3s infinite;
+            }
+
+            /* Header Section */
+            .header-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                animation: slideInLeft 0.6s ease-out;
+                transition: all 0.3s ease;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-section:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+            .header-title {
+                color: #4a5568;
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0;
+                position: relative;
+                animation: float 6s ease-in-out infinite;
+                text-align: left;
+                margin-right: auto;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .header-title::after {
+                content: '';
+                position: absolute;
+                bottom: -8px;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: linear-gradient(90deg, #667eea, #764ba2);
+                border-radius: 2px;
+            }
+
+            .header-icon {
+                font-size: 1.8rem;
+                color: #667eea;
+                animation: iconPulse 3s infinite;
+                transition: all 0.3s ease;
+            }
+
+            .header-section:hover .header-icon {
+                animation: rotate 2s ease;
+                color: #764ba2;
+            }
+
+            /* Card Sections */
+            .card-section {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                animation: slideInLeft 0.8s ease-out;
+                transition: all 0.3s ease;
+            }
+
+            .card-section:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+            .card-header {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .card-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+                transition: all 0.3s ease;
+            }
+
+            .card-section:hover .card-icon {
+                transform: scale(1.1);
+                background: linear-gradient(135deg, #667eea30 0%, #764ba230 100%);
+            }
+
+            .card-title {
+                color: #2d3748;
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .card-subtitle {
+                color: #718096;
+                font-size: 0.9rem;
+                margin: 0.25rem 0 0 0;
+            }
+
+            /* Input Groups */
+            .input-group {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.2rem;
+                flex-wrap: wrap;
+            }
+
+            .input-label {
+                font-weight: 600;
+                color: #4a5568;
+                min-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .input-icon {
+                font-size: 1.1rem;
+                color: #667eea;
+                transition: all 0.3s ease;
+            }
+
+            .input-group:hover .input-icon {
+                transform: scale(1.2);
+                color: #764ba2;
+            }
+
+            .input-field {
+                flex: 1;
+                min-width: 220px;
+            }
+
+            .input-field .ui-inputtext,
+            .input-field .ui-selectonemenu,
+            .input-field .ui-inputtextarea {
+                width: 100% !important;
+                padding: 0.8rem 1rem;
+                border: 2px solid #cbd5e0;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.9);
+            }
+
+            .input-field .ui-inputtext:focus,
+            .input-field .ui-selectonemenu:focus,
+            .input-field .ui-inputtextarea:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                transform: translateY(-1px);
+            }
+
+            /* Enhanced Textarea */
+            .message-textarea {
+                min-height: 200px;
+                line-height: 1.6;
+                resize: vertical;
+            }
+
+            /* Company Info Panel */
+            .company-info {
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+                border-radius: 10px;
+                padding: 1rem;
+                margin-top: 1rem;
+                border: 1px solid rgba(102, 126, 234, 0.1);
+                animation: slideInLeft 0.5s ease-out;
+            }
+
+            .company-info-grid {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                gap: 0.5rem 1rem;
+                align-items: center;
+            }
+
+            .company-info-label {
+                font-weight: 600;
+                color: #4a5568;
+                font-size: 0.85rem;
+            }
+
+            .company-info-value {
+                color: #2d3748;
+                font-weight: 500;
+            }
+
+            /* Button Section */
+            .button-section {
+                display: flex;
+                gap: 0.8rem;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                margin-top: 1.5rem;
+                padding-top: 1.5rem;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            .enhanced-button {
+                position: relative;
+                overflow: hidden;
+                border-radius: 20px !important;
+                padding: 0.5rem 1.2rem !important;
+                font-weight: 500 !important;
+                font-size: 0.85rem !important;
+                transition: all 0.3s ease !important;
+                border: none !important;
+                min-width: 100px;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .enhanced-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+                z-index: -1;
+                transform: scale(0);
+                transition: transform 0.5s ease;
+                border-radius: 20px;
+            }
+
+            .enhanced-button:hover::before {
+                transform: scale(1);
+            }
+
+            .enhanced-button::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 50%;
+                height: 200%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                transform: rotate(45deg);
+                animation: buttonShine 2s infinite;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .enhanced-button:hover::after {
+                opacity: 1;
+            }
+
+            .enhanced-button:hover {
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .enhanced-button:active {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+            }
+
+            .primary-btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                color: white !important;
+                box-shadow: 0 3px 10px rgba(102, 126, 234, 0.25) !important;
+            }
+
+            .secondary-btn {
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+                color: white !important;
+                box-shadow: 0 3px 10px rgba(245, 87, 108, 0.25) !important;
+            }
+
+            .outline-btn {
+                background: transparent !important;
+                border: 2px solid #667eea !important;
+                color: #667eea !important;
+                box-shadow: none !important;
+            }
+
+            .button-icon {
+                font-size: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .enhanced-button:hover .button-icon {
+                transform: scale(1.2);
+            }
+
+            /* Checkbox Styling */
+            .ui-chkbox-box {
+                transition: all 0.3s ease !important;
+                border-radius: 4px !important;
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            .ui-chkbox-box:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            }
+
+            .ui-chkbox-box.ui-state-active {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border-color: #667eea !important;
+            }
+
+            /* Grid System */
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(12, 1fr);
+                gap: 1rem;
+            }
+
+            .col-12 { grid-column: span 12; }
+            .col-8 { grid-column: span 8; }
+            .col-4 { grid-column: span 4; }
+
+            @media (min-width: 768px) {
+                [class~="md:col-8"] { grid-column: span 8; }
+                [class~="md:col-4"] { grid-column: span 4; }
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .input-group {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .input-label {
+                    min-width: auto;
+                }
+                .input-field {
+                    min-width: 100%;
+                }
+                .button-section {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+                .enhanced-button {
+                    width: 100%;
+                }
+                .card-header {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 0.5rem;
+                }
+                .header-section {
+                    flex-direction: column;
+                    text-align: center;
+                }
+                .header-title {
+                    margin-right: 0;
+                    text-align: center;
+                }
+                .header-title::after {
+                    left: 50%;
+                    transform: translateX(-50%);
+                }
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+                .col-8, .col-4, [class~="md:col-8"], [class~="md:col-4"] {
+                    grid-column: span 12;
+                }
+            }
+
+            /* Ripple Effect */
+            .ripple {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .ripple:after {
+                content: "";
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                pointer-events: none;
+                background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+                background-repeat: no-repeat;
+                background-position: 50%;
+                transform: scale(10, 10);
+                opacity: 0;
+                transition: transform .5s, opacity 1s;
+            }
+
+            .ripple:active:after {
+                transform: scale(0, 0);
+                opacity: .3;
+                transition: 0s;
+            }
+
+            /* Helper Text */
+            .helper-text {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #a0aec0;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+                padding: 0.4rem 0.8rem;
+                background: rgba(255, 255, 255, 0.6);
+                border-radius: 6px;
+                border: 1px solid #e2e8f0;
+                transition: all 0.3s ease;
+            }
+
+            .helper-text:hover {
+                background: rgba(255, 255, 255, 0.8);
+                transform: translateY(-1px);
+            }
+
+            /* Security Badge */
+            .security-badge {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background: rgba(102, 126, 234, 0.1);
+                border-radius: 20px;
+                border: 1px solid rgba(102, 126, 234, 0.2);
+                color: #4a5568;
+                font-size: 0.85rem;
+                transition: all 0.3s ease;
+            }
+
+            .security-badge:hover {
+                background: rgba(102, 126, 234, 0.15);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            }
+
+            /* Tooltip */
+            .info-tooltip {
+                position: relative;
+                cursor: help;
+            }
+
+            .info-tooltip:hover::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: 125%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(30, 41, 59, 0.95);
+                color: white;
+                padding: 0.5rem 0.75rem;
+                border-radius: 6px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Loading Animation */
+            .loading-shimmer {
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="section-content">
+        <h:form id="form">
+            <div class="email-container">
+                <p:growl id="messages" showDetail="true" life="2000" sticky="false" />
+
+                <!-- Header Section -->
+                <div class="header-section">
+                    <h2 class="header-title">
+                        <i class="pi pi-envelope header-icon"></i>
+                        Email Composer
+                    </h2>
+                    <div class="security-badge">
+                        <i class="pi pi-shield"></i>
+                        Secure Gmail Integration
+                    </div>
+                </div>
+
+                <!-- Recipient Selection Card -->
+                <div class="card-section">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="pi pi-building" style="font-size: 1.5rem; color: #667eea;"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Select Recipient</h3>
+                            <p class="card-subtitle">Choose the company you want to contact from the list</p>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="input-label">
+                            <i class="pi pi-at input-icon"></i>
+                            Company Email:
+                        </div>
+                        <div class="input-field">
+                            <p:selectOneMenu id="recipient"
+                                             value="#{emailBean.selectedRecipientEmail}"
+                                             style="width:100%"
+                                             filter="true"
+                                             filterMatchMode="contains"
+                                             placeholder="Search company by name or email...">
+                                <f:selectItem itemLabel="-- Select recipient --" itemValue="" />
+                                <f:selectItems value="#{emailBean.companiesWithEmail}"
+                                               var="c"
+                                               itemLabel="#{c.email} - #{c.name}"
+                                               itemValue="#{c.email}" />
+
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <div class="helper-text">
+                        <i class="pi pi-info-circle"></i>
+                        Start typing to search through the company list
+                    </div>
+
+                    <!-- Selected Company Info -->
+                    <p:outputPanel id="companyInfo" style="display: #{not empty emailBean.selectedCompany ? 'block' : 'none'};">
+                        <div class="company-info">
+                            <div class="company-info-grid">
+                                <span class="company-info-label">
+                                    <i class="pi pi-building"></i> Company:
+                                </span>
+                                <span class="company-info-value">#{emailBean.selectedCompany.name}</span>
+
+                                <span class="company-info-label">
+                                    <i class="pi pi-at"></i> Email:
+                                </span>
+                                <span class="company-info-value">#{emailBean.selectedRecipientEmail}</span>
+                            </div>
+                        </div>
+                    </p:outputPanel>
+
+                    <!-- Template Button -->
+
+                </div>
+
+                <!-- Email Configuration Card -->
+                <div class="card-section">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="pi pi-cog" style="font-size: 1.5rem; color: #ed8936;"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Email Configuration</h3>
+                            <p class="card-subtitle">Configure your email subject and settings</p>
+                        </div>
+                    </div>
+
+                    <div class="grid">
+                        <!-- Keep the main column for subject but remove the logo-container and character column -->
+                        <div class="col-12 md:col-8">
+                            <div class="input-group">
+                                <div class="input-label">
+                                    <i class="pi pi-pencil input-icon"></i>
+                                    Email Subject:
+                                </div>
+                                <div class="input-field">
+                                    <!-- simplified subject input (removed enhanced/logo container) -->
+                                    <p:inputText id="emailSubject"
+                                                 value="#{emailBean.emailSubject}"
+                                                 placeholder="Enter email subject"
+                                                 style="width:100%;" />
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Composition Card -->
+                <div class="card-section">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="pi pi-pencil" style="font-size: 1.5rem; color: #48bb78;"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Compose Message</h3>
+
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="align-items: flex-start;">
+                        <div class="input-label">
+                            <i class="pi pi-comment input-icon"></i>
+                            Your Message:
+                        </div>
+                        <div class="input-field">
+                            <p:inputTextarea id="description"
+                                             value="#{emailBean.description}"
+                                             rows="10"
+                                             placeholder="Write your professional message here..."
+                                             styleClass="message-textarea">
+                            </p:inputTextarea>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                                <div class="helper-text">
+                                    <i class="pi pi-lightbulb"></i>
+                                    Your message will open in Gmail for final review
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="button-section">
+                    <p:commandButton value="Clear"
+                                     icon="pi pi-times"
+                                     styleClass="enhanced-button secondary-btn ripple"
+                                     action="#{emailBean.clearForm}"
+                                     update="form"
+                                     process="@this">
+                        <i class="pi pi-times button-icon"></i>
+                    </p:commandButton>
+
+                    <p:commandButton value="Preview"
+                                     icon="pi pi-eye"
+                                     styleClass="enhanced-button outline-btn ripple"
+                                     onclick="previewEmail(); return false;">
+                        <i class="pi pi-eye button-icon"></i>
+                    </p:commandButton>
+
+                    <p:commandButton value="Send Email"
+                                     icon="pi pi-send"
+                                     styleClass="enhanced-button primary-btn ripple"
+                                     action="#{emailBean.validateAndPrepareEmail}"
+                                     update="messages">
+                        <i class="pi pi-send button-icon"></i>
+                    </p:commandButton>
+                </div>
+            </div>
+        </h:form>
+
+        <script type="text/javascript">
+            //<![CDATA[
+            // Preview email function
+            function previewEmail() {
+                var recipient = document.querySelector('[id*="recipient_input"]').value;
+                var description = document.querySelector('[id*="description"]').value || '';
+                var subject = document.querySelector('[id*="emailSubject"]').value || 'Message from SMAT';
+
+                if (!recipient) {
+                    alert('Please select a recipient email.');
+                    return;
+                }
+
+                if (!description.trim()) {
+                    alert('Please write your message before previewing.');
+                    return;
+                }
+
+                var url = 'https://mail.google.com/mail/?view=cm&fs=1' +
+                    '&to=' + encodeURIComponent(recipient) +
+                    '&su=' + encodeURIComponent(subject) +
+                    '&body=' + encodeURIComponent(description);
+
+                window.open(url, '_blank', 'width=800,height=600');
+            }
+
+            // Initialize UI behaviors on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add animation to form elements
+                document.querySelectorAll('.input-field input, .input-field textarea, .input-field select').forEach(function(el) {
+                    el.addEventListener('focus', function() {
+                        this.parentElement.style.transform = 'translateY(-2px)';
+                    });
+
+                    el.addEventListener('blur', function() {
+                        this.parentElement.style.transform = 'translateY(0)';
+                    });
+                });
+
+                // Add hover effect to cards
+                document.querySelectorAll('.card-section').forEach(function(card) {
+                    card.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-4px) scale(1.005)';
+                    });
+
+                    card.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(-2px) scale(1)';
+                    });
+                });
+            });
+
+            // Function to show loading animation
+            function showLoading() {
+                var buttons = document.querySelectorAll('.enhanced-button');
+                buttons.forEach(function(btn) {
+                    btn.classList.add('loading-shimmer');
+                    btn.disabled = true;
+                });
+
+                setTimeout(function() {
+                    buttons.forEach(function(btn) {
+                        btn.classList.remove('loading-shimmer');
+                        btn.disabled = false;
+                    });
+                }, 1500);
+            }
+
+            // Attach loading animation to send button
+            document.addEventListener('DOMContentLoaded', function() {
+                var sendButton = document.querySelector('.primary-btn');
+                if (sendButton) {
+                    sendButton.addEventListener('click', function() {
+                        if (document.querySelector('[id*="recipient_input"]').value &&
+                            document.querySelector('[id*="description"]').value.trim()) {
+                            showLoading();
+                        }
+                    });
+                }
+            });
+            //]]>
+        </script>
+    </ui:define>
+</ui:composition>
