@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+    <ui:define name="section-head">
+        #{interfaceLabel.view} #{interfaceLabel.empCertificationType}
+    </ui:define>
+
+    <ui:define name="head">
+        <h:outputStylesheet library="#{appSetting.resourceLib}"
+                            name="css/material-theme.css"></h:outputStylesheet>
+    </ui:define>
+
+    <ui:define name="section-content">
+        <h:form id="form">
+            <div class="card">
+                <p:growl id="messages" showDetail="true" life="2000" sticky="false" />
+                <div class="row">
+                    <div class="col-lg-9 col-xl-8 col-xxl-7">
+                        <p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+                                         actionListener="#{codingEmpCertificationTypeBean.openNew}"
+                                         update=":form:outputPanel-content"
+                                         oncomplete="PF('widgetVarDetailDialog').show()"
+                                         styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+                                         style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+                            <p:resetInput target=":form:outputPanel-content" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-empCertificationType-button"
+                                         value="#{codingEmpCertificationTypeBean.deleteButtonMessage}"
+                                         icon="pi pi-trash" styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+                                         actionListener="#{codingEmpCertificationTypeBean.deleteSelectedEmpCertificationType()}"
+                                         disabled="#{!codingEmpCertificationTypeBean.hasSelectedEmpCertificationType()}"
+                                         update="@this">
+                            <p:confirm header="#{interfaceLabel.confirmation}"
+                                       message="#{interfaceLabel.deleteSelectedCertificationType}"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </div>
+                </div>
+
+                <p:divider layout="horizontal" type="dashed"></p:divider>
+
+                <p:dataTable id="dataTable-empCertificationType" widgetVar="dtEmpCertificationType"
+                             var="type" value="#{codingEmpCertificationTypeBean.empCertificationTypeList}"
+                             reflow="true" styleClass="products-table" globalFilterOnly="true"
+                             selection="#{codingEmpCertificationTypeBean.selectedEmpCertificationTypeList}"
+                             rowKey="#{type.id}" paginator="true" rows="10"
+                             rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
+                             paginatorPosition="bottom">
+                    <p:ajax event="rowSelect" update=":form:delete-empCertificationType-button" />
+                    <p:ajax event="rowUnselect" update=":form:delete-empCertificationType-button" />
+                    <f:facet name="header">
+                        <div class="flex align-items-center justify-content-between">
+                            <h:outputText value="#{interfaceLabel.search} : " />
+                            <p:inputText id="globalFilter" onkeyup="PF('dtEmpCertificationType').filter()" style="width:auto;"
+                                         placeholder="#{interfaceLabel.enterKeyword}" />
+                        </div>
+                    </f:facet>
+                    <p:column selectionMode="multiple" exportable="false"></p:column>
+
+                    <p:column headerText="#{interfaceLabel.certName}" sortBy="#{type.certName}" filterBy="#{type.certName}">
+                        <h:outputText value="#{type.certName}" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.description}" sortBy="#{type.description}" filterBy="#{type.description}">
+                        <h:outputText value="#{type.description}" />
+                    </p:column>
+                    <p:column headerText="#{interfaceLabel.validityPeriodMonths}" sortBy="#{type.validityPeriodMonths}" filterBy="#{type.validityPeriodMonths}">
+                        <h:outputText value="#{type.validityPeriodMonths}" />
+                    </p:column>
+
+                    <p:column exportable="false" width="20">
+                        <p:commandButton icon="pi pi-pencil" update=":form:outputPanel-content" oncomplete="PF('widgetVarDetailDialog').show()" process="@this">
+                            <f:setPropertyActionListener value="#{type}" target="#{codingEmpCertificationTypeBean.empCertificationType}" />
+                            <p:resetInput target=":form:outputPanel-content" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column exportable="false" width="20">
+                        <p:commandButton styleClass="ui-button-danger" icon="pi pi-trash" process="@this" oncomplete="PF('widgetVarDeleteDialog').show()">
+                            <f:setPropertyActionListener value="#{type}" target="#{codingEmpCertificationTypeBean.empCertificationType}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:dialog header="#{interfaceLabel.details} #{interfaceLabel.empCertificationType}" showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog" responsive="true">
+                    <p:outputPanel id="outputPanel-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty codingEmpCertificationTypeBean.empCertificationType}">
+                            <div class="p-field">
+                                <p:outputLabel for="certName">#{interfaceLabel.certName}</p:outputLabel>
+                                <p:inputText id="certName" value="#{codingEmpCertificationTypeBean.empCertificationType.certName}" required="true" requiredMessage="#{interfaceLabel.certName} #{errorLabel.validateInput}" />
+                            </div>
+                            <div class="p-field">
+                                <p:outputLabel for="description">#{interfaceLabel.description}</p:outputLabel>
+                                <p:inputTextarea id="description" value="#{codingEmpCertificationTypeBean.empCertificationType.description}" rows="4" cols="50" />
+                            </div>
+                            <div class="p-field">
+                                <p:outputLabel for="validity">#{interfaceLabel.validityPeriodMonths}</p:outputLabel>
+                                <p:inputText id="validity" value="#{codingEmpCertificationTypeBean.empCertificationType.validityPeriodMonths}" />
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+                    <f:facet name="footer">
+                        <p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check" actionListener="#{codingEmpCertificationTypeBean.save}"
+                                         update=":form:outputPanel-content :form:dataTable-empCertificationType" process="outputPanel-content @this" />
+                        <p:commandButton value="#{interfaceLabel.cancel}" icon="pi pi-times" onclick="PF('widgetVarDetailDialog').hide()" class="ui-button-secondary" />
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade" width="300" message="#{interfaceLabel.deleteSelectedCertificationType}"
+                                 header="#{interfaceLabel.confirmation}" severity="warn">
+                    <p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check" actionListener="#{codingEmpCertificationTypeBean.deleteEmpCertificationType()}" process="@this" oncomplete="PF('widgetVarDeleteDialog').hide()" />
+                    <p:commandButton value="#{interfaceLabel.no}" type="button" styleClass="ui-button-secondary" icon="pi pi-times" onclick="PF('widgetVarDeleteDialog').hide()" />
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="#{interfaceLabel.yes}" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="#{interfaceLabel.no}" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times" />
+                </p:confirmDialog>
+
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
