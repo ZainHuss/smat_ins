@@ -110,6 +110,8 @@ public class CertificatePdfGenerator {
             cb.stroke();
 
             String certType = parameters.get("CertType") != null ? String.valueOf(parameters.get("CertType")) : "";
+            String certParam = parameters.get("CertNumber") != null ? String.valueOf(parameters.get("CertNumber")) : "";
+            String certDisplay = certParam.startsWith("ID/") ? certParam : ("ID/" + certParam);
             float certifiedY = frontY + panelH - headerH - 22f;
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("Certified As:", certLabelFont), frontX + 12f, certifiedY, 0);
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(certType, certValueFont), frontX + 150f, certifiedY, 0);
@@ -187,7 +189,7 @@ public class CertificatePdfGenerator {
 
             float bottomY = frontY + 22f;
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("ID No.", labelFont), frontX + 12f, bottomY, 0);
-            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("ID/" + (parameters.get("CertNumber") != null ? String.valueOf(parameters.get("CertNumber")) : ""), approvalValueFont), frontX + 62f, bottomY, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(certDisplay, approvalValueFont), frontX + 62f, bottomY, 0);
             ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase("TS No.", labelFont), frontX + panelW - 92f, bottomY, 0);
             ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase(parameters.get("TsNumber") != null ? String.valueOf(parameters.get("TsNumber")) : "", approvalValueFont), frontX + panelW - 12f, bottomY, 0);
 
@@ -201,7 +203,7 @@ public class CertificatePdfGenerator {
             ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("SMAT for Inspection Company", titleFont), backX + panelW / 2f, backY + panelH - 44f, 0);
             ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("Postal code: 34432, P.O.Box: 19331", smallFont), backX + panelW / 2f, backY + panelH - 62f, 0);
 
-            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("ID No. " + "ID/" + (parameters.get("CertNumber") != null ? String.valueOf(parameters.get("CertNumber")) : ""), valueFont), backX + panelW / 2f, backY + panelH - 74f, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("ID No. " + certDisplay, valueFont), backX + panelW / 2f, backY + panelH - 74f, 0);
 
             float boxX = backX + 28f;
             float boxY = backY + 12f;

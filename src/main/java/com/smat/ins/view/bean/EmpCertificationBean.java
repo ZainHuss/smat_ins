@@ -233,17 +233,17 @@ public class EmpCertificationBean implements Serializable {
                 }
 
                 if (nextSeq != null) {
-                    empCertification.setCertNumber("SMI/24RDIID/" + String.format("%07d", nextSeq));
+                    empCertification.setCertNumber(buildCertPrefix(task) + String.format("%07d", nextSeq));
                 } else {
                     // fallback: الطريقة القديمة بالـ MAX
                     try {
                         Integer maxCertNo = empCertificationService.getMaxCertNo();
                         int fallback = (maxCertNo == null) ? 1 : (maxCertNo + 1);
-                        empCertification.setCertNumber("SMI/24RDIID/" + String.format("%07d", fallback));
+                        empCertification.setCertNumber(buildCertPrefix(task) + String.format("%07d", fallback));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         // كآخر حل: استخدم 1
-                        empCertification.setCertNumber("SMI/24RDIID/" + String.format("%07d", 1));
+                        empCertification.setCertNumber(buildCertPrefix(task) + String.format("%07d", 1));
                     }
                 }
 
@@ -365,6 +365,135 @@ public class EmpCertificationBean implements Serializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Build certification prefix in format
+    private String buildCertPrefix(Task task) {
+        try {
+            int yy = Calendar.getInstance().get(Calendar.YEAR) % 100;
+            String year = String.format("%02d", yy);
+
+            String orgShortcut = "XX";
+
+            if (task != null && task.getUserAliasByAssignTo() != null) {
+                UserAlias ua = task.getUserAliasByAssignTo();
+                Organization selected = null;
+                Organization rootCandidate = null;
+
+                // Prefer organizationByOrganization from multiple sources; collect a root candidate but use it only if no specific org found
+                try {
+                    // 1) Prefer alias' SysUser -> organization (this is the actual inspector's organization)
+                    try {
+                        SysUser aliasUser = ua.getSysUserBySysUser();
+                        if (aliasUser != null) {
+                            try { Organization o2 = aliasUser.getOrganizationByOrganization(); if (o2 != null) selected = o2; } catch (Exception ignore) {}
+                            try { Organization r2 = aliasUser.getOrganizationByRootOrganization(); if (r2 != null && rootCandidate == null) rootCandidate = r2; } catch (Exception ignore) {}
+                        }
+                    } catch (Exception ignore) {}
+
+                    // 2) Alias -> organization (specific on alias level) - used only if alias's sysuser has no specific org
+                    try { Organization o = ua.getOrganizationByOrganization(); if (o != null && selected == null) selected = o; } catch (Exception ignore) {}
+                    // keep root candidate from alias if not set
+                    try { Organization r = ua.getOrganizationByRootOrganization(); if (r != null && rootCandidate == null) rootCandidate = r; } catch (Exception ignore) {}
+
+                    // 3) Task's sysUser -> organization
+                    try {
+                        SysUser taskUser = task.getSysUser();
+                        if (taskUser != null && selected == null) {
+                            try { Organization o3 = taskUser.getOrganizationByOrganization(); if (o3 != null) selected = o3; } catch (Exception ignore) {}
+                            try { Organization r3 = taskUser.getOrganizationByRootOrganization(); if (r3 != null && rootCandidate == null) rootCandidate = r3; } catch (Exception ignore) {}
+                        }
+                    } catch (Exception ignore) {}
+
+                    // 4) Logged-in user -> organization
+                    try {
+                        SysUser logged = (loginBean != null) ? loginBean.getUser() : null;
+                        if (logged != null && selected == null) {
+                            try { Organization o4 = logged.getOrganizationByOrganization(); if (o4 != null) selected = o4; } catch (Exception ignore) {}
+                            try { Organization r4 = logged.getOrganizationByRootOrganization(); if (r4 != null && rootCandidate == null) rootCandidate = r4; } catch (Exception ignore) {}
+                        }
+                    } catch (Exception ignore) {}
+                } catch (Exception ignore) {}
+
+                // If we couldn't find a specific org, use the root candidate (last resort)
+                Organization org = (selected != null) ? selected : rootCandidate;
+
+                // debug output removed
+
+                if (org != null) {
+                    try {
+                        // Prefer explicit alphabetic code if available and contains letters
+                        String code = org.getCode();
+                        if (code != null) code = code.trim();
+                        if (code != null && !code.isEmpty() && code.matches(".*[A-Za-z].*")) {
+                            // keep letters/numbers but prefer letters; take first two letters if possible
+                            String lettersOnly = code.replaceAll("[^A-Za-z]", "").toUpperCase();
+                            if (lettersOnly.length() >= 2) orgShortcut = lettersOnly.substring(0,2);
+                            else if (lettersOnly.length() == 1) orgShortcut = lettersOnly + "X";
+                            else {
+                                // fallback to first two alnum
+                                String alnum = code.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
+                                if (alnum.length() >= 2) orgShortcut = alnum.substring(0,2);
+                                else if (alnum.length() == 1) orgShortcut = alnum + "X";
+                            }
+                        } else {
+                            // derive from name (english preferred)
+                            String name = org.getEnglishName() != null && !org.getEnglishName().trim().isEmpty() ? org.getEnglishName() : org.getArabicName();
+                            if (name != null && !name.trim().isEmpty()) {
+                                // First: check explicit branch suffix after '-' and map to provided shortcuts
+                                try {
+                                    String lower = name.toLowerCase();
+                                    String branchKey = null;
+                                    if (lower.contains("-")) {
+                                        branchKey = lower.substring(lower.lastIndexOf('-') + 1).trim();
+                                    }
+                                    if (branchKey != null && !branchKey.isEmpty()) {
+                                        if (branchKey.contains("khobar")) {
+                                            orgShortcut = "KH";
+                                        } else if (branchKey.contains("riyadh")) {
+                                            orgShortcut = "RD";
+                                        } else if (branchKey.contains("jeddah")) {
+                                            orgShortcut = "JD";
+                                        } else if (branchKey.contains("neom")) {
+                                            orgShortcut = "NE";
+                                        }
+                                    }
+                                } catch (Exception ignore) {}
+
+                                // If mapping not applied, fallback to previous heuristic
+                                if (orgShortcut == null || orgShortcut.equals("XX")) {
+                                    String clean = name.trim().replaceAll("[^A-Za-z ]", "").toUpperCase();
+                                    String[] parts = clean.split("\\s+");
+                                    if (parts.length >= 2) {
+                                        orgShortcut = (parts[0].substring(0,1) + parts[1].substring(0,1)).toUpperCase();
+                                    } else {
+                                        String s = parts[0];
+                                        if (s.length() >= 2) {
+                                            orgShortcut = (s.substring(0,1) + s.substring(1,2)).toUpperCase();
+                                        } else if (s.length() == 1) {
+                                            orgShortcut = (s + s).toUpperCase();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        orgShortcut = "XX";
+                    }
+                }
+            }
+
+            // normalize to 2 alphabetic chars; ensure letters (fallback to XX)
+            if (orgShortcut == null) orgShortcut = "XX";
+            orgShortcut = orgShortcut.replaceAll("[^A-Z]", "");
+            if (orgShortcut.length() >= 2) orgShortcut = orgShortcut.substring(0,2);
+            if (orgShortcut.length() == 1) orgShortcut = orgShortcut + "X";
+            if (orgShortcut.length() == 0) orgShortcut = "XX";
+
+            return "ID/" + year + orgShortcut + "/";
+        } catch (Exception e) {
+            return "ID/" + String.format("%02d", Calendar.getInstance().get(Calendar.YEAR) % 100) + "XX/";
         }
     }
 
@@ -1115,6 +1244,8 @@ public class EmpCertificationBean implements Serializable {
 
             // Role title (Certified as: <role>) - moved below the blue separator to avoid overlap
             String certType = safeString(parameters.get("CertType"));
+            String certParam = safeString(parameters.get("CertNumber"));
+            String certDisplay = (certParam != null && certParam.startsWith("ID/")) ? certParam : ("ID/" + certParam);
             // move 'Certified As' a bit higher for better alignment with logos (capitalize)
             // Render 'Certified As' and its value on the same baseline with matching size
             // lower the "Certified As" line slightly for better spacing
@@ -1207,7 +1338,7 @@ public class EmpCertificationBean implements Serializable {
             float bottomY = frontY + 22f;
             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("ID No.", labelFont), frontX + 12f, bottomY, 0);
             // bring ID value closer to label
-            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase("ID/" + safeString(parameters.get("CertNumber")), approvalValueFont), frontX + 62f, bottomY, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(certDisplay, approvalValueFont), frontX + 62f, bottomY, 0);
             // TS label and value tightened and closer
             ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase("TS No.", labelFont), frontX + panelW - 92f, bottomY, 0);
             ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase(safeString(parameters.get("TsNumber")), approvalValueFont), frontX + panelW - 12f, bottomY, 0);
@@ -1227,7 +1358,7 @@ public class EmpCertificationBean implements Serializable {
             ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("Postal code: 34432, P.O.Box: 19331", smallFont), backX + panelW / 2f, backY + panelH - 62f, 0);
 
             // big ID
-            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("ID No. " + "ID/" + safeString(parameters.get("CertNumber")), valueFont), backX + panelW / 2f, backY + panelH - 74f, 0);
+            ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, new Phrase("ID No. " + certDisplay, valueFont), backX + panelW / 2f, backY + panelH - 74f, 0);
 
             // approval schedule box with QR
             // make box slightly smaller and place it lower

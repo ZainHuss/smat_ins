@@ -16,7 +16,6 @@
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                /* keep contact cell on a single line */
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -34,7 +33,6 @@
                 flex-shrink: 0;
             }
             .details-cell {
-                /* keep details on a single line and use ellipsis for overflow */
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -55,7 +53,6 @@
                 table-layout: auto;
             }
             .products-table .ui-datatable-tablewrapper td {
-                /* force single-line rows (desktop) and ellipsis; full text available via title */
                 max-width: 220px;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -63,7 +60,6 @@
                 vertical-align: middle;
                 padding: 8px;
             }
-            /* make nested containers inside cells also truncate */
             .products-table .ui-datatable-tablewrapper td .details-cell,
             .products-table .ui-datatable-tablewrapper td .contact-person-cell {
                 overflow: hidden;
@@ -72,6 +68,228 @@
                 display: inline-block;
                 max-width: 100%;
             }
+
+            /* Enhanced Dialog Styles - More Compact */
+            .enhanced-dialog .ui-dialog-titlebar {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                font-weight: 600;
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .enhanced-dialog .ui-dialog-content {
+                padding: 0.75rem;
+                max-height: 500px;
+                overflow-y: auto;
+            }
+
+            /* Compact Info Card */
+            .compact-info-card {
+                background: white;
+                padding: 0.75rem;
+            }
+
+            .compact-section {
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .compact-section:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            .compact-section-title {
+                color: #495057;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                font-size: 0.95rem;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+
+            .compact-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 0.5rem;
+            }
+
+            .compact-item {
+                display: flex;
+                flex-direction: column;
+                padding: 0.4rem;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                border-left: 2px solid #667eea;
+            }
+
+            .compact-label {
+                font-size: 0.75rem;
+                color: #6c757d;
+                font-weight: 500;
+                margin-bottom: 0.15rem;
+            }
+
+            .compact-value {
+                font-size: 0.85rem;
+                color: #212529;
+                font-weight: 500;
+                word-break: break-word;
+            }
+
+            .compact-value.empty {
+                color: #adb5bd;
+                font-style: italic;
+            }
+
+            /* Compact Contact Display */
+            .compact-contact {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem;
+                background: #f8f9fa;
+                border-radius: 4px;
+                margin: 0.25rem 0;
+            }
+
+            .compact-avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 600;
+                color: white;
+                font-size: 0.9rem;
+                flex-shrink: 0;
+            }
+
+            .compact-contact-details {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .compact-contact-name {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #212529;
+                margin-bottom: 0.1rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .compact-contact-email {
+                font-size: 0.8rem;
+                color: #495057;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .compact-contact-email a {
+                color: #667eea;
+                text-decoration: none;
+            }
+
+            /* Compact Company Header */
+            .compact-header {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .compact-icon {
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.2rem;
+                flex-shrink: 0;
+            }
+
+            .compact-title {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .compact-company-name {
+                font-size: 1rem;
+                font-weight: 700;
+                color: #212529;
+                margin-bottom: 0.15rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .compact-company-code {
+                font-size: 0.8rem;
+                color: #6c757d;
+                background-color: #e9ecef;
+                padding: 0.15rem 0.4rem;
+                border-radius: 10px;
+                display: inline-block;
+                font-weight: 500;
+            }
+
+            /* Compact Phone Badges */
+            .compact-phone-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.3rem;
+                margin-top: 0.3rem;
+            }
+
+            .compact-phone-badge {
+                background-color: #e9ecef;
+                padding: 0.2rem 0.4rem;
+                border-radius: 10px;
+                font-size: 0.8rem;
+                color: #495057;
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            /* Compact Content Areas */
+            .compact-content-area {
+                padding: 0.5rem;
+                background-color: #f8f9fa;
+                border-radius: 4px;
+                border-left: 2px solid #17a2b8;
+                font-size: 0.85rem;
+                color: #495057;
+                line-height: 1.4;
+                max-height: 80px;
+                overflow-y: auto;
+                margin-top: 0.25rem;
+            }
+
+            .compact-content-area.empty {
+                color: #adb5bd;
+                font-style: italic;
+                border-left-color: #adb5bd;
+            }
+
+            .compact-details-area {
+                border-left-color: #28a745;
+            }
+
             @media screen and (max-width: 960px) {
                 .products-table .ui-datatable-tablewrapper table {
                     table-layout: auto;
@@ -79,14 +297,72 @@
                 .name-column {
                     min-width: 150px;
                 }
-                /* allow wrapping on small screens */
                 .products-table .ui-datatable-tablewrapper td {
                     white-space: normal;
                     overflow: visible;
                     text-overflow: unset;
                     padding: 6px;
                 }
+                .compact-grid {
+                    grid-template-columns: 1fr;
+                }
             }
+
+            /* Rainbow animated buttons for edit/view/delete */
+            .rainbow-btn {
+                position: relative;
+                overflow: hidden;
+                color: #fff !important;
+                border: none !important;
+                padding: 0.32rem 0.6rem !important;
+                border-radius: 8px !important;
+                min-width: 34px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+                background: linear-gradient(90deg, #ff3cac 0%, #784ba0 15%, #2b86c5 30%, #06beb6 45%, #fddb92 60%, #ff7a18 75%, #ff3cac 90%);
+                background-size: 200% 100%;
+                animation: rainbowShift 3.2s linear infinite;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            }
+
+            @keyframes rainbowShift {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+
+            .rainbow-btn .pi {
+                color: #fff !important;
+                transition: transform .18s ease;
+                font-size: 1rem;
+            }
+
+            .rainbow-btn:hover {
+                transform: translateY(-3px) scale(1.03);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.14);
+                filter: saturate(1.08);
+            }
+
+            .rainbow-btn:hover .pi { transform: scale(1.15); }
+
+            /* View button: green variant */
+            .rainbow-btn.view-btn {
+                /* green gradient override for the 'view' action */
+                background: linear-gradient(90deg, #28a745 0%, #4ac26a 45%, #28a745 100%) !important;
+                background-size: 200% 100%;
+                animation: rainbowShift 3.6s linear infinite;
+                box-shadow: 0 4px 10px rgba(40,167,69,0.12);
+            }
+
+            /* Small variants so row buttons stay compact */
+            .rainbow-btn.edit-btn { padding: 0.28rem 0.5rem !important; animation-duration: 3.2s; }
+            .rainbow-btn.view-btn { padding: 0.28rem 0.5rem !important; animation-duration: 3.6s; }
+            .rainbow-btn.delete-btn { padding: 0.28rem 0.5rem !important; animation-duration: 2.8s; }
+
+            /* Keep accessibility focus visible */
+            .rainbow-btn:focus { outline: 3px solid rgba(255,255,255,0.18); }
         </style>
     </ui:define>
     <ui:define name="section-content">
@@ -144,7 +420,6 @@
                     </f:facet>
                     <p:column selectionMode="multiple" exportable="false"></p:column>
 
-                    <!-- Reordered & consolidated columns: Name, Code, Phones, Contact (name + email), Address, Details -->
                     <p:column headerText="#{interfaceLabel.name}"
                               sortBy="#{company.name}" filterBy="#{company.name}" styleClass="name-column wrap-text-cell">
                         <h:outputText value="#{company.name}" title="#{company.name}" />
@@ -169,13 +444,9 @@
                               sortBy="#{company.contactPerson}" filterBy="#{company.contactPerson}" styleClass="wrap-text-cell"
                               headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
                         <div class="contact-person-cell">
-                            <div class="contact-avatar">
-                                <h:outputText value="#{not empty company.contactPerson ? company.contactPerson.substring(0,1).toUpperCase() : '?'}" />
-                            </div>
                             <div class="details-cell">
                                 <h:outputText value="#{company.contactPerson}" rendered="#{not empty company.contactPerson}" title="#{company.contactPerson}" />
                                 <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.contactPerson}" />
-                                <!-- inline separator only when both contactPerson and email exist -->
                                 <h:outputText value=" - " rendered="#{not empty company.contactPerson and not empty company.email}" style="color:#6c757d;" />
                                 <h:outputLink value="mailto:#{company.email}" rendered="#{not empty company.email}" title="#{company.email}">
                                     <h:outputText value="#{company.email}" />
@@ -194,26 +465,27 @@
                         </div>
                     </p:column>
 
-                    <p:column headerText="#{interfaceLabel.details}"
-                              sortBy="#{company.details}" filterBy="#{company.details}" styleClass="wrap-text-cell"
-                              headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
-                        <div class="details-cell">
-                            <h:outputText value="#{company.details}" rendered="#{not empty company.details}" title="#{company.details}" />
-                            <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.details}" />
-                        </div>
-                    </p:column>
-
                     <p:column exportable="false" width="20">
                         <p:commandButton icon="pi pi-pencil"
                                          update=":form:outputPanel-content"
-                                         oncomplete="PF('widgetVarDetailDialog').show()" process="@this">
+                                         oncomplete="PF('widgetVarDetailDialog').show()" process="@this"
+                                         styleClass="rainbow-btn edit-btn">
                             <f:setPropertyActionListener value="#{company}"
                                                          target="#{codingCompanyBean.company}" />
                             <p:resetInput target=":form:outputPanel-content" />
                         </p:commandButton>
                     </p:column>
                     <p:column exportable="false" width="20">
-                        <p:commandButton styleClass="ui-button-danger" icon="pi pi-trash"
+                        <p:commandButton icon="pi pi-eye" title="#{interfaceLabel.view}"
+                                         update=":form:viewPanel-content"
+                                         oncomplete="PF('widgetVarViewDialog').show()" process="@this"
+                                         styleClass="ui-button-secondary rainbow-btn view-btn">
+                            <f:setPropertyActionListener value="#{company}"
+                                                         target="#{codingCompanyBean.company}" />
+                        </p:commandButton>
+                    </p:column>
+                    <p:column exportable="false" width="20">
+                        <p:commandButton styleClass="ui-button-danger rainbow-btn delete-btn" icon="pi pi-trash"
                                          process="@this" oncomplete="PF('widgetVarDeleteDialog').show()">
                             <f:setPropertyActionListener value="#{company}"
                                                          target="#{codingCompanyBean.company}" />
@@ -285,6 +557,137 @@
                     </f:facet>
                 </p:dialog>
 
+                <p:dialog header="#{interfaceLabel.view} #{interfaceLabel.company}"
+                          showEffect="fade" modal="true" widgetVar="widgetVarViewDialog"
+                          responsive="true" styleClass="enhanced-dialog"
+                          width="500" height="auto">
+                    <p:outputPanel id="viewPanel-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty codingCompanyBean.company}">
+                            <div class="compact-info-card">
+                                <!-- Company Header -->
+                                <div class="compact-header">
+                                    <div class="compact-icon">
+                                        <i class="pi pi-building"></i>
+                                    </div>
+                                    <div class="compact-title">
+                                        <div class="compact-company-name" title="#{codingCompanyBean.company.name}">
+                                            #{codingCompanyBean.company.name}
+                                        </div>
+                                        <div class="compact-company-code">
+                                            <i class="pi pi-tag"></i> #{codingCompanyBean.company.code}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Information -->
+                                <div class="compact-section">
+                                    <div class="compact-section-title">
+                                        <i class="pi pi-user"></i> #{interfaceLabel.contactPerson}
+                                    </div>
+
+                                    <p:outputPanel rendered="#{not empty codingCompanyBean.company.contactPerson or not empty codingCompanyBean.company.email}">
+                                        <div class="compact-contact">
+                                            <div class="compact-avatar">
+                                                <h:outputText value="#{not empty codingCompanyBean.company.contactPerson ? codingCompanyBean.company.contactPerson.substring(0,1).toUpperCase() : 'C'}" />
+                                            </div>
+                                            <div class="compact-contact-details">
+                                                <div class="compact-contact-name" title="#{codingCompanyBean.company.contactPerson}">
+                                                    <h:outputText value="#{codingCompanyBean.company.contactPerson}" rendered="#{not empty codingCompanyBean.company.contactPerson}" />
+
+                                                </div>
+                                                <div class="compact-contact-email" title="#{codingCompanyBean.company.email}">
+                                                    <h:outputLink value="mailto:#{codingCompanyBean.company.email}" rendered="#{not empty codingCompanyBean.company.email}" style="display: inline-flex; align-items: center; gap: 0.2rem;">
+                                                        <i class="pi pi-envelope"></i>
+                                                        <h:outputText value="#{codingCompanyBean.company.email}" />
+                                                    </h:outputLink>
+                                                    <h:outputText value="#{interfaceLabel.notSpecified}" rendered="#{empty codingCompanyBean.company.email}" styleClass="compact-value empty" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </p:outputPanel>
+
+                                    <p:outputPanel rendered="#{empty codingCompanyBean.company.contactPerson and empty codingCompanyBean.company.email}">
+                                        <div style="padding: 0.25rem; text-align: center; color: #adb5bd; font-style: italic; font-size: 0.8rem;">
+                                            No Contact Information
+                                        </div>
+                                    </p:outputPanel>
+                                </div>
+
+                                <!-- Company Details -->
+                                <div class="compact-section">
+                                    <div class="compact-section-title">
+                                        <i class="pi pi-info-circle"></i> Company Details
+                                    </div>
+
+                                    <div class="compact-grid">
+                                        <!-- Phone Information -->
+                                        <div class="compact-item">
+                                            <div class="compact-label">
+                                                <i class="pi pi-phone"></i> Phone - Mobile
+                                            </div>
+                                            <div class="compact-phone-badges">
+                                                <p:outputPanel rendered="#{not empty codingCompanyBean.company.phone}">
+                                                    <div class="compact-phone-badge">
+                                                        <i class="pi pi-phone"></i>
+                                                        <h:outputText value="#{codingCompanyBean.company.phone}" />
+                                                    </div>
+                                                </p:outputPanel>
+                                                <p:outputPanel rendered="#{not empty codingCompanyBean.company.mobile}">
+                                                    <div class="compact-phone-badge">
+                                                        <i class="pi pi-mobile"></i>
+                                                        <h:outputText value="#{codingCompanyBean.company.mobile}" />
+                                                    </div>
+                                                </p:outputPanel>
+                                                <p:outputPanel rendered="#{empty codingCompanyBean.company.phone and empty codingCompanyBean.company.mobile}">
+                                                    <h:outputText value="Not Specified" styleClass="compact-value empty" />
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>
+
+                                        <!-- Code -->
+                                        <div class="compact-item">
+                                            <div class="compact-label">
+                                                <i class="pi pi-tag"></i> #{interfaceLabel.code}
+                                            </div>
+                                            <div class="compact-value">
+                                                #{codingCompanyBean.company.code}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="compact-section">
+                                    <div class="compact-section-title">
+                                        <i class="pi pi-map-marker"></i> #{interfaceLabel.address}
+                                    </div>
+                                    <div class="#{empty codingCompanyBean.company.address ? 'compact-content-area empty' : 'compact-content-area'}">
+                                        <h:outputText value="#{codingCompanyBean.company.address}" rendered="#{not empty codingCompanyBean.company.address}" />
+                                        <h:outputText value="Not Specified" rendered="#{empty codingCompanyBean.company.address}" />
+                                    </div>
+                                </div>
+
+                                <!-- Details -->
+                                <div class="compact-section">
+                                    <div class="compact-section-title">
+                                        <i class="pi pi-file"></i> #{interfaceLabel.details}
+                                    </div>
+                                    <div class="#{empty codingCompanyBean.company.details ? 'compact-content-area compact-details-area empty' : 'compact-content-area compact-details-area'}">
+                                        <h:outputText value="#{codingCompanyBean.company.details}" rendered="#{not empty codingCompanyBean.company.details}" />
+                                        <h:outputText value="No Additional Details" rendered="#{empty codingCompanyBean.company.details}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+                    <f:facet name="footer">
+                        <div style="display: flex; justify-content: flex-end;">
+                            <p:commandButton value="#{interfaceLabel.close}" icon="pi pi-times" type="button"
+                                             onclick="PF('widgetVarViewDialog').hide()" styleClass="ui-button-secondary" />
+                        </div>
+                    </f:facet>
+                </p:dialog>
+
                 <p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
                                  width="300" message="#{interfaceLabel.deleteSelectedCompany}"
                                  header="#{interfaceLabel.confirmation}" severity="warn">
@@ -304,6 +707,660 @@
                 </p:confirmDialog>
 
             </div>
-        </h:form>
+        </h:form><ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                                 xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+
+        <ui:define name="section-head">
+            #{interfaceLabel.view} #{interfaceLabel.companies}
+        </ui:define>
+
+        <ui:define name="head">
+            <h:outputStylesheet library="#{appSetting.resourceLib}"
+                                name="css/material-theme.css"></h:outputStylesheet>
+            <style>
+                .contact-person-cell {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .contact-avatar {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background-color: #e9ecef;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 600;
+                    color: #495057;
+                    flex-shrink: 0;
+                }
+                .details-cell {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 300px;
+                }
+                .wrap-text-cell {
+                    white-space: normal;
+                    word-wrap: break-word;
+                    word-break: break-word;
+                }
+                .name-column {
+                    min-width: 200px;
+                    white-space: normal;
+                    word-wrap: break-word;
+                    word-break: break-word;
+                }
+                .products-table .ui-datatable-tablewrapper table {
+                    table-layout: auto;
+                }
+                .products-table .ui-datatable-tablewrapper td {
+                    max-width: 220px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    vertical-align: middle;
+                    padding: 8px;
+                }
+                .products-table .ui-datatable-tablewrapper td .details-cell,
+                .products-table .ui-datatable-tablewrapper td .contact-person-cell {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    display: inline-block;
+                    max-width: 100%;
+                }
+
+                /* Enhanced Dialog Styles - More Compact */
+                .enhanced-dialog .ui-dialog-titlebar {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    padding: 0.5rem 1rem;
+                }
+
+                .enhanced-dialog .ui-dialog-content {
+                    padding: 0.75rem;
+                    max-height: 500px;
+                    overflow-y: auto;
+                }
+
+                /* Compact Info Card */
+                .compact-info-card {
+                    background: white;
+                    padding: 0.75rem;
+                }
+
+                .compact-section {
+                    margin-bottom: 0.75rem;
+                    padding-bottom: 0.75rem;
+                    border-bottom: 1px solid #e9ecef;
+                }
+
+                .compact-section:last-child {
+                    border-bottom: none;
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                }
+
+                .compact-section-title {
+                    color: #495057;
+                    font-weight: 600;
+                    margin-bottom: 0.5rem;
+                    font-size: 0.95rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.4rem;
+                }
+
+                .compact-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                    gap: 0.5rem;
+                }
+
+                .compact-item {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 0.4rem;
+                    background-color: #f8f9fa;
+                    border-radius: 4px;
+                    border-left: 2px solid #667eea;
+                }
+
+                .compact-label {
+                    font-size: 0.75rem;
+                    color: #6c757d;
+                    font-weight: 500;
+                    margin-bottom: 0.15rem;
+                }
+
+                .compact-value {
+                    font-size: 0.85rem;
+                    color: #212529;
+                    font-weight: 500;
+                    word-break: break-word;
+                }
+
+                .compact-value.empty {
+                    color: #adb5bd;
+                    font-style: italic;
+                }
+
+                /* Compact Contact Display */
+                .compact-contact {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.5rem;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    margin: 0.25rem 0;
+                }
+
+                .compact-avatar {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 600;
+                    color: white;
+                    font-size: 0.9rem;
+                    flex-shrink: 0;
+                }
+
+                .compact-contact-details {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .compact-contact-name {
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    color: #212529;
+                    margin-bottom: 0.1rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .compact-contact-email {
+                    font-size: 0.8rem;
+                    color: #495057;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .compact-contact-email a {
+                    color: #667eea;
+                    text-decoration: none;
+                }
+
+                /* Compact Company Header */
+                .compact-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.75rem;
+                    padding-bottom: 0.5rem;
+                    border-bottom: 1px solid #e9ecef;
+                }
+
+                .compact-icon {
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border-radius: 6px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-size: 1.2rem;
+                    flex-shrink: 0;
+                }
+
+                .compact-title {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                .compact-company-name {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    color: #212529;
+                    margin-bottom: 0.15rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .compact-company-code {
+                    font-size: 0.8rem;
+                    color: #6c757d;
+                    background-color: #e9ecef;
+                    padding: 0.15rem 0.4rem;
+                    border-radius: 10px;
+                    display: inline-block;
+                    font-weight: 500;
+                }
+
+                /* Compact Phone Badges */
+                .compact-phone-badges {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.3rem;
+                    margin-top: 0.3rem;
+                }
+
+                .compact-phone-badge {
+                    background-color: #e9ecef;
+                    padding: 0.2rem 0.4rem;
+                    border-radius: 10px;
+                    font-size: 0.8rem;
+                    color: #495057;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.3rem;
+                }
+
+                /* Compact Content Areas */
+                .compact-content-area {
+                    padding: 0.5rem;
+                    background-color: #f8f9fa;
+                    border-radius: 4px;
+                    border-left: 2px solid #17a2b8;
+                    font-size: 0.85rem;
+                    color: #495057;
+                    line-height: 1.4;
+                    max-height: 80px;
+                    overflow-y: auto;
+                    margin-top: 0.25rem;
+                }
+
+                .compact-content-area.empty {
+                    color: #adb5bd;
+                    font-style: italic;
+                    border-left-color: #adb5bd;
+                }
+
+                .compact-details-area {
+                    border-left-color: #28a745;
+                }
+
+                @media screen and (max-width: 960px) {
+                    .products-table .ui-datatable-tablewrapper table {
+                        table-layout: auto;
+                    }
+                    .name-column {
+                        min-width: 150px;
+                    }
+                    .products-table .ui-datatable-tablewrapper td {
+                        white-space: normal;
+                        overflow: visible;
+                        text-overflow: unset;
+                        padding: 6px;
+                    }
+                    .compact-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
+        </ui:define>
+        <ui:define name="section-content">
+            <h:form id="form">
+                <div class="card">
+                    <p:growl id="messages" showDetail="true" life="2000" sticky="false" />
+                    <div class="row">
+                        <div class="col-6 col-lg-3 col-xl-2 col-xxl-1">
+                            <p:commandButton value="#{interfaceLabel.add}" icon="pi pi-plus"
+                                             actionListener="#{codingCompanyBean.openNew}"
+                                             update=":form:outputPanel-content"
+                                             oncomplete="PF('widgetVarDetailDialog').show()"
+                                             styleClass="rounded-button ui-button-success ui-button-raised ui-button-flat"
+                                             style="#{app.locale.locale eq 'en'? 'margin-right:.5rem' : 'margin-left:.5rem'} ">
+                                <p:resetInput target=":form:outputPanel-content" />
+                            </p:commandButton>
+                        </div>
+                        <div class="col-6 col-lg-5 col-xl-4 col-xxl-3">
+                            <p:commandButton id="delete-company-button"
+                                             value="#{codingCompanyBean.deleteButtonMessage}"
+                                             icon="pi pi-trash" style="width:auto;"
+                                             styleClass="rounded-button ui-button-danger ui-button-raised ui-button-flat"
+                                             actionListener="#{codingCompanyBean.delete()}"
+                                             disabled="#{!codingCompanyBean.hasSelected()}" update="@this">
+                                <p:confirm header="#{interfaceLabel.confirmation}"
+                                           message="#{interfaceLabel.deleteSelectedCompany}"
+                                           icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+
+                    <p:divider layout="horizontal" type="dashed"></p:divider>
+
+                    <p:dataTable id="dataTable-company" widgetVar="widgetVarCompany"
+                                 var="company" value="#{codingCompanyBean.companies}" reflow="true"
+                                 styleClass="products-table" globalFilterOnly="true"
+                                 selection="#{codingCompanyBean.selectedCompanyList}"
+                                 rowKey="#{company.id}" paginator="true" rows="10"
+                                 rowSelectMode="add" emptyMessage="#{interfaceLabel.noRecordsFound}"
+                                 paginatorPosition="bottom">
+                        <p:ajax event="rowSelect" update=":form:delete-company-button" />
+                        <p:ajax event="rowUnselect" update=":form:delete-company-button" />
+                        <p:ajax event="rowSelectCheckbox"
+                                update=":form:delete-company-button" />
+                        <p:ajax event="rowUnselectCheckbox"
+                                update=":form:delete-company-button" />
+                        <p:ajax event="toggleSelect" update=":form:delete-company-button" />
+                        <f:facet name="header">
+                            <div class="flex align-items-center justify-content-between">
+                                <h:outputText value="#{interfaceLabel.search} : " />
+                                <p:inputText id="globalFilter"
+                                             onkeyup="PF('widgetVarCompany').filter()" style="width:auto;"
+                                             placeholder="#{interfaceLabel.enterKeyword}" />
+                            </div>
+                        </f:facet>
+                        <p:column selectionMode="multiple" exportable="false"></p:column>
+
+                        <p:column headerText="#{interfaceLabel.name}"
+                                  sortBy="#{company.name}" filterBy="#{company.name}" styleClass="name-column wrap-text-cell">
+                            <h:outputText value="#{company.name}" title="#{company.name}" />
+                        </p:column>
+
+                        <p:column headerText="#{interfaceLabel.code}"
+                                  sortBy="#{company.code}" filterBy="#{company.code}" styleClass="wrap-text-cell"
+                                  headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                            <h:outputText value="#{company.code}" title="#{company.code}" />
+                        </p:column>
+
+                        <p:column headerText="#{interfaceLabel.phone}"
+                                  sortBy="#{company.phone}" filterBy="#{company.phone}" styleClass="wrap-text-cell"
+                                  headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                            <h:outputText value="#{not empty company.phone ? company.phone : ''}" title="#{company.phone}" />
+                            <h:outputText value=" / " rendered="#{not empty company.phone and not empty company.mobile}" />
+                            <h:outputText value="#{company.mobile}" rendered="#{not empty company.mobile}" title="#{company.mobile}" />
+                            <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.phone and empty company.mobile}" />
+                        </p:column>
+
+                        <p:column headerText="#{interfaceLabel.contactPerson}"
+                                  sortBy="#{company.contactPerson}" filterBy="#{company.contactPerson}" styleClass="wrap-text-cell"
+                                  headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                            <div class="contact-person-cell">
+                                <div class="details-cell">
+                                    <h:outputText value="#{company.contactPerson}" rendered="#{not empty company.contactPerson}" title="#{company.contactPerson}" />
+                                    <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.contactPerson}" />
+                                    <h:outputText value=" - " rendered="#{not empty company.contactPerson and not empty company.email}" style="color:#6c757d;" />
+                                    <h:outputLink value="mailto:#{company.email}" rendered="#{not empty company.email}" title="#{company.email}">
+                                        <h:outputText value="#{company.email}" />
+                                    </h:outputLink>
+                                    <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.email}" />
+                                </div>
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="#{interfaceLabel.address}"
+                                  sortBy="#{company.address}" filterBy="#{company.address}" styleClass="wrap-text-cell"
+                                  headerStyle="color:#0d6efd;font-weight:600;font-family:'Segoe UI', Tahoma, Arial, sans-serif;">
+                            <div class="details-cell">
+                                <h:outputText value="#{company.address}" rendered="#{not empty company.address}" title="#{company.address}" />
+                                <h:outputText value="-" style="color: #6c757d;" rendered="#{empty company.address}" />
+                            </div>
+                        </p:column>
+
+                        <p:column exportable="false" width="20">
+                            <p:commandButton icon="pi pi-pencil"
+                                             update=":form:outputPanel-content"
+                                             oncomplete="PF('widgetVarDetailDialog').show()" process="@this">
+                                <f:setPropertyActionListener value="#{company}"
+                                                             target="#{codingCompanyBean.company}" />
+                                <p:resetInput target=":form:outputPanel-content" />
+                            </p:commandButton>
+                        </p:column>
+                        <p:column exportable="false" width="20">
+                            <p:commandButton icon="pi pi-eye" title="#{interfaceLabel.view}"
+                                             update=":form:viewPanel-content"
+                                             oncomplete="PF('widgetVarViewDialog').show()" process="@this"
+                                             styleClass="ui-button-secondary rainbow-btn view-btn">
+                                <f:setPropertyActionListener value="#{company}"
+                                                             target="#{codingCompanyBean.company}" />
+                            </p:commandButton>
+                        </p:column>
+                        <p:column exportable="false" width="20">
+                            <p:commandButton styleClass="ui-button-danger rainbow-btn delete-btn" icon="pi pi-trash"
+                                             process="@this" oncomplete="PF('widgetVarDeleteDialog').show()">
+                                <f:setPropertyActionListener value="#{company}"
+                                                             target="#{codingCompanyBean.company}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:dialog
+                            header="#{interfaceLabel.details} #{interfaceLabel.company}"
+                            showEffect="fade" modal="true" widgetVar="widgetVarDetailDialog"
+                            responsive="true">
+                        <p:outputPanel id="outputPanel-content" class="ui-fluid">
+                            <p:outputPanel rendered="#{not empty codingCompanyBean.company}">
+                                <div class="ui-fluid formgrid grid">
+                                    <div class="field col-12 md:col-4">
+                                        <p:outputLabel style="font-weight:bold;color:black;" for="name">#{interfaceLabel.name}</p:outputLabel>
+                                        <p:inputText id="name"
+                                                     value="#{codingCompanyBean.company.name}" required="true"
+                                                     requiredMessage="#{interfaceLabel.name}  #{errorLabel.validateInput}" />
+                                    </div>
+                                    <div class="field col-12 md:col-4">
+                                        <p:outputLabel style="font-weight:bold;color:black;" for="phone">#{interfaceLabel.phone}</p:outputLabel>
+                                        <p:inputText id="phone"
+                                                     value="#{codingCompanyBean.company.phone}" />
+                                    </div>
+                                    <div class="field col-12 md:col-4">
+                                        <p:outputLabel style="font-weight:bold;color:black;" for="mobile">#{interfaceLabel.mobile}</p:outputLabel>
+                                        <p:inputText id="mobile"
+                                                     value="#{codingCompanyBean.company.mobile}" />
+                                    </div>
+                                </div>
+                                <div class="ui-fluid formgrid grid">
+                                    <div class="field col-12 md:col-6">
+                                        <p:outputLabel style="font-weight:bold;color:black;" for="contactPerson">#{interfaceLabel.contactPerson}</p:outputLabel>
+                                        <p:inputText id="contactPerson"
+                                                     value="#{codingCompanyBean.company.contactPerson}" />
+                                    </div>
+                                    <div class="field col-12 md:col-6">
+                                        <p:outputLabel style="font-weight:bold;color:black;" for="email">#{interfaceLabel.email}</p:outputLabel>
+                                        <p:inputText id="email" value="#{codingCompanyBean.company.email}" validatorMessage="#{interfaceLabel.invalidEmail}">
+                                            <f:validateRegex pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$" />
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                                <div class="row ">
+                                    <div class="col-lg-10 col-xl-9 col-xxl-8">
+                                        <p:outputLabel style="font-weight:bold;color:black;">#{interfaceLabel.address}</p:outputLabel>
+                                        <p:inputTextarea value="#{codingCompanyBean.company.address}"
+                                                         rows="3"></p:inputTextarea>
+                                    </div>
+                                </div>
+                                <div class="row ">
+                                    <div class="col-lg-10 col-xl-9 col-xxl-8">
+                                        <p:outputLabel style="font-weight:bold;color:black;">#{interfaceLabel.details}</p:outputLabel>
+                                        <p:inputTextarea value="#{codingCompanyBean.company.details}"
+                                                         rows="3"></p:inputTextarea>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                        <f:facet name="footer">
+                            <p:commandButton value="#{interfaceLabel.save}" icon="pi pi-check"
+                                             actionListener="#{codingCompanyBean.save}"
+                                             update=":form:outputPanel-content :form:dataTable-company"
+                                             process="outputPanel-content @this" />
+                            <p:commandButton value="#{interfaceLabel.cancel}"
+                                             icon="pi pi-times" onclick="PF('widgetVarDetailDialog').hide()"
+                                             class="ui-button-secondary" />
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:dialog header="#{interfaceLabel.view} #{interfaceLabel.company}"
+                              showEffect="fade" modal="true" widgetVar="widgetVarViewDialog"
+                              responsive="true" styleClass="enhanced-dialog"
+                              width="500" height="auto">
+                        <p:outputPanel id="viewPanel-content" class="ui-fluid">
+                            <p:outputPanel rendered="#{not empty codingCompanyBean.company}">
+                                <div class="compact-info-card">
+                                    <!-- Company Header -->
+                                    <div class="compact-header">
+                                        <div class="compact-icon">
+                                            <i class="pi pi-building"></i>
+                                        </div>
+                                        <div class="compact-title">
+                                            <div class="compact-company-name" title="#{codingCompanyBean.company.name}">
+                                                #{codingCompanyBean.company.name}
+                                            </div>
+                                            <div class="compact-company-code">
+                                                <i class="pi pi-tag"></i> #{codingCompanyBean.company.code}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contact Information -->
+                                    <div class="compact-section">
+                                        <div class="compact-section-title">
+                                            <i class="pi pi-user"></i> #{interfaceLabel.contactPerson}
+                                        </div>
+
+                                        <p:outputPanel rendered="#{not empty codingCompanyBean.company.contactPerson or not empty codingCompanyBean.company.email}">
+                                            <div class="compact-contact">
+                                                <div class="compact-avatar">
+                                                    <h:outputText value="#{not empty codingCompanyBean.company.contactPerson ? codingCompanyBean.company.contactPerson.substring(0,1).toUpperCase() : 'C'}" />
+                                                </div>
+                                                <div class="compact-contact-details">
+                                                    <div class="compact-contact-name" title="#{codingCompanyBean.company.contactPerson}">
+                                                        <h:outputText value="#{codingCompanyBean.company.contactPerson}" rendered="#{not empty codingCompanyBean.company.contactPerson}" />
+
+                                                    </div>
+                                                    <div class="compact-contact-email" title="#{codingCompanyBean.company.email}">
+                                                        <h:outputLink value="mailto:#{codingCompanyBean.company.email}" rendered="#{not empty codingCompanyBean.company.email}" style="display: inline-flex; align-items: center; gap: 0.2rem;">
+                                                            <i class="pi pi-envelope"></i>
+                                                            <h:outputText value="#{codingCompanyBean.company.email}" />
+                                                        </h:outputLink>
+                                                        <h:outputText value="#{interfaceLabel.notSpecified}" rendered="#{empty codingCompanyBean.company.email}" styleClass="compact-value empty" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:outputPanel>
+
+                                        <p:outputPanel rendered="#{empty codingCompanyBean.company.contactPerson and empty codingCompanyBean.company.email}">
+                                            <div style="padding: 0.25rem; text-align: center; color: #adb5bd; font-style: italic; font-size: 0.8rem;">
+                                                No Contact Information
+                                            </div>
+                                        </p:outputPanel>
+                                    </div>
+
+                                    <!-- Company Details -->
+                                    <div class="compact-section">
+                                        <div class="compact-section-title">
+                                            <i class="pi pi-info-circle"></i> Company Details
+                                        </div>
+
+                                        <div class="compact-grid">
+                                            <!-- Phone Information -->
+                                            <div class="compact-item">
+                                                <div class="compact-label">
+                                                    <i class="pi pi-phone"></i> Phone - Mobile
+                                                </div>
+                                                <div class="compact-phone-badges">
+                                                    <p:outputPanel rendered="#{not empty codingCompanyBean.company.phone}">
+                                                        <div class="compact-phone-badge">
+                                                            <i class="pi pi-phone"></i>
+                                                            <h:outputText value="#{codingCompanyBean.company.phone}" />
+                                                        </div>
+                                                    </p:outputPanel>
+                                                    <p:outputPanel rendered="#{not empty codingCompanyBean.company.mobile}">
+                                                        <div class="compact-phone-badge">
+                                                            <i class="pi pi-mobile"></i>
+                                                            <h:outputText value="#{codingCompanyBean.company.mobile}" />
+                                                        </div>
+                                                    </p:outputPanel>
+                                                    <p:outputPanel rendered="#{empty codingCompanyBean.company.phone and empty codingCompanyBean.company.mobile}">
+                                                        <h:outputText value="Not Specified" styleClass="compact-value empty" />
+                                                    </p:outputPanel>
+                                                </div>
+                                            </div>
+
+                                            <!-- Code -->
+                                            <div class="compact-item">
+                                                <div class="compact-label">
+                                                    <i class="pi pi-tag"></i> #{interfaceLabel.code}
+                                                </div>
+                                                <div class="compact-value">
+                                                    #{codingCompanyBean.company.code}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="compact-section">
+                                        <div class="compact-section-title">
+                                            <i class="pi pi-map-marker"></i> #{interfaceLabel.address}
+                                        </div>
+                                        <div class="#{empty codingCompanyBean.company.address ? 'compact-content-area empty' : 'compact-content-area'}">
+                                            <h:outputText value="#{codingCompanyBean.company.address}" rendered="#{not empty codingCompanyBean.company.address}" />
+                                            <h:outputText value="Not Specified" rendered="#{empty codingCompanyBean.company.address}" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Details -->
+                                    <div class="compact-section">
+                                        <div class="compact-section-title">
+                                            <i class="pi pi-file"></i> #{interfaceLabel.details}
+                                        </div>
+                                        <div class="#{empty codingCompanyBean.company.details ? 'compact-content-area compact-details-area empty' : 'compact-content-area compact-details-area'}">
+                                            <h:outputText value="#{codingCompanyBean.company.details}" rendered="#{not empty codingCompanyBean.company.details}" />
+                                            <h:outputText value="No Additional Details" rendered="#{empty codingCompanyBean.company.details}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </p:outputPanel>
+                        </p:outputPanel>
+                        <f:facet name="footer">
+                            <div style="display: flex; justify-content: flex-end;">
+                                <p:commandButton value="#{interfaceLabel.close}" icon="pi pi-times" type="button"
+                                                 onclick="PF('widgetVarViewDialog').hide()" styleClass="ui-button-secondary" />
+                            </div>
+                        </f:facet>
+                    </p:dialog>
+
+                    <p:confirmDialog widgetVar="widgetVarDeleteDialog" showEffect="fade"
+                                     width="300" message="#{interfaceLabel.deleteSelectedCompany}"
+                                     header="#{interfaceLabel.confirmation}" severity="warn">
+                        <p:commandButton value="#{interfaceLabel.yes}" icon="pi pi-check"
+                                         actionListener="#{codingCompanyBean.delete()}" process="@this"
+                                         oncomplete="PF('widgetVarDeleteDialog').hide()" />
+                        <p:commandButton value="#{interfaceLabel.no}" type="button"
+                                         styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('widgetVarDeleteDialog').hide()" />
+                    </p:confirmDialog>
+                    <p:confirmDialog global="true" showEffect="fade" width="300">
+                        <p:commandButton value="#{interfaceLabel.yes}" type="button"
+                                         styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton value="#{interfaceLabel.no}" type="button"
+                                         styleClass="ui-confirmdialog-no ui-button-secondary"
+                                         icon="pi pi-times" />
+                    </p:confirmDialog>
+
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
     </ui:define>
 </ui:composition>
