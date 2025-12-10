@@ -875,6 +875,13 @@
                                         </h:link>
                                     </li>
 
+                                    <li class="nk-menu-item">
+                                        <h:link styleClass="nk-menu-link" outcome="pretty:empCertificationType">
+                                            <span class="menu-icon"><i class="fa fa-certificate vibrant-2" aria-hidden="true"></i></span>
+                                            #{interfaceLabel.empCertificationType}
+                                        </h:link>
+                                    </li>
+
                                 </ul>
                             </div>
                         </li>
@@ -925,12 +932,9 @@
                                             #{interfaceLabel.purposeType}
                                         </h:link>
                                     </li>
-                                    <li class="nk-menu-item">
-                                        <h:link styleClass="nk-menu-link" outcome="pretty:empCertificationType">
-                                            <span class="menu-icon"><i class="fa fa-certificate vibrant-2" aria-hidden="true"></i></span>
-                                            #{interfaceLabel.empCertificationType}
-                                        </h:link>
-                                    </li>
+
+                                    <!-- empCertificationType moved to Inspection Setting -->
+
                                     <li class="nk-menu-item">
                                         <h:link styleClass="nk-menu-link" outcome="pretty:hierarchySystem">
                                             <span class="menu-icon"><i class="fa fa-project-diagram vibrant-3" aria-hidden="true"></i></span>
@@ -1000,3 +1004,4 @@
                          action="#{loginBean.logout()}" style="display:none;" immediate="true"/>
     </h:form>
 </ui:composition>
+
