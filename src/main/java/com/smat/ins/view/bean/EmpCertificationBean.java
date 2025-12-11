@@ -501,9 +501,7 @@ public class EmpCertificationBean implements Serializable {
         // normalize before save to ensure DB gets noon-time
         empCertification.setIssueDate(toNoon(empCertification.getIssueDate()));
         empCertification.setExpiryDate(toNoon(empCertification.getExpiryDate()));
-        if (empCertification.getEmployee() != null) {
-            empCertification.getEmployee().setDateOfBirth(toNoon(empCertification.getEmployee().getDateOfBirth()));
-        }
+
 
         if (!doValidate())
             return "";
