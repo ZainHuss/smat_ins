@@ -1540,8 +1540,6 @@ public class EmpCertificationBean implements Serializable {
 
 
 
-
-
     private void exportReport(JasperPrint jasperPrint, String reportName) throws IOException, JRException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
@@ -1598,13 +1596,73 @@ public class EmpCertificationBean implements Serializable {
 
     private boolean doValidate() {
         try {
-            // Comment is optional now; do not enforce non-empty comment here.
-            if (UtilityHelper.decipher(persistentMode).equals("insert")) {
+            // Basic presence checks
+            if (empCertification == null) {
+                UtilityHelper.addErrorMessage("Certification data is missing.");
+                return false;
+            }
+
+
+            // Issue/Expiry dates must be provided
+            if (empCertification.getIssueDate() == null) {
+                UtilityHelper.addErrorMessage("Please enter Issue Date.");
+                return false;
+            }
+            if (empCertification.getExpiryDate() == null) {
+                UtilityHelper.addErrorMessage("Please enter Expiry Date.");
+                return false;
+            }
+            // expiry must not be before issue
+            try {
+                if (empCertification.getExpiryDate().before(empCertification.getIssueDate())) {
+                    UtilityHelper.addErrorMessage("Expiry Date must be after Issue Date.");
+                    return false;
+                }
+            } catch (Exception ignore) {}
+
+            // Company: either the form `company` must be chosen, or task/company or employee.company must be present
+            boolean companyAvailable = false;
+            try {
+                if (company != null) companyAvailable = true;
+                if (!companyAvailable && task != null && task.getCompany() != null) companyAvailable = true;
+                if (!companyAvailable && empCertification.getEmployee() != null && empCertification.getEmployee().getCompany() != null) companyAvailable = true;
+            } catch (Exception ignore) {}
+            if (!companyAvailable) {
+                UtilityHelper.addErrorMessage("Please select a Company.");
+                return false;
+            }
+
+            // Employee presence and required fields
+            if (employee == null && empCertification.getEmployee() == null) {
+                UtilityHelper.addErrorMessage("Employee data is missing.");
+                return false;
+            }
+            Employee empToCheck = (employee != null) ? employee : empCertification.getEmployee();
+            if (empToCheck == null) {
+                UtilityHelper.addErrorMessage("Employee data is missing.");
+                return false;
+            }
+            if (empToCheck.getFullName() == null || empToCheck.getFullName().trim().isEmpty()) {
+                UtilityHelper.addErrorMessage("Please enter employee full name.");
+                return false;
+            }
+            if (empToCheck.getIdNumber() == null || empToCheck.getIdNumber().trim().isEmpty()) {
+                UtilityHelper.addErrorMessage("Please enter employee id number.");
+                return false;
+            }
+
+            // Existing logic: when inserting, ensure a reviewer is selected
+            String decodedMode = "";
+            try {
+                if (persistentMode != null) decodedMode = UtilityHelper.decipher(persistentMode);
+            } catch (Exception ignore) {}
+            if ("insert".equals(decodedMode)) {
                 if (selectedUserAliasRecipient == null || selectedUserAliasRecipient.getSysUserBySysUser() == null) {
                     UtilityHelper.addErrorMessage("Please select a reviewer.");
                     return false;
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -1967,7 +2025,7 @@ public class EmpCertificationBean implements Serializable {
                 docFile.setServerPath(target.toString());
             } catch (Exception ex) {
                 // fallback to older naming if code allocation fails
-                int seq = 1; try { seq += (int) java.nio.file.Files.list(folderPath).count(); } catch (Exception ignore) {}
+                int seq = 1; try { seq += (int) Files.list(folderPath).count(); } catch (Exception ignore) {}
                 String storedName = String.format("%03d_%s", seq, safe);
                 java.nio.file.Path target = folderPath.resolve(storedName);
                 Files.write(target, event.getFile().getContent(), java.nio.file.StandardOpenOption.CREATE_NEW);
@@ -2169,5 +2227,18 @@ public class EmpCertificationBean implements Serializable {
             UtilityHelper.addErrorMessage("Error removing photo: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void ajaxValidate() {
+        boolean ok = false;
+        try {
+            ok = doValidate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            ok = false;
+        }
+        try {
+            PrimeFaces.current().ajax().addCallbackParam("valid", ok);
+        } catch (Exception ignore) {}
     }
 }

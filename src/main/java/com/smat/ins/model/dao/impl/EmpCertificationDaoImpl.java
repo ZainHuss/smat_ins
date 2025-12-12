@@ -154,18 +154,20 @@ public class EmpCertificationDaoImpl extends GenericDaoImpl<EmpCertification, In
         try {
             session = sessionFactory.getCurrentSession();
 
-            // Use fully-qualified class name to satisfy IDE/JPA resolution when legacy hbm.xml mapping is used
-            String hql = "select e from com.smat.ins.model.entity.EmpCertification e "
-                    + "left join fetch e.employee emp "
-                    + "left join fetch e.empCertificationType et "
-                    + "left join fetch e.equipments eq "
-                    + "where e.certNumber = :certNumber and e.tsNumber = :tsNumber";
+            // Use Criteria API to avoid string-based HQL property resolution issues in IDE
+            javax.persistence.criteria.CriteriaBuilder cb = session.getCriteriaBuilder();
+            javax.persistence.criteria.CriteriaQuery<EmpCertification> cq = cb.createQuery(EmpCertification.class);
+            javax.persistence.criteria.Root<EmpCertification> root = cq.from(EmpCertification.class);
+            root.fetch("employee", javax.persistence.criteria.JoinType.LEFT);
+            root.fetch("empCertificationType", javax.persistence.criteria.JoinType.LEFT);
+            root.fetch("equipments", javax.persistence.criteria.JoinType.LEFT);
 
-            TypedQuery<EmpCertification> query = session.createQuery(hql, EmpCertification.class);
-            query.setParameter("certNumber", certNumber);
-            query.setParameter("tsNumber", tsNumber);
+            cq.select(root);
+            cq.where(cb.and(cb.equal(root.get("certNumber"), certNumber), cb.equal(root.get("tsNumber"), tsNumber)));
 
-            List<EmpCertification> results = query.getResultList();
+            TypedQuery<EmpCertification> query = session.createQuery(cq);
+
+            java.util.List<EmpCertification> results = query.getResultList();
             if (results != null && !results.isEmpty()) {
                 empCertification = results.get(0);
             }

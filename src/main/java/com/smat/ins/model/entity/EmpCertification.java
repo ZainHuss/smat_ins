@@ -27,9 +27,10 @@ public class EmpCertification implements java.io.Serializable {
 	private String tsNumber;
 	private String status;
 	private Timestamp createdAt;
-	private Set empCertificationWorkflows = new HashSet(0);
-	private Set equipments = new HashSet(0);
-	private Set empCertificationWorkflowSteps = new HashSet(0);
+	// typed collections to help IDE and provide type-safety
+	private Set<EmpCertificationWorkflow> empCertificationWorkflows = new HashSet<EmpCertificationWorkflow>(0);
+	private Set<Equipment> equipments = new HashSet<Equipment>(0);
+	private Set<EmpCertificationWorkflowStep> empCertificationWorkflowSteps = new HashSet<EmpCertificationWorkflowStep>(0);
 
 	// Constructors
 
@@ -47,8 +48,8 @@ public class EmpCertification implements java.io.Serializable {
 	/** full constructor */
 	public EmpCertification(EmpCertificationType empCertificationType, SysUser sysUserByReviewedBy,
 			SysUser sysUserByInspectedBy, Employee employee, SysUser sysUserByIssuedBy, Date issueDate, Date expiryDate,
-			String certNumber, String tsNumber, String status, Timestamp createdAt, Set empCertificationWorkflows,
-			Set equipments, Set empCertificationWorkflowSteps) {
+			String certNumber, String tsNumber, String status, Timestamp createdAt, Set<EmpCertificationWorkflow> empCertificationWorkflows,
+			Set<Equipment> equipments, Set<EmpCertificationWorkflowStep> empCertificationWorkflowSteps) {
 		this.empCertificationType = empCertificationType;
 		this.sysUserByReviewedBy = sysUserByReviewedBy;
 		this.sysUserByInspectedBy = sysUserByInspectedBy;
@@ -163,27 +164,27 @@ public class EmpCertification implements java.io.Serializable {
 		this.createdAt = createdAt;
 	}
 
-	public Set getEmpCertificationWorkflows() {
+	public Set<EmpCertificationWorkflow> getEmpCertificationWorkflows() {
 		return this.empCertificationWorkflows;
 	}
 
-	public void setEmpCertificationWorkflows(Set empCertificationWorkflows) {
+	public void setEmpCertificationWorkflows(Set<EmpCertificationWorkflow> empCertificationWorkflows) {
 		this.empCertificationWorkflows = empCertificationWorkflows;
 	}
 
-	public Set getEquipments() {
+	public Set<Equipment> getEquipments() {
 		return this.equipments;
 	}
 
-	public void setEquipments(Set equipments) {
+	public void setEquipments(Set<Equipment> equipments) {
 		this.equipments = equipments;
 	}
 
-	public Set getEmpCertificationWorkflowSteps() {
+	public Set<EmpCertificationWorkflowStep> getEmpCertificationWorkflowSteps() {
 		return this.empCertificationWorkflowSteps;
 	}
 
-	public void setEmpCertificationWorkflowSteps(Set empCertificationWorkflowSteps) {
+	public void setEmpCertificationWorkflowSteps(Set<EmpCertificationWorkflowStep> empCertificationWorkflowSteps) {
 		this.empCertificationWorkflowSteps = empCertificationWorkflowSteps;
 	}
 

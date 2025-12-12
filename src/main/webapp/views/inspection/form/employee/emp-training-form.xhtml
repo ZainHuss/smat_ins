@@ -1425,6 +1425,11 @@
         <h:form id="form">
             <p:growl id="messages" showDetail="true" showSummary="false" sticky="false" life="2000" />
 
+            <!-- remote commands: validate then optionally perform save -->
+            <p:remoteCommand name="rcValidate" actionListener="#{empCertificationBean.ajaxValidate}" process="@form" update=":form:messages" oncomplete="if(args &amp;&amp; args.valid){ PF('statusDialog').show(); rcDoSave(); }" />
+            <!-- use action so returned navigation string from doSave is honored -->
+            <p:remoteCommand name="rcDoSave" action="#{empCertificationBean.doSave}" process="@form" update="@form" oncomplete="PF('statusDialog').hide();" />
+
             <div class="card main-info-card">
                 <div class="form-header">
                     <h3 class="form-title">Tranning &amp; assissment Certification Form</h3>
@@ -1483,14 +1488,22 @@
 
                     <div class="field-group required-field">
                         <span class="floating-label required">Certification Type</span>
-                        <p:selectOneMenu
+                        <p:selectOneMenu id="selectCertType"
                                 style="width:100%;"
                                 value="#{empCertificationBean.empCertificationType}"
-                                converter="omnifaces.SelectItemsIndexConverter">
+                                converter="omnifaces.SelectItemsIndexConverter"
+                                filter="true"
+                                filterMatchMode="contains"
+                                filterPlaceholder="Search certification types..."
+                                filterBy="#{type.certName}"
+                                required="true"
+                                requiredMessage="please select a certification type">
+                            <f:selectItem itemLabel="Select Certification Type" itemValue="#{null}" />
                             <f:selectItems
                                     value="#{empCertificationBean.empCertificationTypes}"
                                     var="type" itemLabel="#{type.certName}" itemValue="#{type}" />
                         </p:selectOneMenu>
+                        <p:message for="selectCertType" display="icon" />
                     </div>
                 </div>
 
@@ -1777,20 +1790,29 @@
                     <div class="button-group-actions">
                         <!-- Right Side Group (now on left) -->
                         <div class="button-group-right">
+                            <!-- Return to Issuer Button (moved here so it appears on the left side) -->
+                            <div style="#{empCertificationBean.disabled and empCertificationBean.step ne '03' ? 'display:block;' : 'display:none;'}">
+                                <p:commandButton id="commandButton_return"
+                                                 value="Return to Inspector"
+                                                 icon="pi pi-undo"
+                                                 pt:data-tooltip="Return to Inspector"
+                                                 process="@form"
+                                                 update="@([id$=messages])"
+                                                 action="#{empCertificationBean.returnToIssuer}"
+                                                 styleClass="ui-button-hazel">
+                                </p:commandButton>
+                            </div>
+
                             <!-- Save/Approve Button -->
                             <div>
                                 <p:commandButton id="commandButton_save"
+                                                 type="button"
                                                  value="#{empCertificationBean.disabled ? 'Approve' : 'Save'}"
                                                  icon="#{empCertificationBean.disabled ? 'pi pi-check-circle' : 'pi pi-save'}"
                                                  pt:data-tooltip="#{empCertificationBean.disabled ? 'Approve' : 'Save'}"
-                                                 process="@form"
-                                                 action="#{empCertificationBean.doSave}"
-                                                 update="@form"
+                                                 onclick="rcValidate();"
                                                  disabled="#{empCertificationBean.step eq '03'}"
-                                                 styleClass="ui-button-primary"
-                                                 onstart="PF('statusDialog').show();"
-                                                 oncomplete="if (args &amp;&amp; args.approveOk===false) { PF('statusDialog').hide(); }">
-                                </p:commandButton>
+                                                 styleClass="ui-button-primary" />
                             </div>
 
                             <!-- Print Button -->
@@ -1818,10 +1840,11 @@
                             </div>
                             <!-- Return Button -->
 
+                            <!-- Return / Cancel Button: show 'Cancel' for reviewer (disabled) -->
                             <p:button id="commandButton_return_main"
-                                      value="Return"
+                                      value="#{empCertificationBean.disabled ? 'Cancel' : 'Return'}"
                                       icon="pi pi-arrow-left"
-                                      pt:data-tooltip="Return"
+                                      pt:data-tooltip="#{empCertificationBean.disabled ? 'Cancel' : 'Return'}"
                                       styleClass="ui-button-secondary"
                                       outcome="pretty:inspection/my-tasks" />
 
@@ -1829,24 +1852,13 @@
 
                         <!-- Left Side Group (now on right) -->
                         <div class="button-group-left">
-                            <!-- Return to Issuer Button -->
-                            <div style="#{empCertificationBean.disabled and empCertificationBean.step ne '03' ? 'display:block;' : 'display:none;'}">
-                                <p:commandButton id="commandButton_return"
-                                                 value="Return to Inspector"
-                                                 icon="pi pi-undo"
-                                                 pt:data-tooltip="Return to Inspector"
-                                                 process="@form"
-                                                 update="@([id$=messages])"
-                                                 action="#{empCertificationBean.returnToIssuer}"
-                                                 styleClass="ui-button-hazel">
-                                </p:commandButton>
-                            </div>
+                            <!-- (intentionally left empty for layout) -->
                         </div>
-                    </div>
-                </div>
-            </div>
-        </h:form>
-    </ui:define>
+                     </div>
+                 </div>
+             </div>
+         </h:form>
+     </ui:define>
 
     <ui:define name="section-dialogs">
         <p:dialog modal="true" widgetVar="statusDialog"
