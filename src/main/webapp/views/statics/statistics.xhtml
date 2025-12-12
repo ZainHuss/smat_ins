@@ -1354,10 +1354,10 @@
                                 </label>
                                 <p:selectOneMenu id="selectoneMenu_UserAlias"
                                                  value="#{statisticsBean.selectedUserAlias}"
-                                                  styleClass="filter-select"
-                                                  filter="true"
-                                                  filterMatchMode="contains"
-                                                  converter="omnifaces.SelectItemsIndexConverter">
+                                                 styleClass="filter-select"
+                                                 filter="true"
+                                                 filterMatchMode="contains"
+                                                 converter="omnifaces.SelectItemsIndexConverter">
                                     <f:selectItem itemLabel="Select a user..." value="#{null}" noSelectionOption="true" />
                                     <f:selectItems value="#{statisticsBean.userAliasList}"
                                                    var="userAlias"
@@ -1629,10 +1629,10 @@
                                 </label>
                                 <p:selectOneMenu id="selectedCompany"
                                                  value="#{statisticsBean.selectedCompany}"
-                                                  styleClass="filter-select"
-                                                  converter="omnifaces.SelectItemsIndexConverter"
-                                                  filter="true"
-                                                  filterMatchMode="contains">
+                                                 styleClass="filter-select"
+                                                 converter="omnifaces.SelectItemsIndexConverter"
+                                                 filter="true"
+                                                 filterMatchMode="contains">
                                     <f:selectItem itemLabel="All Companies" itemValue="#{null}" noSelectionOption="true" />
                                     <f:selectItems value="#{statisticsBean.companyList}"
                                                    var="c"
@@ -1760,10 +1760,10 @@
                                     <div>
                                         <h:outputText value="Top Companies" style="font-weight:800;" />
                                     </div>
-                                        <div style="min-width:260px;">
-                                            <p:inputText id="topCompaniesGlobalFilter" placeholder="Search companies..." styleClass="filter-select"
-                                                         onkeyup="PF('topCompaniesTableWidget') &amp;&amp; PF('topCompaniesTableWidget').filter();" />
-                                        </div>
+                                    <div style="min-width:260px;">
+                                        <p:inputText id="topCompaniesGlobalFilter" placeholder="Search companies..." styleClass="filter-select"
+                                                     onkeyup="PF('topCompaniesTableWidget') &amp;&amp; PF('topCompaniesTableWidget').filter();" />
+                                    </div>
                                 </div>
                             </f:facet>
 
@@ -1922,20 +1922,20 @@
                 const searchBtns = document.querySelectorAll('.search-btn');
                 searchBtns.forEach(button => {
                     button.addEventListener('click', function() {
-                         if (!this.classList.contains('loading')) {
-                             const originalHTML = this.innerHTML;
-                             this.classList.add('loading');
-                             this.innerHTML = '&lt;i class="pi pi-spin pi-spinner"&gt;&lt;/i&gt; Searching...';
-                             this.disabled = true;
+                        if (!this.classList.contains('loading')) {
+                            const originalHTML = this.innerHTML;
+                            this.classList.add('loading');
+                            this.innerHTML = '&lt;i class="pi pi-spin pi-spinner"&gt;&lt;/i&gt; Searching...';
+                            this.disabled = true;
 
-                             setTimeout(() => {
-                                 this.classList.remove('loading');
-                                 this.innerHTML = originalHTML;
-                                 this.disabled = false;
-                             }, 2000);
-                         }
-                     });
-                 });
+                            setTimeout(() => {
+                                this.classList.remove('loading');
+                                this.innerHTML = originalHTML;
+                                this.disabled = false;
+                            }, 2000);
+                        }
+                    });
+                });
 
                 // تحريك شارة الترتيب عند التمرير
                 let lastScrollTop = 0;

@@ -501,7 +501,7 @@ public class EmpCertificationBean implements Serializable {
         // normalize before save to ensure DB gets noon-time
         empCertification.setIssueDate(toNoon(empCertification.getIssueDate()));
         empCertification.setExpiryDate(toNoon(empCertification.getExpiryDate()));
-
+        // Date of birth field removed from UI: do not require or modify it on save
 
         if (!doValidate())
             return "";
@@ -845,9 +845,7 @@ public class EmpCertificationBean implements Serializable {
         // normalize before save to ensure DB gets noon-time
         empCertification.setIssueDate(toNoon(empCertification.getIssueDate()));
         empCertification.setExpiryDate(toNoon(empCertification.getExpiryDate()));
-        if (empCertification.getEmployee() != null) {
-            empCertification.getEmployee().setDateOfBirth(toNoon(empCertification.getEmployee().getDateOfBirth()));
-        }
+        // Date of birth removed from UI - do not enforce or modify here
 
         if (!doValidate()) {
             return "";

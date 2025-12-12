@@ -103,7 +103,10 @@ public class EmpCertificationDaoImpl extends GenericDaoImpl<EmpCertification, In
             criteriaQuery.select(root);
             criteriaQuery.where(criteriaBuilder.equal(joinTask.get("id"), taskId));
             TypedQuery<EmpCertification> typedQuery = session.createQuery(criteriaQuery);
-            empCertification = typedQuery.getSingleResult();
+            java.util.List<EmpCertification> results = typedQuery.getResultList();
+            if (results != null && !results.isEmpty()) {
+                empCertification = results.get(0);
+            }
             return empCertification;
         } catch (Exception e) {
             log.error(persistentClass + " can't be fetched from DB because of the following Exception ");
@@ -132,7 +135,10 @@ public class EmpCertificationDaoImpl extends GenericDaoImpl<EmpCertification, In
             criteriaQuery.select(root);
             criteriaQuery.where(criteriaBuilder.equal(root.get("id"), certId));
             TypedQuery<EmpCertification> typedQuery = session.createQuery(criteriaQuery);
-            empCertification = typedQuery.getSingleResult();
+            java.util.List<EmpCertification> results = typedQuery.getResultList();
+            if (results != null && !results.isEmpty()) {
+                empCertification = results.get(0);
+            }
             return empCertification;
         } catch (Exception e) {
             log.error(persistentClass + " can't be fetched from DB because of the following Exception ");
@@ -148,7 +154,8 @@ public class EmpCertificationDaoImpl extends GenericDaoImpl<EmpCertification, In
         try {
             session = sessionFactory.getCurrentSession();
 
-            String hql = "select e from EmpCertification e "
+            // Use fully-qualified class name to satisfy IDE/JPA resolution when legacy hbm.xml mapping is used
+            String hql = "select e from com.smat.ins.model.entity.EmpCertification e "
                     + "left join fetch e.employee emp "
                     + "left join fetch e.empCertificationType et "
                     + "left join fetch e.equipments eq "

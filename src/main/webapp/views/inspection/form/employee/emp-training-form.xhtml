@@ -1512,8 +1512,7 @@
                                 styleClass="block" />
                     </div>
 
-
-
+                    <!-- Date of birth field removed as requested -->
                 </div>
 
                 <!-- Employee Photo Section - Premium Version باللون الأخضر الفاتح -->
@@ -1788,7 +1787,9 @@
                                                  action="#{empCertificationBean.doSave}"
                                                  update="@form"
                                                  disabled="#{empCertificationBean.step eq '03'}"
-                                                 styleClass="ui-button-primary">
+                                                 styleClass="ui-button-primary"
+                                                 onstart="PF('statusDialog').show();"
+                                                 oncomplete="if (args &amp;&amp; args.approveOk===false) { PF('statusDialog').hide(); }">
                                 </p:commandButton>
                             </div>
 

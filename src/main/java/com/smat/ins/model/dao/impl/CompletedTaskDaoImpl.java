@@ -67,7 +67,7 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
             sql.append("    t.created_date, ");
             sql.append("    t.completed_date, ");
             sql.append("    c.name AS company_name, ");
-                sql.append("    ec.arabic_name AS equipment_category_name, ");
+            sql.append("    ec.arabic_name AS equipment_category_name, ");
             sql.append("    ec.code AS equipment_category_code, ");
             sql.append("    ua_assigner.en_alias_name AS assigner_name, ");
             sql.append("    su_assigner.user_name AS assigner_user_name, ");
@@ -135,14 +135,14 @@ public class CompletedTaskDaoImpl extends GenericDaoImpl<Task, Integer> implemen
                 taskMap.put("createdDate", row[6]);
                 taskMap.put("completedDate", row[7]);
                 taskMap.put("companyName", row[8]);
-                    taskMap.put("equipmentCategoryName", row[9]);
-                    taskMap.put("equipmentCategoryCode", row[10]);
-                    taskMap.put("assignerName", row[11]);
-                    taskMap.put("assignerUserName", row[12]);
-                    taskMap.put("assigneeName", row[13]);
-                    taskMap.put("assigneeUserName", row[14]);
-                    taskMap.put("assignerUserDisplayName", row[15]);
-                    taskMap.put("stepName", row[16]);
+                taskMap.put("equipmentCategoryName", row[9]);
+                taskMap.put("equipmentCategoryCode", row[10]);
+                taskMap.put("assignerName", row[11]);
+                taskMap.put("assignerUserName", row[12]);
+                taskMap.put("assigneeName", row[13]);
+                taskMap.put("assigneeUserName", row[14]);
+                taskMap.put("assignerUserDisplayName", row[15]);
+                taskMap.put("stepName", row[16]);
                 results.add(taskMap);
             }
 
